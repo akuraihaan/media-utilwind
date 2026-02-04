@@ -2,16 +2,18 @@
 @section('title','Bab 1.5 · Keunggulan Tailwind CSS')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-fuchsia-500/30">
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30">
 
+    {{-- Background Effects --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-60"></div>
-        <div id="gradient-wave" class="absolute inset-0"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-20"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[1200px] h-[1200px] bg-cyan-900/20 rounded-full blur-[150px] animate-pulse"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[1000px] h-[1000px] bg-indigo-900/20 rounded-full blur-[100px]"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.035]"></div>
-        <div id="cursor-glow"></div>
     </div>
 
+    {{-- Navbar --}}
     <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
@@ -22,7 +24,7 @@
             <span class="nav-link active cursor-default">Course</span> 
             <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
             <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>  
+        </div>
         <div class="flex gap-3 items-center">
             <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
             <form method="POST" action="{{ route('logout') }}">
@@ -30,153 +32,148 @@
                 <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
             </form>
         </div>
-</nav>
+    </nav>
+
     <div class="flex flex-1 overflow-hidden relative z-20">
 
         @include('layouts.partials.course-sidebar')
 
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
-            <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-[#020617]/80 backdrop-blur-2xl border-b border-white/5 px-8 py-4 flex items-center justify-between transition-all duration-300">
+            {{-- Sticky Header with PROGRESS BAR --}}
+            <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-[#020617]/90 backdrop-blur-2xl border-b border-white/5 px-8 py-4 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-transparent border border-purple-500/20 flex items-center justify-center font-bold text-xs text-purple-400">1.5</div>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-transparent border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-400">1.5</div>
                     <div>
-                        <h1 class="text-sm font-bold text-white">Keunggulan Tailwind CSS</h1>
-                        <p class="text-[10px] text-white/50">Estimasi: 20 Menit</p>
+                        <h1 class="text-sm font-bold text-white">Keunggulan Tailwind</h1>
+                        <p class="text-[10px] text-white/50">Speed, Consistency & Performance</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-purple-400 to-cyan-500 w-0 transition-all duration-500 shadow-[0_0_10px_#d946ef]"></div>
+                    <div class="hidden sm:block w-40 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_#22d3ee]"></div>
                     </div>
-                    <span id="progressLabelTop" class="text-purple-400 font-bold text-xs">0%</span>
+                    <span id="progressLabelTop" class="text-cyan-400 font-bold text-xs">0%</span>
                 </div>
             </div>
 
             <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
-                <article class="space-y-32">
+                
+                {{-- Tujuan Pembelajaran --}}
+                <div class="mb-24">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Tujuan Pembelajaran
+                    </h3>
                     
-                    <section id="efficiency" class="lesson-section scroll-mt-32" data-lesson-id="{{ $subbab15LessonIds[0] ?? 20 }}">
-                        <div class="space-y-8">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-widest">
-                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                                Efisiensi UI
-                            </div>
-                            
-                            <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                                Nama Kelas yang <br> 
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Intuitif & Cepat</span>
-                            </h2>
-                            
-                            <p class="text-lg text-white/70 leading-relaxed max-w-3xl">
-                                Tailwind menghasilkan nama kelas yang hampir sesuai dengan tujuan penggunaannya. Anda tidak perlu menghafal kode aneh, yang membuat <strong>kurva pembelajarannya menjadi sangat mudah</strong>.
-                            </p>
-
-                            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                                <div class="bg-[#0f141e] p-6 rounded-2xl border border-white/5 relative overflow-hidden group">
-                                    <div class="absolute top-0 right-0 p-3 opacity-10 text-4xl grayscale group-hover:grayscale-0 transition">🐢</div>
-                                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                                        <span class="text-red-400">❌</span> CSS Tradisional
-                                    </h3>
-                                    <p class="text-sm text-white/50 mb-4">Harus membuka file CSS terpisah untuk memahami apa arti kelas ini.</p>
-                                    <code class="block bg-black/30 p-3 rounded text-xs text-red-300 font-mono">.card-wrapper-inner</code>
-                                </div>
-                                <div class="bg-[#0f141e] p-6 rounded-2xl border border-purple-500/30 shadow-lg shadow-purple-900/20 relative overflow-hidden group">
-                                    <div class="absolute top-0 right-0 p-3 opacity-10 text-4xl grayscale group-hover:grayscale-0 transition">🚀</div>
-                                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                                        <span class="text-purple-400">✔</span> Tailwind CSS
-                                    </h3>
-                                    <p class="text-sm text-white/50 mb-4">Langsung mengerti hanya dengan membacanya (Self-explanatory).</p>
-                                    <code class="block bg-black/30 p-3 rounded text-xs text-purple-300 font-mono">p-4 bg-white rounded shadow</code>
-                                </div>
-                            </div>
-
-                            <div class="bg-purple-500/5 border-l-4 border-purple-500 p-6 rounded-r-xl">
-                                <p class="text-purple-100 italic">
-                                    "Merancang User Interface (UI) menjadi lebih efisien karena tidak wajib menulis aturan CSS sendiri. Kebutuhan desain terpenuhi melalui kelas-kelas bawaan."
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="responsive" class="lesson-section scroll-mt-32" data-lesson-id="{{ $subbab15LessonIds[1] ?? 21 }}">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">1.5.2 Responsif & Performa</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
-
-                        <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 mb-12 relative overflow-hidden shadow-2xl">
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white mb-1">📱 Simulator Breakpoint</h3>
-                                    <p class="text-sm text-white/60">Klik tombol untuk simulasi ukuran layar.</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="setDevice('w-[320px]')" class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold text-white transition border border-white/5">Mobile</button>
-                                    <button onclick="setDevice('w-[480px]')" class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold text-white transition border border-white/5">Tablet</button>
-                                    <button onclick="setDevice('w-full')" class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold text-white transition border border-white/5">Desktop</button>
-                                </div>
-                            </div>
-
-                            <div class="w-full bg-black/50 rounded-xl border border-white/5 h-[260px] flex justify-center items-center relative overflow-hidden" id="device-container">
-                                <div id="resizable-box" class="w-[320px] h-[90%] bg-[#1e1e1e] border-x-4 border-purple-500/20 transition-all duration-500 ease-in-out flex flex-col p-4 relative shadow-2xl">
-                                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white px-2 rounded-b text-[9px] font-bold" id="device-label">Mobile</div>
-                                    
-                                    <div class="grid grid-cols-1 gap-2 w-full mt-4 transition-all duration-500" id="demo-grid">
-                                        <div class="bg-purple-500/10 border border-purple-500/30 p-3 rounded text-center">
-                                            <div class="w-8 h-8 bg-purple-500/20 rounded-full mx-auto mb-2"></div>
-                                            <div class="h-2 bg-purple-500/20 rounded w-16 mx-auto"></div>
-                                        </div>
-                                        <div class="bg-cyan-500/10 border border-cyan-500/30 p-3 rounded text-center">
-                                            <div class="w-8 h-8 bg-cyan-500/20 rounded-full mx-auto mb-2"></div>
-                                            <div class="h-2 bg-cyan-500/20 rounded w-16 mx-auto"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mt-auto pt-4 border-t border-white/5 text-center">
-                                        <p class="text-[10px] text-purple-400 font-mono">class="grid-cols-1 md:grid-cols-2"</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-[#151515] border border-white/5 p-6 rounded-xl flex items-start gap-4 hover:border-purple-500/30 transition group h-full">
+                            <div class="w-10 h-10 rounded-lg bg-purple-900/20 text-purple-400 flex items-center justify-center shrink-0 font-bold text-lg border border-purple-500/10">1</div>
                             <div>
-                                <h3 class="text-xl font-bold text-white mb-4">⚡ Kecepatan Pemuatan (Browser Loading)</h3>
-                                <p class="text-white/70 text-sm leading-relaxed mb-4">
-                                    Versi produksi dari file CSS Tailwind hanya berisi kumpulan aturan yang <strong>benar-benar digunakan</strong> di HTML Anda.
-                                </p>
-                                <p class="text-white/70 text-sm leading-relaxed">
-                                    Teknik ini disebut <em>Tree Shaking</em> atau <em>Purging</em>. Tailwind membuang kelas yang tidak terpakai, membuat ukuran file sangat kecil.
+                                <h4 class="text-sm font-bold text-white mb-2 group-hover:text-purple-400 transition">Rapid Development</h4>
+                                <p class="text-xs text-white/50 leading-relaxed">
+                                    Memahami bagaimana <em>Utility-First</em> mempercepat pembuatan UI tanpa perlu menulis CSS custom.
                                 </p>
                             </div>
-                            <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/5">
-                                <div class="space-y-6">
-                                    <div>
-                                        <div class="flex justify-between text-xs text-white/60 mb-2">
-                                            <span>Framework Lain (Full)</span>
-                                            <span>~300KB</span>
+                        </div>
+
+                        <div class="bg-[#151515] border border-white/5 p-6 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-900/20 text-cyan-400 flex items-center justify-center shrink-0 font-bold text-lg border border-cyan-500/10">2</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-2 group-hover:text-cyan-400 transition">Konsistensi Desain</h4>
+                                <p class="text-xs text-white/50 leading-relaxed">
+                                    Menghindari nilai acak (Magic Numbers) dengan menggunakan skala desain yang terstandarisasi.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#151515] border border-white/5 p-6 rounded-xl flex items-start gap-4 hover:border-emerald-500/30 transition group h-full">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-900/20 text-emerald-400 flex items-center justify-center shrink-0 font-bold text-lg border border-emerald-500/10">3</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-2 group-hover:text-emerald-400 transition">Optimasi Performa</h4>
+                                <p class="text-xs text-white/50 leading-relaxed">
+                                    Mempelajari bagaimana Tailwind menghasilkan file CSS produksi yang sangat kecil (Tiny Bundle).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <article class="space-y-40">
+                    
+                    {{-- LESSON 1.5.1 --}}
+                    <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="20">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.1</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Kecepatan: <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Rapid Prototyping</span>
+                                </h2>
+                            </div>
+                            
+                            {{-- MATERI A --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-[10px] text-white">A</span> Styling Tanpa Jeda</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Buku <em>"Modern CSS with Tailwind"</em> menjelaskan bahwa hambatan terbesar dalam CSS tradisional adalah <strong>Context Switching</strong>. Anda harus terus-menerus berpindah antara file HTML (struktur) dan CSS (gaya).
+                                    </p>
+                                    <p>
+                                        Dengan Tailwind, Anda membawa gaya langsung ke markup. Ini memungkinkan Anda membangun antarmuka yang kompleks dengan sangat cepat karena Anda tidak perlu berhenti untuk memikirkan nama class abstrak seperti <code>.sidebar-inner-wrapper</code> hanya untuk memberi padding.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- MATERI B --}}
+                            <div class="space-y-4 pt-6">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-[10px] text-white">B</span> Iterasi Lebih Cepat</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Dalam <em>"Ultimate Tailwind CSS Handbook"</em>, disebutkan bahwa Tailwind menghilangkan rasa takut untuk mengubah desain. Pada CSS tradisional, menghapus kode CSS seringkali berisiko merusak halaman lain yang menggunakan class yang sama.
+                                    </p>
+                                    <p>
+                                        Di Tailwind, gaya bersifat lokal pada elemen HTML. Anda bisa mengubah warna tombol di satu halaman tanpa khawatir tombol di halaman lain ikut berubah secara tidak sengaja. Ini memberikan kepercayaan diri penuh saat melakukan <em>refactoring</em>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- SIMULATOR 1: FRICTION TEST --}}
+                            <div class="bg-[#151515] p-8 rounded-2xl border border-white/10 relative shadow-2xl overflow-hidden mt-8">
+                                <h4 class="text-xs font-bold text-white/50 uppercase mb-8 text-center relative z-10">Simulasi: Kecepatan Workflow (Manual vs Utility)</h4>
+                                
+                                <div class="grid md:grid-cols-2 gap-10 relative z-10">
+                                    {{-- Kiri: Tradisional --}}
+                                    <div class="space-y-4 bg-red-900/5 p-6 rounded-xl border border-red-500/10 hover:border-red-500/30 transition">
+                                        <div class="flex justify-between text-xs text-red-400 font-bold mb-2">TRADISIONAL (BUAT CLASS)</div>
+                                        <p class="text-[10px] text-gray-400">Anda harus berpikir nama class yang semantik dan unik:</p>
+                                        
+                                        <input type="text" placeholder="Ketik nama class yang panjang..." 
+                                            class="w-full bg-black/50 border border-white/10 rounded px-3 py-2 text-xs text-white focus:border-red-500 outline-none transition"
+                                            onkeyup="sim1UpdateMeter(this.value)">
+                                        
+                                        <div class="relative w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                                            <div id="sim1-meter" class="absolute top-0 left-0 h-full bg-red-500 w-0 transition-all duration-200"></div>
                                         </div>
-                                        <div class="h-3 bg-white/5 rounded-full overflow-hidden">
-                                            <div class="h-full bg-gradient-to-r from-red-500 to-red-600 w-full rounded-full"></div>
-                                        </div>
+                                        <p id="sim1-text" class="text-[10px] text-red-300 h-4">Waktu Terbuang: 0%</p>
                                     </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs text-white/60 mb-2">
-                                            <span>Tailwind (Dev Mode)</span>
-                                            <span>~3MB (Besar)</span>
+
+                                    {{-- Kanan: Tailwind --}}
+                                    <div class="space-y-4 bg-emerald-900/5 p-6 rounded-xl border border-emerald-500/10 hover:border-emerald-500/30 transition">
+                                        <div class="flex justify-between text-xs text-emerald-400 font-bold mb-2">TAILWIND (GUNAKAN UTILITY)</div>
+                                        <p class="text-[10px] text-gray-400">Langsung terapkan gaya tanpa berpikir nama:</p>
+                                        
+                                        <div class="flex gap-2 flex-wrap">
+                                            <button onclick="sim1Tw(this, 'bg-blue-600')" class="px-3 py-1 bg-white/10 rounded text-[10px] hover:bg-emerald-500 hover:text-black transition border border-white/10">Warna Biru</button>
+                                            <button onclick="sim1Tw(this, 'p-4')" class="px-3 py-1 bg-white/10 rounded text-[10px] hover:bg-emerald-500 hover:text-black transition border border-white/10">Padding</button>
+                                            <button onclick="sim1Tw(this, 'rounded-xl')" class="px-3 py-1 bg-white/10 rounded text-[10px] hover:bg-emerald-500 hover:text-black transition border border-white/10">Sudut Tumpul</button>
                                         </div>
-                                        <div class="h-3 bg-white/5 rounded-full overflow-hidden">
-                                            <div class="h-full bg-gradient-to-r from-yellow-500 to-yellow-600 w-full animate-pulse rounded-full"></div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs text-white/60 mb-2">
-                                            <span class="text-purple-400 font-bold">Tailwind (Production)</span>
-                                            <span class="text-purple-400 font-bold">~10KB (Sangat Kecil)</span>
-                                        </div>
-                                        <div class="h-3 bg-white/5 rounded-full overflow-hidden relative">
-                                            <div class="h-full bg-gradient-to-r from-purple-400 to-cyan-500 w-[5%] rounded-full shadow-[0_0_10px_#a855f7]"></div>
+                                        
+                                        {{-- Visual Result --}}
+                                        <div id="sim1-box" class="w-full h-12 border border-dashed border-white/20 flex items-center justify-center text-[10px] text-gray-500 transition-all duration-300 mt-2 rounded">
+                                            Preview Hasil
                                         </div>
                                     </div>
                                 </div>
@@ -184,321 +181,635 @@
                         </div>
                     </section>
 
-                    <section id="dry" class="lesson-section scroll-mt-32" data-lesson-id="{{ $subbab15LessonIds[2] ?? 22 }}">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">1.5.3 Prinsip DRY (Don't Repeat Yourself)</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
+                    {{-- LESSON 1.5.2 --}}
+                    <section id="section-2" class="lesson-section scroll-mt-32" data-lesson-id="21">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                                <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.2</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Konsistensi: <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Constraint-Based System</span>
+                                </h2>
+                            </div>
 
-                        <p class="text-white/70 mb-6">
-                            Tailwind memungkinkan Anda mempersiapkan <strong>komponen yang dapat digunakan kembali</strong> (reusable component). Ini mendukung strategi DRY untuk menjaga kebersihan kode dan memudahkan pemeliharaan.
-                        </p>
-
-                        <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 relative overflow-hidden text-center shadow-2xl">
-                            <p class="text-xs text-white/40 mb-8 font-mono">Klik tombol "Update Master" untuk melihat efeknya pada seluruh komponen turunan.</p>
-                            
-                            <div class="flex flex-col items-center gap-8 relative z-10">
-                                <div class="relative group">
-                                    <div class="absolute -inset-4 bg-purple-500/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
-                                    <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-purple-400 uppercase tracking-widest font-bold">Master Component</span>
-                                    <button onclick="triggerUpdate()" id="master-btn" class="relative bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-500 border border-white/10 shadow-lg transform active:scale-95">
-                                        Tombol Utama
-                                    </button>
-                                </div>
-
-                                <div class="flex gap-20 text-white/10 text-2xl">
-                                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                                </div>
-
-                                <div class="flex flex-wrap justify-center gap-6">
-                                    <div class="child-component bg-blue-600 text-white font-bold py-2 px-6 rounded-lg opacity-70 scale-90 transition-all duration-500 border border-transparent">Halaman A</div>
-                                    <div class="child-component bg-blue-600 text-white font-bold py-2 px-6 rounded-lg opacity-70 scale-90 transition-all duration-500 border border-transparent">Halaman B</div>
-                                    <div class="child-component bg-blue-600 text-white font-bold py-2 px-6 rounded-lg opacity-70 scale-90 transition-all duration-500 border border-transparent">Halaman C</div>
+                            {{-- MATERI A --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Menghindari Magic Numbers</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Salah satu keuntungan terbesar yang disebut dalam <em>"Tailwind CSS by SitePoint"</em> adalah standarisasi. Dalam CSS biasa, developer bebas memasukkan nilai apa saja, seperti <code>margin: 13px</code> atau <code>color: #4a3b2c</code>, yang menyebabkan desain tidak konsisten ("Magic Numbers").
+                                    </p>
+                                    <p>
+                                        Tailwind bekerja dengan sistem <strong>Constraint-Based</strong>. Anda dibatasi pada skala yang telah ditentukan (seperti <code>m-4</code> untuk 1rem, atau <code>text-gray-500</code>). Batasan ini justru membebaskan Anda dari kebingungan memilih nilai piksel dan menjamin UI yang rapi.
+                                    </p>
                                 </div>
                             </div>
 
-                            <button onclick="triggerUpdate()" class="mt-10 px-6 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-xs transition flex items-center gap-2 mx-auto text-purple-300">
-                                <span>🔄</span> Ubah Desain Master
-                            </button>
-                        </div>
-
-                        <div class="mt-8 p-6 bg-purple-500/5 border border-purple-500/10 rounded-xl">
-                            <p class="text-sm text-purple-200 leading-relaxed">
-                                <strong>Systematic Coherence:</strong> Framework ini membantu menjaga konsistensi visual di seluruh komponen situs web tanpa membatasi kreativitas.
-                            </p>
-                        </div>
-                    </section>
-
-                    <section id="quiz-1-5" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="{{ $subbab15LessonIds[3] ?? 23 }}" data-manual="true">
-                        <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl text-center group hover:border-purple-500/30 transition-all duration-500">
-                            
-                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50 blur-sm"></div>
-
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase mb-4 tracking-widest">
-                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                                Evaluasi 1.5
+                            {{-- MATERI B --}}
+                            <div class="space-y-4 pt-6">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-cyan-600 flex items-center justify-center text-[10px] text-white">B</span> Responsif & State Variants</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Mitos bahwa Tailwind sama dengan "Inline Styles" dipatahkan oleh kemampuannya menangani <em>state</em>. Inline style standar tidak bisa melakukan media query atau hover state.
+                                    </p>
+                                    <p>
+                                        Tailwind menyediakan modifier seperti <code>hover:</code>, <code>focus:</code>, dan <code>lg:</code>. Anda bisa membuat desain yang sepenuhnya responsif dan interaktif langsung di HTML tanpa perlu menulis satu baris pun <code>@media</code> query yang rumit di file CSS terpisah.
+                                    </p>
+                                </div>
                             </div>
-                            <h2 class="text-3xl font-black text-white mb-6">Uji Pemahaman</h2>
 
-                            <div id="quiz-container" class="max-w-xl mx-auto min-h-[300px] relative">
-                                <div class="flex justify-between mb-6 px-2">
-                                    <div class="h-1 flex-1 bg-white/10 rounded-full overflow-hidden mr-2">
-                                        <div id="quiz-progress" class="h-full bg-purple-500 w-[33%] transition-all duration-500"></div>
+                            {{-- SIMULATOR 2: DESIGN VALIDATOR --}}
+                            <div class="bg-[#151515] border border-white/10 rounded-xl overflow-hidden shadow-2xl p-8 relative mt-8">
+                                <h4 class="text-xs font-bold text-white/50 uppercase mb-6 text-center">Simulator: Penjaga Konsistensi (Design System)</h4>
+                                <div class="flex flex-col items-center gap-6 relative z-10">
+                                    <div class="w-full max-w-md relative">
+                                        <p class="text-[10px] text-gray-400 mb-2 text-center">Coba ketik nilai acak (cth: 17px) vs Utility Tailwind (cth: p-4)</p>
+                                        <div class="relative group">
+                                            <input type="text" id="sim2-input" placeholder="Ketik nilai styling..." 
+                                                class="w-full bg-black/50 border border-white/20 rounded-lg py-3 px-12 text-white font-mono text-center focus:border-cyan-500 outline-none transition uppercase"
+                                                onkeyup="checkDesignPolice(this.value)">
+                                            <div id="sim2-icon" class="absolute right-4 top-3 text-xl transition-all opacity-50">🛡️</div>
+                                        </div>
                                     </div>
-                                    <span id="question-counter" class="text-[10px] text-purple-400 font-bold">1/3</span>
-                                </div>
-
-                                <div id="q1" class="quiz-step transition-all duration-500 absolute inset-0">
-                                    <p class="font-bold text-white mb-6 text-lg">1. Mengapa kurva pembelajaran Tailwind dianggap mudah?</p>
-                                    <div class="space-y-3">
-                                        <button onclick="nextQuestion(1, false, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>Karena wajib menghafal semua kode CSS manual</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs">✖</span>
-                                        </button>
-                                        <button onclick="nextQuestion(1, true, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>Karena nama kelas hampir sesuai dengan tujuannya</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs text-green-400">✔</span>
-                                        </button>
-                                        <button onclick="nextQuestion(1, false, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>Karena hanya ada sedikit fitur</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs">✖</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="q2" class="quiz-step transition-all duration-500 absolute inset-0 translate-x-[120%] opacity-0 pointer-events-none">
-                                    <p class="font-bold text-white mb-6 text-lg">2. Bagaimana Tailwind menangani ukuran file di produksi?</p>
-                                    <div class="space-y-3">
-                                        <button onclick="nextQuestion(2, false, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>Memuat semua ribuan kelas bawaan</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs">✖</span>
-                                        </button>
-                                        <button onclick="nextQuestion(2, true, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>Hanya memuat kelas yang benar-benar digunakan</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs text-green-400">✔</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="q3" class="quiz-step transition-all duration-500 absolute inset-0 translate-x-[120%] opacity-0 pointer-events-none">
-                                    <p class="font-bold text-white mb-6 text-lg">3. Fitur "Reusable Component" mendukung prinsip apa?</p>
-                                    <div class="space-y-3">
-                                        <button onclick="nextQuestion(3, true, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>DRY (Don't Repeat Yourself)</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs text-green-400">✔</span>
-                                        </button>
-                                        <button onclick="nextQuestion(3, false, this)" class="quiz-opt w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group flex justify-between items-center">
-                                            <span>WET (Write Everything Twice)</span>
-                                            <span class="opacity-0 group-hover:opacity-100 text-xs">✖</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="quiz-success" class="transition-all duration-500 absolute inset-0 translate-y-10 opacity-0 pointer-events-none text-center flex flex-col justify-center items-center">
-                                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30 scale-0 transition-transform duration-500 delay-200" id="success-icon">
-                                        <span class="text-4xl text-white">🏆</span>
-                                    </div>
-                                    <h3 class="text-2xl font-bold text-white mb-2">Hebat!</h3>
-                                    <p class="text-white/60 mb-8">Anda telah memahami keunggulan utama Tailwind.</p>
                                     
-                                    <button id="finishBtn" onclick="finishChapter()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-bold shadow-lg shadow-purple-900/40 hover:scale-105 transition-transform hover:shadow-purple-500/40">
-                                        Selesaikan Bab 1.5 →
+                                    <div id="sim2-status" class="h-10 flex items-center justify-center text-xs text-gray-500 font-mono bg-white/5 w-full max-w-md rounded border border-dashed border-white/10">
+                                        [STATUS: MENUNGGU INPUT...]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- LESSON 1.5.3 --}}
+                    <section id="section-3" class="lesson-section scroll-mt-32" data-lesson-id="22">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-emerald-500 pl-6">
+                                <span class="text-emerald-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.3</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Performa: <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Tiny Production Files</span>
+                                </h2>
+                            </div>
+
+                            {{-- MATERI A --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-emerald-600 flex items-center justify-center text-[10px] text-white">A</span> Masalah "Append-Only"</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Dalam pengembangan website tradisional, file CSS cenderung tumbuh secara linear seiring bertambahnya fitur. Setiap halaman baru berarti baris CSS baru. Developer takut menghapus CSS lama ("Append-Only"), membuat file membengkak hingga ratusan kilobyte.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {{-- MATERI B --}}
+                            <div class="space-y-4 pt-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-emerald-600 flex items-center justify-center text-[10px] text-white">B</span> Solusi Purge & JIT</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Tailwind memecahkan masalah ini dengan konsep utilitas yang dapat digunakan kembali. Begitu Anda memiliki class <code>flex</code>, <code>pt-4</code>, dan <code>text-center</code>, Anda bisa menggunakannya di jutaan tempat tanpa menambah ukuran file CSS sedikitpun.
+                                    </p>
+                                    <p>
+                                        Ditambah dengan fitur <strong>Purge/Tree-Shaking</strong>, Tailwind secara otomatis membuang semua class yang tidak Anda pakai saat build produksi. Hasilnya? File CSS yang sangat kecil (seringkali di bawah 10kB) meskipun situs Anda sangat besar.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- SIMULATOR 3: BLOAT MONITOR --}}
+                            <div class="bg-[#151515] p-8 rounded-2xl border border-white/10 relative shadow-2xl overflow-hidden mt-8">
+                                <h4 class="text-xs font-bold text-white/50 uppercase mb-8 text-center relative z-10">Simulasi: Grafik Pertumbuhan Ukuran File CSS</h4>
+                                
+                                <div class="space-y-8 relative z-10">
+                                    <div>
+                                        <div class="flex justify-between text-xs text-white/50 mb-2 font-mono">
+                                            <span>Traditional CSS (Terus Tumbuh Linear)</span>
+                                            <span id="txt-trad" class="text-red-400 font-bold">50 KB</span>
+                                        </div>
+                                        <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden border border-white/5">
+                                            <div id="bar-trad" class="bg-gradient-to-r from-red-600 to-red-400 h-full rounded-full w-[10%] transition-all duration-300 relative"></div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between text-xs text-white/50 mb-2 font-mono">
+                                            <span>Tailwind CSS (Stabil / Plateau)</span>
+                                            <span id="txt-tw" class="text-emerald-400 font-bold">4.0 KB</span>
+                                        </div>
+                                        <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden border border-white/5">
+                                            <div id="bar-tw" class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full w-[2%] shadow-[0_0_15px_#10b981] transition-all duration-300 relative"></div>
+                                        </div>
+                                        <p class="text-[10px] text-emerald-400/60 mt-2 italic">*Ukuran file berhenti tumbuh karena reuse utility class.</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-10 flex justify-center relative z-10">
+                                    <button onclick="addFeature()" id="add-feature-btn" class="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/10 transition text-white hover:scale-105 hover:border-emerald-500/30 flex items-center gap-2 group cursor-pointer active:scale-95 select-none">
+                                        <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:bg-emerald-500 group-hover:text-black transition">+</span>
+                                        TAMBAH 10 HALAMAN BARU
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- ACTIVITY SECTION: LIVE REFACTOR CHALLENGE --}}
+                    {{-- PENTING: data-type="activity" agar tidak auto-complete saat scroll --}}
+                    <section id="section-4" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="23" data-type="activity">
+                        <div class="relative rounded-[2.5rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
+                            
+                            {{-- Activity Header --}}
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 relative z-10">
+                                <div class="p-4 bg-gradient-to-br from-cyan-600 to-blue-800 rounded-2xl text-white shadow-lg shadow-cyan-500/20 shrink-0">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h2 class="text-3xl font-black text-white tracking-tight">Final Mission: The Refactor</h2>
+                                        <span id="status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase tracking-wider">Live Code</span>
+                                    </div>
+                                    <p class="text-cyan-200/60 text-sm leading-relaxed max-w-2xl">
+                                        <strong>Tantangan:</strong> Rasakan kecepatan development dengan mengubah kode CSS konvensional di bawah ini menjadi Utility Tailwind.
+                                        Ketik class di editor untuk melihat perubahan <strong>Real-Time</strong>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- The Live Editor Interface --}}
+                            <div class="grid lg:grid-cols-2 gap-8 border-t border-white/5 pt-8">
+                                
+                                {{-- Left: Target & Preview --}}
+                                <div class="space-y-6">
+                                    {{-- Soal --}}
+                                    <div class="p-4 bg-red-900/10 border border-red-500/20 rounded-xl relative overflow-hidden">
+                                        <div class="absolute top-2 right-2 text-[8px] font-bold bg-red-500 text-black px-1 rounded">LEGACY CODE</div>
+                                        <p class="text-[10px] text-red-400 font-bold mb-2 uppercase">UBAH KODE INI:</p>
+                                        <code class="text-xs text-red-200 font-mono block bg-black/30 p-3 rounded leading-relaxed">
+                                            style="background-color: blue; <br>
+                                            padding: 1rem; <br>
+                                            color: white; <br>
+                                            border-radius: 0.5rem;"
+                                        </code>
+                                    </div>
+                                    
+                                    {{-- Live Preview Box (Hasil Render) --}}
+                                    <div class="p-8 bg-[#1e1e1e] rounded-xl border border-white/10 flex flex-col items-center justify-center min-h-[200px] relative transition-all" id="preview-container">
+                                        <p class="absolute top-3 left-3 text-[10px] text-gray-500 font-mono">LIVE PREVIEW</p>
+                                        
+                                        {{-- Tombol yang akan berubah --}}
+                                        <button id="live-btn" class="transition-all duration-300 font-sans border border-dashed border-white/20 text-gray-500 p-2">
+                                            Button Saya
+                                        </button>
+
+                                        {{-- Hint text di bawah --}}
+                                        <p id="feedback-text" class="absolute bottom-3 text-[10px] text-gray-500 bg-black/50 px-2 py-1 rounded">
+                                            Menunggu input...
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {{-- Right: Editor Input --}}
+                                <div class="space-y-4 flex flex-col">
+                                    <div class="relative flex-1">
+                                        <div class="absolute top-0 left-0 bg-cyan-900/20 text-cyan-400 text-[10px] px-3 py-1 rounded-br border-r border-b border-cyan-500/20 font-bold z-10">CODE EDITOR</div>
+                                        
+                                        <div class="w-full h-full bg-[#0f1117] rounded-xl border border-white/10 p-6 pt-10 font-mono text-sm relative group focus-within:border-cyan-500/50 transition">
+                                            <span class="text-gray-500 select-none">&lt;button class="</span>
+                                            
+                                            {{-- INPUT UTAMA --}}
+                                            <input type="text" id="code-input" 
+                                                class="bg-transparent border-none outline-none text-white w-full placeholder-gray-700 font-bold" 
+                                                placeholder="ketik class disini... (cth: bg-blue-500)" 
+                                                autocomplete="off" spellcheck="false"
+                                                onkeyup="handleInput(this.value)">
+                                            
+                                            <span class="text-gray-500 select-none">"&gt;Button Saya&lt;/button&gt;</span>
+                                        </div>
+                                    </div>
+                                    
+                                    {{-- Live Checklist Feedback --}}
+                                    <div class="grid grid-cols-2 gap-2 text-[10px] text-gray-500">
+                                        <div id="req-bg" class="flex items-center gap-1 transition-colors">
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Background Biru
+                                        </div>
+                                        <div id="req-p" class="flex items-center gap-1 transition-colors">
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Padding (p-4)
+                                        </div>
+                                        <div id="req-text" class="flex items-center gap-1 transition-colors">
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Teks Putih
+                                        </div>
+                                        <div id="req-round" class="flex items-center gap-1 transition-colors">
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Rounded (lg/md)
+                                        </div>
+                                    </div>
+
+                                    <button id="submit-code" onclick="validateFinal()" class="w-full py-4 bg-white/5 text-gray-500 font-bold rounded-xl transition-all text-xs border border-white/5 flex items-center justify-center gap-2 cursor-not-allowed">
+                                        <span>🔒</span> SELESAIKAN TANTANGAN
+                                    </button>
+                                    <div id="error-msg" class="text-center text-xs text-red-400 font-mono h-4 opacity-0 transition">Error message here</div>
+                                </div>
+
                             </div>
                         </div>
                     </section>
 
                 </article>
 
+                {{-- Footer Navigation --}}
                 <div class="mt-32 pt-10 border-t border-white/10 flex justify-between items-center">
                     <a href="{{ route('courses.implementation') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
                         <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">←</div>
-                        <div class="text-left">
-                            <div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div>
-                            <div class="font-bold text-sm">Implementasi</div>
-                        </div>
+                        <div class="text-left"><div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div><div class="font-bold text-sm">Implementasi</div></div>
                     </a>
-
-                    <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed">
+                    
+                    {{-- Tombol Lanjut (Default Locked) --}}
+                    <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right">
-                            <div class="text-[10px] uppercase tracking-widest opacity-30">Terkunci</div>
-                            <div class="font-bold text-sm">Instalasi & Konfigurasi</div>
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest opacity-50">Terkunci</div>
+                            <div class="font-bold text-sm">Instalasi dan Konfigurasi</div>
                         </div>
-                        <div class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center">🔒</div>
+                        <div id="nextIcon" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-white/5">🔒</div>
                     </div>
                 </div>
 
-                <div class="mt-16 text-center text-white/20 text-xs">
-                    &copy; {{ date('Y') }} Flowwind Learn. Materi dilindungi hak cipta.
-                </div>
             </div>
         </main>
     </div>
 </div>
 
 <style>
-    /* UTILS & ANIMATION */
+    .nav-link.active { color: #22d3ee; position: relative; }
+    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#22d3ee,#3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.8); border-radius: 2px; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .shake { animation: shake 0.4s ease-in-out; }
-
-    #animated-bg{ background: radial-gradient(600px circle at 20% 20%, rgba(168,85,247,.15), transparent 40%), radial-gradient(700px circle at 80% 30%, rgba(217,70,239,.15), transparent 40%), radial-gradient(800px circle at 50% 80%, rgba(34,211,238,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
+    #animated-bg{ background: radial-gradient(800px circle at 20% 20%, rgba(34,211,238,.15), transparent 40%), radial-gradient(800px circle at 80% 80%, rgba(59,130,246,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
     @keyframes bgMove{to{transform:scale(1.15)}}
+    .nav-item.active { color: #67e8f9; background: rgba(34,211,238,0.1); font-weight: 600; }
+    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
     
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #c084fc; background: rgba(192,132,252,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #c084fc; box-shadow: 0 0 8px #c084fc; transform: scale(1.2); }
+    /* Code Font */
+    #code-input { font-family: 'Fira Code', monospace; caret-color: #22d3ee; }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script>
     /* --- CONFIGURATION --- */
-    window.SUBBAB_LESSON_IDS = {!! json_encode($subbab15LessonIds ?? []) !!}; 
-    window.INIT_COMPLETED_LESSONS = {!! json_encode($completedLessonIds ?? []) !!};
-    let completedLessons = new Set(window.INIT_COMPLETED_LESSONS);
+    window.LESSON_IDS = [20, 21, 22, 23]; // Lesson 1, 2, 3 + Activity
+    window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
+    let completedSet = new Set(window.COMPLETED_IDS);
     
-    // Manual boolean parsing
+    // Status Aktivitas (Mapping ID 5 = Activity Bab 1.5)
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
-
-    const QUIZ_LESSON_ID = 23; // ID 23 sesuai database
+    const ACTIVITY_ID = 5; 
+    const ACTIVITY_LESSON_ID = 23; 
 
     document.addEventListener('DOMContentLoaded', () => {
-        updateProgressUI();
+        initScrollSpy();
         initLessonObserver();
-        initVisualEffects();
         initSidebarScroll();
-        if (activityCompleted) disableQuizUI();
+        initVisualEffects();
+        
+        // --- LOGIKA UTAMA: Cek Status Terkini ---
+        if (activityCompleted) { 
+            completedSet.add(ACTIVITY_LESSON_ID); // Pastikan progress 100%
+            lockActivityUI(); // Arsipkan
+        } else {
+            lockNextChapter(); // Kunci jika belum selesai
+            if(completedSet.has(ACTIVITY_LESSON_ID)) {
+                completedSet.delete(ACTIVITY_LESSON_ID);
+            }
+        }
+        
+        updateProgressUI(); 
     });
 
-    /* --- 1. RESPONSIVE SIMULATOR --- */
-    function setDevice(widthClass) {
-        const box = document.getElementById('resizable-box');
-        const grid = document.getElementById('demo-grid');
-        const label = document.getElementById('device-label');
+    /* --- LOGIC 1: PROGRESS & UNLOCKING --- */
+    function updateProgressUI() {
+        const total = window.LESSON_IDS.length; 
+        const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length; 
+        const percent = Math.round((done / total) * 100);
         
-        box.classList.remove('w-[320px]', 'w-[480px]', 'w-full');
-        box.classList.add(widthClass);
+        document.getElementById('topProgressBar').style.width = percent + '%'; 
+        document.getElementById('progressLabelTop').innerText = percent + '%';
         
-        if(widthClass === 'w-[320px]') {
-            grid.classList.remove('grid-cols-2');
-            grid.classList.add('grid-cols-1');
-            label.innerText = "Mobile";
-        } else if (widthClass === 'w-[480px]') {
-            grid.classList.remove('grid-cols-1');
-            grid.classList.add('grid-cols-2');
-            label.innerText = "Tablet";
+        if(percent === 100) {
+            unlockNextChapter();
         } else {
-            grid.classList.remove('grid-cols-1');
-            grid.classList.add('grid-cols-2');
-            label.innerText = "Desktop";
+            lockNextChapter();
         }
     }
 
-    /* --- 2. DRY SIMULATOR --- */
-    function triggerUpdate() {
-        const master = document.getElementById('master-btn');
-        const children = document.querySelectorAll('.child-component');
-        
-        // Toggle Master Style
-        if(master.classList.contains('bg-blue-600')) {
-            master.classList.remove('bg-blue-600');
-            master.classList.add('bg-fuchsia-600', 'rounded-full', 'shadow-fuchsia-500/50'); 
-            master.innerText = "Tombol Updated!";
-        } else {
-            // Revert
-            master.classList.remove('bg-fuchsia-600', 'rounded-full', 'shadow-fuchsia-500/50');
-            master.classList.add('bg-blue-600');
-            master.innerText = "Tombol Utama";
+    function unlockNextChapter() {
+        const btn = document.getElementById('nextChapterBtn');
+        const nextLabel = document.getElementById('nextLabel');
+        const nextIcon = document.getElementById('nextIcon');
+
+        if(btn) {
+            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
+            btn.classList.add('text-cyan-400', 'hover:text-cyan-300', 'cursor-pointer');
+            
+            if(nextLabel) { nextLabel.innerText = "Selanjutnya"; nextLabel.classList.remove('opacity-50'); }
+            if(nextIcon) { nextIcon.innerHTML = "→"; nextIcon.classList.remove('bg-white/5'); nextIcon.classList.add('bg-cyan-500/20', 'border-cyan-500/50'); }
+            
+            btn.onclick = () => window.location.href = "{{ route('courses.installation') }}"; 
         }
-        
-        // Propagate to Children
-        setTimeout(() => {
-            children.forEach(c => {
-                if(c.classList.contains('bg-blue-600')) {
-                    c.classList.remove('bg-blue-600', 'opacity-70', 'scale-90');
-                    c.classList.add('bg-fuchsia-600', 'rounded-full', 'opacity-100', 'scale-100');
-                } else {
-                    c.classList.remove('bg-fuchsia-600', 'rounded-full', 'opacity-100', 'scale-100');
-                    c.classList.add('bg-blue-600', 'opacity-70', 'scale-90');
-                }
-            });
-        }, 300);
     }
 
-    /* --- 3. QUIZ LOGIC --- */
-    let currentStep = 1;
-    function nextQuestion(step, isCorrect, btn) {
-        if(activityCompleted) return;
-        if (!isCorrect) {
-            btn.classList.add('bg-red-500/20', 'border-red-500', 'shake');
-            setTimeout(() => btn.classList.remove('bg-red-500/20', 'border-red-500', 'shake'), 500);
+    function lockNextChapter() {
+        const btn = document.getElementById('nextChapterBtn');
+        if(btn) {
+            btn.classList.add('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
+            btn.classList.remove('text-cyan-400', 'hover:text-cyan-300', 'cursor-pointer');
+            btn.onclick = null;
+        }
+    }
+
+    /* --- SIM 1: NAMING FATIGUE (METER) --- */
+    function sim1UpdateMeter(val) {
+        const meter = document.getElementById('sim1-meter');
+        const text = document.getElementById('sim1-text');
+        
+        // Semakin panjang nama, semakin penuh meternya
+        let percentage = Math.min(val.length * 5, 100);
+        
+        meter.style.width = percentage + '%';
+        
+        if(percentage < 30) {
+            text.innerText = "Waktu Terbuang: Sedikit";
+            meter.className = "absolute top-0 left-0 h-full bg-emerald-500 w-0 transition-all duration-200";
+        } else if (percentage < 70) {
+            text.innerText = "Waktu Terbuang: Sedang (Mikir Nama...)";
+            meter.className = "absolute top-0 left-0 h-full bg-yellow-500 w-0 transition-all duration-200";
+        } else {
+            text.innerText = "⚠️ PROSES LAMBAT! Naming Fatigue.";
+            meter.className = "absolute top-0 left-0 h-full bg-red-600 w-0 transition-all duration-200 animate-pulse";
+        }
+    }
+
+    function sim1Tw(btn, className) {
+        // Reset
+        btn.parentElement.querySelectorAll('button').forEach(b => {
+            b.classList.remove('bg-emerald-500', 'text-black');
+            b.classList.add('bg-white/10');
+        });
+        
+        // Active state
+        btn.classList.remove('bg-white/10');
+        btn.classList.add('bg-emerald-500', 'text-black');
+
+        // Apply to box
+        const box = document.getElementById('sim1-box');
+        if(className === 'bg-blue-600') {
+            box.className = "w-full h-12 bg-blue-600 flex items-center justify-center text-xs text-white font-bold transition-all duration-300 mt-2 rounded";
+            box.innerText = "Background Applied";
+        } else if(className === 'p-4') {
+            box.className = "w-full h-auto p-4 border border-dashed border-white/20 flex items-center justify-center text-xs text-gray-400 transition-all duration-300 mt-2 rounded";
+            box.innerText = "Padding Applied";
+        } else if(className === 'rounded-xl') {
+            box.className = "w-full h-12 border border-dashed border-white/20 flex items-center justify-center text-xs text-gray-400 transition-all duration-300 mt-2 rounded-xl";
+            box.innerText = "Border Radius Applied";
+        }
+    }
+
+    /* --- SIM 2: DESIGN POLICE --- */
+    function checkDesignPolice(val) {
+        const status = document.getElementById('sim2-status');
+        const icon = document.getElementById('sim2-icon');
+        const input = document.getElementById('sim2-input');
+
+        if(val.length === 0) {
+            status.innerText = "[SYSTEM: MENUNGGU INPUT...]";
+            status.className = "h-12 flex items-center justify-center text-xs text-gray-500 font-mono bg-white/5 w-full max-w-md rounded-lg border border-dashed border-white/10 transition-all duration-300";
             return;
         }
-        btn.classList.add('bg-purple-500/20', 'border-purple-500', 'text-purple-300');
-        setTimeout(() => {
-            const current = document.getElementById('q' + step);
-            const next = document.getElementById(step === 3 ? 'quiz-success' : 'q' + (step + 1));
-            
-            current.classList.add('-translate-x-[120%]', 'opacity-0', 'pointer-events-none');
-            next.classList.remove('translate-x-[120%]', 'translate-y-10', 'opacity-0', 'pointer-events-none');
-            
-            currentStep++;
-            if(step < 3) {
-                document.getElementById('quiz-progress').style.width = ((step + 1) / 3 * 100) + '%';
-                document.getElementById('question-counter').innerText = (step + 1) + '/3';
-            } else {
-                document.getElementById('quiz-progress').parentElement.classList.add('opacity-0');
-                document.getElementById('question-counter').classList.add('opacity-0');
-                document.getElementById('success-icon').classList.remove('scale-0');
-            }
-        }, 600);
+
+        // Logic check: Magic number vs Utility
+        if(/\d+px/.test(val)) {
+            status.innerText = "⛔ MAGIC NUMBER: TIDAK KONSISTEN!";
+            status.className = "h-12 flex items-center justify-center text-xs text-red-400 font-bold bg-red-900/20 w-full max-w-md rounded-lg border border-red-500/50 animate-pulse";
+            icon.innerText = "⚠️";
+            icon.className = "absolute right-4 top-4 text-2xl grayscale-0 transition-all animate-bounce";
+            input.classList.add('border-red-500');
+        } else if (/^[a-z]+-\d+$/.test(val)) {
+            status.innerText = "✅ VALID: SESUAI DESIGN SYSTEM";
+            status.className = "h-12 flex items-center justify-center text-xs text-emerald-400 font-bold bg-emerald-900/20 w-full max-w-md rounded-lg border border-emerald-500/50";
+            icon.innerText = "🛡️";
+            icon.className = "absolute right-4 top-4 text-2xl grayscale-0 transition-all";
+            input.classList.remove('border-red-500');
+            input.classList.add('border-emerald-500');
+        } else {
+            status.innerText = "⏳ ANALYZING...";
+            status.className = "h-12 flex items-center justify-center text-xs text-cyan-400 font-mono bg-cyan-900/10 w-full max-w-md rounded-lg border border-cyan-500/30";
+            icon.innerText = "🔎";
+        }
     }
 
+    /* --- SIM 3: BLOAT CLICKER --- */
+    let featureCount = 0;
+    function addFeature() {
+        featureCount++;
+        const btn = document.getElementById('add-feature-btn');
+        const barTrad = document.getElementById('bar-trad');
+        const barTw = document.getElementById('bar-tw');
+        const txtTrad = document.getElementById('txt-trad');
+        const txtTw = document.getElementById('txt-tw');
+
+        // Trad linear growth
+        let tradW = 10 + (featureCount * 15);
+        if(tradW > 100) tradW = 100;
+        barTrad.style.width = tradW + '%';
+        txtTrad.innerText = (50 + (featureCount * 25)) + ' KB';
+
+        // Tailwind plateau
+        let twW = 5;
+        let twSize = 10;
+        if(featureCount < 3) {
+            twW += featureCount * 2;
+            twSize += featureCount * 1;
+        } else {
+            twW = 12; // Plateau visal
+            twSize = 14; // Plateau size
+        }
+        barTw.style.width = twW + '%';
+        txtTw.innerText = twSize + ' KB';
+
+        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[12px] mr-2 transition group-hover:bg-emerald-500 group-hover:text-black">+</span> TAMBAH FITUR (${featureCount})`;
+
+        if(featureCount > 6) {
+            featureCount = 0;
+            setTimeout(() => {
+                barTrad.style.width = '10%'; txtTrad.innerText = '50 KB';
+                barTw.style.width = '5%'; txtTw.innerText = '10 KB';
+                btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[12px] mr-2 transition group-hover:bg-emerald-500 group-hover:text-black">+</span> SIMULASI ULANG`;
+            }, 500);
+        }
+    }
+
+    /* --- LOGIC 3: LIVE REFACTOR CHALLENGE (The Core) --- */
+    function handleInput(val) {
+        updateLivePreview(val);
+        checkLiveValidation(val);
+    }
+
+    function updateLivePreview(code) {
+        if(activityCompleted) return;
+
+        const btn = document.getElementById('live-btn');
+        const feedback = document.getElementById('feedback-text');
+        
+        // Reset base class
+        btn.className = "transition-all duration-300 font-sans ";
+        
+        // Safety & Syntax check
+        if(code.includes('style') || code.includes('script') || code.includes(':') || code.includes(';')) {
+            feedback.innerText = "❌ Warning: Gunakan Utility Class (cth: bg-blue-500), bukan CSS!";
+            feedback.className = "absolute bottom-3 text-[10px] text-red-400 font-bold bg-black/80 px-2 py-1 rounded";
+            return;
+        }
+
+        // Apply class
+        btn.className += code; 
+
+        // Update feedback status visually
+        if(code.length > 0) {
+            feedback.innerText = "Rendering: " + code;
+            feedback.className = "absolute bottom-3 text-[10px] text-cyan-400 animate-pulse bg-black/50 px-2 py-1 rounded";
+        } else {
+            feedback.innerText = "Menunggu input...";
+            feedback.className = "absolute bottom-3 text-[10px] text-gray-500 bg-black/50 px-2 py-1 rounded";
+            btn.className += "border border-dashed border-white/20 text-gray-500 p-2"; 
+        }
+    }
+
+    function checkLiveValidation(val) {
+        // Real-time checklist update
+        const reqBg = document.getElementById('req-bg');
+        const reqP = document.getElementById('req-p');
+        const reqText = document.getElementById('req-text');
+        const reqRound = document.getElementById('req-round');
+        const submitBtn = document.getElementById('submit-code');
+
+        let score = 0;
+
+        // Check Background Blue
+        if(val.includes('bg-blue-')) {
+            reqBg.classList.add('text-emerald-400', 'font-bold');
+            reqBg.querySelector('span').classList.add('bg-emerald-500');
+            score++;
+        } else {
+            reqBg.classList.remove('text-emerald-400', 'font-bold');
+            reqBg.querySelector('span').classList.remove('bg-emerald-500');
+        }
+
+        // Check Padding (p-4)
+        if(val.includes('p-4')) {
+            reqP.classList.add('text-emerald-400', 'font-bold');
+            reqP.querySelector('span').classList.add('bg-emerald-500');
+            score++;
+        } else {
+            reqP.classList.remove('text-emerald-400', 'font-bold');
+            reqP.querySelector('span').classList.remove('bg-emerald-500');
+        }
+
+        // Check Text White
+        if(val.includes('text-white')) {
+            reqText.classList.add('text-emerald-400', 'font-bold');
+            reqText.querySelector('span').classList.add('bg-emerald-500');
+            score++;
+        } else {
+            reqText.classList.remove('text-emerald-400', 'font-bold');
+            reqText.querySelector('span').classList.remove('bg-emerald-500');
+        }
+
+        // Check Rounded
+        if(val.includes('rounded')) {
+            reqRound.classList.add('text-emerald-400', 'font-bold');
+            reqRound.querySelector('span').classList.add('bg-emerald-500');
+            score++;
+        } else {
+            reqRound.classList.remove('text-emerald-400', 'font-bold');
+            reqRound.querySelector('span').classList.remove('bg-emerald-500');
+        }
+
+        // Enable Submit if all correct
+        if(score >= 4 && !/\d+px/.test(val)) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('bg-white/5', 'text-gray-400', 'cursor-not-allowed', 'border-white/5');
+            submitBtn.classList.add('bg-cyan-600', 'text-white', 'hover:bg-cyan-500', 'cursor-pointer', 'shadow-lg', 'shadow-cyan-500/20');
+            submitBtn.innerHTML = "<span>🎉</span> KODE VALID - SELESAIKAN MISI";
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('bg-white/5', 'text-gray-400', 'cursor-not-allowed', 'border-white/5');
+            submitBtn.classList.remove('bg-cyan-600', 'text-white', 'hover:bg-cyan-500', 'cursor-pointer', 'shadow-lg', 'shadow-cyan-500/20');
+            submitBtn.innerHTML = "<span>🔒</span> LENGKAPI SEMUA SYARAT";
+        }
+    }
+
+    function validateFinal() {
+        const input = document.getElementById('code-input').value;
+        // Final safety check
+        if(input.includes('bg-blue-') && input.includes('p-4') && input.includes('text-white') && input.includes('rounded')) {
+            finishChapter();
+        }
+    }
+
+    /* --- LOGIC 4: SAVE & LOCK --- */
     async function finishChapter() {
-        const btn = document.getElementById('finishBtn');
-        btn.innerHTML = "Menyimpan...";
-        btn.disabled = true;
         try {
-            await fetch('/activity/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ activity_id: 5, score: 100 }) });
-            await saveLessonToDB(QUIZ_LESSON_ID);
-            completedLessons.add(QUIZ_LESSON_ID);
-            activityCompleted = true;
-            updateProgressUI();
-            btn.innerHTML = "Tersimpan ✔";
-            btn.classList.add('bg-fuchsia-600', 'cursor-default');
-            unlockNext();
-        } catch(e) { console.error(e); btn.innerText = "Gagal. Coba lagi."; btn.disabled = false; }
+            await fetch('/activity/complete', { 
+                method: 'POST', 
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) 
+            });
+
+            await saveLessonToDB(ACTIVITY_LESSON_ID); 
+            completedSet.add(ACTIVITY_LESSON_ID);
+            activityCompleted = true; 
+            
+            updateProgressUI(); 
+            lockActivityUI(); 
+            
+        } catch(e) { console.error(e); }
     }
 
-    function disableQuizUI() {
-        document.getElementById('q1').classList.add('hidden');
-        document.getElementById('quiz-success').classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
-        document.getElementById('success-icon').classList.remove('scale-0');
-        const btn = document.getElementById('finishBtn');
-        btn.innerHTML = "Bab Selesai ✔";
-        btn.classList.add('bg-fuchsia-600', 'cursor-default');
-        btn.onclick = null;
-        document.getElementById('quiz-progress').parentElement.classList.add('hidden');
+    function lockActivityUI() {
+        const badge = document.getElementById('status-badge');
+        badge.innerText = "MISSION ACCOMPLISHED";
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider";
+
+        const input = document.getElementById('code-input');
+        input.value = "bg-blue-500 p-4 text-white rounded-lg (Selesai)";
+        input.disabled = true;
+        
+        // Force visual update
+        document.getElementById('live-btn').className = "bg-blue-500 p-4 text-white rounded-lg transition-all duration-300 font-sans";
+        
+        const btn = document.getElementById('submit-code');
+        btn.innerText = "AKTIVITAS SUDAH SELESAI (TERARSIP)";
+        btn.disabled = true;
+        btn.className = "w-full py-4 bg-gray-800 text-gray-500 font-bold rounded-xl text-xs cursor-not-allowed border border-gray-700";
     }
 
-    /* --- CORE SYSTEM --- */
-    function updateProgressUI() {
-        const total = window.SUBBAB_LESSON_IDS.length;
-        const done = window.SUBBAB_LESSON_IDS.filter(id => completedLessons.has(id)).length;
-        let percent = Math.round((done / total) * 100);
-        if (done === total && !activityCompleted) percent = 90;
-        else if (done === total && activityCompleted) percent = 100;
-        ['topProgressBar', 'sideProgressBar'].forEach(id => { const el = document.getElementById(id); if(el) el.style.width = percent + '%'; });
-        ['progressLabelTop', 'progressLabelSide'].forEach(id => { const el = document.getElementById(id); if(el) el.innerText = percent + '%'; });
-        if (percent === 100) unlockNext();
+    // Standard Effects
+    function initVisualEffects(){const c=document.getElementById('stars'),x=c.getContext('2d');function r(){c.width=innerWidth;c.height=innerHeight}r();window.onresize=r;let s=[];for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});(function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.3)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a)})();}
+    
+    async function saveLessonToDB(id) { await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: new URLSearchParams({ lesson_id: id }) }); }
+    
+    function initScrollSpy() {
+        const mainScroll = document.getElementById('mainScroll'); const sections = document.querySelectorAll('.lesson-section'); const navLinks = document.querySelectorAll('.sidebar-nav-link');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = '#' + entry.target.id;
+                    navLinks.forEach(link => {
+                        const dot = link.querySelector('.dot-indicator'); if(!dot) return;
+                        link.classList.remove('bg-white/5'); dot.classList.remove('bg-purple-500', 'shadow-[0_0_8px_#a855f7]', 'scale-125'); dot.classList.add('bg-slate-600');
+                        if (link.dataset.target === id) { link.classList.add('bg-white/5'); dot.classList.remove('bg-slate-600'); dot.classList.add('bg-purple-500', 'shadow-[0_0_8px_#a855f7]', 'scale-125'); }
+                    });
+                }
+            });
+        }, { root: mainScroll, rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+        sections.forEach(section => observer.observe(section));
     }
 
     function initLessonObserver() {
@@ -506,9 +817,9 @@
             for (const entry of entries) {
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
-                    const isManual = entry.target.getAttribute('data-manual') === 'true';
-                    if (id && !isManual && !completedLessons.has(id)) {
-                        try { await saveLessonToDB(id); completedLessons.add(id); updateProgressUI(); } catch (e) {}
+                    const type = entry.target.dataset.type; 
+                    if (id && type !== 'activity' && !completedSet.has(id)) {
+                        try { await saveLessonToDB(id); completedSet.add(id); updateProgressUI(); } catch(e) {}
                     }
                 }
             }
@@ -516,53 +827,6 @@
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
 
-    async function saveLessonToDB(id) {
-        const form = new FormData(); form.append('lesson_id', id);
-        await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: form });
-    }
-
-    function unlockNext() {
-        const icon = document.querySelector('.sb-group.open .icon-status');
-        if(icon) { icon.innerHTML = '✔'; icon.className = 'icon-status w-6 h-6 rounded-lg border flex items-center justify-center transition-colors bg-purple-500/20 text-purple-400 border-purple-500/20'; }
-        const btn = document.getElementById('nextChapterBtn');
-        if(btn) {
-            btn.className = "group flex items-center gap-3 text-right text-purple-400 hover:text-purple-300 transition cursor-pointer";
-            btn.innerHTML = `<div class="text-right"><div class="text-[10px] uppercase tracking-widest opacity-50">Selanjutnya</div><div class="font-bold text-sm">Instalasi & Konfigurasi</div></div><div class="w-10 h-10 rounded-full border border-purple-500/30 bg-purple-500/10 flex items-center justify-center">→</div>`;
-            btn.onclick = () => window.location.href = "instalasi"; // Ganti dengan route bab berikutnya jika ada
-        }
-    }
-
-    function initVisualEffects() { 
-        const c=document.getElementById('stars'),x=c.getContext('2d');
-        let s=[]; function r(){c.width=innerWidth;c.height=innerHeight}
-        r();window.onresize=r;
-        for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});
-        (function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.4)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a);})();
-        $(window).on('mousemove',e=>{ $('#cursor-glow').css({left:e.clientX,top:e.clientY}); });
-    }
-    
-    function initSidebarScroll() {
-        const main = document.getElementById('mainScroll');
-        const links = document.querySelectorAll('.accordion-content .nav-item');
-        main.addEventListener('scroll', () => {
-            let current = '';
-            document.querySelectorAll('.lesson-section').forEach(sec => { if (main.scrollTop >= sec.offsetTop - 250) current = '#' + sec.id; });
-            links.forEach(link => { link.classList.remove('active'); if(link.getAttribute('data-target') === current) link.classList.add('active'); });
-        });
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                const target = document.querySelector(link.getAttribute('data-target'));
-                if(target) main.scrollTo({ top: target.offsetTop - 120, behavior: 'smooth' });
-            });
-        });
-    }
-    
-    function toggleAccordion(id) {
-        const el = document.getElementById(id);
-        const group = el.closest('.accordion-group');
-        const arrow = document.getElementById(id.replace('content', 'arrow'));
-        if(el.style.maxHeight){ el.style.maxHeight=null; group.classList.remove('open'); if(arrow) arrow.style.transform='rotate(0deg)'; }
-        else{ el.style.maxHeight=el.scrollHeight+"px"; group.classList.add('open'); if(arrow) arrow.style.transform='rotate(180deg)'; }
-    }
+    function initSidebarScroll(){const m=document.getElementById('mainScroll');const l=document.querySelectorAll('.accordion-content .nav-item');m.addEventListener('scroll',()=>{let c='';document.querySelectorAll('.lesson-section').forEach(s=>{if(m.scrollTop>=s.offsetTop-250)c='#'+s.id;});l.forEach(k=>{k.classList.remove('active');if(k.getAttribute('data-target')===c)k.classList.add('active')})});l.forEach(k=>k.addEventListener('click',(e)=>{const t=document.querySelector(k.getAttribute('data-target'));if(t)m.scrollTo({top:t.offsetTop-120,behavior:'smooth'})}));}
 </script>
 @endsection

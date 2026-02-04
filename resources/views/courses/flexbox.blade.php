@@ -12,7 +12,26 @@
         <div id="cursor-glow"></div>
     </div>
 
-        @include('layouts.partials.navbar')
+        <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
+            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
+        </div>
+        <div class="hidden md:flex gap-10 text-sm font-medium">
+            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
+            <span class="nav-link active cursor-default">Course</span> 
+            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
+            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
+        </div>
+        <div class="flex gap-3 items-center">
+            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
+            </form>
+        </div>
+    </nav>
+
 
 
     <div class="flex flex-1 overflow-hidden relative z-20">
@@ -40,11 +59,11 @@
             <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 <article class="space-y-32">
                     
-                    <section id="2.1.1" class="lesson-section scroll-mt-32" data-lesson-id="29">
+                    <section id="fondasi" class="lesson-section scroll-mt-32" data-lesson-id="29">
                         <div class="space-y-8">
                             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-widest">
-                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                                Fondasi Layout
+                                <!-- <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> -->
+                                Dasar Layouting Flexbox
                             </div>
                             
                             <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
@@ -88,7 +107,7 @@
                         </div>
                     </section>
 
-                    <section id="2.1.2" class="lesson-section scroll-mt-32" data-lesson-id="30">
+                    <section id="arahwrap" class="lesson-section scroll-mt-32" data-lesson-id="30">
                         <div class="flex items-center gap-4 mb-8">
                             <h2 class="text-3xl font-bold text-white">2. Flex Wrap (Pembungkusan)</h2>
                             <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
@@ -131,7 +150,7 @@
                         </div>
                     </section>
 
-                    <section id="2.1.4" class="lesson-section scroll-mt-32" data-lesson-id="31">
+                    <section id="sizing" class="lesson-section scroll-mt-32" data-lesson-id="31">
                         <div class="flex items-center gap-4 mb-8">
                             <h2 class="text-3xl font-bold text-white">3. Kendali Ukuran (Sizing)</h2>
                             <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
@@ -163,7 +182,7 @@
                         </div>
                     </section>
 
-                    <section id="2.1.7" class="lesson-section scroll-mt-32" data-lesson-id="32">
+                    <section  class="lesson-section scroll-mt-32" data-lesson-id="32">
                         <div class="flex items-center gap-4 mb-8">
                             <h2 class="text-3xl font-bold text-white">4. Pengurutan (Order)</h2>
                             <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
@@ -199,7 +218,7 @@
                         </div>
                     </section>
 
-                    <section id="quiz-2-1" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-manual="true">
+                    <section id="aktivitas-1-7" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-manual="true">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
                             
                             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50 blur-sm"></div>
@@ -331,7 +350,7 @@
                     <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed">
                         <div class="text-right">
                             <div class="text-[10px] uppercase tracking-widest opacity-30">Terkunci</div>
-                            <div class="font-bold text-sm">Grid Layout (Segera)</div>
+                            <div class="font-bold text-sm">Grid Layout</div>
                         </div>
                         <div class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center">🔒</div>
                     </div>
@@ -347,6 +366,8 @@
 
 <style>
     /* UTILS & ANIMATION */
+    .nav-link.active { color: #22d3ee; position: relative; }
+    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#22d3ee,#3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.8); border-radius: 2px; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }

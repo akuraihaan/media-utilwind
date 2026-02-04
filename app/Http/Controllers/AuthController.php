@@ -32,7 +32,14 @@ class AuthController extends Controller
 
         if(Auth::attempt($r->only('email','password'))) {
             $r->session()->regenerate();
-            return redirect()->route('dashboard');
+            // Cek apakah user adalah admin
+        // Sesuaikan 'role' dan 'admin' dengan nama kolom di database Anda
+        if (Auth::user()->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        // Jika bukan admin (Siswa/User Biasa)
+        return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors(['email'=>'Login gagal']);

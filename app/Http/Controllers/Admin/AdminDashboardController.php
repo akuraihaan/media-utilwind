@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\QuizAttempt;
-
+use App\Models\QuizQuestion;
 class AdminDashboardController extends Controller
 {
     public function index()
@@ -111,16 +111,62 @@ class AdminDashboardController extends Controller
         return view('admin.student_detail', compact('student', 'stats', 'attempts'));
     }
 
-    public function questionAnalytics() {
-        $questions = DB::table('quiz_questions as q')
-            ->leftJoin('quiz_attempt_answers as a', 'q.id', '=', 'a.quiz_question_id')
-            ->select('q.id', 'q.chapter_id', 'q.question_text', DB::raw('count(a.id) as total_attempts'), DB::raw('sum(case when a.is_correct = 1 then 1 else 0 end) as correct_count'), DB::raw('sum(case when a.is_correct = 0 then 1 else 0 end) as wrong_count'))
-            ->groupBy('q.id', 'q.chapter_id', 'q.question_text')->orderBy('q.chapter_id')->get()
-            ->map(function($q) {
-                $q->accuracy = $q->total_attempts > 0 ? round(($q->correct_count / $q->total_attempts) * 100) : 0;
-                if($q->accuracy >= 80) $q->status = 'Mudah'; elseif($q->accuracy >= 50) $q->status = 'Sedang'; else $q->status = 'Sulit';
+    public function questionAnalytics() 
+    {
+        // 1. Ambil Soal beserta relasi berantai: Jawaban -> Percobaan -> User
+        $questions = \App\Models\QuizQuestion::with(['answers.attempt.user'])
+            ->get()
+            ->map(function ($q) {
+                
+                // Ambil semua jawaban untuk soal ini
+                $answers = $q->answers;
+
+                // 2. AMBIL NAMA SISWA YANG BENAR
+                // Logika: Dari Answer -> masuk ke Attempt -> masuk ke User -> ambil Name
+                $q->list_correct = $answers->where('is_correct', 1)
+                    ->map(function ($a) {
+                        // Cek null safety (jika user terhapus)
+                        return $a->attempt && $a->attempt->user 
+                            ? $a->attempt->user->name 
+                            : 'User Tidak Dikenal';
+                    })
+                    ->values() // Reset index array
+                    ->toArray();
+
+                // 3. AMBIL NAMA SISWA YANG SALAH
+                $q->list_wrong = $answers->where('is_correct', 0)
+                    ->map(function ($a) {
+                        return $a->attempt && $a->attempt->user 
+                            ? $a->attempt->user->name 
+                            : 'User Tidak Dikenal';
+                    })
+                    ->values()
+                    ->toArray();
+
+                // 4. Hitung Statistik
+                $q->total_attempts = $answers->count();
+                $q->correct_count  = count($q->list_correct);
+                $q->wrong_count    = count($q->list_wrong);
+
+                // 5. Hitung Akurasi
+                if ($q->total_attempts > 0) {
+                    $q->accuracy = round(($q->correct_count / $q->total_attempts) * 100);
+                } else {
+                    $q->accuracy = 0;
+                }
+
+                // 6. Tentukan Status Tingkat Kesulitan
+                if ($q->accuracy >= 80) {
+                    $q->status = 'Mudah';
+                } elseif ($q->accuracy >= 50) {
+                    $q->status = 'Sedang';
+                } else {
+                    $q->status = 'Sulit';
+                }
+
                 return $q;
             });
+
         return view('admin.question_analytics', compact('questions'));
     }
 }

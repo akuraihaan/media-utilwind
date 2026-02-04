@@ -20,4 +20,10 @@ class QuizAttempt extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // Relasi ke Jawaban Detail
+    public function answers()
+    {
+        return $this->hasMany(QuizAttemptAnswer::class, 'quiz_attempt_id');
+    }
 }

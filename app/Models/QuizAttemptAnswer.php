@@ -10,7 +10,7 @@ class QuizAttemptAnswer extends Model
 
     public function attempt()
     {
-        return $this->belongsTo(QuizAttempt::class);
+        return $this->belongsTo(QuizAttempt::class, 'quiz_attempt_id'); // Pastikan foreign key benar
     }
 
     public function question()

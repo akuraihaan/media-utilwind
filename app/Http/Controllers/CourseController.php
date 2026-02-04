@@ -34,8 +34,8 @@ class CourseController extends Controller
         // 3. Ambil Kuis yang Selesai (PENTING UNTUK BUKA BAB 2)
         $completedQuizzes = QuizAttempt::where('user_id', $userId)
             ->whereNotNull('completed_at')
-            ->pluck('chapter_id') // Output: ['1', '2']
-            ->map(fn($item) => (string)$item) // Pastikan string agar aman
+            ->pluck('chapter_id')
+            ->map(fn($item) => (string)$item)
             ->toArray();
 
         // --- DEFINISI SYARAT KELULUSAN PER SUB-BAB ---
@@ -43,24 +43,41 @@ class CourseController extends Controller
         // Helper cek kelengkapan
         $check = function($range, $actId) use ($completedLessons, $completedActivities) {
             $ids = is_array($range) ? $range : range($range[0], $range[1]);
+            
+            // Cek apakah semua lesson dalam range sudah selesai
             $lessonsDone = !empty($ids) && count(array_intersect($ids, $completedLessons)) == count($ids);
+            
+            // Cek apakah aktivitas coding sudah selesai
             $actDone = in_array($actId, $completedActivities);
+            
             return $lessonsDone && $actDone;
         };
 
-        // Bab 1
-        $status['1.1'] = $check([1, 5], 1);
+        // [BAB 1: PENDAHULUAN]
+        $status['1.1'] = $check([1, 6], 1);
         $status['1.2'] = $check([7, 11], 2);
         $status['1.3'] = $check([12, 15], 3);
         $status['1.4'] = $check([16, 19], 4);
         $status['1.5'] = $check([20, 23], 5);
         $status['1.6'] = $check([24, 28], 6);
+        $status['quiz_1'] = in_array('1', $completedQuizzes); // Syarat masuk Bab 2
 
-        // Status Kuis Bab 1
-        $status['quiz_1'] = in_array('1', $completedQuizzes);
-
-        // Bab 2 (Syaratnya Kuis 1 Selesai + Materi Bab 2 sendiri selesai)
+        // [BAB 2: LAYOUTING]
+        
+        // 2.1 Flexbox (Lesson 29-32, Activity ID 7)
         $status['2.1'] = $check([29, 32], 7);
+
+        // 2.2 Grid (Lesson 34-39, Activity ID 8)
+        // Note: ID 33 dilewati karena itu ID lama/activity flexbox di DB Anda sebelumnya
+        $status['2.2'] = $check([34, 40], 8); 
+        // Lesson: 41-45, Activity: 9
+        $status['2.3'] = $check([41, 45], 9);
+        $status['quiz_2'] = in_array('2', $completedQuizzes);
+
+        $status['3.1'] = $check([46, 51], 10);
+        $status['3.2'] = $check([52, 55], 11);
+        $status['3.3'] = $check([56, 59], 12);
+        $status['3.4'] = $check([60, 63], 13);
 
         return $status;
     }
@@ -77,13 +94,14 @@ class CourseController extends Controller
         $statusMap = $this->getChapterStatus($userId);
 
         // 1. CEK PRASYARAT (Security Gate)
-        // Jika ada prasyarat (misal '1.1') dan belum selesai, tendang user
+        // Jika prasyarat belum 'true', tendang user kembali
         if ($requiredKey && empty($statusMap[$requiredKey])) {
-            return redirect()->route('courses.htmldancss')->with('error', 'Selesaikan materi/evaluasi sebelumnya!');
+            // Redirect ke halaman sebelumnya yang relevan (misal dashboard atau bab sebelumnya)
+            // Disini kita redirect ke dashboard saja agar aman
+            return redirect()->route('dashboard')->with('error', 'Selesaikan materi sebelumnya untuk mengakses halaman ini!');
         }
 
         // 2. Hitung Progress Halaman Ini
-        $lessons = CourseLesson::where('course_id', $course->id)->orderBy('order')->get();
         $targetIds = is_array($lessonRange) ? $lessonRange : range($lessonRange[0], $lessonRange[1]);
         
         $completedIds = UserLessonProgress::where('user_id', $userId)
@@ -92,6 +110,8 @@ class CourseController extends Controller
             ->toArray();
 
         $doneCount = count(array_intersect($targetIds, $completedIds));
+        
+        // Hitung persentase dasar dari materi bacaan
         $percent = count($targetIds) > 0 ? round(($doneCount / count($targetIds)) * 100) : 0;
 
         // Cek Activity Halaman Ini
@@ -100,32 +120,39 @@ class CourseController extends Controller
             ->where('completed', true)
             ->exists();
 
-        // Adjust Percent based on Activity
-        if ($percent == 100 && !$actDone) $percent = 99;
-        if ($percent >= 99 && $actDone) $percent = 100;
-
+        // Adjust Percent: 
+        // - Jika materi bacaan 100% tapi Activity belum, set 90% (atau 99%)
+        // - Jika materi bacaan 100% DAN Activity sudah, baru set 100%
+        if ($percent == 100 && !$actDone) $percent = 90; 
+        if ($percent >= 90 && $actDone) $percent = 100;
+        // Kita ambil data Lessons dari DB agar judulnya dinamis sesuai yang kita input tadi
+        $lessons = CourseLesson::whereIn('id', $targetIds)->orderBy('order')->get();
         // 3. Data Kuis untuk Sidebar
         $quizProgress = QuizAttempt::where('user_id', $userId)
             ->whereNotNull('completed_at')
             ->pluck('chapter_id')
+            ->map(fn($item) => (string)$item)
             ->toArray();
 
         return view($view, [
             'course'              => $course,
+            'lessons'             => $lessons,
             'progressPercent'     => $percent,
             'isCurrentCompleted'  => ($percent == 100),
             'completedLessonIds'  => $completedIds,
             'currentLessonIds'    => $targetIds,
             'activityCompleted'   => $actDone,
-            'completedLessonsMap' => $statusMap, // Kirim map lengkap ke sidebar
-            'quizProgress'        => $quizProgress, // Kirim status kuis ke sidebar
-            // Kompatibilitas variabel lama jika di view masih dipakai
+            'completedLessonsMap' => $statusMap, // Peta status untuk sidebar (checklist)
+            'quizProgress'        => $quizProgress,
+            
+            // Variable legacy untuk kompatibilitas view lama
             'subbab1LessonIds'    => $targetIds, 
             'subbab12LessonIds'   => $targetIds, 
             'subbab13LessonIds'   => $targetIds, 
             'subbab14LessonIds'   => $targetIds, 
             'subbab15LessonIds'   => $targetIds, 
             'subbab16LessonIds'   => $targetIds, 
+
 
             // dst...
         ]);
@@ -139,12 +166,12 @@ class CourseController extends Controller
 
     // 1.1 Pendahuluan (Selalu Terbuka)
     public function tailwind() {
-        return $this->loadView('courses.htmldancss', '1.1', [1, 5], 1, null);
+        return $this->loadView('courses.htmldancss', '1.1', [1, 6], 1, null);
     }
 
     // 1.2 Konsep Dasar (Syarat: 1.1 Selesai)
     public function subbabTailwindCss() {
-        return $this->loadView('courses.tailwindcss', '1.2', [6, 10], 2, '1.1');
+        return $this->loadView('courses.tailwindcss', '1.2', [7,11], 2, '1.1');
     }
 
     // 1.3 Latar Belakang (Syarat: 1.2 Selesai)
@@ -169,14 +196,80 @@ class CourseController extends Controller
 
     /**
      * BAB 2.1 FLEXBOX
-     * SYARAT UTAMA: Evaluasi Bab 1 Harus Selesai!
+     * SYARAT: Kuis Bab 1 (quiz_1) Harus Selesai!
      */
     public function flexbox() {
-        // Kita menggunakan key khusus 'quiz_1' yang kita buat di getChapterStatus
-        // Jika quiz_1 false, maka akses ditolak.
         return $this->loadView('courses.flexbox', '2.1', [29, 32], 7, 'quiz_1');
     }
 
+    /**
+     * BAB 2.2 GRID LAYOUT
+     * SYARAT: Bab 2.1 (Flexbox) Harus Selesai
+     * Range ID: 34-39 (Materi)
+     * Activity ID: 8 (Tantangan Grid)
+     */
+    public function grid() {
+        return $this->loadView(
+            'courses.grid',      // View Name
+            '2.2',               // Current Key Status
+            [34, 40],            // Lesson IDs Range 
+            8,                   // Activity ID (Pastikan ini ID Grid Challenge di DB activity Anda)
+            '2.1'                // Prasyarat: Flexbox selesai
+        );
+    }
+
+    public function layoutMgmt() {
+        return $this->loadView(
+            'courses.layout-mgmt', // View Blade Baru
+            '2.3',                 // Key Status
+            [41, 45],              // Range Lesson ID (41,42,43,44,45)
+            9,                     // Activity ID (Tantangan Layout Master)
+            '2.2'                  // Prasyarat: Grid Selesai
+        );
+    }
+
+    public function typography() {
+
+        return $this->loadView(
+            'courses.typography', // Nama Blade View
+            '3.1',                // Key Status
+            [46, 51],             // Range Lesson ID
+            10,               // Activity ID
+            'quiz_2'                 // Prasyarat: Quiz 2 selesai
+        );
+    }
+
+    public function backgrounds() {
+
+        return $this->loadView(
+            'courses.background', // Nama Blade View
+            '3.2',                // Key Status
+            [52, 55],             // Range Lesson ID
+            11,               // Activity ID
+            '3.1'                 // Prasyarat: Layout Management selesai
+        );
+    }
+
+    public function borders() {
+            return $this->loadView(
+                'courses.borders',    // File blade
+                '3.3',                // Key Status Sidebar
+                [55, 59],             // Range Lesson ID
+                12,                   // Activity ID
+                '3.2'                 // Prasyarat: Background Selesai
+            );
+    }
+
+    // BAB 3.4: EFEK VISUAL
+    public function effects() {
+        return $this->loadView(
+            'courses.effects',    // Nama file blade
+            '3.4',                // ID Sidebar
+            [60, 63],         // ID Lessons (DB)
+            13,                   // ID Activity (DB)
+            '3.3'                 // Prasyarat: Bab Borders selesai
+        );
+    }
     /**
      * [AJAX] Mark Lesson Complete
      */

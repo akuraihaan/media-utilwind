@@ -10,10 +10,13 @@
                     'title' => 'Konsep Dasar HTML & CSS',
                     'route' => 'courses.htmldancss',
                     'anchors' => [
-                        ['id' => 'intro', 'label' => 'Pengantar'],
-                        ['id' => 'html-css', 'label' => 'Definisi HTML & CSS'],
-                        ['id' => 'relation', 'label' => 'Struktur & Peran'],
-                        ['id' => 'activity-1-1', 'label' => 'Aktivitas Interaktif', 'highlight' => true],
+                        ['id' => 'section-1', 'label' => 'Pengantar'],
+                        ['id' => 'section-2', 'label' => 'Semantik & Atribut HTML'],
+                        ['id' => 'section-3', 'label' => 'Pengenalan CSS Styling'],
+                        ['id' => 'section-4', 'label' => 'Warna & Dasar Font'],
+                        ['id' => 'section-5', 'label' => 'Box Model'],
+
+                        ['id' => 'section-6', 'label' => 'Aktivitas 1.1', 'highlight' => true],
                     ]
                 ],
                 [
@@ -21,21 +24,23 @@
                     'title' => 'Konsep Dasar Tailwind',
                     'route' => 'courses.tailwindcss',
                     'anchors' => [
-                        ['id' => 'why-tailwind', 'label' => 'Mengapa Tailwind?'],
-                        ['id' => 'utility-first', 'label' => 'Konsep Utility-First'],
-                        ['id' => 'comparison', 'label' => 'Perbandingan CSS'],
-                        ['id' => 'quiz-1-2', 'label' => 'Live Coding', 'highlight' => true],
+                        ['id' => 'section-1', 'label' => 'Filosofi Utility'],
+                        ['id' => 'section-2', 'label' => 'Warna & Tipografi'],
+                        ['id' => 'section-3', 'label' => 'Spacing & Sizing'],
+                        ['id' => 'section-4', 'label' => 'Borders & Effects'],
+                        ['id' => 'section-5', 'label' => 'Aktivitas 1.2', 'highlight' => true],
                     ]
                 ],
                 [
                     'id' => '1.3',
                     'title' => 'Latar Belakang',
-                    'route' => 'courses.background',
+                    'route' => 'courses.latarbelakang',
                     'anchors' => [
-                        ['id' => 'intro', 'label' => 'Filosofi & Efisiensi'],
-                        ['id' => 'structure', 'label' => 'Struktur (3 Layers)'],
-                        ['id' => 'duplication', 'label' => 'Pengelolaan Duplikasi'],
-                        ['id' => 'quiz-1-3', 'label' => 'Evaluasi Pemahaman', 'highlight' => true],
+                        ['id' => 'section-1', 'label' => 'Krisis Skalabilitas CSS Tradisional'],
+                        ['id' => 'section-2', 'label' => ' Arsitektur Tiga Lapisan'],
+                        ['id' => 'section-3', 'label' => 'Mesin JIT '],
+
+                        ['id' => 'section-4', 'label' => 'Aktivitas 1.3', 'highlight' => true],
                     ]
                 ],
                 [
@@ -43,10 +48,10 @@
                     'title' => 'Penerapan Utility', 
                     'route' => 'courses.implementation',
                     'anchors' => [
-                        ['id' => 'concept', 'label' => 'Konsep Atribut Class'],
-                        ['id' => 'chaining', 'label' => 'Penerapan & Chaining'], 
-                        ['id' => 'comparison', 'label' => 'Tailwind vs CSS'], 
-                        ['id' => 'quiz-1-4', 'label' => 'Evaluasi 1.4', 'highlight' => true],
+                        ['id' => 'section-1', 'label' => 'Konsep Utility & Pola Sintaks'],
+                        ['id' => 'section-2', 'label' => 'Komposisi & Interaktivitas'], 
+                        ['id' => 'section-3', 'label' => 'Manajemen Kode Berulang'], 
+                        ['id' => 'section-4', 'label' => 'Aktivitas 1.4', 'highlight' => true],
                     ]
                 ],
                 [
@@ -54,10 +59,10 @@
                     'title' => 'Keunggulan',
                     'route' => 'courses.advantages',
                     'anchors' => [
-                        ['id' => 'efficiency', 'label' => 'Efisiensi & UI'],
-                        ['id' => 'responsive', 'label' => 'Responsif & Speed'],
-                        ['id' => 'dry', 'label' => 'Prinsip DRY'],
-                        ['id' => 'quiz-1-5', 'label' => 'Evaluasi 1.5', 'highlight' => true],
+                        ['id' => 'section-1', 'label' => 'Kecepatan'],
+                        ['id' => 'section-2', 'label' => 'Konsistensi'],
+                        ['id' => 'section-3', 'label' => 'Performa'],
+                        ['id' => 'section-4', 'label' => 'Aktivitas 1.5', 'highlight' => true],
                     ]
                 ],
                 [
@@ -82,10 +87,10 @@
                     'title' => 'Layout dengan Flexbox',
                     'route' => 'courses.flexbox',
                     'anchors' => [
-                        ['id' => '2.1.1', 'label' => 'Ukuran Flexbox'],
-                        ['id' => '2.1.2', 'label' => 'Arah & Wrap'],
-                        ['id' => '2.1.4', 'label' => 'Flex Grow & Shrink'],
-                        ['id' => '2.1.7', 'label' => 'Flex Order'],
+                        ['id' => 'fondasi', 'label' => 'Ukuran Flexbox'],
+                        ['id' => 'arahwrap', 'label' => 'Arah & Wrap'],
+                        ['id' => 'sizing', 'label' => 'Flex Grow, Shrink & Order'],
+                        ['id' => 'aktivitas-1-7', 'label' => 'Aktivitas 2.1', 'highlight' => true],
                     ]
                 ],
                 [
@@ -93,20 +98,23 @@
                     'title' => 'Layout dengan Grid',
                     'route' => 'courses.grid',
                     'anchors' => [
-                        ['id' => '2.2.1', 'label' => 'Konsep Grid Layout'],
-                        ['id' => '2.2.2', 'label' => 'Penjajaran Grid'],
-                        ['id' => '2.2.3', 'label' => 'Span & Placement'],
-                        ['id' => '2.2.6', 'label' => 'Grid Auto Flow'],
+                        ['id' => 'section-34', 'label' => 'Konsep Grid'],
+                        ['id' => 'section-35', 'label' => 'Penjajaran'],
+                        ['id' => 'section-36', 'label' => 'Span'],
+                        ['id' => 'section-37', 'label' => 'Template Rows'],
+                        ['id' => 'section-38', 'label' => 'Template Cols'],
+                        ['id' => 'section-39', 'label' => 'Auto Flow'],
+                        ['id' => 'section-40', 'label' => 'Aktivitas 2.2', 'highlight' => true],
                     ]
                 ],
                 [
-                    'id' => '2.3',
-                    'title' => 'Mengelola Layout',
-                    'route' => 'courses.layout-mgmt',
+                    'id' => '2.3', 'title' => 'Mengelola Layout', 'route' => 'courses.layout-mgmt',
                     'anchors' => [
-                        ['id' => 'container', 'label' => 'Container'],
-                        ['id' => 'float', 'label' => 'Float & Clear'],
-                        ['id' => 'position', 'label' => 'Position & Z-Index'],
+                        ['id'=>'section-41','label'=>'Container & Viewport'], 
+                        ['id'=>'section-42','label'=>'Float & Clear'],        
+                        ['id'=>'section-43','label'=>'Position & Z-Index'],   
+                        ['id'=>'section-44','label'=>'Table Layout'],         
+                        ['id'=>'section-45','label'=>'Aktivitas 2.3','highlight'=> true]
                     ]
                 ],
             ]
@@ -116,34 +124,115 @@
             'quiz_id' => '3',
             'items' => [
                 [
-                    'id' => '3.1',
-                    'title' => 'Tipografi',
-                    'route' => 'courses.typography',
-                    'anchors' => [
-                        ['id' => '3.1.1', 'label' => 'Font Family & Size'],
-                        ['id' => '3.1.5', 'label' => 'Weight & Style'],
-                        ['id' => '3.1.8', 'label' => 'Align & Decoration'],
-                    ]
-                ],
+    'id' => '3.1',
+    'title' => 'Tipografi',
+    'route' => 'courses.typography',
+    'anchors' => [
+        [
+            'id' => 'fonts', 'label' => 'Font Family & Size'
+        ],
+        [
+            'id' => 'weight', 
+            'label' => 'Weight & Style'
+        ],
+        [
+            'id' => 'spacing', 
+            'label' => 'Align & Spacing'
+        ],
+        [
+            'id' => 'decoration', 
+            'label' => 'Color & Decor'
+        ],
+        [
+            'id' => 'transform', 
+            'label' => 'Transform & Overflow'
+        ],
+        [
+            'id' => 'activity-expert', 
+            'label' => 'Aktivitas 3.1','highlight'=> true
+        ],
+    ]
+],
                 [
-                    'id' => '3.2',
-                    'title' => 'Backgrounds',
-                    'route' => 'courses.backgrounds',
-                    'anchors' => [
-                        ['id' => '3.2.1', 'label' => 'Color & Image'],
-                        ['id' => '3.2.7', 'label' => 'Gradients'],
-                    ]
-                ],
+    'id' => '3.2',
+    'title' => 'Backgrounds',
+    'route' => 'courses.backgrounds', // Sesuai route web.php
+    'anchors' => [
+        [
+            'id' => 'attachment', 
+            'label' => 'Attachment, Clip & Origin'
+        ],
+        [
+            'id' => 'position', 
+            'label' => 'Color, Position & Repeat'
+        ],
+        [
+            'id' => 'size', 
+            'label' => 'Size, Image & Gradient'
+        ],
+        [
+            'id' => 'activity-expert', 
+                        'label' => 'Aktivitas 3.2','highlight'=> true
+
+        ],
+    ]
+],
                 [
-                    'id' => '3.3',
-                    'title' => 'Borders & Effects',
-                    'route' => 'courses.borders',
-                    'anchors' => [
-                        ['id' => '3.3.1', 'label' => 'Radius & Width'],
-                        ['id' => '3.4.1', 'label' => 'Box Shadow'],
-                        ['id' => '3.4.4', 'label' => 'Transisi & Animasi'],
-                    ]
-                ],
+    'id' => '3.3',
+    'title' => 'Borders & Effects',
+    'route' => 'courses.borders',
+    'anchors' => [
+        [
+            'id' => 'radius', 
+            'label' => 'Radius & Width'
+        ],
+        [
+            'id' => 'style', 
+            'label' => 'Gaya & Divide'
+        ],
+        [
+            'id' => 'ring', 
+            'label' => 'Outline & Ring'
+        ],
+        [
+            'id' => 'activity-challenge', 
+                        'label' => 'Aktivitas 3.3','highlight'=> true
+
+        ],
+    ]
+],
+
+[
+    'id' => '3.4',
+    'title' => 'Efek Visual',
+    'route' => 'courses.effects', // Sesuaikan dengan route di web.php
+    'anchors' => [
+        [
+            'id' => 'box-shadow', 
+            'label' => 'Box Shadow & Color'
+        ],
+        [
+            'id' => 'opacity', 
+            'label' => 'Opacity'
+        ],
+        [
+            'id' => 'filters', 
+            'label' => 'Filters (Blur & Effects)'
+        ],
+        [
+            'id' => 'transitions', 
+            'label' => 'Transitions & Animation'
+        ],
+        [
+            'id' => 'transforms', 
+            'label' => 'Transforms'
+        ],
+        [
+            'id' => 'visual-challenge', 
+            'label' => 'Aktivitas 3.4','highlight'=> true
+        ],
+    ]
+],
             ]
         ]
     ];

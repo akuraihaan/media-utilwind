@@ -33,7 +33,7 @@
                 </nav>
             </div>
             
-            <div class="mt-auto p-6 border-t border-white/5">
+            <!-- <div class="mt-auto p-6 border-t border-white/5">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-red-500/10 hover:text-red-400 text-gray-400 transition-all text-sm font-bold group">
@@ -41,7 +41,7 @@
                         Keluar
                     </button>
                 </form>
-            </div>
+            </div> -->
         </aside>
 
         <main class="flex-1 h-full overflow-y-auto scroll-smooth relative custom-scrollbar p-6 lg:p-10">
@@ -211,11 +211,9 @@
 </div>
 
 <style>
-    .nav-link.active { color: #e879f9; position: relative; }
-    .nav-link.active::after {
-        content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px;
-        background: linear-gradient(to right,#d946ef,#22d3ee); box-shadow: 0 0 12px rgba(217,70,239,.8); border-radius: 2px;
-    }
+     .nav-link.active { color: #22d3ee; position: relative; }
+    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#22d3ee,#3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.8); border-radius: 2px; }
+    
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }

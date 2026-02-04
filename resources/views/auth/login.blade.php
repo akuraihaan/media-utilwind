@@ -85,11 +85,7 @@
                     @enderror
                 </div>
 
-                <div class="flex justify-end pt-2">
-                    <a href="{{ route('password.request') }}" class="text-xs text-white/40 hover:text-cyan-400 transition-colors">
-                        Lupa password?
-                    </a>
-                </div>
+                
 
                 <button type="submit"
                     class="relative w-full py-4 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 font-bold text-white shadow-lg shadow-fuchsia-900/30 hover:shadow-fuchsia-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 overflow-hidden group/btn">

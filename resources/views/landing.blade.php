@@ -15,11 +15,9 @@
 
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 lg:px-8 transition-all duration-500">
         
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='{{ route('landing') }}'">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-600 to-cyan-500 flex items-center justify-center font-extrabold text-black shadow-lg shadow-fuchsia-500/20">
-                TW
-            </div>
-            <span class="font-bold tracking-wide text-lg text-white group-hover:text-cyan-100 transition">TailwindLearn</span>
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
+            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
         </div>
 
         <div class="hidden md:flex gap-10 text-sm font-medium">
@@ -66,13 +64,13 @@
 
         <div class="max-w-5xl mx-auto text-center relative z-10">
             
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-300 text-[10px] font-bold uppercase tracking-widest mb-8 backdrop-blur-md animate-fade-in-up shadow-lg shadow-cyan-900/20">
+            <!-- <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-300 text-[10px] font-bold uppercase tracking-widest mb-8 backdrop-blur-md animate-fade-in-up shadow-lg shadow-cyan-900/20">
                 <span class="relative flex h-2 w-2">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
                 Media Pembelajaran Interaktif
-            </div>
+            </div> -->
 
             <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.1] mb-8 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
                 Belajar <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-purple-400 to-cyan-400 animate-gradient-x">Web Design</span> <br>

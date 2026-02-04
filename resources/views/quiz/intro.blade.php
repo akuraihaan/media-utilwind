@@ -35,28 +35,28 @@
 
             <div class="grid md:grid-cols-2 gap-4 mb-8">
                 <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex items-start gap-3">
-                    <div class="text-xl">⏱️</div>
+                    <!-- <div class="text-xl">⏱️</div> -->
                     <div>
                         <h4 class="font-bold text-white text-sm">Durasi Waktu</h4>
                         <p class="text-xs text-white/50 mt-1">20 Menit pengerjaan. Waktu berjalan server-side (tetap berjalan meski browser ditutup).</p>
                     </div>
                 </div>
                 <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex items-start gap-3">
-                    <div class="text-xl">🎯</div>
+                    <!-- <div class="text-xl">🎯</div> -->
                     <div>
                         <h4 class="font-bold text-white text-sm">Passing Grade</h4>
                         <p class="text-xs text-white/50 mt-1">Nilai minimal 70 untuk dianggap lulus pada bab ini.</p>
                     </div>
                 </div>
                 <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex items-start gap-3">
-                    <div class="text-xl">⚡</div>
+                    <!-- <div class="text-xl">⚡</div> -->
                     <div>
                         <h4 class="font-bold text-white text-sm">Auto Submit</h4>
                         <p class="text-xs text-white/50 mt-1">Jawaban tersimpan otomatis saat waktu habis.</p>
                     </div>
                 </div>
                 <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex items-start gap-3">
-                    <div class="text-xl">🚫</div>
+                    <!-- <div class="text-xl">🚫</div> -->
                     <div>
                         <h4 class="font-bold text-white text-sm">Integritas</h4>
                         <p class="text-xs text-white/50 mt-1">Dilarang membuka tab lain atau melakukan kecurangan.</p>

@@ -13,4 +13,10 @@ class QuizQuestion extends Model
     {
         return $this->hasMany(QuizOption::class);
     }
+
+    // TAMBAHKAN INI: Relasi ke Jawaban Siswa (Untuk Analisis)
+    public function answers()
+    {
+        return $this->hasMany(QuizAttemptAnswer::class, 'quiz_question_id');
+    }
 }

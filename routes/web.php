@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
     // BAB 1: PENDAHULUAN
     Route::get('/courses/htmldancss', [CourseController::class, 'tailwind'])->name('courses.htmldancss');
     Route::get('/courses/tailwindcss', [CourseController::class, 'subbabTailwindCss'])->name('courses.tailwindcss');
-    Route::get('/courses/latarbelakang', [CourseController::class, 'background'])->name('courses.background');
+    Route::get('/courses/latarbelakang', [CourseController::class, 'background'])->name('courses.latarbelakang');
     Route::get('/courses/implementasi', [CourseController::class, 'implementation'])->name('courses.implementation');
     Route::get('/courses/keunggulan', [CourseController::class, 'advantages'])->name('courses.advantages');
     Route::get('/courses/instalasi', [CourseController::class, 'installation'])->name('courses.installation');
@@ -67,8 +67,10 @@ Route::middleware(['auth'])->group(function () {
 
     // BAB 3: STYLING
     Route::get('/courses/typography', [CourseController::class, 'typography'])->name('courses.typography');
-    Route::get('/courses/backgrounds', [CourseController::class, 'backgrounds'])->name('courses.backgrounds');
+    Route::get('/courses/background', [CourseController::class, 'backgrounds'])->name('courses.backgrounds');
     Route::get('/courses/borders', [CourseController::class, 'borders'])->name('courses.borders');
+    Route::get('/courses/effects', [CourseController::class, 'effects'])->name('courses.effects');
+
 });
 
 // ====================================================
