@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'class_group',
         'password',
         'institution',
         'study_program',
@@ -61,5 +62,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserLessonProgress::class);
     }
+
+    public function labHistories() {
+    return $this->hasMany(LabHistory::class)->latest();
+}
 }
 

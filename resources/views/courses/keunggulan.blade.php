@@ -2,7 +2,8 @@
 @section('title','Bab 1.5 · Keunggulan Tailwind CSS')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30">
+{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30"> --}}
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
 
     {{-- Background Effects --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -14,25 +15,8 @@
     </div>
 
     {{-- Navbar --}}
-    <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+            @include('layouts.partials.navbar')
+
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -50,8 +34,8 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-40 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_#22d3ee]"></div>
+                    <div class="hidden sm:block w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 w-0 transition-all duration-500 shadow-[0_0_10px_#06b6d4]"></div>
                     </div>
                     <span id="progressLabelTop" class="text-cyan-400 font-bold text-xs">0%</span>
                 </div>
@@ -391,13 +375,13 @@
                                             <span class="w-2 h-2 rounded-full bg-gray-700"></span> Background Biru
                                         </div>
                                         <div id="req-p" class="flex items-center gap-1 transition-colors">
-                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Padding (p-4)
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Padding - 4
                                         </div>
                                         <div id="req-text" class="flex items-center gap-1 transition-colors">
                                             <span class="w-2 h-2 rounded-full bg-gray-700"></span> Teks Putih
                                         </div>
                                         <div id="req-round" class="flex items-center gap-1 transition-colors">
-                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Rounded (lg/md)
+                                            <span class="w-2 h-2 rounded-full bg-gray-700"></span> Rounded 
                                         </div>
                                     </div>
 

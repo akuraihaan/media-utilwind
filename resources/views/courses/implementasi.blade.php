@@ -2,7 +2,8 @@
 @section('title','Bab 1.4 · Implementasi Utility Classes')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30">
+{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30"> --}}
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
 
     {{-- Background Effects --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -13,25 +14,8 @@
     </div>
 
     {{-- Navbar --}}
-    <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+            @include('layouts.partials.navbar')
+
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -546,101 +530,131 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
-    /* --- CONFIGURATION --- */
+    /* --- 1. CONFIGURATION --- */
     window.LESSON_IDS = [16, 17, 18, 19]; 
     window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
-    let completedSet = new Set(window.COMPLETED_IDS);
+    let completedSet = new Set(window.COMPLETED_IDS.map(Number));
     
-    // Activity ID 4 = System Assembler
+    // Config Aktivitas
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
-    const ACTIVITY_ID = 4; 
+    const ACTIVITY_ID = 4;         
     const ACTIVITY_LESSON_ID = 19; 
 
+    /* --- 2. INITIALIZATION --- */
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
         initLessonObserver();
         initSidebarScroll();
-        updateProgressUI();
         
-        // Init Sims
         setTranslate('text-center');
         updateScale('p', 6);
-        
-        // --- LOGIKA UTAMA: PENGARSIPAN AKTIVITAS ---
-        if (activityCompleted) { 
-            unlockNextChapter(); 
-            lockActivityUI(); // <-- Memanggil fungsi pengunci aktivitas
+
+        // Update Progress Bar saat load
+        updateProgressUI();
+
+        if (activityCompleted) {
+            lockActivityUI();
+            unlockNextChapter();
         }
     });
 
-    /* --- SIMULATOR 1: SYNTAX TRANSLATOR --- */
-    function translateClass() {
-        const input = document.getElementById('decoder-input').value.trim();
-        const res = document.getElementById('decoder-result');
-        let css = '';
-
-        if (!input) css = '<span class="text-white/20 italic">// Menunggu input...</span>';
-        else {
-            if (input.match(/^text-(center|left|right)$/)) css = `text-align: ${input.split('-')[1]};`;
-            else if (input.match(/^(m|p)[trblxy]?-\d+$/)) css = `${input.startsWith('m')?'margin':'padding'}: ${input.split('-').pop() * 0.25}rem; /* ${input.split('-').pop()*4}px */`;
-            else if (input.match(/^bg-[a-z]+-\d{3}$/)) css = `background-color: [Palette ${input.split('-')[1]}];`;
-            else if (input === 'flex') css = 'display: flex;';
-            else if (input.startsWith('text-')) css = `font-size: [Scale ${input.split('-')[1]}];`;
-            else css = `/* Style untuk .${input} */`;
-            res.innerHTML = `<span class="text-xs text-white/30 font-mono mb-1">CSS Equivalent:</span><code class="text-cyan-400 font-bold text-sm block">${css}</code>`;
-        }
-    }
-    function setTranslate(val) { document.getElementById('decoder-input').value = val; translateClass(); }
-
-    /* --- SIMULATOR 2: SCALE SLIDER --- */
-    function updateScale(type, val) {
-        const formula = document.getElementById('scale-formula');
-        const target = document.getElementById('scale-target');
-        const label = document.getElementById('scale-p-val');
+    /* --- 3. PROGRESS LOGIC (WARNA TETAP & NO AUTO REDIRECT) --- */
+    function updateProgressUI() {
+        const total = window.LESSON_IDS.length; 
+        const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length;
+        const percent = Math.round((done / total) * 100);
         
-        const px = val * 4;
-        const rem = val * 0.25;
+        const bar = document.getElementById('topProgressBar');
+        const label = document.getElementById('progressLabelTop');
         
-        formula.innerHTML = `${val} x 4px = <span class="text-cyan-400">${px}px</span> (${rem}rem)`;
-        label.innerText = `p-${val}`;
-        target.style.padding = `${px}px`;
-    }
-
-    /* --- SIMULATOR 3: INTERACTION HOLODECK --- */
-    let activeStates = new Set();
-    function toggleStateClass(state) {
-        const btn = document.getElementById('state-target');
-        if(activeStates.has(state)) {
-            activeStates.delete(state);
-            if(state === 'hover') { btn.onmouseenter = null; btn.onmouseleave = null; btn.classList.remove('scale-110'); }
-            if(state === 'active') { btn.onmousedown = null; btn.onmouseup = null; btn.classList.remove('bg-fuchsia-800'); }
-            if(state === 'focus') btn.classList.remove('ring-4', 'ring-yellow-500/50');
-        } else {
-            activeStates.add(state);
-            if(state === 'hover') { btn.onmouseenter = () => btn.classList.add('scale-110'); btn.onmouseleave = () => btn.classList.remove('scale-110'); }
-            if(state === 'active') { btn.onmousedown = () => btn.classList.add('bg-fuchsia-800'); btn.onmouseup = () => btn.classList.remove('bg-fuchsia-800'); }
-            if(state === 'focus') btn.classList.add('ring-4', 'ring-yellow-500/50');
+        if (bar && label) {
+            bar.style.width = percent + '%';
+            label.innerText = percent + '%';
+            
+            // [MODIFIKASI] Hapus logika pengubah warna hijau disini.
+            // Biarkan warna tetap default (Cyan-Indigo).
+            
+            if (percent === 100) {
+                // Hanya buka kunci tombol "Selanjutnya" di footer
+                unlockNextChapter();
+            }
         }
     }
 
-    /* --- SIMULATOR 4: REFACTOR MORPH --- */
-    function triggerMorph() {
-        const messy = document.getElementById('morph-messy');
-        const clean = document.getElementById('morph-clean');
-        messy.style.opacity = '0'; messy.style.transform = 'translateY(-20px)';
-        setTimeout(() => { clean.classList.remove('opacity-0', 'scale-90', 'pointer-events-none'); }, 400);
+    function unlockNextChapter() {
+        const btn = document.getElementById('nextChapterBtn');
+        const nextLabel = document.getElementById('nextLabel');
+        const nextIcon = document.getElementById('nextIcon');
+
+        if(btn && btn.classList.contains('cursor-not-allowed')) {
+            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
+            btn.classList.add('text-cyan-400', 'hover:text-cyan-300', 'cursor-pointer');
+            
+            if(nextLabel) {
+                nextLabel.innerText = "Selanjutnya";
+                nextLabel.classList.remove('opacity-50');
+            }
+            if(nextIcon) {
+                nextIcon.innerHTML = "→";
+                nextIcon.classList.remove('bg-white/5');
+                nextIcon.classList.add('bg-cyan-500/20', 'border-cyan-500/50');
+            }
+
+            btn.onclick = () => window.location.href = "{{ route('courses.advantages') }}"; 
+        }
     }
 
-    /* --- FINAL ACTIVITY: SYSTEM ASSEMBLER --- */
+    /* --- 4. FINISH LOGIC (TANPA AUTO REDIRECT) --- */
+    
+    async function submitExercise() {
+        const actionBtn = document.getElementById('deploy-action');
+        actionBtn.innerText = "Menyimpan...";
+        actionBtn.disabled = true;
+        
+        try {
+            // 1. Simpan ke Server
+            await fetch("{{ route('activity.complete') }}", { 
+                method: 'POST', 
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) 
+            });
+
+            const formData = new URLSearchParams();
+            formData.append('lesson_id', ACTIVITY_LESSON_ID);
+            await fetch("{{ route('lesson.complete') }}", { 
+                method: 'POST', 
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                body: formData 
+            });
+            
+            // 2. Update State Lokal
+            completedSet.add(ACTIVITY_LESSON_ID); 
+            activityCompleted = true;
+            
+            // 3. Update UI
+            updateProgressUI(); 
+            lockActivityUI();   
+            unlockNextChapter(); 
+
+            // 4. [MODIFIKASI] Feedback User (Tanpa Redirect Otomatis)
+            actionBtn.innerText = "Berhasil Disimpan. Lanjutkan di bawah.";
+            actionBtn.classList.add('text-emerald-400');
+            // Kita biarkan user klik tombol "Selanjutnya" di footer secara manual
+
+        } catch(e) { 
+            console.error(e); 
+            actionBtn.innerText = "Gagal. Coba lagi.";
+            actionBtn.disabled = false;
+        }
+    }
+
+    /* --- 5. SIMULATOR LOGIC (ASSEMBLER) --- */
     let asmState = { 1: null, 2: null, 3: null };
 
     function assemble(module, choice, btn) {
-        // Cegah interaksi jika aktivitas sudah selesai
         if (activityCompleted) return;
 
         asmState[module] = choice;
-        
-        // UI State
         const parent = btn.parentElement;
         parent.querySelectorAll('.module-btn').forEach(b => {
             b.classList.remove('bg-cyan-500/20', 'border-cyan-500', 'text-cyan-300');
@@ -649,60 +663,11 @@
         btn.classList.remove('bg-white/5', 'text-gray-400');
         btn.classList.add('bg-cyan-500/20', 'border-cyan-500', 'text-cyan-300');
 
-        // Update Diagnostic
         updateDiagnostic(module, choice);
-
-        // Live Render
         renderAssembly();
     }
 
-    function updateDiagnostic(module, choice) {
-        const diag = document.getElementById('diagnostic-text');
-        const lights = [document.getElementById('diag-light-1'), document.getElementById('diag-light-2'), document.getElementById('diag-light-3')];
-        
-        let msg = "";
-        let color = "text-white/40";
-
-        if (choice === 'A') {
-            msg = `> MODULE ${module} [OK]: Optimization verified.\n> Standard compliant structure detected.`;
-            color = "text-emerald-400";
-            lights[module-1].className = "w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]";
-        } else {
-            msg = `> MODULE ${module} [WARN]: Anomalous pattern detected.\n> Suggest checking documentation references.`;
-            color = "text-red-400";
-            lights[module-1].className = "w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_#ef4444]";
-        }
-
-        diag.innerHTML = msg;
-        diag.className = `text-[10px] font-mono h-12 leading-relaxed ${color}`;
-    }
-
-    function renderAssembly() {
-        const zone = document.getElementById('render-zone');
-        
-        // Visual Logic based on Choices
-        let container = asmState[1] === 'A' ? "bg-slate-800 rounded-2xl p-8 border border-white/10 w-full" : (asmState[1] === 'B' ? "bg-red-900 border-4 border-yellow-500 p-20 w-full" : "w-full border-2 border-dashed border-white/10 rounded-xl p-6");
-        let layout = asmState[2] === 'A' ? "flex flex-col gap-4 text-center items-center" : (asmState[2] === 'B' ? "block" : "");
-        let btn = asmState[3] === 'A' ? "bg-cyan-600 hover:bg-cyan-500 text-white w-full py-3 rounded-lg transition-colors" : (asmState[3] === 'B' ? "bg-cyan-600 cursor-pointer p-4 text-black" : "");
-
-        // Only render content if at least container is picked
-        if (asmState[1]) {
-            zone.className = `transition-all duration-500 max-w-sm ${container}`;
-            zone.innerHTML = `
-                <div class="${layout}">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 shadow-lg mb-2"></div>
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Feature Unlock</h3>
-                        <p class="text-slate-400 text-sm mt-1">Upgrade system capabilities.</p>
-                    </div>
-                    ${asmState[3] ? `<button class="${btn}">Activate Now</button>` : ''}
-                </div>
-            `;
-        }
-    }
-
     function deploySystem() {
-        // Cegah klik jika aktivitas sudah selesai
         if (activityCompleted) return;
 
         const overlay = document.getElementById('deploy-overlay');
@@ -713,148 +678,170 @@
 
         overlay.classList.remove('hidden');
 
-        // Logic Check: Correct is A, A, A
+        // Validasi: Benar jika A, A, A
         if (asmState[1] === 'A' && asmState[2] === 'A' && asmState[3] === 'A') {
-            // Success Flow
+            // UI Sukses
             icon.className = "w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/50 animate-bounce";
             icon.innerHTML = `<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>`;
             title.innerText = "System Deployed Successfully";
             msg.innerText = "Konfigurasi optimal. Kode bersih, semantik, dan performa tinggi.";
             
-            // Tombol Lanjut (Trigger Finish Chapter)
-            action.innerText = "Lanjut Bab Berikutnya →";
-            action.onclick = finishChapter;
+            action.innerText = "Simpan Progress";
+            action.onclick = submitExercise; 
         } else {
-            // Fail Flow
+            // UI Gagal
             icon.className = "w-16 h-16 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mb-4 border border-red-500/50 animate-pulse";
             icon.innerHTML = `<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>`;
             title.innerText = "Deployment Failed";
-            msg.innerText = "Terdeteksi inefisiensi pada konfigurasi. Periksa kembali pilihan Anda menggunakan panel diagnostik.";
+            msg.innerText = "Terdeteksi inefisiensi. Periksa kembali pilihan Anda.";
+            
             action.innerText = "Re-Configure";
             action.onclick = () => { overlay.classList.add('hidden'); };
         }
     }
 
-    // --- FUNGSI PENGUNCI AKTIVITAS ---
     function lockActivityUI() {
-        // 1. Set Status Internal ke Benar
         asmState = { 1: 'A', 2: 'A', 3: 'A' };
+        renderAssembly();
 
-        // 2. Kunci Tombol Pilihan (Visual Only)
-        // Kita loop elemen button yang memiliki data-choice
         document.querySelectorAll('.module-btn').forEach(btn => {
             const choice = btn.getAttribute('data-choice');
-            // Jika ini jawaban benar (A), highlight. Jika salah (B), disable.
             if(choice === 'A') {
                 btn.classList.remove('bg-white/5', 'text-gray-400');
                 btn.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'cursor-default');
             } else {
                 btn.classList.add('opacity-30', 'cursor-not-allowed');
             }
-            // Hapus onclick handler
             btn.removeAttribute('onclick');
         });
 
-        // 3. Render Hasil Akhir
-        renderAssembly();
-
-        // 4. Update Diagnostik ke Status Final
         const diag = document.getElementById('diagnostic-text');
-        diag.innerHTML = "> SYSTEM ARCHIVED.\n> STATUS: COMPLETED.";
-        diag.className = "text-[10px] font-mono h-12 leading-relaxed text-emerald-400";
-        [1,2,3].forEach(i => document.getElementById(`diag-light-${i}`).className = "w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]");
+        if(diag) {
+            diag.innerHTML = "> SYSTEM ARCHIVED.\n> STATUS: COMPLETED.";
+            diag.className = "text-[10px] font-mono h-12 leading-relaxed text-emerald-400";
+            [1,2,3].forEach(i => document.getElementById(`diag-light-${i}`).className = "w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]");
+        }
 
-        // 5. Ubah Tombol Deploy menjadi Archived
         const deployBtn = document.getElementById('btn-deploy');
         if(deployBtn) {
             deployBtn.innerHTML = "<span>MISSION ACCOMPLISHED (ARCHIVED)</span>";
-            deployBtn.classList.remove('hover:scale-[1.02]');
             deployBtn.classList.add('opacity-50', 'cursor-not-allowed', 'grayscale');
             deployBtn.disabled = true;
             deployBtn.removeAttribute('onclick');
         }
-    }
-
-
-    // --- SYSTEM UTILS: UNLOCK LOGIC (From 1.3) ---
-
-    async function finishChapter() {
-        const actionBtn = document.getElementById('deploy-action');
-        actionBtn.innerText = "Menyimpan...";
         
-        try {
-            await fetch('/activity/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) });
-            await saveLessonToDB(ACTIVITY_LESSON_ID); 
-            completedSet.add(ACTIVITY_LESSON_ID);
-            activityCompleted = true; 
-            
-            updateProgressUI(); 
-            unlockNextChapter(); 
-            lockActivityUI(); // Kunci UI setelah selesai
-            
-            // Redirect to Dashboard or next chapter
-            window.location.href = "{{ route('courses.advantages') }}";
-        } catch(e) { 
-            console.error(e); 
-            actionBtn.innerText = "Gagal. Coba lagi.";
-        }
+        document.getElementById('deploy-overlay').classList.add('hidden');
     }
 
-    function unlockNextChapter() {
-        const btn = document.getElementById('nextChapterBtn');
-        const nextLabel = document.getElementById('nextLabel');
-        const nextIcon = document.getElementById('nextIcon');
-
-        if(btn) {
-            // Unlock UI Container
-            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
-            btn.classList.add('text-cyan-400', 'hover:text-cyan-300', 'cursor-pointer');
-            
-            // Update Label
-            if(nextLabel) {
-                nextLabel.innerText = "Selanjutnya";
-                nextLabel.classList.remove('opacity-50');
-            }
-
-            // Update Icon
-            if(nextIcon) {
-                nextIcon.innerHTML = "→";
-                nextIcon.classList.remove('bg-white/5');
-                nextIcon.classList.add('bg-cyan-500/20', 'border-cyan-500/50');
-            }
-
-            // Bind Click Action
-            btn.onclick = () => window.location.href = "{{ route('courses.advantages') }}"; 
-        }
-    }
-
-    function updateProgressUI() {
-        const total = window.LESSON_IDS.length; 
-        const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length; 
-        const percent = Math.round((done / total) * 100);
-        document.getElementById('topProgressBar').style.width = percent + '%'; 
-        document.getElementById('progressLabelTop').innerText = percent + '%';
-        if(percent === 100) unlockNextChapter();
-    }
-
-    // --- SCROLL & OBSERVER LOGIC ---
-
+    /* --- 6. STANDARD OBSERVERS & HELPERS --- */
     function initLessonObserver() {
         const obs = new IntersectionObserver(async entries => {
             for (const entry of entries) {
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
-                    if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
-                        try { await saveLessonToDB(id); completedSet.add(id); updateProgressUI(); } catch(e) {}
+                    const type = entry.target.dataset.type;
+
+                    if (id && type !== 'activity' && !completedSet.has(id)) {
+                        try { 
+                            await saveLessonToDB(id); 
+                            completedSet.add(id); 
+                            updateProgressUI(); 
+                        } catch(e) {}
                     }
                 }
             }
-        }, { threshold: 0.5, root: document.getElementById('mainScroll') });
+        }, { threshold: 0.4, root: document.getElementById('mainScroll') });
+
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
     
-    async function saveLessonToDB(id) { await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: new URLSearchParams({ lesson_id: id }) }); }
-    
+    async function saveLessonToDB(id) { 
+        const formData = new URLSearchParams();
+        formData.append('lesson_id', id);
+        await fetch("{{ route('lesson.complete') }}", { 
+            method: 'POST', 
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/x-www-form-urlencoded' }, 
+            body: formData
+        }); 
+    }
+
+    // --- UI HELPERS (TIDAK BERUBAH) ---
+    function updateDiagnostic(module, choice) {
+        const diag = document.getElementById('diagnostic-text');
+        const lights = [1,2,3].map(i => document.getElementById(`diag-light-${i}`));
+        let msg = "", color = "text-white/40";
+        if (choice === 'A') {
+            msg = `> MODULE ${module} [OK]: Optimization verified.`; color = "text-emerald-400";
+            lights[module-1].className = "w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]";
+        } else {
+            msg = `> MODULE ${module} [WARN]: Anomalous pattern.`; color = "text-red-400";
+            lights[module-1].className = "w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_#ef4444]";
+        }
+        diag.innerHTML = msg; diag.className = `text-[10px] font-mono h-12 leading-relaxed ${color}`;
+    }
+
+    function renderAssembly() {
+        const zone = document.getElementById('render-zone');
+        let container = asmState[1] === 'A' ? "bg-slate-800 rounded-2xl p-8 border border-white/10 w-full" : (asmState[1] === 'B' ? "bg-red-900 border-4 border-yellow-500 p-20 w-full" : "w-full border-2 border-dashed border-white/10 rounded-xl p-6");
+        let layout = asmState[2] === 'A' ? "flex flex-col gap-4 text-center items-center" : (asmState[2] === 'B' ? "block" : "");
+        let btn = asmState[3] === 'A' ? "bg-cyan-600 hover:bg-cyan-500 text-white w-full py-3 rounded-lg transition-colors" : (asmState[3] === 'B' ? "bg-cyan-600 cursor-pointer p-4 text-black" : "");
+
+        if (asmState[1]) {
+            zone.className = `transition-all duration-500 max-w-sm ${container}`;
+            zone.innerHTML = `<div class="${layout}"><div class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 shadow-lg mb-2"></div><div><h3 class="text-xl font-bold text-white">Feature Unlock</h3><p class="text-slate-400 text-sm mt-1">Upgrade system capabilities.</p></div>${asmState[3] ? `<button class="${btn}">Activate Now</button>` : ''}</div>`;
+        }
+    }
+
+    function translateClass() {
+        const input = document.getElementById('decoder-input').value.trim();
+        const res = document.getElementById('decoder-result');
+        let css = '';
+        if (!input) css = '<span class="text-white/20 italic">// Menunggu input...</span>';
+        else {
+            if (input.match(/^text-(center|left|right)$/)) css = `text-align: ${input.split('-')[1]};`;
+            else if (input.match(/^(m|p)[trblxy]?-\d+$/)) css = `${input.startsWith('m')?'margin':'padding'}: ${input.split('-').pop() * 0.25}rem;`;
+            else if (input.match(/^bg-[a-z]+-\d{3}$/)) css = `background-color: [Color ${input.split('-')[1]}];`;
+            else if (input === 'flex') css = 'display: flex;';
+            else if (input.startsWith('text-')) css = `font-size: [Scale ${input.split('-')[1]}];`;
+            else css = `/* Style untuk .${input} */`;
+            res.innerHTML = `<span class="text-xs text-white/30 font-mono mb-1">CSS Output:</span><code class="text-cyan-400 font-bold text-sm block">${css}</code>`;
+        }
+    }
+    function setTranslate(val) { document.getElementById('decoder-input').value = val; translateClass(); }
+
+    function updateScale(type, val) {
+        const formula = document.getElementById('scale-formula');
+        const target = document.getElementById('scale-target');
+        const label = document.getElementById('scale-p-val');
+        const px = val * 4; const rem = val * 0.25;
+        formula.innerHTML = `${val} x 4px = <span class="text-cyan-400">${px}px</span> (${rem}rem)`;
+        label.innerText = `p-${val}`;
+        target.style.padding = `${px}px`;
+    }
+
+    let activeStates = new Set();
+    function toggleStateClass(state) {
+        const btn = document.getElementById('state-target');
+        if(activeStates.has(state)) {
+            activeStates.delete(state);
+            if(state==='hover') { btn.onmouseenter = null; btn.onmouseleave = null; btn.classList.remove('scale-110'); }
+            if(state==='active') { btn.onmousedown = null; btn.onmouseup = null; btn.classList.remove('bg-fuchsia-800'); }
+            if(state==='focus') btn.classList.remove('ring-4', 'ring-yellow-500/50');
+        } else {
+            activeStates.add(state);
+            if(state==='hover') { btn.onmouseenter = () => btn.classList.add('scale-110'); btn.onmouseleave = () => btn.classList.remove('scale-110'); }
+            if(state==='active') { btn.onmousedown = () => btn.classList.add('bg-fuchsia-800'); btn.onmouseup = () => btn.classList.remove('bg-fuchsia-800'); }
+            if(state==='focus') btn.classList.add('ring-4', 'ring-yellow-500/50');
+        }
+    }
+
+    function triggerMorph() {
+        const messy = document.getElementById('morph-messy');
+        const clean = document.getElementById('morph-clean');
+        messy.style.opacity = '0'; messy.style.transform = 'translateY(-20px)';
+        setTimeout(() => { clean.classList.remove('opacity-0', 'scale-90', 'pointer-events-none'); }, 400);
+    }
+
     function initScrollSpy() {
         const mainScroll = document.getElementById('mainScroll'); const sections = document.querySelectorAll('.lesson-section'); const navLinks = document.querySelectorAll('.sidebar-nav-link');
         const observer = new IntersectionObserver((entries) => {

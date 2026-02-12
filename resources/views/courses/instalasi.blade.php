@@ -2,7 +2,8 @@
 @section('title','Bab 1.6 · Instalasi & Konfigurasi Dasar')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30">
+{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30"> --}}
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
 
     {{-- Background Effects --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -14,24 +15,8 @@
     </div>
 
     {{-- Navbar --}}
-    <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center font-extrabold text-white shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+            @include('layouts.partials.navbar')
+
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -49,8 +34,8 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-40 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_#22d3ee]"></div>
+                    <div class="hidden sm:block w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 w-0 transition-all duration-500 shadow-[0_0_10px_#06b6d4]"></div>
                     </div>
                     <span id="progressLabelTop" class="text-cyan-400 font-bold text-xs">0%</span>
                 </div>
@@ -403,54 +388,55 @@ module.exports = {
 
                 </article>
 
-                {{-- Footer --}}
+                {{-- Footer Navigation --}}
                 <div class="mt-32 pt-10 border-t border-white/10 flex justify-between items-center">
-                    <a href="{{ route('courses.implementation') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
+                    <a href="{{ route('courses.advantages') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
                         <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">←</div>
                         <div class="text-left"><div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div><div class="font-bold text-sm">Bab 1.5: Keunggulan</div></div>
                     </a>
                     
+                    {{-- Tombol Next Chapter (Menuju Lab) --}}
                     <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right">
                             <div id="nextLabel" class="text-[10px] uppercase tracking-widest opacity-50">Terkunci</div>
-                            <div class="font-bold text-sm">Kuis Bab 1</div>
+                            <div class="font-bold text-sm">Hands-on Lab 1</div>
                         </div>
-                        <div id="nextIcon" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-white/5">🔒</div>
+                        <div id="nextIcon" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-white/5 transition-all duration-300">🔒</div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 </div>
 
 <style>
-    @keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
-    .nav-link.active { color: #a855f7; position: relative; }
-    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#a855f7,#6366f1); box-shadow: 0 0 12px rgba(168,85,247,.8); border-radius: 2px; }
+    .nav-link.active { color: #22d3ee; position: relative; }
+    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#22d3ee,#3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.8); border-radius: 2px; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    #animated-bg{ animation:bgMove 20s ease-in-out infinite alternate; }
+    #animated-bg{ background: radial-gradient(800px circle at 20% 20%, rgba(34,211,238,.15), transparent 40%), radial-gradient(800px circle at 80% 80%, rgba(59,130,246,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
     @keyframes bgMove{to{transform:scale(1.15)}}
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .animate-shake { animation: shake 0.3s ease-in-out; }
+    .nav-item.active { color: #67e8f9; background: rgba(34,211,238,0.1); font-weight: 600; }
+    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
+    
+    /* Code Font */
+    #code-input { font-family: 'Fira Code', monospace; caret-color: #22d3ee; }
 </style>
-
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
     /* =========================================
        KONFIGURASI UTAMA
        ========================================= */
-    window.LESSON_IDS = [24, 25, 26, 27]; 
+    window.LESSON_IDS = [24, 25, 26, 27, 28]; 
     window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedSet = new Set(window.COMPLETED_IDS);
     
     // Status Aktivitas (Hanya 100% jika ini true)
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     const ACTIVITY_ID = 6; 
-    const ACTIVITY_LESSON_ID = 27; 
+    const ACTIVITY_LESSON_ID = 28; 
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
@@ -491,13 +477,20 @@ module.exports = {
     function unlockNextChapter() {
         const btn = document.getElementById('nextChapterBtn');
         if(!btn) return;
+        
+        // Aktifkan Style
         btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
-        btn.classList.add('text-purple-400', 'hover:text-purple-300', 'cursor-pointer', 'group');
-        document.getElementById('nextLabel').innerText = "Mulai Kuis";
+        btn.classList.add('text-cyan-400', 'hover:text-cyan-300', 'cursor-pointer', 'group');
+        
+        // Ubah Teks & Icon
+        document.getElementById('nextLabel').innerText = "Mulai Praktik";
         document.getElementById('nextLabel').classList.remove('opacity-50');
-        document.getElementById('nextIcon').innerHTML = "→";
-        document.getElementById('nextIcon').classList.add('shadow-[0_0_10px_#22d3ee]', 'border-cyan-500');
-        btn.onclick = () => window.location.href = "{{ route('quiz.intro', ['chapterId' => 1]) }}"; 
+        document.getElementById('nextIcon').innerHTML = "💻"; // Icon Laptop/Lab
+        document.getElementById('nextIcon').classList.remove('bg-white/5', 'border-white/5');
+        document.getElementById('nextIcon').classList.add('bg-cyan-500/20', 'border-cyan-500/50', 'text-cyan-400', 'shadow-[0_0_15px_rgba(34,211,238,0.3)]');
+
+        // Set Action Klik -> Ke Route Lab Start
+        btn.onclick = () => window.location.href = "{{ route('lab.start', ['id' => 1]) }}"; 
     }
 
     function lockNextChapter() {

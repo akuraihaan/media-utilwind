@@ -2,7 +2,7 @@
 @section('title','Bab 1.1 · HTML & CSS Foundations')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30">
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-50"></div>
@@ -13,25 +13,8 @@
         <div id="cursor-glow"></div>
     </div>
 
-    <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+        @include('layouts.partials.navbar')
+
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -427,21 +410,21 @@
                                     <div class="p-6 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
                                         <form id="activityForm">
                                             <div class="space-y-3">
-                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">1. Wrapper Tag</label><span class="text-[10px] text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded">Target: &lt;article&gt;</span></div>
+                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">1. Wrapper Tag</label></div>
                                                 <div class="grid grid-cols-2 gap-2">
                                                     <button type="button" onclick="setAct('tag', 'div', this)" class="opt-btn-tag px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">&lt;div&gt;</button>
                                                     <button type="button" onclick="setAct('tag', 'article', this)" class="opt-btn-tag px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">&lt;article&gt;</button>
                                                 </div>
                                             </div>
                                             <div class="space-y-3">
-                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">2. Internal Spacing</label><span class="text-[10px] text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded">Target: padding: 24px</span></div>
+                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">2. Internal Spacing</label></div>
                                                 <div class="grid grid-cols-2 gap-2">
                                                     <button type="button" onclick="setAct('pad', '0px', this)" class="opt-btn-pad px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">0px</button>
                                                     <button type="button" onclick="setAct('pad', '24px', this)" class="opt-btn-pad px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">24px</button>
                                                 </div>
                                             </div>
                                             <div class="space-y-3">
-                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">3. Card Style</label><span class="text-[10px] text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded">Target: Dark Theme</span></div>
+                                                <div class="flex justify-between"><label class="text-[10px] uppercase text-white/40 font-bold tracking-widest">3. Card Style</label></div>
                                                 <div class="grid grid-cols-2 gap-2">
                                                     <button type="button" onclick="setAct('style', 'plain', this)" class="opt-btn-style px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">Plain Text</button>
                                                     <button type="button" onclick="setAct('style', 'card', this)" class="opt-btn-style px-3 py-3 rounded-lg bg-white/5 text-gray-400 border border-white/5 text-xs text-left font-mono transition hover:bg-white/10">Styled Card</button>

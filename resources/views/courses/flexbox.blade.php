@@ -2,37 +2,18 @@
 @section('title','Bab 2.1 · Layouting dengan Flexbox')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30">
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30 pt-20">
 
+    {{-- BACKGROUND COSMIC LAYER --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-60"></div>
-        <div id="gradient-wave" class="absolute inset-0"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-50"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-purple-900/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[100px]"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.035]"></div>
         <div id="cursor-glow"></div>
     </div>
 
-        <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
-
-
+    @include('layouts.partials.navbar')
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -40,325 +21,409 @@
 
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
+            {{-- STICKY HEADER --}}
             <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-[#020617]/80 backdrop-blur-2xl border-b border-white/5 px-8 py-4 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-4">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-transparent border border-purple-500/20 flex items-center justify-center font-bold text-xs text-purple-400">2.1</div>
                     <div>
                         <h1 class="text-sm font-bold text-white">Layouting dengan Flexbox</h1>
-                        <p class="text-[10px] text-white/50">Estimasi: 35 Menit</p>
+                        <p class="text-[10px] text-white/50">Core Layout Concepts</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 w-0 transition-all duration-500 shadow-[0_0_10px_#d946ef]"></div>
+                    <div class="hidden sm:block w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 w-0 transition-all duration-500 shadow-[0_0_10px_#8b5cf6]"></div>
                     </div>
                     <span id="progressLabelTop" class="text-purple-400 font-bold text-xs">0%</span>
                 </div>
             </div>
 
+            {{-- CONTENT WRAPPER --}}
             <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
-                <article class="space-y-32">
+                
+                {{-- LEARNING OBJECTIVES --}}
+                <div class="mb-24">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Tujuan Pembelajaran
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-purple-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 font-bold text-xs">1</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Mental Model</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami perubahan konteks dari Block ke Flex formatting context.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xs">2</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Axis & Wrapping</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami manipulasi Sumbu Utama dan Sumbu Silang serta overflow.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-fuchsia-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center shrink-0 font-bold text-xs">3</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Distribution</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami distribusi ruang kosong menggunakan Justify dan Align.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-pink-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0 font-bold text-xs">4</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Flexibility</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami algoritma Grow dan Shrink untuk elemen responsif.</p></div>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 border border-purple-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition group h-full col-span-2 md:col-span-2">
+                            <div class="w-8 h-8 rounded bg-white/10 text-white flex items-center justify-center shrink-0 font-bold text-xs">🏁</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Final Mission</h4><p class="text-[11px] text-white/70 leading-relaxed">Live Code: Memperbaiki Navbar Rusak.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <article class="space-y-40">
                     
+                    {{-- LESSON 1: FONDASI FLEX --}}
                     <section id="fondasi" class="lesson-section scroll-mt-32" data-lesson-id="29">
-                        <div class="space-y-8">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-widest">
-                                <!-- <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> -->
-                                Dasar Layouting Flexbox
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.1</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Filosofi & <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500">Flex Container</span>
+                                </h2>
                             </div>
                             
-                            <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                                Menguasai Sumbu <br> 
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">Flexbox</span>
-                            </h2>
-                            
-                            <p class="text-lg text-white/70 leading-relaxed max-w-3xl">
-                                Flexbox bekerja berdasarkan dua sumbu: <strong>Main Axis</strong> (Sumbu Utama) dan <strong>Cross Axis</strong> (Sumbu Silang). Arah sumbu ini ditentukan oleh properti <code>flex-direction</code>.
-                            </p>
-
-                            <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden group hover:border-purple-500/30 transition-all">
-                                <div class="flex flex-col md:flex-row justify-between items-end mb-6 gap-6">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white mb-1">🎛️ Flex Playground</h3>
-                                        <p class="text-xs text-white/50">Atur arah (direction) dan distribusi (justify).</p>
-                                    </div>
-                                    <div class="flex flex-wrap gap-4">
-                                        <div class="bg-white/5 p-1 rounded-lg flex gap-1">
-                                            <button onclick="setPlaygroundState('dir', 'flex-row')" id="btn-row" class="dir-btn px-4 py-1.5 text-xs rounded bg-purple-600 text-white shadow-[0_0_10px_#9333ea] transition">Row</button>
-                                            <button onclick="setPlaygroundState('dir', 'flex-col')" id="btn-col" class="dir-btn px-4 py-1.5 text-xs rounded bg-transparent text-white/50 hover:bg-white/10 transition">Col</button>
-                                        </div>
-                                        <div class="bg-white/5 p-1 rounded-lg flex gap-1">
-                                            <button onclick="setPlaygroundState('just', 'justify-start')" id="btn-start" class="jus-btn px-4 py-1.5 text-xs rounded bg-purple-600 text-white shadow-[0_0_10px_#9333ea] transition">Start</button>
-                                            <button onclick="setPlaygroundState('just', 'justify-center')" id="btn-center" class="jus-btn px-4 py-1.5 text-xs rounded bg-transparent text-white/50 hover:bg-white/10 transition">Center</button>
-                                            <button onclick="setPlaygroundState('just', 'justify-between')" id="btn-between" class="jus-btn px-4 py-1.5 text-xs rounded bg-transparent text-white/50 hover:bg-white/10 transition">Between</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="flex-container" class="w-full h-64 bg-black/40 rounded-xl border-2 border-dashed border-white/10 flex flex-row justify-start p-6 gap-4 transition-all duration-500 relative">
-                                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
-                                    <div class="w-16 h-16 bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg border border-white/10 transform transition-all hover:scale-110 z-10">1</div>
-                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg border border-white/10 transform transition-all hover:scale-110 z-10">2</div>
-                                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg border border-white/10 transform transition-all hover:scale-110 z-10">3</div>
-                                </div>
-                                <div class="mt-4 text-center">
-                                    <code id="flex-code" class="bg-black/50 px-4 py-2 rounded text-fuchsia-300 text-xs font-mono border border-white/10">class="flex flex-row justify-start"</code>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="arahwrap" class="lesson-section scroll-mt-32" data-lesson-id="30">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">2. Flex Wrap (Pembungkusan)</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
-
-                        <p class="text-white/70 mb-6">
-                            Secara default, Flexbox akan memaksa elemen berada dalam satu baris (menyebabkan penyusutan/overflow). Gunakan <code>flex-wrap</code> untuk mengizinkan elemen "turun" ke baris baru ketika ruang habis.
-                        </p>
-
-                        <div class="grid md:grid-cols-2 gap-8">
+                            {{-- Materi Part 1 --}}
                             <div class="space-y-4">
-                                <div class="p-4 bg-[#1e1e1e] rounded-xl border border-white/10 flex justify-between items-center group hover:border-purple-500/30 transition">
-                                    <code class="text-purple-400 font-bold">flex-nowrap</code>
-                                    <span class="text-[10px] bg-white/10 px-2 py-1 rounded text-white/50">Default (Paksa Satu Baris)</span>
-                                </div>
-                                <div class="p-4 bg-[#1e1e1e] rounded-xl border border-white/10 flex justify-between items-center group hover:border-emerald-500/30 transition">
-                                    <code class="text-emerald-400 font-bold">flex-wrap</code>
-                                    <span class="text-[10px] text-white/50">Bungkus ke Bawah</span>
-                                </div>
-                                <div class="p-4 bg-[#1e1e1e] rounded-xl border border-white/10 flex justify-between items-center group hover:border-blue-500/30 transition">
-                                    <code class="text-blue-400 font-bold">flex-wrap-reverse</code>
-                                    <span class="text-[10px] text-white/50">Bungkus ke Atas</span>
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-[10px] text-white">A</span> Perubahan Konteks Layout</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Sebelum adanya Flexbox (Flexible Box Layout), pengembang web mengandalkan properti <code>float</code> dan <code>position</code> untuk mengatur tata letak. Metode ini seringkali rapuh dan sulit dikendalikan, terutama untuk penyelarasan vertikal (vertical alignment) dan distribusi ruang yang merata.
+                                    </p>
+                                    <p>
+                                        Dalam buku <em>"Modern CSS with Tailwind"</em>, dijelaskan bahwa Flexbox memperkenalkan <strong>Formatting Context</strong> baru. Ketika Anda menambahkan kelas utilitas <code>flex</code> pada sebuah elemen pembungkus (parent), Anda mengubah aturan fisika di dalamnya. Elemen anak (children) tidak lagi berperilaku sebagai elemen <em>block</em> yang menumpuk ke bawah, melainkan menjadi <em>flex items</em> yang mengalir sesuai sumbu fleksibel.
+                                    </p>
                                 </div>
                             </div>
 
-                            <div class="bg-[#0b0f19] p-6 rounded-2xl border border-white/10 flex flex-col relative overflow-hidden">
-                                <div class="flex justify-between mb-4 z-10 relative">
-                                    <span class="text-sm font-bold text-white">Simulator Wrap</span>
-                                    <button onclick="toggleWrap()" id="wrap-btn" class="text-xs px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 text-white transition border border-white/5">Mode: No Wrap</button>
-                                </div>
-                                <div id="wrap-container" class="flex flex-nowrap gap-2 overflow-hidden border border-white/20 p-2 h-40 bg-black/20 rounded-lg relative transition-all content-start">
-                                    <div class="w-1/3 h-12 bg-purple-500/20 rounded border border-purple-500/40 flex-shrink-0 flex items-center justify-center text-xs text-purple-300">Item 1</div>
-                                    <div class="w-1/3 h-12 bg-purple-500/20 rounded border border-purple-500/40 flex-shrink-0 flex items-center justify-center text-xs text-purple-300">Item 2</div>
-                                    <div class="w-1/3 h-12 bg-purple-500/20 rounded border border-purple-500/40 flex-shrink-0 flex items-center justify-center text-xs text-purple-300">Item 3</div>
-                                    <div class="w-1/3 h-12 bg-purple-500/20 rounded border border-purple-500/40 flex-shrink-0 flex items-center justify-center text-xs text-purple-300">Item 4</div>
-                                    <div class="w-1/3 h-12 bg-purple-500/20 rounded border border-purple-500/40 flex-shrink-0 flex items-center justify-center text-xs text-purple-300">Item 5</div>
-                                </div>
-                                <p class="text-[10px] text-white/30 mt-2 text-center" id="wrap-desc">Items dipaksa masuk satu baris (overflow).</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="sizing" class="lesson-section scroll-mt-32" data-lesson-id="31">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">3. Kendali Ukuran (Sizing)</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
-
-                        <p class="text-white/70 mb-6">
-                            Kontrol seberapa banyak ruang yang diambil item flex menggunakan <code>grow</code> (tumbuh) dan <code>shrink</code> (menyusut).
-                        </p>
-
-                        <div class="bg-[#0b0f19] p-8 rounded-2xl border border-white/10">
-                            <h3 class="text-sm font-bold text-white mb-4">Studi Kasus: Sidebar + Content</h3>
-                            
-                            <div class="mb-6">
-                                <p class="text-xs text-white/50 mb-2"><code>flex-1</code>: Mengambil semua ruang sisa.</p>
-                                <div class="flex gap-2 w-full bg-white/5 p-2 rounded-lg">
-                                    <div class="w-16 h-10 bg-purple-600 rounded flex items-center justify-center text-[10px] flex-none">Sidebar</div>
-                                    <div class="h-10 bg-indigo-600 rounded flex items-center justify-center text-[10px] flex-1">Content (flex-1)</div>
+                            {{-- Materi Part 2 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-[10px] text-white">B</span> Flex vs Inline-Flex</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Tailwind menyediakan dua kelas utama untuk mengaktifkan Flexbox:
+                                    </p>
+                                    <ul class="list-disc pl-5 space-y-2 marker:text-purple-500">
+                                        <li><strong><code>flex</code></strong>: Membuat elemen pembungkus menjadi <em>block-level flex container</em>. Elemen ini akan mengambil lebar penuh (width 100%) dari induknya, mirip dengan <code>div</code> biasa.</li>
+                                        <li><strong><code>inline-flex</code></strong>: Membuat elemen pembungkus menjadi <em>inline-level flex container</em>. Elemen ini hanya akan selebar konten di dalamnya dan mengalir bersama teks di sekitarnya, mirip dengan <code>span</code>.</li>
+                                    </ul>
+                                    <p>
+                                        Penting untuk diingat: properti ini hanya mempengaruhi <strong>pembungkusnya</strong>. Perilaku elemen anak (flex items) di dalamnya tetap sama untuk kedua jenis container tersebut.
+                                    </p>
                                 </div>
                             </div>
 
-                            <div class="mb-6">
-                                <p class="text-xs text-white/50 mb-2"><code>flex-none</code>: Ukuran tetap, tidak berubah.</p>
-                                <div class="flex gap-2 w-full bg-white/5 p-2 rounded-lg">
-                                    <div class="w-16 h-10 bg-purple-600 rounded flex items-center justify-center text-[10px] flex-none">Fixed</div>
-                                    <div class="h-10 bg-indigo-600/50 rounded flex items-center justify-center text-[10px] flex-1">Sisa Ruang</div>
-                                    <div class="w-16 h-10 bg-purple-600 rounded flex items-center justify-center text-[10px] flex-none">Fixed</div>
+                            {{-- SIMULATOR 1 --}}
+                            <div class="bg-[#0b0f19] border border-white/10 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row h-[350px]">
+                                <div class="w-full md:w-1/2 bg-[#1e1e1e] p-6 font-mono text-xs flex flex-col">
+                                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
+                                        <span class="text-white/40 font-bold uppercase text-[10px]">Playground: Enable Flex</span>
+                                        <div class="flex gap-2">
+                                            <button onclick="setSimFlex('block')" class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-400 hover:text-white transition text-[10px]">Default (Block)</button>
+                                            <button onclick="setSimFlex('flex')" class="px-3 py-1 bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded transition text-[10px]">Flexbox</button>
+                                        </div>
+                                    </div>
+                                    <div id="sim1-code" class="flex-1 overflow-auto text-purple-300 leading-relaxed whitespace-pre font-mono bg-black/20 p-4 rounded border border-white/5">
+&lt;div class="<span id="sim1-class">block</span>"&gt;
+  &lt;div&gt;Kotak 1&lt;/div&gt;
+  &lt;div&gt;Kotak 2&lt;/div&gt;
+  &lt;div&gt;Kotak 3&lt;/div&gt;
+&lt;/div&gt;</div>
+                                </div>
+                                <div class="w-full md:w-1/2 bg-[#111] flex items-center justify-center border-l border-white/5 relative p-8">
+                                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                                    <div id="sim1-preview" class="block w-full border border-dashed border-white/20 p-4 rounded bg-white/5 gap-2 transition-all duration-500">
+                                        <div class="bg-purple-600 w-16 h-16 rounded flex items-center justify-center font-bold text-white mb-2 sim1-item shadow-[0_0_15px_rgba(147,51,234,0.3)]">1</div>
+                                        <div class="bg-indigo-600 w-16 h-16 rounded flex items-center justify-center font-bold text-white mb-2 sim1-item shadow-[0_0_15px_rgba(79,70,229,0.3)]">2</div>
+                                        <div class="bg-fuchsia-600 w-16 h-16 rounded flex items-center justify-center font-bold text-white mb-2 sim1-item shadow-[0_0_15px_rgba(192,38,211,0.3)]">3</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    <section  class="lesson-section scroll-mt-32" data-lesson-id="32">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">4. Pengurutan (Order)</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
+                    {{-- LESSON 2: DIRECTION & WRAP --}}
+                    <section id="arahwrap" class="lesson-section scroll-mt-32" data-lesson-id="30">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.2</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Arah & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Wrapping</span>
+                                </h2>
+                            </div>
 
-                        <p class="text-white/70 mb-6">
-                            Anda dapat mengubah urutan tampilan elemen tanpa mengubah struktur HTML menggunakan utilitas <code>order-{n}</code>. Ini sangat berguna untuk desain responsif (misal: gambar di atas teks pada mobile, tapi di samping pada desktop).
-                        </p>
-
-                        <div class="bg-[#0b0f19] p-8 rounded-2xl border border-white/10 text-center">
-                            <h3 class="text-lg font-bold text-white mb-6">Visualisasi Property Order</h3>
-                            
-                            <div class="flex justify-center gap-4 mb-8 p-4 bg-white/5 rounded-xl" id="order-container">
-                                <div id="ord-1" class="w-20 h-20 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg transition-all duration-500 order-1 relative group">
-                                    <span>1</span>
-                                    <span class="absolute -bottom-6 text-[10px] text-white/50 opacity-0 group-hover:opacity-100 transition">HTML: 1</span>
-                                </div>
-                                <div id="ord-2" class="w-20 h-20 bg-purple-600 rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg transition-all duration-500 order-2 relative group">
-                                    <span>2</span>
-                                    <span class="absolute -bottom-6 text-[10px] text-white/50 opacity-0 group-hover:opacity-100 transition">HTML: 2</span>
-                                </div>
-                                <div id="ord-3" class="w-20 h-20 bg-fuchsia-600 rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg transition-all duration-500 order-3 relative group">
-                                    <span>3</span>
-                                    <span class="absolute -bottom-6 text-[10px] text-white/50 opacity-0 group-hover:opacity-100 transition">HTML: 3</span>
+                            {{-- Materi Part 1 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white">A</span> Main Axis vs Cross Axis</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        
+                                        Inti dari Flexbox adalah pemahaman tentang dua sumbu imajiner: <strong>Main Axis</strong> (Sumbu Utama) dan <strong>Cross Axis</strong> (Sumbu Silang). Arah sumbu ini tidak statis; mereka berubah tergantung pada properti <code>flex-direction</code>.
+                                    </p>
+                                    <p>
+                                        Secara default (<code>flex-row</code>), Main Axis berjalan secara horizontal dari kiri ke kanan. Namun, ketika Anda menggunakan <code>flex-col</code>, Main Axis berputar 90 derajat menjadi vertikal (atas ke bawah). Pemahaman ini krusial karena properti seperti <code>justify-*</code> selalu bekerja pada Main Axis, sedangkan <code>items-*</code> bekerja pada Cross Axis.
+                                    </p>
                                 </div>
                             </div>
-                            
-                            <div class="flex justify-center gap-3">
-                                <button onclick="swapOrder(1)" class="px-4 py-2 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-xs transition">1 ke Akhir</button>
-                                <button onclick="swapOrder(2)" class="px-4 py-2 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-xs transition">2 ke Awal</button>
-                                <button onclick="resetOrder()" class="px-4 py-2 rounded border border-white/20 hover:bg-white/10 text-xs text-white/60 transition">Reset</button>
+
+                            {{-- Materi Part 2 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Mengatasi "Squishing" dengan Wrap</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Perilaku default Flexbox adalah <code>flex-nowrap</code>. Ini berarti container akan berusaha sekuat tenaga untuk memuat semua item dalam satu baris, bahkan jika itu berarti memaksa item menyusut (<em>squishing</em>) hingga kontennya rusak atau keluar dari container (overflow).
+                                    </p>
+                                    <p>
+                                        Solusinya adalah utilitas <code>flex-wrap</code>. Kelas ini memberitahu browser: "Jika tidak ada cukup ruang di baris ini, turunkan item ke baris baru". Ini adalah fondasi dari sistem grid responsif tanpa menggunakan CSS Grid. Buku <em>"Ultimate Tailwind CSS Handbook"</em> menyarankan penggunaan <code>flex-wrap</code> bersamaan dengan <code>gap-*</code> untuk membuat galeri kartu yang rapi.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- SIMULATOR 2 --}}
+                            <div class="bg-[#1e1e1e] rounded-xl border border-white/10 p-6 flex flex-col md:flex-row gap-8 shadow-2xl relative overflow-hidden">
+                                <div class="w-full md:w-1/2 space-y-6 relative z-10">
+                                    <h4 class="text-xs font-bold text-white/50 uppercase">Direction Controls</h4>
+                                    <div>
+                                        <label class="text-[10px] text-purple-400 block mb-2 font-bold">FLEX DIRECTION</label>
+                                        <div class="flex gap-2">
+                                            <button onclick="updateSimDir('flex-row')" class="flex-1 py-2 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600/20 transition text-gray-300">flex-row</button>
+                                            <button onclick="updateSimDir('flex-col')" class="flex-1 py-2 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600/20 transition text-gray-300">flex-col</button>
+                                            <button onclick="updateSimDir('flex-wrap')" class="flex-1 py-2 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600/20 transition text-gray-300">flex-wrap</button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-black/40 p-3 rounded border border-white/5 font-mono text-[10px] text-gray-400 mt-4">
+                                        &lt;div class="flex <span id="sim2-code" class="text-purple-300">flex-row</span>"&gt;...&lt;/div&gt;
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-1/2 bg-black/40 rounded-xl flex items-center justify-center border border-white/5 min-h-[200px] relative z-10 p-4 overflow-hidden">
+                                    <div id="sim2-target" class="flex flex-row gap-2 transition-all duration-500 border border-dashed border-white/20 p-2 rounded w-full">
+                                        <div class="w-16 h-10 bg-purple-500 rounded flex items-center justify-center font-bold text-sm shrink-0">1</div>
+                                        <div class="w-16 h-10 bg-indigo-500 rounded flex items-center justify-center font-bold text-sm shrink-0">2</div>
+                                        <div class="w-16 h-10 bg-fuchsia-500 rounded flex items-center justify-center font-bold text-sm shrink-0">3</div>
+                                        <div class="w-16 h-10 bg-pink-500 rounded flex items-center justify-center font-bold text-sm shrink-0">4</div>
+                                        <div class="w-16 h-10 bg-rose-500 rounded flex items-center justify-center font-bold text-sm shrink-0">5</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
 
-                    <section id="aktivitas-1-7" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-manual="true">
+                    {{-- LESSON 3: ALIGNMENT --}}
+                    <section id="alignment" class="lesson-section scroll-mt-32" data-lesson-id="31">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-fuchsia-500 pl-6">
+                                <span class="text-fuchsia-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.3</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Justify & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-pink-500">Align</span>
+                                </h2>
+                            </div>
+
+                            {{-- Materi Part 1 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-fuchsia-600 flex items-center justify-center text-[10px] text-white">A</span> Justify Content (Main Axis)</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Properti <code>justify-*</code> mengontrol distribusi ruang kosong di sepanjang Sumbu Utama.
+                                    </p>
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li><code>justify-start</code>: Default. Item berkumpul di awal.</li>
+                                        <li><code>justify-center</code>: Item berkumpul di tengah (sering digunakan untuk memusatkan konten).</li>
+                                        <li><code>justify-between</code>: Item pertama di awal, terakhir di ujung, sisanya berjarak rata. Sangat populer untuk Navbar (Logo di kiri, Menu di kanan).</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {{-- Materi Part 2 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-fuchsia-600 flex items-center justify-center text-[10px] text-white">B</span> Align Items (Cross Axis)</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Properti <code>items-*</code> mengontrol bagaimana item duduk di sepanjang Sumbu Silang.
+                                    </p>
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li><code>items-stretch</code>: Default. Item akan ditarik memanjang memenuhi tinggi container (jika container memiliki tinggi).</li>
+                                        <li><code>items-center</code>: Item berada di tengah sumbu silang. Wajib digunakan jika Anda memiliki ikon dan teks bersebelahan agar lurus secara vertikal.</li>
+                                        <li><code>items-baseline</code>: Menyelaraskan item berdasarkan garis dasar teks (typography baseline).</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {{-- SIMULATOR 3 --}}
+                            <div class="bg-[#1e1e1e] border border-white/10 rounded-2xl p-8 relative shadow-2xl overflow-hidden flex flex-col">
+                                <div class="w-full space-y-6 mb-8 relative z-10">
+                                    <div>
+                                        <div class="flex justify-between mb-2">
+                                            <label class="text-xs text-fuchsia-400 font-bold uppercase">Justify (Main Axis)</label>
+                                            <span class="text-xs text-white/50 font-mono" id="sim3-label-j">justify-start</span>
+                                        </div>
+                                        <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                                            <button onclick="updateSimAlign('j', 'justify-start')" class="px-3 py-1.5 bg-white/5 rounded text-[10px] hover:bg-fuchsia-600/30 transition border border-white/10">Start</button>
+                                            <button onclick="updateSimAlign('j', 'justify-center')" class="px-3 py-1.5 bg-white/5 rounded text-[10px] hover:bg-fuchsia-600/30 transition border border-white/10">Center</button>
+                                            <button onclick="updateSimAlign('j', 'justify-between')" class="px-3 py-1.5 bg-white/5 rounded text-[10px] hover:bg-fuchsia-600/30 transition border border-white/10">Between</button>
+                                            <button onclick="updateSimAlign('j', 'justify-end')" class="px-3 py-1.5 bg-white/5 rounded text-[10px] hover:bg-fuchsia-600/30 transition border border-white/10">End</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-2">
+                                            <label class="text-xs text-purple-400 font-bold uppercase">Items (Cross Axis)</label>
+                                            <span class="text-xs text-white/50 font-mono" id="sim3-label-i">items-start</span>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button onclick="updateSimAlign('i', 'items-start')" class="flex-1 py-1.5 bg-white/5 rounded text-[10px] hover:bg-purple-600/30 transition border border-white/10">Start</button>
+                                            <button onclick="updateSimAlign('i', 'items-center')" class="flex-1 py-1.5 bg-white/5 rounded text-[10px] hover:bg-purple-600/30 transition border border-white/10">Center</button>
+                                            <button onclick="updateSimAlign('i', 'items-end')" class="flex-1 py-1.5 bg-white/5 rounded text-[10px] hover:bg-purple-600/30 transition border border-white/10">End</button>
+                                            <button onclick="updateSimAlign('i', 'items-stretch')" class="flex-1 py-1.5 bg-white/5 rounded text-[10px] hover:bg-purple-600/30 transition border border-white/10">Stretch</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-[#0f141e] p-4 rounded-xl border border-white/5 w-full flex h-48 relative z-10 transition-all duration-300 gap-2" id="sim3-target">
+                                    <div class="bg-fuchsia-600 w-12 h-12 rounded flex items-center justify-center font-bold text-white shadow-lg">1</div>
+                                    <div class="bg-purple-600 w-12 h-16 rounded flex items-center justify-center font-bold text-white shadow-lg">2</div>
+                                    <div class="bg-indigo-600 w-12 h-10 rounded flex items-center justify-center font-bold text-white shadow-lg">3</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- LESSON 4: SIZING --}}
+                    <section id="sizing" class="lesson-section scroll-mt-32" data-lesson-id="32">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-pink-500 pl-6">
+                                <span class="text-pink-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.4</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Sizing & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-500">Flexibility</span>
+                                </h2>
+                            </div>
+
+                            {{-- Materi Part 1 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-pink-600 flex items-center justify-center text-[10px] text-white">A</span> Flex Grow & Flex 1</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Bagaimana cara membuat sidebar lebar tetap dan konten utama mengisi sisa ruang? Jawabannya ada pada <code>flex-1</code>.
+                                        Di Tailwind, <code>flex-1</code> adalah shorthand untuk membuat item tumbuh (grow) dan menyusut (shrink) sesuai kebutuhan.
+                                    </p>
+                                    <p>
+                                        Properti <code>grow</code> (tanpa angka) akan membuat elemen tersebut "serakah", mengambil semua ruang kosong yang tersedia di Main Axis.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- Materi Part 2 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-pink-600 flex items-center justify-center text-[10px] text-white">B</span> Mencegah Penyusutan (Shrink-0)</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Pernahkah Anda melihat ikon atau avatar menjadi "gepeng" saat layar mengecil? Itu karena perilaku default <code>flex-shrink: 1</code>.
+                                        Untuk mencegahnya, gunakan kelas utilitas <code>shrink-0</code> pada elemen yang ukurannya harus tetap (rigid), seperti logo, ikon, atau tombol aksi.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- SIMULATOR 4 --}}
+                            <div class="bg-[#1e1e1e] p-8 rounded-2xl border border-white/10">
+                                <h3 class="text-sm font-bold text-white mb-4">Demo: Flex-1 vs Flex-None</h3>
+                                <div class="flex gap-2 w-full bg-white/5 p-2 rounded-lg mb-4">
+                                    <div class="w-20 h-12 bg-purple-600 rounded flex items-center justify-center text-[10px] flex-none border border-white/20">
+                                        Sidebar<br>(flex-none)
+                                    </div>
+                                    <div class="h-12 bg-indigo-600 rounded flex items-center justify-center text-[10px] flex-1 border border-white/20 transition-all duration-500 hover:bg-indigo-500">
+                                        Main Content<br>(flex-1 : Isi sisa ruang)
+                                    </div>
+                                </div>
+                                <p class="text-xs text-white/40 text-center">Hover pada area konten untuk melihat efek highlight.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- FINAL MISSION --}}
+                    <section id="aktivitas-1-7" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-type="activity">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
                             
-                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50 blur-sm"></div>
+                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>
 
-                            <div class="text-center mb-8">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase mb-4 tracking-widest">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                                    Final Challenge
+                            <div class="flex items-center gap-4 mb-6 relative z-10">
+                                <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-purple-500/30">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                                 </div>
-                                <h2 class="text-3xl font-black text-white mb-2">Fix The Navbar</h2>
-                                <p class="text-white/60 text-sm max-w-lg mx-auto">
-                                    Navbar di bawah ini rusak. Tugas Anda adalah memilih kombinasi kelas yang tepat agar tampilannya sesuai dengan <strong>Target</strong> di sebelah kanan.
-                                </p>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">Coding Challenge: Fix The Navbar</h2>
+                                    <p class="text-purple-300 text-sm">Gunakan Flexbox untuk merapikan navigasi di bawah ini.</p>
+                                </div>
                             </div>
 
-                            <div class="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                            <div class="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto h-[600px]">
                                 
-                                <div class="bg-[#1e1e1e] rounded-xl border border-white/10 flex flex-col overflow-hidden h-full">
-                                    <div class="bg-[#2d2d2d] px-4 py-3 border-b border-white/5 flex justify-between items-center">
-                                        <span class="text-xs text-gray-400 font-mono">CSS Controls</span>
-                                        <span class="text-[10px] text-purple-400">● Live Editing</span>
+                                {{-- EDITOR --}}
+                                <div class="bg-[#1e1e1e] rounded-xl border border-white/10 flex flex-col overflow-hidden h-full relative shadow-2xl">
+                                    
+                                    {{-- LOCK OVERLAY --}}
+                                    <div id="lockOverlay" class="hidden absolute inset-0 bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg">
+                                        <div class="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce">
+                                            <svg class="w-12 h-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        </div>
+                                        <h3 class="text-3xl font-black text-white mb-2 tracking-tight">SELESAI!</h3>
+                                        <p class="text-base text-white/60 mb-8 max-w-xs">Anda telah menguasai dasar Flexbox. Lanjut ke materi Grid.</p>
+                                        <button disabled class="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white/30 text-xs font-bold cursor-not-allowed uppercase tracking-widest">Review Mode</button>
+                                    </div>
+
+                                    <div class="bg-[#0f141e] px-4 py-2 border-b border-white/5 flex justify-between items-center">
+                                        <span class="text-xs text-white/50 font-mono">Navbar.html</span>
+                                        <button onclick="resetEditor()" class="text-[10px] text-red-400 hover:text-red-300 transition uppercase font-bold">Reset</button>
                                     </div>
                                     
-                                    <div class="p-6 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
-                                        
-                                        <div>
-                                            <p class="text-[10px] uppercase text-white/30 font-bold tracking-widest mb-2">1. Display & Direction</p>
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <button onclick="selectOption('layout', 'block', this)" class="opt-btn-layout px-3 py-2 rounded bg-purple-600 text-white border-purple-500 border text-xs text-left font-mono transition">block</button>
-                                                <button onclick="selectOption('layout', 'flex flex-col', this)" class="opt-btn-layout px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">flex flex-col</button>
-                                                <button onclick="selectOption('layout', 'flex flex-row', this)" class="opt-btn-layout px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">flex flex-row</button>
-                                                <button onclick="selectOption('layout', 'grid grid-cols-3', this)" class="opt-btn-layout px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">grid grid-cols-3</button>
-                                            </div>
+                                    <div id="codeEditor" class="flex-1 w-full"></div>
+
+                                    <div class="p-4 bg-[#0f141e] border-t border-white/5">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <span class="text-[10px] uppercase font-bold text-white/30">Requirements</span>
+                                            <span id="progressText" class="text-[10px] font-mono text-purple-400">0/4 Selesai</span>
                                         </div>
-
-                                        <div>
-                                            <p class="text-[10px] uppercase text-white/30 font-bold tracking-widest mb-2">2. Justify Content</p>
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <button onclick="selectOption('justify', '', this)" class="opt-btn-justify px-3 py-2 rounded bg-purple-600 text-white border-purple-500 border text-xs text-left font-mono transition">none</button>
-                                                <button onclick="selectOption('justify', 'justify-center', this)" class="opt-btn-justify px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">justify-center</button>
-                                                <button onclick="selectOption('justify', 'justify-between', this)" class="opt-btn-justify px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">justify-between</button>
-                                                <button onclick="selectOption('justify', 'justify-end', this)" class="opt-btn-justify px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">justify-end</button>
-                                            </div>
+                                        <div class="grid grid-cols-2 gap-2 text-[11px] font-mono text-white/50 mb-4">
+                                            <div id="check-flex" class="flex items-center gap-2 transition-colors"><span class="w-3 h-3 rounded-full border border-white/20 flex items-center justify-center text-[8px]"></span> class="flex"</div>
+                                            <div id="check-justify" class="flex items-center gap-2 transition-colors"><span class="w-3 h-3 rounded-full border border-white/20 flex items-center justify-center text-[8px]"></span> justify-between</div>
+                                            <div id="check-align" class="flex items-center gap-2 transition-colors"><span class="w-3 h-3 rounded-full border border-white/20 flex items-center justify-center text-[8px]"></span> items-center</div>
+                                            <div id="check-padding" class="flex items-center gap-2 transition-colors"><span class="w-3 h-3 rounded-full border border-white/20 flex items-center justify-center text-[8px]"></span> p-4 / p-6</div>
                                         </div>
-
-                                        <div>
-                                            <p class="text-[10px] uppercase text-white/30 font-bold tracking-widest mb-2">3. Align Items</p>
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <button onclick="selectOption('items', '', this)" class="opt-btn-items px-3 py-2 rounded bg-purple-600 text-white border-purple-500 border text-xs text-left font-mono transition">none</button>
-                                                <button onclick="selectOption('items', 'items-center', this)" class="opt-btn-items px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10">items-center</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="p-4 bg-black/40 border-t border-white/5 flex justify-between items-center">
-                                        <span class="text-[10px] text-white/30" id="status-text">Konfigurasi belum benar...</span>
-                                        <button onclick="checkSolution()" id="submitBtn" class="px-6 py-2 rounded-lg bg-white/10 text-white/50 font-bold text-xs shadow-lg transition-all hover:bg-white/20 cursor-pointer">
-                                            Jalankan & Periksa
+                                        <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2">
+                                            <span>Selesaikan Misi</span>
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col gap-6">
-                                    
-                                    <div class="bg-[#1e1e1e] rounded-xl border border-white/10 p-4 opacity-70">
-                                        <p class="text-[10px] uppercase text-green-400 font-bold tracking-widest mb-2">Target (Goals)</p>
-                                        <div class="w-full h-16 bg-white rounded-lg flex flex-row justify-between items-center px-4 shadow-sm select-none pointer-events-none opacity-80">
-                                            <div class="font-bold text-gray-800 text-sm">Brand</div>
-                                            <div class="flex gap-2">
-                                                <div class="w-8 h-2 bg-gray-300 rounded"></div>
-                                                <div class="w-8 h-2 bg-gray-300 rounded"></div>
-                                            </div>
-                                            <div class="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded">Login</div>
-                                        </div>
+                                {{-- PREVIEW --}}
+                                <div class="bg-white rounded-xl border border-white/10 flex-1 flex flex-col relative overflow-hidden min-h-[500px]">
+                                    <div class="bg-gray-100 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-500 font-mono">Browser Preview</span>
+                                        <span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded border border-green-200">Active</span>
                                     </div>
-
-                                    <div class="bg-[#1e1e1e] rounded-xl border border-white/10 flex-1 flex flex-col relative overflow-hidden min-h-[300px]">
-                                        <div class="bg-[#2d2d2d] px-4 py-2 border-b border-white/5 flex items-center gap-2">
-                                            <div class="flex gap-1.5">
-                                                <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                                                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                                            </div>
-                                            <span class="text-[10px] text-gray-500 font-mono ml-2">Browser Preview</span>
-                                        </div>
-
-                                        <div class="flex-1 bg-gray-900 p-6 relative">
-                                            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                            
-                                            <nav id="preview-navbar" class="w-full bg-white rounded-lg p-4 shadow-xl min-h-[80px] block transition-all duration-300">
-                                                <div class="bg-gray-200 p-2 mb-1 text-gray-800 font-bold text-sm inline-block rounded">Brand</div>
-                                                
-                                                <div class="bg-gray-100 p-2 mb-1 text-gray-500 text-xs inline-block rounded">
-                                                    <span class="bg-gray-300 w-8 h-2 inline-block rounded mr-1"></span>
-                                                    <span class="bg-gray-300 w-8 h-2 inline-block rounded"></span>
-                                                </div>
-                                                
-                                                <div class="bg-blue-100 p-2 text-blue-600 font-bold text-xs inline-block rounded border border-blue-200">
-                                                    Login Button
-                                                </div>
-                                            </nav>
-
-                                        </div>
-
-                                        <div class="bg-black p-3 font-mono text-[10px] text-gray-500 h-32 border-t border-white/10 overflow-y-auto" id="console-output">
-                                            <p>> System ready.</p>
-                                            <p>> Waiting for configuration...</p>
-                                        </div>
-                                    </div>
-
+                                    <iframe id="previewFrame" class="w-full h-full border-0 bg-gray-50"></iframe>
                                 </div>
                             </div>
-
                         </div>
                     </section>
 
                 </article>
 
+                {{-- FOOTER NAVIGATION --}}
                 <div class="mt-32 pt-10 border-t border-white/10 flex justify-between items-center">
-                    <a href="{{ route('courses.installation') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
+                    <a href="{{ route('courses.tailwindcss') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
                         <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">←</div>
-                        <div class="text-left">
-                            <div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div>
-                            <div class="font-bold text-sm">Instalasi</div>
-                        </div>
+                        <div class="text-left"><div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div><div class="font-bold text-sm">Konsep Dasar Tailwind</div></div>
                     </a>
-
-                    <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed">
+                    
+                    <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right">
-                            <div class="text-[10px] uppercase tracking-widest opacity-30">Terkunci</div>
-                            <div class="font-bold text-sm">Grid Layout</div>
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest opacity-50">Terkunci</div>
+                            <div class="font-bold text-sm">Layout dengan Grid</div>
                         </div>
-                        <div class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center">🔒</div>
+                        <div id="nextIcon" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-white/5">🔒</div>
                     </div>
                 </div>
 
-                <div class="mt-16 text-center text-white/20 text-xs">
-                    &copy; {{ date('Y') }} Flowwind Learn. Materi dilindungi hak cipta.
-                </div>
             </div>
         </main>
     </div>
@@ -366,243 +431,209 @@
 
 <style>
     /* UTILS & ANIMATION */
-    .nav-link.active { color: #22d3ee; position: relative; }
-    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#22d3ee,#3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.8); border-radius: 2px; }
+    .nav-link.active { color: #a855f7; position: relative; } /* Purple-500 */
+    .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#a855f7,#d946ef); box-shadow: 0 0 12px rgba(168,85,247,0.8); border-radius: 2px; }
+    
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .shake { animation: shake 0.4s ease-in-out; }
-
-    #animated-bg{ background: radial-gradient(600px circle at 20% 20%, rgba(168,85,247,.15), transparent 40%), radial-gradient(700px circle at 80% 30%, rgba(217,70,239,.15), transparent 40%), radial-gradient(800px circle at 50% 80%, rgba(34,211,238,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
+    #animated-bg{ background: radial-gradient(800px circle at 20% 20%, rgba(168,85,247,.15), transparent 40%), radial-gradient(800px circle at 80% 80%, rgba(99,102,241,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
     @keyframes bgMove{to{transform:scale(1.15)}}
     
-    /* SCROLLSPY ACTIVE STATES */
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #c084fc; background: rgba(192,132,252,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #c084fc; box-shadow: 0 0 8px #c084fc; transform: scale(1.2); }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    .shake { animation: shake 0.4s ease-in-out; }
     
-    .sb-group.open .accordion-content { max-height: 1000px; opacity: 1; }
-    .sb-group:not(.open) .accordion-content { max-height: 0; opacity: 0; overflow: hidden; }
-    .sb-group.open svg { transform: rotate(180deg); }
+    .nav-item.active { color: #a855f7; background: rgba(168,85,247,0.05); font-weight: 600; }
+    .nav-item.active .dot { background: #a855f7; box-shadow: 0 0 8px #a855f7; transform: scale(1.2); }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+
 <script>
     /* --- CONFIGURATION --- */
-    window.SUBBAB_LESSON_IDS = {!! json_encode($subbab21LessonIds ?? []) !!}; 
-    window.INIT_COMPLETED_LESSONS = {!! json_encode($completedLessonIds ?? []) !!};
-    let completedLessons = new Set(window.INIT_COMPLETED_LESSONS);
-    
-    // Manual boolean parsing
+    // Mapping Lesson IDs for Chapter 2.1 (Adjust these based on your DB)
+    window.LESSON_IDS = [29, 30, 31, 33]; 
+    window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
+    let completedSet = new Set(window.COMPLETED_IDS);
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
-
-    const QUIZ_LESSON_ID = 33; // Activity 2.1 ID
+    
+    const ACTIVITY_ID = 7; // ID Activity for this Chapter
+    const ACTIVITY_LESSON_ID = 33; // Lesson ID for the coding challenge
 
     document.addEventListener('DOMContentLoaded', () => {
-        updateProgressUI();
+        initScrollSpy();
         initLessonObserver();
         initVisualEffects();
         initSidebarScroll();
+        updateProgressUI();
+        initMonaco();
+        setSimFlex('block'); // Init Simulator 1
+        
         if (activityCompleted) {
-            // Restore Completed State
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "Selesai ✔";
-            btn.classList.remove('bg-white/10', 'text-white/50');
-            btn.classList.add('bg-green-600', 'text-white', 'cursor-not-allowed');
-            document.getElementById('status-text').innerText = "Tantangan Selesai!";
-            document.getElementById('status-text').className = "text-[10px] text-green-400 font-bold";
-            
-            // Set Navbar to Correct State
-            const nav = document.getElementById('preview-navbar');
-            nav.className = "w-full bg-white rounded-lg p-4 shadow-xl min-h-[80px] transition-all duration-300 flex flex-row justify-between items-center";
-            // nav.querySelectorAll('div').forEach(d => { d.classList.remove('mb-1'); });
+            lockActivityUI();
+            unlockNextChapter();
         }
     });
 
-    /* --- 1. FLEX PLAYGROUND LOGIC --- */
-    let currentDir = 'flex-row';
-    let currentJust = 'justify-start';
+    /* --- SIMULATOR 1: FLEX TOGGLE --- */
+    function setSimFlex(mode) {
+        const items = document.querySelectorAll('.sim1-item');
+        const container = document.getElementById('sim1-preview');
+        const classSpan = document.getElementById('sim1-class');
 
-    function setPlaygroundState(type, value) {
-        if (type === 'dir') currentDir = value;
-        if (type === 'just') currentJust = value;
+        container.className = "w-full border border-dashed border-white/20 p-4 rounded bg-white/5 gap-2 transition-all duration-500 " + (mode === 'flex' ? 'flex' : 'block');
+        classSpan.innerText = mode;
+        classSpan.className = mode === 'flex' ? 'text-purple-400 font-bold' : 'text-white/50';
 
-        // Update Container Class
-        const container = document.getElementById('flex-container');
-        container.className = `w-full h-64 bg-black/40 rounded-xl border-2 border-dashed border-white/10 p-6 gap-4 transition-all duration-500 relative flex ${currentDir} ${currentJust}`;
-        document.getElementById('flex-code').innerText = `class="flex ${currentDir} ${currentJust}"`;
-
-        // Update Buttons (Active State)
-        updateButtonHighlights();
-    }
-
-    function updateButtonHighlights() {
-        const setActive = (id, isActive) => {
-            const el = document.getElementById(id);
-            if (isActive) {
-                el.className = "px-4 py-1.5 text-xs rounded transition-all duration-300 bg-purple-600 text-white shadow-[0_0_10px_#9333ea]";
-            } else {
-                el.className = "px-4 py-1.5 text-xs rounded transition-all duration-300 bg-transparent text-white/50 hover:bg-white/10";
-            }
-        };
-        // Use separate functions or logic for each group if IDs are unique
-        setActive('btn-row', currentDir === 'flex-row');
-        setActive('btn-col', currentDir === 'flex-col');
-        setActive('btn-start', currentJust === 'justify-start');
-        setActive('btn-center', currentJust === 'justify-center');
-        setActive('btn-between', currentJust === 'justify-between');
-    }
-
-    /* --- 2. WRAP SIMULATOR --- */
-    let isWrap = false;
-    function toggleWrap() {
-        isWrap = !isWrap;
-        const box = document.getElementById('wrap-container');
-        const btn = document.getElementById('wrap-btn');
-        const desc = document.getElementById('wrap-desc');
-
-        if(isWrap) {
-            box.classList.remove('flex-nowrap'); box.classList.add('flex-wrap');
-            btn.innerText = "Mode: Wrap (ON)";
-            btn.classList.add('bg-purple-600');
-        } else {
-            box.classList.remove('flex-wrap'); box.classList.add('flex-nowrap');
-            btn.innerText = "Mode: No Wrap";
-            btn.classList.remove('bg-purple-600');
-        }
-    }
-
-    /* --- 3. ORDER SIMULATOR --- */
-    function swapOrder(item) {
-        const el = document.getElementById('ord-'+item);
-        if(item===1) el.classList.toggle('order-last');
-        if(item===2) el.classList.toggle('order-first');
-    }
-    function resetOrder() {
-        [1,2,3].forEach(i => {
-            document.getElementById('ord-'+i).classList.remove('order-first', 'order-last');
+        items.forEach(item => {
+            item.className = `w-16 h-16 rounded flex items-center justify-center font-bold text-white mb-2 sim1-item ${mode==='flex'?'mb-0':''} ` + (item.innerHTML==='1'?'bg-purple-600':item.innerHTML==='2'?'bg-indigo-600':'bg-fuchsia-600');
         });
     }
 
-    /* --- 4. ACTIVITY LOGIC (LIVE PREVIEW) --- */
-    let currentConfig = {
-        layout: 'block',    // Default: Salah
-        justify: '',        // Default: Kosong
-        items: ''           // Default: Kosong
-    };
-
-    function selectOption(category, value, btn) {
-        if(activityCompleted) return;
-
-        // 1. Update State
-        currentConfig[category] = value;
-
-        // 2. Update Visual Tombol
-        const buttons = document.querySelectorAll(`.opt-btn-${category}`);
-        buttons.forEach(b => {
-            b.className = `opt-btn-${category} px-3 py-2 rounded bg-white/5 text-gray-400 border-white/5 border text-xs text-left font-mono transition hover:bg-white/10`;
-        });
-        btn.className = `opt-btn-${category} px-3 py-2 rounded bg-purple-600 text-white border-purple-500 border text-xs text-left font-mono transition shadow-[0_0_10px_#9333ea]`;
-
-        // 3. Update Preview
-        updatePreviewNavbar();
-    }
-
-    function updatePreviewNavbar() {
-        const navbar = document.getElementById('preview-navbar');
-        const consoleLog = document.getElementById('console-output');
-
-        // Reset & Apply
-        const baseClasses = "w-full bg-white rounded-lg p-4 shadow-xl min-h-[80px] transition-all duration-300";
-        navbar.className = `${baseClasses} ${currentConfig.layout} ${currentConfig.justify} ${currentConfig.items}`;
-
-        // Console Feedback
-        const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-        consoleLog.innerHTML += `<p>> [${time}] Applied: <span class="text-purple-400">${currentConfig.layout} ${currentConfig.justify} ${currentConfig.items}</span></p>`;
-        consoleLog.scrollTop = consoleLog.scrollHeight;
+    /* --- SIMULATOR 2: DIRECTION --- */
+    function updateSimDir(dir) {
+        const target = document.getElementById('sim2-target');
+        const code = document.getElementById('sim2-code');
         
-        // Activate Submit Button
-        const btn = document.getElementById('submitBtn');
-        btn.classList.remove('bg-white/10', 'text-white/50');
-        btn.classList.add('bg-purple-600', 'text-white', 'hover:bg-purple-500');
-    }
-
-    async function checkSolution() {
-        if(activityCompleted) return;
-
-        const btn = document.getElementById('submitBtn');
-        const consoleLog = document.getElementById('console-output');
-        const statusText = document.getElementById('status-text');
-
-        btn.innerText = "Memeriksa...";
-        btn.disabled = true;
-
-        // Validasi Jawaban
-        const isLayoutCorrect = currentConfig.layout === 'flex flex-row';
-        const isJustifyCorrect = currentConfig.justify === 'justify-between';
-        const isItemsCorrect = currentConfig.items === 'items-center';
-
-        await new Promise(r => setTimeout(r, 800)); // Simulasi
-
-        if (isLayoutCorrect && isJustifyCorrect && isItemsCorrect) {
-            // BENAR
-            consoleLog.innerHTML += `<p class="text-green-400 font-bold">> SYSTEM: SUCCESS! Layout Matches Target.</p>`;
-            statusText.innerText = "Sempurna!";
-            statusText.className = "text-[10px] text-green-400 font-bold";
-            
-            // Simpan ke Database
-            await saveActivityData();
-            
+        // Handle Wrap Mode vs Direction Mode
+        if(dir === 'flex-wrap') {
+             target.classList.toggle('flex-wrap');
+             code.innerText = target.classList.contains('flex-wrap') ? 'flex-row flex-wrap' : 'flex-row';
         } else {
-            // SALAH
-            consoleLog.innerHTML += `<p class="text-red-400 font-bold">> SYSTEM: ERROR. Layout Mismatch.</p>`;
-            
-            if(!isLayoutCorrect) consoleLog.innerHTML += `<p class="text-white/50 ml-2">- Hint: Layout harus horizontal (row).</p>`;
-            else if(!isJustifyCorrect) consoleLog.innerHTML += `<p class="text-white/50 ml-2">- Hint: Jarak elemen belum pas (between).</p>`;
-            else if(!isItemsCorrect) consoleLog.innerHTML += `<p class="text-white/50 ml-2">- Hint: Posisi vertikal belum tengah.</p>`;
-
-            consoleLog.scrollTop = consoleLog.scrollHeight;
-            btn.innerText = "Coba Lagi";
-            btn.disabled = false;
-            
-            btn.classList.add('shake');
-            setTimeout(() => btn.classList.remove('shake'), 500);
+             target.className = `flex ${dir} gap-2 transition-all duration-500 border border-dashed border-white/20 p-2 rounded w-full`;
+             code.innerText = dir;
         }
     }
 
-    async function saveActivityData() {
-        const btn = document.getElementById('submitBtn');
+    /* --- SIMULATOR 3: ALIGNMENT --- */
+    let alignState = { justify: 'justify-start', items: 'items-start' };
+    function updateSimAlign(type, val) {
+        const target = document.getElementById('sim3-target');
+        if(type === 'j') { alignState.justify = val; document.getElementById('sim3-label-j').innerText = val; }
+        if(type === 'i') { alignState.items = val; document.getElementById('sim3-label-i').innerText = val; }
+        
+        target.className = `bg-[#0f141e] p-4 rounded-xl border border-white/5 w-full flex h-48 relative z-10 transition-all duration-300 gap-2 ${alignState.justify} ${alignState.items}`;
+    }
+
+    /* --- REALTIME CODING (Lesson 33) --- */
+    let editor;
+    // Broken Navbar Code to Fix
+    const starterCode = `<nav class="bg-purple-900 text-white">
+  <div class="container mx-auto bg-purple-800">
+    
+    <div class="font-bold text-xl">BrandLogo</div>
+    
+    <div class="space-x-4">
+      <a href="#" class="hover:text-purple-300">Home</a>
+      <a href="#" class="hover:text-purple-300">About</a>
+    </div>
+
+    <button class="bg-white text-purple-900 px-4 py-2 rounded">Login</button>
+
+  </div>
+</nav>`;
+
+    function initMonaco() {
+        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                value: starterCode, language: 'html', theme: 'vs-dark', fontSize: 13,
+                minimap: { enabled: false }, automaticLayout: true, padding: { top: 16 }, lineNumbers: 'off'
+            });
+            updatePreview(starterCode);
+            editor.onDidChangeModelContent(() => {
+                if(activityCompleted) return;
+                const code = editor.getValue();
+                updatePreview(code);
+                validateCode(code);
+            });
+        });
+    }
+
+    function updatePreview(code) {
+        const frame = document.getElementById('previewFrame');
+        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: #f3f4f6; padding: 20px; font-family: sans-serif; }</style></head><body>${code}</body></html>`;
+        frame.srcdoc = content;
+    }
+
+    function validateCode(code) {
+        // Regex to check for flex utilities in the wrapper div
+        const flexCheck = /class="[^"]*\bflex\b[^"]*"/;
+        const justifyCheck = /class="[^"]*\bjustify-between\b[^"]*"/;
+        const alignCheck = /class="[^"]*\bitems-center\b[^"]*"/;
+        const paddingCheck = /class="[^"]*\bp-(4|6)\b[^"]*"/;
+
+        const checks = [
+            { id: 'check-flex', valid: flexCheck.test(code) },
+            { id: 'check-justify', valid: justifyCheck.test(code) },
+            { id: 'check-align', valid: alignCheck.test(code) },
+            { id: 'check-padding', valid: paddingCheck.test(code) }
+        ];
+
+        let passedCount = 0;
+        checks.forEach(check => {
+            const el = document.getElementById(check.id);
+            const dot = el.querySelector('span');
+            if (check.valid) {
+                el.classList.remove('text-white/50'); el.classList.add('text-emerald-400', 'font-bold');
+                dot.innerHTML = '✓'; dot.classList.add('bg-emerald-500', 'border-transparent', 'text-black');
+                passedCount++;
+            } else {
+                el.classList.add('text-white/50'); el.classList.remove('text-emerald-400', 'font-bold');
+                dot.innerHTML = ''; dot.classList.remove('bg-emerald-500', 'border-transparent', 'text-black');
+            }
+        });
+
+        document.getElementById('progressText').innerText = `${passedCount}/4 Selesai`;
+        const btn = document.getElementById('submitExerciseBtn');
+        if (passedCount === 4) {
+            btn.disabled = false; btn.classList.remove('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = `<span>Selesaikan Misi</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
+        } else {
+            btn.disabled = true; btn.classList.add('cursor-not-allowed', 'opacity-50');
+        }
+    }
+
+    function resetEditor() { if(editor && !activityCompleted) editor.setValue(starterCode); }
+
+    /* --- SYSTEM --- */
+    async function submitExercise() {
+        const btn = document.getElementById('submitExerciseBtn');
+        btn.innerHTML = "Menyimpan..."; btn.disabled = true;
         try {
-            await fetch('/activity/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ activity_id: 7, score: 100 }) });
-            await saveLessonToDB(QUIZ_LESSON_ID);
-            completedLessons.add(QUIZ_LESSON_ID);
-            activityCompleted = true;
-            updateProgressUI();
-            btn.innerHTML = "Tersimpan ✔";
-            btn.classList.remove('bg-purple-600', 'hover:bg-purple-500');
-            btn.classList.add('bg-green-600', 'cursor-default');
-            unlockNext();
-        } catch(e) { 
-            console.error(e); 
-            btn.innerText = "Gagal Simpan"; 
-            btn.disabled = false; 
+            await fetch('/activity/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) });
+            await saveLessonToDB(ACTIVITY_LESSON_ID); 
+            completedSet.add(ACTIVITY_LESSON_ID);
+            activityCompleted = true; updateProgressUI(); lockActivityUI(); unlockNextChapter(); 
+        } catch(e) { console.error(e); btn.innerHTML = "Gagal. Coba Lagi."; btn.disabled = false; }
+    }
+
+    function lockActivityUI() {
+        document.getElementById('lockOverlay').classList.remove('hidden');
+        if(editor) editor.updateOptions({ readOnly: true });
+        const btn = document.getElementById('submitExerciseBtn'); btn.innerText = "Terkunci"; btn.disabled = true;
+    }
+
+    function unlockNextChapter() {
+        const btn = document.getElementById('nextChapterBtn');
+        if(btn) {
+            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
+            btn.classList.add('text-purple-400', 'hover:text-purple-300', 'cursor-pointer');
+            document.getElementById('nextLabel').innerText = "Selanjutnya"; document.getElementById('nextLabel').classList.remove('opacity-50');
+            document.getElementById('nextIcon').innerHTML = "→"; document.getElementById('nextIcon').classList.add('bg-purple-500/20', 'border-purple-500/50');
+            btn.onclick = () => window.location.href = "{{ route('courses.grid') }}"; 
         }
     }
 
-    /* --- CORE SYSTEM --- */
     function updateProgressUI() {
-        const total = window.SUBBAB_LESSON_IDS.length;
-        const done = window.SUBBAB_LESSON_IDS.filter(id => completedLessons.has(id)).length;
-        let percent = Math.round((done / total) * 100);
-        if (done === total && !activityCompleted) percent = 90;
-        else if (done === total && activityCompleted) percent = 100;
-        ['topProgressBar', 'sideProgressBar'].forEach(id => { const el = document.getElementById(id); if(el) el.style.width = percent + '%'; });
-        ['progressLabelTop', 'progressLabelSide'].forEach(id => { const el = document.getElementById(id); if(el) el.innerText = percent + '%'; });
-        if (percent === 100) unlockNext();
+        const total = window.LESSON_IDS.length; 
+        const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length; 
+        const percent = Math.round((done / total) * 100);
+        document.getElementById('topProgressBar').style.width = percent + '%'; 
+        document.getElementById('progressLabelTop').innerText = percent + '%';
+        if(percent === 100) unlockNextChapter();
     }
 
     function initLessonObserver() {
@@ -610,9 +641,8 @@
             for (const entry of entries) {
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
-                    const isManual = entry.target.getAttribute('data-manual') === 'true';
-                    if (id && !isManual && !completedLessons.has(id)) {
-                        try { await saveLessonToDB(id); completedLessons.add(id); updateProgressUI(); } catch (e) {}
+                    if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
+                        try { await saveLessonToDB(id); completedSet.add(id); updateProgressUI(); } catch(e) {}
                     }
                 }
             }
@@ -620,53 +650,26 @@
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
 
-    async function saveLessonToDB(id) {
-        const form = new FormData(); form.append('lesson_id', id);
-        await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: form });
-    }
+    async function saveLessonToDB(id) { await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: new URLSearchParams({ lesson_id: id }) }); }
 
-    function unlockNext() {
-        const icon = document.querySelector('.sb-group.open .icon-status');
-        if(icon) { icon.innerHTML = '✔'; icon.className = 'icon-status w-6 h-6 rounded-lg border flex items-center justify-center transition-colors bg-purple-500/20 text-purple-400 border-purple-500/20'; }
-        const btn = document.getElementById('nextChapterBtn');
-        if(btn) {
-            btn.className = "group flex items-center gap-3 text-right text-purple-400 hover:text-purple-300 transition cursor-pointer";
-            btn.innerHTML = `<div class="text-right"><div class="text-[10px] uppercase tracking-widest opacity-50">Selanjutnya</div><div class="font-bold text-sm">Grid Layout</div></div><div class="w-10 h-10 rounded-full border border-purple-500/30 bg-purple-500/10 flex items-center justify-center">→</div>`;
-            btn.onclick = () => window.location.href = "{{ route('courses.grid') }}"; 
-        }
-    }
-
-    function initVisualEffects() { 
-        const c=document.getElementById('stars'),x=c.getContext('2d');
-        let s=[]; function r(){c.width=innerWidth;c.height=innerHeight}
-        r();window.onresize=r;
-        for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});
-        (function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.4)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a);})();
-        $(window).on('mousemove',e=>{ $('#cursor-glow').css({left:e.clientX,top:e.clientY}); });
-    }
-    
-    function initSidebarScroll() {
-        const main = document.getElementById('mainScroll');
-        const links = document.querySelectorAll('.accordion-content .nav-item');
-        main.addEventListener('scroll', () => {
-            let current = '';
-            document.querySelectorAll('.lesson-section').forEach(sec => { if (main.scrollTop >= sec.offsetTop - 250) current = '#' + sec.id; });
-            links.forEach(link => { link.classList.remove('active'); if(link.getAttribute('data-target') === current) link.classList.add('active'); });
-        });
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                const target = document.querySelector(link.getAttribute('data-target'));
-                if(target) main.scrollTo({ top: target.offsetTop - 120, behavior: 'smooth' });
+    function initScrollSpy() {
+        const mainScroll = document.getElementById('mainScroll'); const sections = document.querySelectorAll('.lesson-section'); const navLinks = document.querySelectorAll('.sidebar-nav-link');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = '#' + entry.target.id;
+                    navLinks.forEach(link => {
+                        const dot = link.querySelector('.dot-indicator'); if(!dot) return;
+                        link.classList.remove('bg-white/5'); dot.classList.remove('bg-purple-500', 'shadow-[0_0_8px_#a855f7]', 'scale-125'); dot.classList.add('bg-slate-600');
+                        if (link.dataset.target === id) { link.classList.add('bg-white/5'); dot.classList.remove('bg-slate-600'); dot.classList.add('bg-purple-500', 'shadow-[0_0_8px_#a855f7]', 'scale-125'); }
+                    });
+                }
             });
-        });
+        }, { root: mainScroll, rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+        sections.forEach(section => observer.observe(section));
     }
-    
-    function toggleAccordion(id) {
-        const el = document.getElementById(id);
-        const group = el.closest('.accordion-group');
-        const arrow = document.getElementById(id.replace('content', 'arrow'));
-        if(el.style.maxHeight){ el.style.maxHeight=null; group.classList.remove('open'); if(arrow) arrow.style.transform='rotate(0deg)'; }
-        else{ el.style.maxHeight=el.scrollHeight+"px"; group.classList.add('open'); if(arrow) arrow.style.transform='rotate(180deg)'; }
-    }
+
+    function initSidebarScroll(){const m=document.getElementById('mainScroll');const l=document.querySelectorAll('.accordion-content .nav-item');m.addEventListener('scroll',()=>{let c='';document.querySelectorAll('.lesson-section').forEach(s=>{if(m.scrollTop>=s.offsetTop-250)c='#'+s.id;});l.forEach(k=>{k.classList.remove('active');if(k.getAttribute('data-target')===c)k.classList.add('active')})});l.forEach(k=>k.addEventListener('click',(e)=>{const t=document.querySelector(k.getAttribute('data-target'));if(t)m.scrollTo({top:t.offsetTop-120,behavior:'smooth'})}));}
+    function initVisualEffects(){const c=document.getElementById('stars'),x=c.getContext('2d');function r(){c.width=innerWidth;c.height=innerHeight}r();window.onresize=r;let s=[];for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});(function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.3)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a)})();$(window).on('mousemove',e=>{$('#cursor-glow').css({left:e.clientX,top:e.clientY})});}
 </script>
 @endsection

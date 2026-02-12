@@ -2,7 +2,8 @@
 @section('title','Bab 1.3 · Architecture & JIT Engine')
 
 @section('content')
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30">
+{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30"> --}}
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-50"></div>
@@ -13,25 +14,8 @@
         <div id="cursor-glow"></div>
     </div>
 
-    <nav id="navbar" class="h-[74px] w-full bg-[#020617]/10 backdrop-blur-xl border-b border-white/5 shrink-0 z-50 flex items-center justify-between px-6 lg:px-8 transition-all duration-500 relative">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center font-extrabold text-black shadow-xl">TW</div>
-            <span class="font-semibold tracking-wide text-lg">TailwindLearn</span>
-        </div>
-        <div class="hidden md:flex gap-10 text-sm font-medium">
-            <a href="{{ route('landing') }}" class="nav-link opacity-70 hover:opacity-100 transition">Beranda</a>
-            <span class="nav-link active cursor-default">Course</span> 
-            <a href="{{ route('dashboard') }}" class="nav-link opacity-70 hover:opacity-100 transition">Dashboard</a>
-            <a href="{{ route('sandbox') }}" class="nav-link opacity-70 hover:opacity-100 transition">Sandbox</a>
-        </div>
-        <div class="flex gap-3 items-center">
-            <span class="text-white/70 text-sm hidden sm:block">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="cta-main px-6 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-sm font-semibold shadow-xl hover:scale-105 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+               @include('layouts.partials.navbar')
+
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
@@ -290,9 +274,9 @@
 
                                     <div class="p-4 bg-[#0f141e] border-t border-white/5">
                                         <div class="text-[11px] font-mono text-white/50 mb-3 flex flex-col gap-1" id="validation-list">
-                                            <div id="chk-w">❌ Lebar harus tepat 327px (w-[327px])</div>
-                                            <div id="chk-h">❌ Tinggi harus tepat 200px (h-[200px])</div>
-                                            <div id="chk-bg">❌ Warna Hex harus #5b21b6 (bg-[#5b21b6])</div>
+                                            <div id="chk-w">❌ Lebar ( Width )harus tepat 327px </div>
+                                            <div id="chk-h">❌ Tinggi ( Height ) harus tepat 200px </div>
+                                            <div id="chk-bg">❌ Warna ( Background ) Hex harus #5b21b6 </div>
                                         </div>
                                         <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2">
                                             <span>Validasi Kode JIT</span>

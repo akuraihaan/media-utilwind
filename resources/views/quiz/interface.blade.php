@@ -1,344 +1,389 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Evaluasi Bab {{ $chapterId }} · TailwindLearn</title>
+    <title>Ujian Bab {{ $chapterId }} | Utilwind CBT</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 10px; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        .no-select { -webkit-user-select: none; user-select: none; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .glass-panel { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* THEME: Glassmorphism Consistent with Intro */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
         
-        .q-card { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease-out; }
-        .q-card.active { display: block; opacity: 1; transform: translateY(0); }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Radio Button Logic (Neon Glow Effect) */
+        .option-input:checked + .option-card {
+            border-color: #d946ef; /* Fuchsia-500 */
+            background: linear-gradient(to right, rgba(217, 70, 239, 0.1), rgba(168, 85, 247, 0.05));
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.1);
+        }
+        .option-input:checked + .option-card .option-circle {
+            background: linear-gradient(135deg, #d946ef, #a855f7);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.3);
+        }
         
-        /* Radio Button Logic */
-        input:checked + div { border-color: #d946ef; background: linear-gradient(to right, rgba(217, 70, 239, 0.1), transparent); }
-        input:checked + div .indicator { transform: scale(1); }
-        input:checked + div .opt-text { color: #fff; font-weight: 600; }
-        
-        .nav-btn.active { border-color: #d946ef; color: white; background: rgba(217, 70, 239, 0.1); }
-        .nav-btn.answered { background: #d946ef; color: white; border-color: #d946ef; }
+        .no-select { user-select: none; -webkit-user-select: none; }
     </style>
 </head>
-<body class="bg-[#020617] text-white h-screen flex flex-col overflow-hidden no-select selection:bg-fuchsia-500/30">
+<body class="bg-[#020617] text-white h-screen flex flex-col overflow-hidden selection:bg-fuchsia-500/30 no-select" 
+      x-data="cbtApp()" x-init="initCBT()" oncontextmenu="return false;">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-fuchsia-900/20 via-[#020617] to-[#020617]"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
     </div>
 
-    <header class="h-20 glass flex items-center justify-between px-6 lg:px-10 shrink-0 z-50">
-        <div class="flex items-center gap-5">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-600 to-purple-600 flex items-center justify-center font-black text-lg shadow-lg shadow-purple-500/20">Q</div>
+    <div x-show="isBlurred" 
+         class="fixed inset-0 z-[100] bg-[#020617]/95 backdrop-blur-2xl flex flex-col items-center justify-center text-center p-8 transition-opacity duration-300"
+         style="display: none;"
+         x-transition.opacity>
+        <div class="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6 ring-1 ring-red-500/50 animate-pulse">
+            <svg class="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2 tracking-widest uppercase">Fokus Terganggu</h2>
+        <p class="text-white/50 max-w-md">
+            Sistem mendeteksi Anda meninggalkan halaman ujian. <br>Kembali fokus mengerjakan soal sekarang.
+        </p>
+        <button @click="isBlurred = false" class="mt-8 px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-900/40">
+            KEMBALI KE UJIAN
+        </button>
+    </div>
+
+    <header class="h-16 glass-panel fixed top-0 w-full z-50 flex items-center justify-between px-4 lg:px-8">
+        
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2.5">
+                
+            </div>
+
+
             <div>
-                <h1 class="font-bold text-lg tracking-wide text-white">Evaluasi Bab {{ $chapterId }}</h1>
-                <div class="flex items-center gap-2 text-xs text-white/40">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Auto-Save Aktif</span>
+                <h2 class="text-xs font-bold text-white/80 uppercase tracking-wider">Bab {{ $chapterId }}</h2>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-[10px] text-emerald-400 font-bold tracking-wider">Evaluasi</span>
                 </div>
             </div>
         </div>
 
-        <div class="flex items-center gap-4 bg-[#0f172a]/80 border border-white/10 px-5 py-2.5 rounded-full shadow-2xl relative overflow-hidden group">
-            <div class="absolute inset-0 bg-red-500/10 w-0 transition-all duration-1000" id="timer-progress"></div>
-            <div class="relative flex items-center gap-3 z-10">
-                <span class="text-[10px] uppercase text-red-400 font-bold tracking-widest mb-0.5">Sisa Waktu</span>
-                <span id="timer" class="text-xl font-mono font-bold text-white tracking-widest">--:--</span>
+        <div class="absolute left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center group cursor-default">
+            <span class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-bold mb-1 group-hover:text-fuchsia-400 transition-colors">Sisa Waktu</span>
+            <div class="font-mono text-2xl font-bold tracking-tight transition-all duration-300 tabular-nums drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" 
+                 :class="timeLeft < 300 ? 'text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.6)] animate-pulse scale-110' : 'text-white'"
+                 x-text="formatTime(timeLeft)">
+                --:--
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+                <div class="text-xs font-bold text-white">{{ Auth::user()->name }}</div>
+                <div class="text-[10px] text-white/40">Peserta #{{ Auth::id() }}</div>
+            </div>
+            <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-bold text-fuchsia-400 ring-2 ring-white/5 shadow-inner">
+                {{ substr(Auth::user()->name, 0, 1) }}
             </div>
         </div>
     </header>
 
-    <div class="flex flex-1 overflow-hidden">
+    <div class="pt-16 h-full flex flex-col lg:flex-row">
         
-        <aside class="w-80 glass border-r-0 border-r border-white/5 p-6 hidden lg:flex flex-col z-40">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xs font-bold text-white/40 uppercase tracking-widest">Peta Soal</h3>
-                <span class="text-xs text-fuchsia-400 font-mono bg-fuchsia-500/10 px-2 py-1 rounded" id="answered-count">0/{{ $questions->count() }}</span>
-            </div>
+        <main class="flex-1 h-full overflow-y-auto custom-scrollbar relative flex flex-col">
             
-            <div class="grid grid-cols-5 gap-3 content-start">
-                @foreach($questions as $index => $q)
-                    <button onclick="jumpTo({{ $index }})" id="nav-btn-{{ $index }}" 
-                        class="nav-btn h-12 w-full rounded-lg border border-white/10 hover:border-white/30 hover:bg-white/5 transition flex items-center justify-center text-sm font-bold text-white/40 relative group">
-                        {{ $index + 1 }}
-                    </button>
-                @endforeach
+            <div class="h-0.5 w-full bg-white/5 lg:hidden">
+                <div class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 transition-all duration-300" :style="`width: ${(currentIndex + 1) / questions.length * 100}%`"></div>
             </div>
-            
-            <div class="mt-auto pt-6 border-t border-white/10">
-                <button onclick="confirmSubmit()" class="w-full py-3.5 rounded-xl bg-white text-black font-bold text-sm shadow-lg hover:bg-gray-200 transition active:scale-95 flex items-center justify-center gap-2">
-                    <span>Selesai & Kumpulkan</span>
-                </button>
-            </div>
-        </aside>
 
-        <main class="flex-1 relative overflow-y-auto custom-scrollbar p-6 lg:p-12 flex flex-col items-center">
-            
-            <div class="w-full max-w-4xl mb-8">
-                <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="h-full bg-gradient-to-r from-fuchsia-500 to-purple-500 w-0 transition-all duration-500 shadow-[0_0_10px_#d946ef]"></div>
+            <div class="flex-1 max-w-5xl mx-auto w-full p-6 lg:p-10 pb-32">
+                
+                <div x-show="!ready" class="h-64 flex flex-col items-center justify-center text-white/30 animate-pulse">
+                    <div class="w-12 h-12 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_rgba(217,70,239,0.3)]"></div>
+                    <span class="text-xs font-bold tracking-widest uppercase">Memuat Lembar Soal...</span>
+                </div>
+
+                <div x-show="ready" x-transition.opacity.duration.300ms>
+                    
+                    <div class="flex justify-between items-end mb-8 border-b border-white/5 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-5xl font-black text-white/10 select-none">Q<span x-text="currentIndex + 1"></span></span>
+                            <div class="h-8 w-px bg-white/10"></div>
+                            <span class="text-xs font-bold text-white/40 uppercase tracking-wider">Single Choice</span>
+                        </div>
+                        
+                        <div class="lg:hidden glass-card px-3 py-1.5 rounded-lg font-mono text-sm font-bold text-white/80">
+                            <span x-text="formatTime(timeLeft)"></span>
+                        </div>
+                    </div>
+
+                    <div class="text-lg md:text-xl leading-loose text-white/90 font-medium mb-10 tracking-wide">
+                        <span x-html="currentQuestion.question_text"></span>
+                    </div>
+
+                    <div class="grid gap-3">
+                        <template x-for="(option, idx) in currentQuestion.options" :key="option.id">
+                            <label class="block relative cursor-pointer group">
+                                <input type="radio" 
+                                       :name="'q_' + currentQuestion.id" 
+                                       class="option-input hidden"
+                                       :value="option.id"
+                                       :checked="answers[currentQuestion.id] == option.id"
+                                       @change="selectAnswer(currentQuestion.id, option.id)">
+                                
+                                <div class="option-card p-5 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-200 flex items-start gap-5 group-hover:shadow-lg">
+                                    <div class="option-circle w-8 h-8 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-sm font-bold text-white/40 shrink-0 mt-0.5 transition-all duration-300">
+                                        <span x-text="String.fromCharCode(65 + idx)"></span>
+                                    </div>
+                                    <div class="text-base text-white/70 group-hover:text-white transition-colors pt-1 leading-relaxed">
+                                        <span x-text="option.option_text"></span>
+                                    </div>
+                                </div>
+                            </label>
+                        </template>
+                    </div>
+
                 </div>
             </div>
 
-            <div class="w-full max-w-4xl flex-1 flex flex-col justify-center pb-20">
-                @foreach($questions as $index => $q)
-                    <div id="q-card-{{ $index }}" class="q-card {{ $index === 0 ? 'active' : '' }}">
-                        <div class="mb-10">
-                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-300 text-xs font-bold mb-6 border border-fuchsia-500/20">
-                                <span>No. {{ $index + 1 }}</span>
-                            </span>
-                            <h2 class="text-2xl lg:text-3xl font-bold leading-relaxed text-gray-100 selection:bg-fuchsia-500/40">
-                                {{ $q->question_text }}
-                            </h2>
-                        </div>
-
-                        <div class="space-y-4">
-                            @foreach($q->options as $opt)
-                                <label class="cursor-pointer block relative group">
-                                    <input type="radio" name="q_{{ $q->id }}" value="{{ $opt->id }}" class="hidden" 
-                                           onchange="saveAnswer({{ $index }}, {{ $q->id }}, {{ $opt->id }})">
-                                    
-                                    <div class="glass-panel flex items-center p-5 rounded-2xl hover:bg-white/5 transition-all duration-300 group-hover:border-white/20">
-                                        <div class="w-6 h-6 rounded-full border-2 border-white/20 mr-5 flex items-center justify-center shrink-0 transition-colors group-hover:border-white/40">
-                                            <div class="indicator w-3 h-3 rounded-full bg-fuchsia-500 scale-0 transition-transform duration-200"></div>
-                                        </div>
-                                        <span class="opt-text text-base text-gray-400 transition-colors leading-snug">
-                                            {{ $opt->option_text }}
-                                        </span>
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="fixed bottom-0 left-0 lg:left-80 right-0 p-6 bg-gradient-to-t from-[#020617] to-transparent z-40 flex justify-center pointer-events-none">
-                <div class="w-full max-w-4xl flex justify-between items-center pointer-events-auto">
-                    <button onclick="prevQuestion()" id="btn-prev" class="px-6 py-3 rounded-xl glass text-white/50 hover:text-white hover:bg-white/10 transition disabled:opacity-0 disabled:cursor-not-allowed flex items-center gap-2 backdrop-blur-xl">
-                        <span>Sebelumnya</span>
+            <div class="glass-panel p-4 lg:px-8 absolute bottom-0 w-full z-20">
+                <div class="max-w-5xl mx-auto flex items-center justify-between">
+                    
+                    <button @click="prevQuestion()" 
+                            :disabled="currentIndex === 0"
+                            class="px-5 py-2.5 rounded-xl border border-white/10 text-white/50 hover:bg-white/5 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium text-sm group">
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        <span class="hidden sm:inline">Sebelumnya</span>
                     </button>
-                    <button onclick="nextQuestion()" id="btn-next" class="px-8 py-3 rounded-xl bg-fuchsia-600 text-white font-bold hover:bg-fuchsia-500 transition shadow-[0_0_30px_rgba(192,38,211,0.3)] flex items-center gap-2 backdrop-blur-xl">
-                        <span>Selanjutnya</span>
+
+                    <button @click="toggleFlag(currentQuestion.id)"
+                            class="group px-6 py-2.5 rounded-xl border transition-all flex items-center gap-2.5 font-bold text-sm"
+                            :class="flags[currentQuestion.id] 
+                                ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]' 
+                                : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'">
+                        <div class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
+                             :class="flags[currentQuestion.id] ? 'border-amber-400 bg-amber-400 text-black' : 'border-white/30'">
+                             <svg x-show="flags[currentQuestion.id]" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <span>Ragu-ragu</span>
                     </button>
+
+                    <template x-if="currentIndex < questions.length - 1">
+                        <button @click="nextQuestion()" 
+                                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-purple-900/30 transition-all flex items-center gap-2 font-bold text-sm group">
+                            <span class="hidden sm:inline">Selanjutnya</span>
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </template>
+                    
+                    <template x-if="currentIndex === questions.length - 1">
+                        <button @click="confirmSubmit()" 
+                                class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2 font-bold text-sm animate-pulse">
+                            <span>Kumpulkan</span>
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </button>
+                    </template>
+
                 </div>
             </div>
         </main>
+
+        <aside class="w-full lg:w-[320px] glass-panel border-l-0 lg:border-l border-white/5 flex flex-col shrink-0 lg:h-full z-30 shadow-2xl">
+            
+            <div class="p-5 border-b border-white/5 bg-white/[0.02]">
+                <h3 class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-4">Navigasi Soal</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center gap-2 px-3 py-2 bg-white/5 rounded border border-white/5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span> 
+                        <span class="text-[10px] text-white/70 font-bold">DIJAWAB</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-2 bg-white/5 rounded border border-white/5">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_#f59e0b]"></span> 
+                        <span class="text-[10px] text-white/70 font-bold">RAGU</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
+                <div class="grid grid-cols-5 gap-2">
+                    <template x-for="(q, index) in questions" :key="q.id">
+                        <button @click="goToQuestion(index)"
+                            class="relative w-full aspect-square rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center shadow-sm"
+                            :class="{
+                                'bg-fuchsia-600 text-white ring-2 ring-fuchsia-400 ring-offset-2 ring-offset-[#020617] z-10 scale-105': currentIndex === index,
+                                'bg-amber-500/20 text-amber-400 border border-amber-500/50 hover:bg-amber-500/30': flags[q.id] && currentIndex !== index,
+                                'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500/30': answers[q.id] && !flags[q.id] && currentIndex !== index,
+                                'bg-white/5 text-white/30 border border-white/5 hover:bg-white/10 hover:text-white/60': !answers[q.id] && !flags[q.id] && currentIndex !== index
+                            }">
+                            <span x-text="index + 1"></span>
+                            <div x-show="flags[q.id]" class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_4px_#fbbf24]"></div>
+                        </button>
+                    </template>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-white/5 bg-white/[0.02] text-center">
+                 <div class="flex items-center justify-center gap-2 text-[10px] text-red-400/80 font-bold tracking-widest uppercase bg-red-500/5 py-2 rounded border border-red-500/20">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m0 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Akses Keluar Dikunci
+                </div>
+            </div>
+        </aside>
+
     </div>
 
-    <div id="loadingModal" class="fixed inset-0 z-[110] bg-[#020617]/90 flex flex-col items-center justify-center hidden backdrop-blur-sm">
-        <div class="w-16 h-16 border-4 border-fuchsia-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-white font-bold animate-pulse" id="loading-text">Menyimpan Jawaban...</p>
-        <p class="text-white/40 text-xs mt-2" id="error-details" style="display:none;"></p>
-        <button onclick="closeLoading()" id="close-error-btn" class="mt-4 px-4 py-2 bg-white/10 rounded hidden">Tutup</button>
-    </div>
-
-</body>
-
-<script>
-    // --- 1. CONFIGURATION ---
-    const TOTAL_Q = {{ $questions->count() }};
-    const ATTEMPT_ID = {{ $attemptId }};
-    const USER_ID = {{ Auth::id() }};
-    const STORAGE_KEY = `quiz_draft_${ATTEMPT_ID}_${USER_ID}`;
-    
-    let remainingSeconds = parseInt("{{ $remainingSeconds }}", 10); 
-    let currentIndex = 0;
-    let answers = {}; 
-    let timerInterval;
-    let isSubmitting = false;
-
-    $(document).ready(() => {
-        // A. Load Draft from LocalStorage
-        loadDraft();
-        
-        startTimer();
-        updateUI();
-        preventNavigation();
-    });
-
-    // --- 2. LOCAL STORAGE LOGIC (AUTO SAVE) ---
-    function loadDraft() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                answers = JSON.parse(saved);
+    <script>
+        function cbtApp() {
+            return {
+                questions: @json($questions),
+                savedAnswers: @json($savedAnswers),
+                timeLeft: Math.floor({{ $remainingSeconds }}), 
+                attemptId: {{ $attemptId }},
                 
-                // Restore UI based on loaded answers
-                $.each(answers, function(qId, optId) {
-                    // Find the radio button and check it
-                    $(`input[name="q_${qId}"][value="${optId}"]`).prop('checked', true);
+                currentIndex: 0,
+                answers: {},
+                flags: {},
+                ready: false,
+                isBlurred: false,
+                timerInterval: null,
+
+                get currentQuestion() { return this.questions[this.currentIndex]; },
+
+                initCBT() {
+                    // 1. Restore Data
+                    Object.values(this.savedAnswers).forEach(record => {
+                        if (record.quiz_option_id) this.answers[record.quiz_question_id] = record.quiz_option_id;
+                        if (record.is_flagged) this.flags[record.quiz_question_id] = true;
+                    });
+
+                    this.ready = true;
+                    this.startTimer();
+                    this.activateStrictMode();
+                },
+
+                formatTime(seconds) {
+                    if (seconds < 0) seconds = 0;
+                    const m = Math.floor(seconds / 60);
+                    const s = seconds % 60;
+                    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                },
+
+                startTimer() {
+                    this.timerInterval = setInterval(() => {
+                        if (this.timeLeft > 0) this.timeLeft--;
+                        else this.timeOut();
+                    }, 1000);
+                },
+
+                nextQuestion() { if (this.currentIndex < this.questions.length - 1) this.currentIndex++; },
+                prevQuestion() { if (this.currentIndex > 0) this.currentIndex--; },
+                goToQuestion(index) { this.currentIndex = index; },
+                
+                selectAnswer(qId, oId) {
+                    this.answers[qId] = oId;
+                    this.saveToDb(qId, oId, this.flags[qId] || false);
+                },
+
+                toggleFlag(qId) {
+                    if (this.flags[qId]) {
+                        delete this.flags[qId];
+                        this.saveToDb(qId, this.answers[qId] || null, false);
+                    } else {
+                        this.flags[qId] = true;
+                        this.saveToDb(qId, this.answers[qId] || null, true);
+                    }
+                },
+
+                saveToDb(qId, oId, isFlagged) {
+                    fetch("{{ route('quiz.save-progress') }}", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
+                        body: JSON.stringify({ attempt_id: this.attemptId, question_id: qId, option_id: oId, is_flagged: isFlagged ? 1 : 0 })
+                    }).catch(e => {});
+                },
+
+                confirmSubmit() {
+                    if(confirm("Apakah Anda yakin ingin mengumpulkan jawaban dan mengakhiri ujian?")) {
+                        this.submitQuiz();
+                    }
+                },
+
+                submitQuiz() {
+                    this.disableStrictMode();
+                    document.body.innerHTML += `<div class="fixed inset-0 z-[200] bg-[#020617]/95 flex flex-col items-center justify-center text-white"><div class="w-16 h-16 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_#d946ef]"></div><h2 class="text-xl font-bold tracking-widest uppercase">Menyimpan Jawaban...</h2></div>`;
                     
-                    // Find which index this question belongs to (for sidebar highlighting)
-                    // Note: This assumes simple looping. If random, might need more robust logic.
-                    // But visual update based on `answers` keys is enough for sidebar.
-                });
-                
-                // Refresh Sidebar Visuals
-                refreshSidebarStatus();
-                
-            } catch (e) {
-                console.error("Gagal memuat draft", e);
+                    fetch("{{ route('quiz.submit') }}", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
+                        body: JSON.stringify({ attempt_id: this.attemptId, time_spent: ({{ $remainingSeconds }} - this.timeLeft) })
+                    }).then(res => res.json()).then(data => {
+                        window.location.href = data.redirect;
+                    });
+                },
+
+                timeOut() {
+                    clearInterval(this.timerInterval);
+                    alert("WAKTU HABIS! Sistem mengumpulkan jawaban otomatis.");
+                    this.submitQuiz();
+                },
+
+                // === STRICT SECURITY ===
+                activateStrictMode() {
+                    // Anti-Back Button
+                    history.pushState(null, null, location.href);
+                    window.onpopstate = () => history.go(1);
+
+                    // Anti-Refresh/Close
+                    window.onbeforeunload = (e) => {
+                        e.preventDefault();
+                        return "Ujian sedang berlangsung!";
+                    };
+
+                    // Anti-Switch Tab
+                    document.addEventListener("visibilitychange", () => {
+                        if (document.hidden) {
+                            this.isBlurred = true;
+                            document.title = "⚠️ KEMBALI SEGERA!";
+                        } else {
+                            document.title = "Ujian Bab {{ $chapterId }}";
+                        }
+                    });
+
+                    // Anti-Context Menu & Keys
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) e.preventDefault();
+                    });
+                },
+
+                disableStrictMode() {
+                    window.onbeforeunload = null;
+                }
             }
         }
-    }
-
-    function saveToDraft() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-    }
-
-    function clearDraft() {
-        localStorage.removeItem(STORAGE_KEY);
-    }
-
-    function refreshSidebarStatus() {
-        // Iterate all questions to see if they are in answers object
-        for(let i=0; i < TOTAL_Q; i++) {
-            // Check if input inside q-card-i is checked
-            let isAnswered = $(`#q-card-${i} input:checked`).length > 0;
-            if(isAnswered) {
-                $(`#nav-btn-${i}`).addClass('answered').removeClass('text-white/40');
-            }
-        }
-        
-        let count = Object.keys(answers).length;
-        $('#answered-count').text(`${count}/${TOTAL_Q}`);
-        let pct = (count / TOTAL_Q) * 100;
-        $('#progress-bar').css('width', `${pct}%`);
-    }
-
-    // --- 3. LOGIC UTAMA ---
-    function startTimer() {
-        updateTimerDisplay();
-        timerInterval = setInterval(() => {
-            remainingSeconds--;
-            updateTimerDisplay();
-            if (remainingSeconds <= 0) {
-                clearInterval(timerInterval);
-                submitQuiz(true);
-            }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        let secureSeconds = Math.max(0, remainingSeconds);
-        let m = Math.floor(secureSeconds / 60).toString().padStart(2, '0');
-        let s = (secureSeconds % 60).toString().padStart(2, '0');
-        $('#timer').text(`${m}:${s}`);
-        if (secureSeconds < 60) {
-            $('#timer').addClass('text-red-500 animate-pulse');
-            $('#timer-progress').addClass('bg-red-500/20 w-full');
-        }
-    }
-
-    function showQuestion(idx) {
-        $('.q-card').removeClass('active');
-        setTimeout(() => { $(`#q-card-${idx}`).addClass('active'); }, 50);
-        currentIndex = idx;
-        updateUI();
-    }
-
-    function nextQuestion() {
-        if (currentIndex < TOTAL_Q - 1) showQuestion(currentIndex + 1);
-        else submitQuiz(false); // Confirm first
-    }
-
-    function prevQuestion() {
-        if (currentIndex > 0) showQuestion(currentIndex - 1);
-    }
-
-    function jumpTo(idx) { showQuestion(idx); }
-
-    function updateUI() {
-        $('#btn-prev').prop('disabled', currentIndex === 0).toggleClass('opacity-0', currentIndex === 0);
-        
-        if (currentIndex === TOTAL_Q - 1) {
-            $('#btn-next').html('<span>Selesai</span>').removeClass('bg-fuchsia-600').addClass('bg-white text-black hover:bg-gray-200');
-        } else {
-            $('#btn-next').html('<span>Selanjutnya</span>').addClass('bg-fuchsia-600').removeClass('bg-white text-black hover:bg-gray-200');
-        }
-
-        $('.nav-btn').removeClass('active');
-        $(`#nav-btn-${currentIndex}`).addClass('active');
-    }
-
-    // --- 4. SAVE ANSWER ---
-    window.saveAnswer = function(idx, qId, optId) {
-        answers[qId] = optId; // Update Memory
-        saveToDraft(); // Update LocalStorage
-        
-        // Update Visuals
-        $(`#nav-btn-${idx}`).addClass('answered').removeClass('text-white/40');
-        refreshSidebarStatus();
-    }
-
-    // --- 5. SUBMIT & ERROR HANDLING ---
-    window.confirmSubmit = function() {
-        if(confirm("Yakin ingin mengumpulkan jawaban?")) {
-            submitQuiz();
-        }
-    }
-
-    window.submitQuiz = function(force = false) {
-        isSubmitting = true;
-        clearInterval(timerInterval);
-        
-        $('#loadingModal').fadeIn(200).css('display', 'flex');
-        $('#loading-text').text("Mengirim ke Server...");
-        $('#error-details').hide();
-        $('#close-error-btn').hide();
-
-        let totalDuration = 20 * 60; 
-        let timeSpent = totalDuration - remainingSeconds;
-
-        $.ajax({
-            url: "{{ route('quiz.submit') }}",
-            method: "POST",
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                attempt_id: ATTEMPT_ID,
-                answers: answers,
-                time_spent: timeSpent
-            },
-            success: function(res) {
-                clearDraft(); // Hapus draft jika sukses
-                window.location.href = res.redirect;
-            },
-            error: function(xhr, status, error) {
-                isSubmitting = false; // Allow exit to try again
-                console.error("Submit Error:", xhr.responseText);
-                
-                // Tampilkan Error di Modal
-                $('#loading-text').text("Gagal Mengirim!").addClass('text-red-500');
-                $('#error-details').text("Error: " + xhr.status + " - " + error).show();
-                $('#close-error-btn').show();
-                
-                startTimer(); // Lanjutkan timer agar user tidak panik
-            }
-        });
-    }
-
-    window.closeLoading = function() {
-        $('#loadingModal').fadeOut();
-    }
-
-    function preventNavigation() {
-        history.pushState(null, null, location.href);
-        window.onpopstate = function () { history.go(1); };
-        window.onbeforeunload = function() {
-            if (!isSubmitting) return "Jawaban belum dikirim!";
-        };
-    }
-</script>
+    </script>
+</body>
 </html>

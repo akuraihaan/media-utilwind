@@ -3,186 +3,161 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-
-// Models
+use Illuminate\Support\Facades\DB;
 use App\Models\UserLessonProgress;
 use App\Models\CourseLesson;
+use App\Models\Lab;
+use App\Models\LabHistory;
 use App\Models\QuizAttempt;
 
 class DashboardController extends Controller
 {
-    /**
-     * HALAMAN UTAMA DASHBOARD
-     * Mengirim data statistik utama dan riwayat kuis ke Blade.
-     */
     public function index()
     {
         $userId = Auth::id();
 
-        // 1. STATISTIK MATERI (LESSON)
-        $totalLessons = DB::table('course_lessons')->count();
-        $lessonsCompleted = DB::table('user_lesson_progress')
-            ->where('user_id', $userId)
-            ->count();
-
-        // 2. STATISTIK KUIS (EVALUASI)
-        $quizzes = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at') // Hanya yang sudah selesai
-            ->get();
-
-        $quizAverage = $quizzes->avg('score') ?? 0;
-        $quizzesCompleted = $quizzes->count(); // Total kali mencoba
-        
-        // Menghitung jumlah bab unik yang sudah lulus (misal KKM 70)
-        $chaptersPassed = $quizzes->where('score', '>=', 70)->unique('chapter_id')->count();
-
-        // 3. DATA GRAFIK NILAI KUIS (Untuk Chart.js di Blade)
-        // Kita ambil nilai terbaik per bab atau riwayat urut waktu
-        $chartAttempts = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at')
-            ->orderBy('created_at', 'asc') // Urutkan dari yang pertama dikerjakan
-            ->take(10) // Ambil 10 terakhir agar grafik tidak kepanjangan
-            ->get();
-
-        $chartData = [
-            'labels' => $chartAttempts->map(function($attempt) {
-                return 'Bab ' . $attempt->chapter_id . ' (' . $attempt->created_at->format('d/m') . ')';
-            }),
-            'scores' => $chartAttempts->pluck('score')
-        ];
-
-        // 4. RIWAYAT AKTIVITAS TERBARU (Gabungan Kuis & Lesson)
-        $recentAttempts = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at')
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Mengirim semua data ke View
-        return view('dashboard', [
-            'user' => Auth::user(),
-            'stats' => [
-                'lessons_completed' => $lessonsCompleted,
-                'total_lessons'     => $totalLessons,
-                'quiz_average'      => round($quizAverage),
-                'quizzes_completed' => $quizzesCompleted,
-                'chapters_passed'   => $chaptersPassed
-            ],
-            'recentAttempts' => $recentAttempts,
-            'chartData'      => $chartData
-        ]);
-    }
-
-    /**
-     * API ENDPOINT UNTUK DATA CHART KOMPLEKS (AJAX)
-     * Digunakan untuk Heatmap & Activity Log Timeline agar loading halaman utama tidak berat.
-     */
-    public function progress(Request $request)
-    {
-        $userId = $request->user()->id;
-
-        // A. Progress Pelajaran
-        $totalLessons = DB::table('course_lessons')->count();
-        $lessonCompleted = DB::table('user_lesson_progress')->where('user_id', $userId)->count();
-        
-        // B. Progress Aktivitas
-        $totalActivities = DB::table('course_activities')->count();
-        $activityCompleted = DB::table('user_activity_progress')
-            ->where('user_id', $userId)
+        // 1. STATS: MATERI
+        $totalLessons = CourseLesson::count();
+        $lessonsCompleted = UserLessonProgress::where('user_id', $userId)
             ->where('completed', true)
             ->count();
 
-        // C. Hitung Persentase Gabungan (Lesson + Activity + Quiz Passing)
-        // Asumsi: Total Units = Lesson + Activity + 3 Bab Quiz
-        $totalUnits = $totalLessons + $totalActivities + 3; 
-        
-        // Hitung bab kuis yang lulus (>70)
-        $quizPassedCount = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at')
-            ->where('score', '>=', 70)
-            ->distinct('chapter_id')
-            ->count('chapter_id');
+        // 2. STATS: LABS (Hanya Lulus)
+        $totalLabs = Lab::count();
+        $labsCompleted = LabHistory::where('user_id', $userId)
+            ->where('final_score', '>=', 70)
+            ->distinct('lab_id')
+            ->count('lab_id');
 
-        $completedUnits = $lessonCompleted + $activityCompleted + $quizPassedCount;
-        $progressPercent = $totalUnits > 0 ? round(($completedUnits / $totalUnits) * 100) : 0;
+        // 3. STATS: KUIS
+        $quizAttempts = QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->get();
+        $quizzesCompleted = $quizAttempts->count();
+        $quizAverage = $quizzesCompleted > 0 ? $quizAttempts->avg('score') : 0;
 
-        // D. Timeline Lesson (Line Chart)
-        $lessonTimeline = DB::table('user_lesson_progress')
-            ->where('user_id', $userId)
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as value')
-            ->groupBy('date')
-            ->orderBy('date')
+        // 4. STATS: BAB LULUS
+        $chaptersPassed = $quizAttempts->where('score', '>=', 70)->unique('chapter_id')->count();
+
+        // 5. CHART DATA (Nilai Terbaik per Bab)
+        $bestQuizScores = QuizAttempt::where('user_id', $userId)
+            ->select('chapter_id', DB::raw('MAX(score) as max_score'))
+            ->groupBy('chapter_id')
+            ->orderBy('chapter_id')
             ->get();
 
-        // E. Timeline Gabungan (Heatmap - Lesson + Quiz)
-        // Menggabungkan tanggal pengerjaan lesson dan kuis untuk heatmap aktivitas
-        $lessonDates = DB::table('user_lesson_progress')
-            ->where('user_id', $userId)
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date');
+        $chartData = [
+            'labels' => $bestQuizScores->map(fn($q) => 'Bab ' . $q->chapter_id)->toArray(),
+            'scores' => $bestQuizScores->pluck('max_score')->toArray(),
+        ];
 
-        $quizDates = DB::table('quiz_attempts')
-            ->where('user_id', $userId)
+        // 6. RIWAYAT AKTIVITAS (NO DUPLICATE LOGIC)
+        // Ambil data agak banyak dulu (misal 20 terakhir), nanti kita filter unik
+        $rawLabs = LabHistory::where('user_id', $userId)
+            ->with('lab')
+            ->latest()
+            ->limit(20) 
+            ->get();
+
+        $rawQuizzes = QuizAttempt::where('user_id', $userId)
             ->whereNotNull('completed_at')
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date');
+            ->latest()
+            ->limit(20)
+            ->get();
 
-        // Union keduanya untuk heatmap konsistensi belajar
-        $activityTimeline = $lessonDates->unionAll($quizDates)
+        // Mapping ke format standar
+        $mappedLabs = $rawLabs->map(function ($item) {
+            return [
+                'id' => 'lab-' . $item->lab_id, // Unique Key ID
+                'name' => $item->lab->title,
+                'type' => 'lab',
+                'score' => $item->final_score,
+                'date' => $item->updated_at,
+                'icon' => '💻'
+            ];
+        });
+
+        $mappedQuizzes = $rawQuizzes->map(function ($item) {
+            return [
+                'id' => 'quiz-' . $item->chapter_id, // Unique Key ID
+                'name' => 'Evaluasi Bab ' . $item->chapter_id,
+                'type' => 'quiz',
+                'score' => $item->score,
+                'date' => $item->completed_at,
+                'icon' => '📝'
+            ];
+        });
+
+        // MERGE -> SORT -> UNIQUE -> TAKE
+        $historyCombined = $mappedLabs->merge($mappedQuizzes)
+            ->sortByDesc('date')
+            ->unique('name') // Hapus duplikat berdasarkan Nama Aktivitas
+            ->take(5)        // Ambil 5 teratas setelah unik
+            ->values();
+
+        // 7. ACTIVE SESSION
+        $activeSession = LabHistory::where('user_id', $userId)
+            ->where('status', 'in_progress')
+            ->with('lab')
+            ->latest()
+            ->first();
+
+        return view('dashboard', compact(
+            'totalLessons', 'lessonsCompleted',
+            'totalLabs', 'labsCompleted',
+            'quizAverage', 'quizzesCompleted',
+            'chaptersPassed',
+            'chartData',
+            'historyCombined',
+            'activeSession'
+        ));
+    }
+
+    /**
+     * API Progress (Heatmap & Sidebar Log)
+     */
+    public function progress()
+    {
+        $userId = Auth::id();
+
+        // 1. HEATMAP DATA
+        $lessonActivity = UserLessonProgress::where('user_id', $userId)
+            ->where('updated_at', '>=', now()->subDays(90))
+            ->select(DB::raw('DATE(updated_at) as date'), DB::raw('count(*) as count'))
+            ->groupBy('date')
             ->get()
-            ->groupBy('date')
-            ->map(function ($row) {
-                return [
-                    'date' => $row->first()->date,
-                    'count' => $row->sum('count')
-                ];
-            })->values();
+            ->map(fn($i) => ['date' => $i->date, 'count' => $i->count]);
 
-        // F. Activity Log (Gabungan Lesson & Quiz untuk List Sidebar)
-        $logs = collect();
+        // 2. ACTIVITY LOG (NO DUPLICATE - SIDEBAR)
+        // Sama seperti index, kita ambil pool data lalu filter unik
+        $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(15)->get();
+        $rawQuizzes = QuizAttempt::where('user_id', $userId)->latest()->limit(15)->get();
 
-        // Ambil Log Lesson
-        $lessonLogs = DB::table('user_lesson_progress as ulp')
-            ->join('course_lessons as cl', 'cl.id', '=', 'ulp.course_lesson_id')
-            ->where('ulp.user_id', $userId)
-            ->select('cl.title as activity', 'ulp.created_at', DB::raw("'Lesson' as type"))
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get();
+        $mappedLabs = $rawLabs->map(fn($i) => [
+            'activity' => $i->lab->title,
+            'type' => 'Lab',
+            'raw_date' => $i->updated_at,
+            'time' => $i->updated_at->diffForHumans(),
+            'status' => $i->final_score >= 70 ? 'Lulus' : 'Remedial'
+        ]);
 
-        // Ambil Log Quiz
-        $quizLogs = DB::table('quiz_attempts')
-            ->where('user_id', $userId)
-            ->whereNotNull('completed_at')
-            ->select(DB::raw("CONCAT('Evaluasi Bab ', chapter_id) as activity"), 'completed_at as created_at', DB::raw("'Kuis' as type"))
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get();
+        $mappedQuizzes = $rawQuizzes->map(fn($i) => [
+            'activity' => 'Evaluasi Bab ' . $i->chapter_id,
+            'type' => 'Kuis',
+            'raw_date' => $i->completed_at,
+            'time' => $i->completed_at->diffForHumans(),
+            'status' => $i->score >= 70 ? 'Lulus' : 'Remedial'
+        ]);
 
-        // Merge & Sort
-        $activityLog = $lessonLogs->merge($quizLogs)
-            ->sortByDesc('created_at')
-            ->take(10)
-            ->values()
-            ->map(function ($item) {
-                return [
-                    'activity' => $item->activity,
-                    'status'   => $item->type == 'Kuis' ? 'Selesai' : 'Tuntas',
-                    'time'     => Carbon::parse($item->created_at)->diffForHumans(),
-                    'type'     => $item->type
-                ];
-            });
+        // LOGIKA FILTERING DUPLIKAT SIDEBAR
+        $activityLog = $mappedLabs->merge($mappedQuizzes)
+            ->sortByDesc('raw_date')
+            ->unique('activity') // Pastikan nama aktivitas unik
+            ->take(4)            // Ambil 4 item unik terakhir
+            ->values();
 
         return response()->json([
-            'progress_percent'   => $progressPercent,
-            'lesson_completed'   => $lessonCompleted,
-            'activity_completed' => $activityCompleted + $quizPassedCount, // Digabung biar terlihat banyak
-            'lesson_timeline'    => $lessonTimeline,
-            'activity_timeline'  => $activityTimeline, // Untuk Heatmap
-            'activity_log'       => $activityLog,
+            'activity_timeline' => $lessonActivity,
+            'activity_log' => $activityLog
         ]);
     }
 }
