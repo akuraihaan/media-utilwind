@@ -67,7 +67,7 @@
                     <div class="flex items-center justify-center gap-4 mb-6">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 p-[2px] shadow-[0_0_30px_rgba(139,92,246,0.4)]">
                             <div class="w-full h-full bg-[#1a103c] rounded-2xl flex items-center justify-center p-3">
-                                <img src="{{ asset('image/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain drop-shadow-lg">
+                                <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain drop-shadow-lg">
                             </div>
                         </div>
                         <div class="text-left">
@@ -91,7 +91,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-violet-100 text-sm">Durasi 20 Menit</h4>
-                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Waktu berjalan server-side. Timer presisi tanpa desimal.</p>
+                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Waktu berjalan server-side.</p>
                         </div>
                     </div>
 
@@ -157,7 +157,6 @@
             </div>
         </div>
         
-        <p class="text-center text-violet-500/40 text-[10px] mt-8 uppercase tracking-widest font-bold">Utilwind Secure Exam Browser v2.0</p>
     </div>
 
     <script>

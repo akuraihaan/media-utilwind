@@ -41,7 +41,7 @@
             <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 
                 {{-- LEARNING OBJECTIVES --}}
-                <div class="mb-24">
+                <div class="mb-24 animate-fade-in-up">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Tujuan Pembelajaran
@@ -61,11 +61,11 @@
                         </div>
                         <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-teal-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center shrink-0 font-bold text-xs">4</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Grid Alignment</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami <code>justify-items</code> vs <code>items-center</code> dalam konteks grid.</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Auto Flow</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami algoritma penempatan otomatis (Dense & Row/Col).</p></div>
                         </div>
                         <div class="bg-gradient-to-br from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition group h-full col-span-2 md:col-span-2">
                             <div class="w-8 h-8 rounded bg-white/10 text-white flex items-center justify-center shrink-0 font-bold text-xs">🏁</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Final Mission</h4><p class="text-[11px] text-white/70 leading-relaxed">Live Code: Membangun Layout Galeri Foto.</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Final Mission</h4><p class="text-[11px] text-white/70 leading-relaxed">Live Code: Membangun Layout Galeri Foto 2x2.</p></div>
                         </div>
                     </div>
                 </div>
@@ -73,60 +73,37 @@
                 <article class="space-y-40">
                     
                     {{-- LESSON 1: KONSEP GRID (ID 34) --}}
-                    {{-- LESSON 1: KONSEP GRID (ID 34) --}}
-    <section id="section-34" class="lesson-section scroll-mt-32" data-lesson-id="34">
-        <div class="space-y-10">
-            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
-                <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.1</span>
-                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                    Filosofi Grid & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Struktur Kolom</span>
-                </h2>
-            </div>
-            
-            {{-- Materi Part 1 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Mengapa Kita Membutuhkan Grid?</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Selama bertahun-tahun, Flexbox telah menjadi "raja" tata letak CSS. Namun, seperti yang dijelaskan dalam buku <em>"Tailwind CSS by Ivaylo Gerchev"</em>, Flexbox memiliki keterbatasan mendasar: ia adalah sistem <strong>satu dimensi</strong>. Flexbox sangat hebat dalam mengatur elemen dalam satu baris <em>atau</em> satu kolom, tetapi ia mulai kesulitan ketika harus menangani hubungan antara baris dan kolom secara bersamaan.
-                    </p>
-                    <p>
-                        Di sinilah <strong>CSS Grid Layout</strong> masuk. Grid adalah sistem tata letak <strong>dua dimensi</strong> pertama yang sejati di web. Dengan Grid, Anda tidak lagi menyusun konten elemen per elemen. Sebaliknya, Anda mendefinisikan "papan permainan" (scaffolding) terlebih dahulu—garis-garis vertikal dan horizontal—lalu menempatkan konten ke dalam kotak-kotak yang tercipta.
-                    </p>
-                    <p>
-                        Di Tailwind CSS, mengaktifkan mode ini semudah menambahkan kelas <code>grid</code> pada elemen pembungkus (container). Ini mengubah <em>formatting context</em> elemen tersebut, memungkinkan penggunaan properti-properti grid yang kuat pada elemen anak (children).
-                    </p>
-                </div>
-            </div>
-
-            {{-- Materi Part 2 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">B</span> Logika Template Columns</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Pondasi utama dari Grid adalah kolom. Dalam CSS murni, kita menggunakan properti <code>grid-template-columns</code>. Tailwind menyederhanakan sintaks yang rumit ini menjadi utilitas yang mudah diingat: <code>grid-cols-{n}</code>.
-                    </p>
-                    <p>
-                        Misalnya, kelas <code>grid-cols-3</code> akan secara otomatis membagi container menjadi 3 kolom dengan lebar yang sama persis. Di belakang layar, Tailwind menggunakan unit <code>fr</code> (fractional unit), yaitu <code>repeat(3, minmax(0, 1fr))</code>. Unit <code>1fr</code> ini sangat ajaib karena ia menghitung "ruang yang tersedia" setelah dikurangi gap dan padding, lalu membaginya secara proporsional. Ini membuat grid di Tailwind sangat fluid dan anti-pecah.
-                    </p>
-                    <p>
-                        Dalam buku <em>"Modern CSS with Tailwind"</em>, Noel Rappin menekankan pentingnya responsivitas. Anda tidak perlu menulis media query manual. Cukup gunakan prefix: <code>grid-cols-1 md:grid-cols-3 lg:grid-cols-4</code>. Ini berarti: "Mulai dengan 1 kolom di HP, berubah jadi 3 kolom di Tablet, dan 4 kolom di Laptop".
-                    </p>
-                </div>
-            </div>
-
-            {{-- Materi Part 3 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-sky-600 flex items-center justify-center text-[10px] text-white">C</span> Manajemen Celah (Gap)</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Di masa lalu, memberikan jarak antar kolom adalah mimpi buruk yang melibatkan margin negatif dan kalkulasi lebar yang rumit (seperti <code>width: 33.33%</code> dikurangi margin). Grid memecahkan masalah ini dengan properti <code>gap</code>.
-                    </p>
-                    <p>
-                        Di Tailwind, utilitas <code>gap-{n}</code> (misalnya <code>gap-4</code> atau <code>gap-8</code>) menciptakan saluran kosong (gutter) di antara baris dan kolom. Celah ini tidak menambah lebar container, melainkan "mendorong" konten ke dalam. Anda juga bisa mengontrol celah secara terpisah menggunakan <code>gap-x-{n}</code> untuk horizontal dan <code>gap-y-{n}</code> untuk vertikal.
-                    </p>
-                </div>
-            </div>
+                    <section id="section-34" class="lesson-section scroll-mt-32" data-lesson-id="34">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                                <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.1</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Konsep Grid Layout & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Struktur Kolom</span>
+                                </h2>
+                            </div>
+                            
+                            {{-- Materi --}}
+                            <div class="space-y-6">
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed">
+                                    <p>
+                                        Buku <em>"Tailwind CSS by SitePoint"</em> menjelaskan perbedaan fundamental antara Flexbox dan Grid. 
+                                        <strong>Flexbox</strong> adalah sistem satu dimensi (mengatur elemen dalam satu baris <em>atau</em> satu kolom). 
+                                        <strong>Grid</strong> adalah sistem dua dimensi (mengatur elemen dalam baris <em>dan</em> kolom secara bersamaan).
+                                    </p>
+                                    <p>
+                                        Dengan Grid, Anda mendefinisikan sebuah "papan permainan" (scaffolding) yang kaku terlebih dahulu—garis vertikal dan horizontal—lalu menempatkan item-item ke dalam kotak-kotak yang tercipta. Tailwind menggunakan class <code>grid</code> untuk mengaktifkan mode ini.
+                                    </p>
+                                    <div class="bg-cyan-900/20 border border-cyan-500/30 p-4 rounded-lg my-4">
+                                        <h4 class="text-cyan-300 font-bold text-sm mb-2">💡 Fractional Unit (fr)</h4>
+                                        <p class="text-xs">
+                                            Tailwind menggunakan unit <code>fr</code> di balik layar (misal: <code>repeat(3, 1fr)</code>). Unit ini sangat cerdas karena menghitung ruang yang tersisa <em>setelah</em> dikurangi gap dan padding, lalu membaginya secara proporsional. Ini mencegah layout "pecah" yang sering terjadi jika menggunakan persentase statis (33.33%).
+                                        </p>
+                                    </div>
+                                    <p>
+                                        Untuk mengatur kolom, gunakan <code>grid-cols-{n}</code>. Untuk jarak antar sel, gunakan <code>gap-{n}</code>.
+                                    </p>
+                                </div>
+                            </div>
 
                             {{-- SIMULATOR 1 --}}
                             <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 shadow-2xl relative group hover:border-cyan-500/30 transition-all">
@@ -154,49 +131,33 @@
                         </div>
                     </section>
 
-                    {{-- LESSON 2: ALIGNMENT (ID 35) --}}
-                   <section id="section-35" class="lesson-section scroll-mt-32" data-lesson-id="35">
-        <div class="space-y-10">
-            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
-                <span class="text-blue-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.2</span>
-                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                    Penjajaran Grid <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">(Alignment)</span>
-                </h2>
-            </div>
+                    {{-- SECTION 35: PENJAJARAN GRID (ALIGNMENT) --}}
+                    <section id="section-35" class="lesson-section scroll-mt-32" data-lesson-id="35">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
+                                <span class="text-blue-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.2</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Penjajaran Grid <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">(Alignment)</span>
+                                </h2>
+                            </div>
 
-            {{-- Materi Part 1 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">A</span> Justify Items (Sumbu X)</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Banyak pemula Tailwind yang bingung antara <code>justify-content</code> dan <code>justify-items</code>. Dalam konteks Grid, perbedaannya sangat penting.
-                    </p>
-                    <p>
-                        <code>justify-items-*</code> mengontrol posisi elemen <strong>di dalam sel grid-nya sendiri</strong> pada sumbu horizontal (baris).
-                    </p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong><code>justify-items-start</code></strong>: Elemen merapat ke kiri sel. Lebarnya menyesuaikan konten (tidak stretch).</li>
-                        <li><strong><code>justify-items-center</code></strong>: Elemen berada tepat di tengah horizontal sel.</li>
-                        <li><strong><code>justify-items-end</code></strong>: Elemen merapat ke kanan sel.</li>
-                        <li><strong><code>justify-items-stretch</code></strong> (Default): Elemen ditarik paksa agar lebarnya memenuhi lebar sel sepenuhnya. Inilah mengapa secara default div di dalam grid terlihat penuh.</li>
-                    </ul>
-                </div>
-            </div>
-
-            {{-- Materi Part 2 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Align Items (Sumbu Y)</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Untuk sumbu vertikal, kita menggunakan properti <code>align-items</code>, yang di Tailwind ditulis sebagai <code>items-*</code>. Ini mengontrol posisi elemen di dalam sel grid secara vertikal.
-                    </p>
-                    <p>
-                        Kombinasi paling populer dalam desain UI modern adalah:
-                        <br><code>justify-items-center items-center</code>.
-                        <br>Ini adalah "mantra ajaib" untuk meletakkan konten tepat di tengah-tengah kotak grid, terlepas dari berapapun tinggi atau lebar kotak tersebut. Ini jauh lebih ringkas dibandingkan teknik margin auto atau absolute positioning zaman dulu.
-                    </p>
-                </div>
-            </div>
+                            {{-- Materi --}}
+                            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                <p>
+                                    Banyak pemula Tailwind yang bingung antara <code>justify-content</code> dan <code>justify-items</code>. Dalam konteks Grid, <code>justify-items-*</code> mengontrol posisi elemen <strong>di dalam sel grid-nya sendiri</strong> pada sumbu horizontal (X).
+                                </p>
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li><strong><code>justify-items-start</code></strong>: Merapat ke kiri sel. Lebar menyusut sesuai konten.</li>
+                                    <li><strong><code>justify-items-center</code></strong>: Tepat di tengah horizontal sel.</li>
+                                    <li><strong><code>justify-items-stretch</code></strong> (Default): Ditarik penuh memenuhi lebar sel.</li>
+                                </ul>
+                                <p>
+                                    Untuk sumbu vertikal (Y), kita menggunakan properti <code>align-items</code> (ditulis <code>items-*</code> di Tailwind).
+                                    <br>
+                                    <strong>Best Practice:</strong> Kombinasi "Mantra Ajaib" untuk memusatkan konten apapun di tengah-tengah kotak grid adalah:
+                                    <code class="text-indigo-400 bg-white/10 px-1 py-0.5 rounded">justify-items-center items-center</code>.
+                                </p>
+                            </div>
 
                             {{-- SIMULATOR 2 --}}
                             <div class="bg-[#0b0f19] p-8 rounded-2xl border border-white/10 shadow-lg">
@@ -238,45 +199,30 @@
                         </div>
                     </section>
 
-                    {{-- LESSON 3: SPANNING (ID 36) --}}
+                    {{-- SECTION 36: SPAN & START/END --}}
                     <section id="section-36" class="lesson-section scroll-mt-32" data-lesson-id="36">
-        <div class="space-y-10">
-            <div class="space-y-4 border-l-4 border-sky-500 pl-6">
-                <span class="text-sky-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.3</span>
-                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                    Teknik Span <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-500">(Penggabungan Sel)</span>
-                </h2>
-            </div>
-
-            {{-- Materi Part 1 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-sky-600 flex items-center justify-center text-[10px] text-white">A</span> Menguasai Col-Span</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Fitur paling kuat dari Grid yang sulit ditiru oleh Flexbox adalah kemampuan menggabungkan sel (merge cells). Bayangkan Anda sedang mendesain sebuah layout dashboard. Anda mungkin ingin Header membentang penuh di atas, Sidebar di kiri, dan Konten Utama di kanan.
-                    </p>
-                    <p>
-                        Tailwind menyediakan utilitas <code>col-span-{n}</code> untuk ini. Angka <em>n</em> menunjukkan berapa banyak kolom yang ingin "dimakan" oleh elemen tersebut.
-                    </p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong><code>col-span-2</code></strong>: Membuat elemen melebar ke samping, mengambil jatah 2 kolom.</li>
-                        <li><strong><code>col-span-full</code></strong>: Utilitas khusus yang memerintahkan elemen untuk mengambil <em>seluruh</em> lebar grid (start line 1 sampai end line -1), sangat berguna untuk membuat header atau footer tanpa perlu tahu jumlah kolom pasti gridnya.</li>
-                    </ul>
-                </div>
-            </div>
-
-            {{-- Materi Part 2 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-cyan-600 flex items-center justify-center text-[10px] text-white">B</span> Menguasai Row-Span</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Sama seperti kolom, Anda bisa menggabungkan baris vertikal menggunakan <code>row-span-{n}</code>. Ini memungkinkan pembuatan layout "Bento Grid" atau "Masonry Style" yang populer, di mana satu kartu konten penting bisa memiliki tinggi dua kali lipat dibanding kartu lainnya.
-                    </p>
-                    <p>
-                        Dalam buku <em>"Ultimate Tailwind CSS Handbook"</em>, teknik ini sering digunakan untuk membuat sidebar navigasi yang tinggi penuh, sementara di sebelahnya terdapat beberapa baris widget dashboard.
-                    </p>
-                </div>
-            </div>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-sky-500 pl-6">
+                                <span class="text-sky-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.3</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Teknik Span <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-500">(Merge Cells)</span>
+                                </h2>
+                            </div>
+                            
+                            {{-- Materi --}}
+                            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                <p>
+                                    Fitur paling kuat dari Grid Layout adalah kemampuan untuk membuat satu elemen "memakan" (span) beberapa kolom atau baris sekaligus, memecah struktur grid yang kaku. Ini disebut merging cells di Excel.
+                                </p>
+                                <p>
+                                    Ini memungkinkan pembuatan layout kompleks seperti Dashboard (Sidebar tinggi penuh), Artikel Majalah (Gambar lebar penuh), atau Galeri Foto Bento.
+                                </p>
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li><strong><code>col-span-{n}</code></strong>: Melebar ke samping sebanyak <em>n</em> kolom.</li>
+                                    <li><strong><code>row-span-{n}</code></strong>: Memanjang ke bawah sebanyak <em>n</em> baris.</li>
+                                    <li><strong><code>col-span-full</code></strong>: Utilitas khusus yang sangat berguna untuk Header atau Footer, memaksa elemen mengambil seluruh lebar grid dari garis awal (1) hingga akhir (-1).</li>
+                                </ul>
+                            </div>
 
                             {{-- DEMO BENTO GRID --}}
                             <div class="bg-[#0b0f19] p-6 rounded-2xl border border-white/10 shadow-2xl relative group">
@@ -292,120 +238,109 @@
                         </div>
                     </section>
 
-                    {{-- LESSON 4: GRID ROWS (ID 37) --}}
+                    {{-- SECTION 37: GRID TEMPLATE ROWS --}}
                     <section id="section-37" class="lesson-section scroll-mt-32" data-lesson-id="37">
-        <div class="space-y-10">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-bold text-white">4. Grid Template Rows</h2>
-                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-            </div>
-            
-            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                <p>
-                    Secara default, Grid bersifat <em>implicit rows</em>: ia akan membuat baris baru secara otomatis sebanyak yang dibutuhkan konten. Namun, terkadang kita perlu mendefinisikan tinggi baris secara eksplisit.
-                </p>
-                <p>
-                    Gunakan utilitas <code class="text-blue-400">grid-rows-{n}</code> untuk membagi tinggi container menjadi <em>n</em> baris yang sama rata. Ini sering digunakan bersamaan dengan <code>grid-flow-col</code> untuk membuat layout yang mengalir secara vertikal terlebih dahulu (seperti daftar nama di buku telepon).
-                </p>
-            </div>
+                        <div class="space-y-10">
+                            <div class="flex items-center gap-4 mb-8">
+                                <h2 class="text-3xl font-bold text-white">4. Grid Template Rows</h2>
+                                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
+                            </div>
+                            
+                            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                <p>
+                                    Secara default, Grid bersifat <strong>Implicit Rows</strong>: artinya browser akan membuat baris baru secara otomatis setinggi kontennya saat Anda menambahkan lebih banyak item. Anda biasanya tidak perlu mendefinisikan baris.
+                                </p>
+                                <p>
+                                    Namun, ada kasus di mana Anda ingin membagi tinggi container secara eksplisit agar simetris vertikal. Gunakan utilitas <code class="text-blue-400">grid-rows-{n}</code>. Ini membagi tinggi container menjadi <em>n</em> baris yang sama rata (<code>1fr</code>).
+                                </p>
+                            </div>
 
-            <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10">
-                <div class="flex justify-between mb-3"><span class="text-sm font-bold text-white">Preview</span><code class="text-[10px] text-blue-400 bg-white/5 px-2 py-1 rounded">grid-rows-3 grid-flow-col</code></div>
-                <div class="grid grid-rows-3 grid-flow-col gap-2 h-32">
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">1</div>
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">2</div>
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">3</div>
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">4</div>
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">5</div>
-                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">6</div>
-                </div>
-            </div>
-        </div>
-    </section>
+                            <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10">
+                                <div class="flex justify-between mb-3"><span class="text-sm font-bold text-white">Preview</span><code class="text-[10px] text-blue-400 bg-white/5 px-2 py-1 rounded">grid-rows-3 grid-flow-col</code></div>
+                                <div class="grid grid-rows-3 grid-flow-col gap-2 h-32">
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">1</div>
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">2</div>
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">3</div>
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">4</div>
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">5</div>
+                                    <div class="bg-white/5 rounded border border-white/5 flex items-center justify-center text-xs text-white/50">6</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
+                    {{-- SECTION 38: GRID TEMPLATE COLUMNS (ARBITRARY) --}}
                     <section id="section-38" class="lesson-section scroll-mt-32" data-lesson-id="38">
-        <div class="space-y-10">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-bold text-white">5. Arbitrary Columns (JIT)</h2>
-                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-            </div>
-            
-            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                <p>
-                    Terkadang, pembagian kolom standar (1/3, 1/4, dll) tidak cukup. Anda mungkin membutuhkan sidebar yang lebarnya tepat <code>250px</code> dan konten utama mengisi sisanya.
-                </p>
-                <p>
-                    Berkat engine JIT (Just-in-Time) Tailwind, Anda bisa menggunakan <strong>Nilai Arbitrer</strong> dengan tanda kurung siku <code class="text-red-400">[]</code>. Contoh: <code>grid-cols-[250px_1fr]</code> akan membuat kolom pertama fix 250px dan kolom kedua fleksibel memenuhi sisa ruang. Ini memberikan fleksibilitas CSS asli langsung di dalam kelas utility.
-                </p>
-            </div>
+                        <div class="space-y-10">
+                            <div class="flex items-center gap-4 mb-8">
+                                <h2 class="text-3xl font-bold text-white">5. Arbitrary Columns (JIT)</h2>
+                                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
+                            </div>
+                            
+                            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                <p>
+                                    Dalam buku <em>"Modern CSS with Tailwind"</em>, ditekankan bahwa fleksibilitas adalah kunci. Terkadang, pembagian kolom standar (1/3, 1/4) tidak cukup. Anda mungkin membutuhkan sidebar yang lebarnya tepat <code>250px</code> (fixed) dan konten utama mengisi sisanya (fluid).
+                                </p>
+                                <p>
+                                    Berkat engine JIT (Just-in-Time) Tailwind, Anda bisa menggunakan <strong>Nilai Arbitrer</strong> dengan tanda kurung siku <code class="text-red-400">[]</code>.
+                                    <br>Contoh: <code>grid-cols-[200px_1fr]</code>.
+                                </p>
+                            </div>
 
-            <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10">
-                <div class="flex justify-between mb-3"><span class="text-sm font-bold text-white">Preview</span><code class="text-[10px] text-red-400 bg-white/5 px-2 py-1 rounded">grid-cols-[80px_1fr_80px]</code></div>
-                <div class="grid grid-cols-[80px_1fr_80px] gap-2 h-32">
-                    <div class="bg-red-500/10 border border-red-500/30 rounded flex flex-col items-center justify-center text-[10px] text-red-400 font-bold">Fixed<br>80px</div>
-                    <div class="bg-green-500/10 border border-green-500/30 rounded flex flex-col items-center justify-center text-[10px] text-green-400 font-bold">Flexible<br>(1fr)</div>
-                    <div class="bg-red-500/10 border border-red-500/30 rounded flex flex-col items-center justify-center text-[10px] text-red-400 font-bold">Fixed<br>80px</div>
-                </div>
-            </div>
-        </div>
-    </section>
+                            <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10">
+                                <div class="flex justify-between mb-3"><span class="text-sm font-bold text-white">Preview</span><code class="text-[10px] text-red-400 bg-white/5 px-2 py-1 rounded">grid-cols-[80px_1fr_80px]</code></div>
+                                <div class="grid grid-cols-[80px_1fr_80px] gap-2 h-32">
+                                    <div class="bg-red-500/10 border border-red-500/30 rounded flex flex-col items-center justify-center text-[10px] text-red-400 font-bold">Fixed<br>80px</div>
+                                    <div class="bg-green-500/10 border border-green-500/30 rounded flex flex-col items-center justify-center text-[10px] text-green-400 font-bold">Flexible<br>(1fr)</div>
+                                    <div class="bg-red-500/10 border border-red-500/30 rounded flex flex-col items-center justify-center text-[10px] text-red-400 font-bold">Fixed<br>80px</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-    {{-- LESSON 6: AUTO FLOW (ID 39) --}}
-    <section id="section-39" class="lesson-section scroll-mt-32" data-lesson-id="39">
-        <div class="space-y-10">
-            <div class="space-y-4 border-l-4 border-teal-500 pl-6">
-                <span class="text-teal-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.4</span>
-                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                    Grid Auto <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-500">Flow & Dense</span>
-                </h2>
-            </div>
+                    {{-- SECTION 39: GRID AUTO FLOW --}}
+                    <section id="section-39" class="lesson-section scroll-mt-32" data-lesson-id="39">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-teal-500 pl-6">
+                                <span class="text-teal-400 font-mono text-xs uppercase tracking-widest">Lesson 2.2.6</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Grid Auto <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-500">Flow & Dense</span>
+                                </h2>
+                            </div>
 
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-teal-600 flex items-center justify-center text-[10px] text-white">A</span> Algoritma Penempatan Grid</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Salah satu aspek Grid yang paling cerdas adalah algoritma penempatannya (Auto-placement). Secara default, Tailwind menggunakan <code>grid-flow-row</code>. Ini berarti elemen akan mengisi baris pertama dari kiri ke kanan sampai penuh, lalu membuat baris baru di bawahnya (Pola Z).
-                    </p>
-                    <p>
-                        Namun, Anda bisa mengubahnya menjadi <code>grid-flow-col</code>. Dengan ini, elemen akan mengisi kolom pertama dari atas ke bawah sampai penuh, baru pindah ke kolom berikutnya di sebelah kanan (Pola N).
-                    </p>
-                </div>
-            </div>
-            
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-emerald-600 flex items-center justify-center text-[10px] text-white">B</span> Grid Flow Dense</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Fitur yang kurang diketahui tapi sangat powerful adalah <code>grid-flow-dense</code>. Jika Anda memiliki grid dengan item-item yang ukurannya berbeda-beda (ada yang span-2, ada yang span-1), seringkali akan muncul "lubang" kosong dalam layout karena item besar tidak muat di sisa ruang baris tersebut.
-                    </p>
-                    <p>
-                        Dengan menambahkan <code>grid-flow-dense</code>, Anda memerintahkan browser untuk: "Jangan biarkan ada lubang. Jika item besar tidak muat, cari item kecil berikutnya yang muat dan taruh di celah tersebut, meskipun itu berarti mengacak urutan aslinya." Ini sangat bagus untuk layout galeri foto bergaya Pinterest.
-                    </p>
-                </div>
-            </div>
+                            <div class="space-y-4">
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        <strong>Auto Placement Algorithm:</strong> Browser memiliki algoritma cerdas untuk menempatkan item yang tidak memiliki posisi spesifik. Secara default, Tailwind menggunakan <code>grid-flow-row</code> (Pola Z: kiri-ke-kanan, lalu turun).
+                                    </p>
+                                    <p>
+                                        Namun, fitur "rahasia" yang paling menarik adalah <strong><code>grid-flow-dense</code></strong>. Jika Anda memiliki grid dengan item berukuran variatif (ada yang span-2, ada yang span-1), seringkali muncul "lubang" kosong. Mode Dense memerintahkan browser untuk mengambil item kecil berikutnya dan mengisinya ke dalam lubang-lubang tersebut, meskipun itu berarti mengubah urutan visual.
+                                    </p>
+                                </div>
+                            </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 group hover:border-emerald-500/30 transition">
-                    <div class="flex justify-between mb-4"><code class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">grid-flow-row</code><span class="text-[10px] text-white/50">Z-Pattern (Default)</span></div>
-                    <div class="grid grid-rows-2 grid-flow-row gap-2 bg-black/20 p-4 rounded-xl h-40">
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">1</div>
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">2</div>
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">3</div>
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">4</div>
-                    </div>
-                </div>
-                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 group hover:border-purple-500/30 transition">
-                    <div class="flex justify-between mb-4"><code class="text-purple-400 font-bold bg-purple-500/10 px-2 py-1 rounded">grid-flow-col</code><span class="text-[10px] text-white/50">N-Pattern (Vertical)</span></div>
-                    <div class="grid grid-rows-2 grid-flow-col gap-2 bg-black/20 p-4 rounded-xl h-40">
-                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">1</div>
-                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">2</div>
-                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">3</div>
-                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">4</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 group hover:border-emerald-500/30 transition">
+                                    <div class="flex justify-between mb-4"><code class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">grid-flow-row</code><span class="text-[10px] text-white/50">Z-Pattern</span></div>
+                                    <div class="grid grid-rows-2 grid-flow-row gap-2 bg-black/20 p-4 rounded-xl h-40">
+                                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">1</div>
+                                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">2</div>
+                                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">3</div>
+                                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400 font-bold">4</div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 group hover:border-purple-500/30 transition">
+                                    <div class="flex justify-between mb-4"><code class="text-purple-400 font-bold bg-purple-500/10 px-2 py-1 rounded">grid-flow-col</code><span class="text-[10px] text-white/50">N-Pattern</span></div>
+                                    <div class="grid grid-rows-2 grid-flow-col gap-2 bg-black/20 p-4 rounded-xl h-40">
+                                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">1</div>
+                                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">2</div>
+                                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">3</div>
+                                        <div class="bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center text-purple-400 font-bold">4</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     {{-- FINAL MISSION (ID 40) --}}
                     <section id="section-40" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="40" data-type="activity">
@@ -425,9 +360,9 @@
 
                             <div class="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
                                 {{-- EDITOR --}}
-                                <div class="bg-[#1e1e1e] rounded-xl border border-white/10 flex flex-col overflow-hidden h-full">
+                                <div class="bg-[#1e1e1e] rounded-xl border border-white/10 flex flex-col overflow-hidden h-full relative">
                                     
-                                    {{-- LOCK OVERLAY --}}
+                                    {{-- LOCK OVERLAY (Muncul jika completed) --}}
                                     <div id="lockOverlay" class="hidden absolute inset-0 bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg">
                                         <div class="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce">
                                             <svg class="w-12 h-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
@@ -543,18 +478,37 @@
     window.LESSON_IDS = [34, 35, 36, 37, 38, 39, 40]; 
     window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedSet = new Set(window.COMPLETED_IDS);
+    
+    // Activity Status from Controller
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
-    const ACTIVITY_LESSON_ID = 40; // ID 40 is the activity
-    const ACTIVITY_ID = 4; // ID untuk aktivitas Grid
+    
+    const ACTIVITY_LESSON_ID = 40; 
+    const ACTIVITY_ID = 8; // Sesuai permintaan (Activity ID = 8)
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initLessonObserver();
         initVisualEffects();
         updateProgressUI();
+        
+        // CHECK IF COMPLETED ON LOAD
         if (activityCompleted) {
-            markActivityCompleteUI();
+            lockActivityUI();
             unlockNext();
+            
+            // Set visuals to "Correct" state for read-only view
+            document.querySelectorAll('.opt-btn-layout').forEach(b => {
+                if(b.innerText === 'grid-cols-2') b.classList.add('bg-cyan-600', 'text-white', 'border-cyan-500');
+            });
+            document.querySelectorAll('.opt-btn-gap').forEach(b => {
+                if(b.innerText === 'gap-4') b.classList.add('bg-cyan-600', 'text-white', 'border-cyan-500');
+            });
+            document.querySelectorAll('.opt-btn-align').forEach(b => {
+                if(b.innerText === 'center') b.classList.add('bg-cyan-600', 'text-white', 'border-cyan-500');
+            });
+            // Force preview state
+            currentConfig = { layout: 'grid grid-cols-2', gap: 'gap-4', align: 'justify-center items-center' };
+            updatePreview();
         }
     });
 
@@ -607,13 +561,15 @@
         const btn = document.getElementById('submitBtn');
         const classes = `w-full h-full bg-white/5 border-2 border-dashed border-white/10 rounded-lg p-4 transition-all duration-300 ${currentConfig.layout} ${currentConfig.gap} ${currentConfig.align}`;
         container.className = classes;
-        btn.classList.remove('bg-white/10', 'text-white/50');
-        btn.classList.add('bg-cyan-600', 'text-white', 'hover:bg-cyan-500');
         
-        const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-        const consoleLog = document.getElementById('console-output');
-        consoleLog.innerHTML += `<p>> [${time}] Apply: <span class="text-cyan-400">${currentConfig.layout} ${currentConfig.gap} ${currentConfig.align}</span></p>`;
-        consoleLog.scrollTop = consoleLog.scrollHeight;
+        if(!activityCompleted) {
+            btn.classList.remove('bg-white/10', 'text-white/50');
+            btn.classList.add('bg-cyan-600', 'text-white', 'hover:bg-cyan-500');
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const consoleLog = document.getElementById('console-output');
+            consoleLog.innerHTML += `<p>> [${time}] Apply: <span class="text-cyan-400">${currentConfig.layout} ${currentConfig.gap} ${currentConfig.align}</span></p>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
     }
 
     async function checkSolution() {
@@ -657,12 +613,23 @@
 
     function markActivityCompleteUI() {
         const btn = document.getElementById('submitBtn');
-        btn.innerHTML = "Tersimpan ✔";
-        btn.className = "w-full md:w-auto px-8 py-3 bg-green-600 text-white font-bold rounded-xl cursor-not-allowed";
-        btn.disabled = true;
+        if(btn) {
+            btn.innerHTML = "Tersimpan ✔";
+            btn.className = "w-full md:w-auto px-8 py-3 bg-green-600 text-white font-bold rounded-xl cursor-not-allowed";
+            btn.disabled = true;
+        }
         document.getElementById('status-text').innerText = "Tantangan Selesai!";
         document.getElementById('status-text').className = "text-[10px] text-green-400 font-bold";
-        document.getElementById('lockOverlay').classList.remove('hidden'); // Show Overlay
+        document.getElementById('lockOverlay').classList.remove('hidden'); 
+    }
+
+    function lockActivityUI() {
+        // Disable all buttons
+        document.querySelectorAll('#gridActivityForm button').forEach(b => {
+            b.disabled = true;
+            b.classList.add('cursor-not-allowed', 'opacity-50');
+        });
+        markActivityCompleteUI();
     }
 
     /* --- 4. SYSTEM FUNCTIONS --- */
@@ -752,6 +719,13 @@
         let s=[]; for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random(),v:Math.random()*0.5});
         (function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.3)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a)})();
         $(window).on('mousemove',e=>{ $('#cursor-glow').css({left:e.clientX,top:e.clientY}); });
+    }
+    function toggleAccordion(id) {
+        const el = document.getElementById(id);
+        const group = el.closest('.accordion-group');
+        const arrow = document.getElementById(id.replace('content', 'arrow'));
+        if(el.style.maxHeight){ el.style.maxHeight=null; group.classList.remove('open'); if(arrow) arrow.style.transform='rotate(0deg)'; }
+        else{ el.style.maxHeight=el.scrollHeight+"px"; group.classList.add('open'); if(arrow) arrow.style.transform='rotate(180deg)'; }
     }
 </script>
 @endsection

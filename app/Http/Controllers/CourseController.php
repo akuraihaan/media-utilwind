@@ -61,7 +61,7 @@ class CourseController extends Controller
         $status['3.1'] = $check([46, 51], 10);
         $status['3.2'] = $check([52, 55], 11);
         $status['3.3'] = $check([56, 59], 12);
-        $status['3.4'] = $check([60, 63], 13);
+        $status['3.4'] = $check([60, 65], 13);
 
         return $status;
     }
@@ -164,11 +164,52 @@ class CourseController extends Controller
     public function typography() { return $this->loadView('courses.typography', '3.1', [46, 51], 10, 'quiz_2'); }
     public function backgrounds() { return $this->loadView('courses.background', '3.2', [52, 55], 11, '3.1'); }
     public function borders() { return $this->loadView('courses.borders', '3.3', [56, 59], 12, '3.2'); }
-    public function effects() { return $this->loadView('courses.effects', '3.4', [60, 63], 13, '3.3'); }
+    public function effects() { return $this->loadView('courses.effects', '3.4', [60, 65], 13, '3.3'); }
     
     public function completeLesson(Request $request) {
         $data = $request->validate(['lesson_id' => 'required|integer|exists:course_lessons,id']);
         UserLessonProgress::updateOrCreate(['user_id' => Auth::id(), 'course_lesson_id' => $data['lesson_id']], ['completed' => true]);
         return response()->json(['status' => 'ok']);
     }
+
+    // Di dalam class CourseController extends Controller
+
+// Di dalam CourseController.php
+
+public function showSyllabus()
+{
+    $userId = Auth::id();
+
+    // 1. Status Materi & Kuis (Logika Lama)
+    $statusMap = $this->getChapterStatus($userId);
+
+    // 2. Status Lab (BARU: Ambil Lab yang sudah LULUS)
+    // Mengambil daftar ID Lab yang statusnya 'passed' untuk user ini
+    $passedLabsMap = \App\Models\LabHistory::where('user_id', $userId)
+        ->where('status', 'passed')
+        ->pluck('lab_id') // Misal: [1, 2] artinya Lab ID 1 dan 2 sudah lulus
+        ->flip() // Ubah jadi key: [1 => true, 2 => true] agar mudah dicek di Blade
+        ->toArray();
+
+    // 3. Hitung Progress Global (Opsional, penyempurnaan)
+    $totalSteps = 19; // 13 Materi + 3 Lab + 3 Kuis
+    
+    // Hitung item materi selesai
+    $completedLessons = count(array_filter($statusMap, fn($val, $key) => $val === true && !str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
+    
+    // Hitung lab selesai
+    $completedLabs = count($passedLabsMap);
+    
+    // Hitung kuis selesai
+    $completedQuizzes = count(array_filter($statusMap, fn($val, $key) => $val === true && str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
+
+    $totalCompleted = $completedLessons + $completedLabs + $completedQuizzes;
+    $progressPercent = $totalSteps > 0 ? round(($totalCompleted / $totalSteps) * 100) : 0;
+
+    return view('courses.curriculum', [
+        'completedLessonsMap' => $statusMap,
+        'passedLabsMap'       => $passedLabsMap, // Kirim data lab ke view
+        'progressPercent'     => $progressPercent
+    ]);
+}
 }

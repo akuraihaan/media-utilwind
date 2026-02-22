@@ -13,15 +13,15 @@ class LabSession extends Model
     protected $table = 'lab_sessions';
 
     protected $fillable = [
-        'user_id',
-        'lab_id',
-        'status',
-        'started_at',
-        'expires_at',    // Sesuai gambar (menggantikan last_activity_at)
-        'completed_at',
-        'current_score', // Sesuai gambar
-        'current_code',  // Sesuai gambar
-    ];
+    'user_id', 
+    'lab_id', 
+    'status', 
+    'started_at', 
+    'expires_at', 
+    'current_code', 
+    'current_score',
+    'completed_steps' // <--- TAMBAHKAN INI
+];
 
     public function lab()
     {

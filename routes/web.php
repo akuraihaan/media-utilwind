@@ -11,6 +11,8 @@ use App\Http\Controllers\SandboxController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\LabController; 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\ClassManagementController;
+
 
 // ====================================================
 // 1. PUBLIC ROUTES (JANGAN DIHAPUS - PENYEBAB ERROR)
@@ -34,14 +36,24 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 // 2. AUTHENTICATED ROUTES
 // ====================================================
 Route::middleware(['auth'])->group(function () {
+Route::get('/cheatsheet', function () {
+    return view('cheatsheet.index');
+})->name('cheatsheet.index');
 
+// routes/web.php
+
+// Tambahkan ini (Bisa di luar middleware auth jika ingin publik, atau di dalam jika khusus member)
+    Route::get('/gallery', function () { return view('components.gallery'); })->name('gallery.index');
     // --- DASHBOARD ---
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Rute untuk siswa bergabung ke kelas via Token
+    Route::post('/student/join-class', [DashboardController::class, 'joinClass'])->name('student.join_class');
     Route::get('/api/dashboard/progress', [DashboardController::class, 'progress'])->name('api.dashboard.progress');
     // Route khusus untuk akses Peta Konsep
     Route::get('/learning-path', function () {
         return view('courses.curriculum');
     })->name('courses.curriculum');
+    
     // --- UTILITIES ---
     Route::post('/activity/complete', [ActivityProgressController::class, 'store'])->name('activity.complete');
     Route::post('/lesson/complete', [CourseController::class, 'completeLesson'])->name('lesson.complete');
@@ -51,7 +63,8 @@ Route::middleware(['auth'])->group(function () {
     // ====================================================
     // 3. COURSE ROUTES
     // ====================================================
-    
+    // Contoh yang benar
+Route::get('/learning-path', [CourseController::class, 'showSyllabus'])->name('courses.curriculum');
     // BAB 1
     Route::get('/courses/html-css', [CourseController::class, 'tailwind'])->name('courses.htmldancss');
     Route::get('/courses/tailwind-basic', [CourseController::class, 'subbabTailwindCss'])->name('courses.tailwindcss');
@@ -121,13 +134,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // EXPORT ROUTES
     Route::get('/dashboard/user/export-csv', [AdminDashboardController::class, 'exportUsers'])->name('user.export.csv');
     Route::get('/dashboard/user/export-pdf', [AdminDashboardController::class, 'exportPdf'])->name('user.export.pdf');
+    
+    Route::get('/admin/student/{id}/export/csv', [AdminDashboardController::class, 'exportStudentCsv'])->name('student.export.csv');
+    Route::get('/admin/student/{id}/export/pdf', [AdminDashboardController::class, 'exportStudentPdf'])->name('student.export.pdf');
     // Route::get('/dashboard/user/export', [AdminDashboardController::class, 'exportUsers'])->name('user.export');
     // 2. User Management
     Route::post('/users/{id}/update', [AdminDashboardController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{id}', [AdminDashboardController::class, 'deleteUser'])->name('users.delete');
     
-    // Perbaikan nama route reset password agar konsisten
-    Route::post('/users/{id}/reset-password', [AdminDashboardController::class, 'resetPassword'])->name('users.resetPassword');
+  
 
     // 3. Student Insight
     Route::get('/student/{id}', [AdminDashboardController::class, 'studentDetail'])->name('student.detail');
@@ -143,6 +158,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Menyimpan Data (POST) -> Hasil route: admin.questions.store
     Route::post('/questions/store', [AdminDashboardController::class, 'storeQuestion'])->name('questions.store');
+    Route::post('/questions/update/{id}', [AdminDashboardController::class, 'updateQuestion'])->name('questions.update');
+    Route::delete('/questions/delete/{id}', [AdminDashboardController::class, 'destroyQuestion'])->name('questions.destroy');
 
     // ==========================================
     // LAB CONFIGURATION & ANALYTICS ROUTES
@@ -156,15 +173,29 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/labs/{id}/toggle', [LabController::class, 'toggleStatus'])->name('labs.toggle');
 
     // 2. Lab Tasks (Soal di dalam Lab)
+   // Get List Task (dipanggil saat tombol "Steps" diklik)
     Route::get('/labs/{id}/tasks', [LabController::class, 'getTasks'])->name('labs.tasks.index');
+    
+    // Create Task Baru
     Route::post('/labs/tasks', [LabController::class, 'storeTask'])->name('labs.tasks.store');
+    
+    // Update Task (Method PUT untuk Edit)
+    Route::put('/labs/tasks/{id}', [LabController::class, 'updateTask'])->name('labs.tasks.update');
+    
+    // Delete Task
     Route::delete('/labs/tasks/{id}', [LabController::class, 'destroyTask'])->name('labs.tasks.destroy');
-
     // 3. LAB ANALYTICS (Halaman Statistik) -> INI YANG ANDA MINTA
     // Parameter {labId?} bersifat opsional agar bisa menampilkan "Semua Modul" atau "Spesifik Modul"
     Route::get('/analytics/lab/{labId?}', [LabController::class, 'analytics'])->name('lab.analytics');
     Route::get('/analytics/student/{userId}', [LabController::class, 'studentAnalytics'])->name('student.analytics');
+// New
 
+   // CLASS & TOKEN MANAGEMENT
+    Route::get('/classes', [ClassManagementController::class, 'index'])->name('classes.index');
+    Route::post('/classes', [ClassManagementController::class, 'store'])->name('classes.store');
+    Route::put('/classes/{id}', [ClassManagementController::class, 'update'])->name('classes.update');
+    Route::delete('/classes/{id}', [ClassManagementController::class, 'destroy'])->name('classes.destroy');
+    Route::post('/classes/{id}/token', [ClassManagementController::class, 'regenerateToken'])->name('classes.token');
 });
 use App\Http\Controllers\ProfileController;
 
@@ -177,13 +208,3 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
-Route::get('/cheatsheet', function () {
-    return view('cheatsheet.index');
-})->name('cheatsheet.index');
-
-// routes/web.php
-
-// Tambahkan ini (Bisa di luar middleware auth jika ingin publik, atau di dalam jika khusus member)
-Route::get('/gallery', function () {
-    return view('components.gallery'); // Sesuaikan dengan lokasi file blade Anda
-})->name('gallery.index');

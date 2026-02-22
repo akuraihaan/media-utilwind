@@ -66,5 +66,12 @@ class User extends Authenticatable
     public function labHistories() {
     return $this->hasMany(LabHistory::class)->latest();
 }
+
+// Di dalam class User
+    public function classGroup()
+    {
+        // Relasi: Kolom 'class_group' di tabel users terhubung ke kolom 'name' di tabel class_groups
+        return $this->belongsTo(ClassGroup::class, 'class_group', 'name');
+    }
 }
 

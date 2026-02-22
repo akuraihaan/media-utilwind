@@ -88,7 +88,7 @@
                 <article class="space-y-40">
                     
                     {{-- LESSON 1.5.1 --}}
-                    <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="20">
+                    <section id="section-20" class="lesson-section scroll-mt-32" data-lesson-id="20">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
                                 <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.1</span>
@@ -166,7 +166,7 @@
                     </section>
 
                     {{-- LESSON 1.5.2 --}}
-                    <section id="section-2" class="lesson-section scroll-mt-32" data-lesson-id="21">
+                    <section id="section-21" class="lesson-section scroll-mt-32" data-lesson-id="21">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.2</span>
@@ -225,7 +225,7 @@
                     </section>
 
                     {{-- LESSON 1.5.3 --}}
-                    <section id="section-3" class="lesson-section scroll-mt-32" data-lesson-id="22">
+                    <section id="section-22" class="lesson-section scroll-mt-32" data-lesson-id="22">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-emerald-500 pl-6">
                                 <span class="text-emerald-400 font-mono text-xs uppercase tracking-widest">Lesson 1.5.3</span>
@@ -297,7 +297,7 @@
 
                     {{-- ACTIVITY SECTION: LIVE REFACTOR CHALLENGE --}}
                     {{-- PENTING: data-type="activity" agar tidak auto-complete saat scroll --}}
-                    <section id="section-4" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="23" data-type="activity">
+                    <section id="section-23" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="23" data-type="activity">
                         <div class="relative rounded-[2.5rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
                             
                             {{-- Activity Header --}}

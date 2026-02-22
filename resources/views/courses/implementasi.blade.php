@@ -97,7 +97,7 @@
                 <article class="space-y-40">
                     
                     {{-- LESSON 1.4.1 --}}
-                    <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="16">
+                    <section id="section-16" class="lesson-section scroll-mt-32" data-lesson-id="16">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.1</span>
@@ -207,7 +207,7 @@
                     </section>
 
                     {{-- LESSON 1.4.2 --}}
-                    <section id="section-2" class="lesson-section scroll-mt-32" data-lesson-id="17">
+                    <section id="section-17" class="lesson-section scroll-mt-32" data-lesson-id="17">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.2</span>
@@ -301,7 +301,7 @@
                     </section>
 
                     {{-- LESSON 1.4.3 --}}
-                    <section id="section-3" class="lesson-section scroll-mt-32" data-lesson-id="18">
+                    <section id="section-18" class="lesson-section scroll-mt-32" data-lesson-id="18">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.3</span>
@@ -383,7 +383,7 @@
                     </section>
 
                     {{-- ACTIVITY SECTION --}}
-                    <section id="section-4" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="19" data-type="activity">
+                    <section id="section-19" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="19" data-type="activity">
                         <div class="relative rounded-[2.5rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
                             
                             <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 relative z-10">

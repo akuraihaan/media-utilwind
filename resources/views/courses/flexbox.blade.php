@@ -74,7 +74,7 @@
                 <article class="space-y-40">
                     
                     {{-- LESSON 1: FONDASI FLEX --}}
-                    <section id="fondasi" class="lesson-section scroll-mt-32" data-lesson-id="29">
+                    <section id="section-29" class="lesson-section scroll-mt-32" data-lesson-id="29">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
                                 <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.1</span>
@@ -144,7 +144,7 @@
                     </section>
 
                     {{-- LESSON 2: DIRECTION & WRAP --}}
-                    <section id="arahwrap" class="lesson-section scroll-mt-32" data-lesson-id="30">
+                    <section id="section-30" class="lesson-section scroll-mt-32" data-lesson-id="30">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
                                 <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.2</span>
@@ -210,7 +210,7 @@
                     </section>
 
                     {{-- LESSON 3: ALIGNMENT --}}
-                    <section id="alignment" class="lesson-section scroll-mt-32" data-lesson-id="31">
+                    <section id="section-31" class="lesson-section scroll-mt-32" data-lesson-id="31">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-fuchsia-500 pl-6">
                                 <span class="text-fuchsia-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.3</span>
@@ -288,7 +288,7 @@
                     </section>
 
                     {{-- LESSON 4: SIZING --}}
-                    <section id="sizing" class="lesson-section scroll-mt-32" data-lesson-id="32">
+                    <section id="section-32" class="lesson-section scroll-mt-32" data-lesson-id="32">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-pink-500 pl-6">
                                 <span class="text-pink-400 font-mono text-xs uppercase tracking-widest">Lesson 2.1.4</span>
@@ -339,7 +339,7 @@
                     </section>
 
                     {{-- FINAL MISSION --}}
-                    <section id="aktivitas-1-7" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-type="activity">
+                    <section id="section-33" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="33" data-type="activity">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
                             
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>

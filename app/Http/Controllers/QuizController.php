@@ -152,55 +152,69 @@ class QuizController extends Controller
     }
 
     // =========================================================================
-    // 4. REAL-TIME SAVE (AJAX) - FITUR RAGU-RAGU & AUTO SAVE
+    // 4. REAL-TIME SAVE (VERSI PERBAIKAN TOTAL)
     // =========================================================================
     public function saveProgress(Request $request)
     {
-        // Validasi input
+        // 1. Validasi Input (Hapus 'nullable' di option_id validasi agar tidak conflict)
         $request->validate([
-            'attempt_id' => 'required|integer',
-            'question_id' => 'required|integer',
-            'option_id' => 'nullable|integer', // Boleh null jika user hanya klik ragu-ragu tanpa jawab
-            'is_flagged' => 'required|boolean' // Status Ragu-ragu (Mark for Review)
+            'attempt_id'   => 'required|integer',
+            'question_id'  => 'required|integer',
+            'is_flagged'   => 'required|boolean'
         ]);
 
         try {
-            // Validasi kepemilikan sesi
+            // 2. Cek Validasi Sesi
             $attempt = QuizAttempt::find($request->attempt_id);
-            if (!$attempt || $attempt->user_id != Auth::id() || $attempt->completed_at != null) {
+            if (!$attempt || $attempt->user_id != Auth::id()) {
                 return response()->json(['status' => 'error', 'message' => 'Sesi tidak valid'], 403);
             }
 
-            // Cek Kunci Jawaban (Disimpan tapi belum dihitung skor)
-            $isCorrect = false;
-            if ($request->option_id) {
-                $option = QuizOption::find($request->option_id);
-                // Pastikan opsi jawaban milik soal yang benar
-                if ($option && $option->quiz_question_id == $request->question_id) {
-                    $isCorrect = $option->is_correct;
+            // 3. Persiapkan Data Jawaban
+            $optionId = $request->option_id; // Bisa null
+            $isCorrect = 0;
+
+            // Jika user memilih jawaban (tidak kosong/null)
+            if (!empty($optionId) && $optionId !== 'null') {
+                // Cek Kunci Jawaban di Tabel Options
+                $selectedOption = QuizOption::find($optionId);
+                
+                if ($selectedOption) {
+                    // Pastikan opsi ini memang milik soal tersebut (Security Check)
+                    if ($selectedOption->quiz_question_id == $request->question_id) {
+                        $isCorrect = $selectedOption->is_correct ? 1 : 0;
+                    }
                 }
+            } else {
+                $optionId = null; // Pastikan tersimpan sebagai NULL database, bukan string "null"
             }
 
-            // SIMPAN KE DATABASE (Update or Create)
-            // Logika: Cari baris data berdasarkan attempt_id dan question_id
-            // Jika ada update, jika tidak buat baru.
-            QuizAttemptAnswer::updateOrCreate(
+            // 4. SIMPAN KE DATABASE (Update jika ada, Create jika belum)
+            // Menggunakan updateOrCreate agar tidak duplikat data per soal
+            $answer = QuizAttemptAnswer::updateOrCreate(
                 [
-                    'quiz_attempt_id' => $attempt->id, 
+                    'quiz_attempt_id'  => $attempt->id, 
                     'quiz_question_id' => $request->question_id
                 ],
                 [
-                    'quiz_option_id' => $request->option_id, // Jawaban User
-                    'is_correct' => $isCorrect,               // Status Benar/Salah (Hidden)
-                    'is_flagged' => $request->is_flagged      // Status Ragu-ragu
+                    'quiz_option_id' => $optionId,
+                    'is_flagged'     => $request->is_flagged,
+                    'is_correct'     => $isCorrect // Simpan status benar/salah langsung
                 ]
             );
 
-            return response()->json(['status' => 'success']);
+            return response()->json([
+                'status' => 'success',
+                'debug_info' => $answer // Mengembalikan data yang disimpan untuk cek di console browser
+            ]);
 
         } catch (\Exception $e) {
-            Log::error("Quiz Save Error: " . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Gagal menyimpan jawaban'], 500);
+            // Tampilkan error asli untuk debugging
+            return response()->json([
+                'status' => 'error', 
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ], 500);
         }
     }
 

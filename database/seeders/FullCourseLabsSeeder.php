@@ -4,283 +4,243 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 class FullCourseLabsSeeder extends Seeder
 {
     public function run()
     {
-        // Reset tabel untuk mencegah duplikasi saat seeding ulang
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
+
+        // Bersihkan data lama (Child dulu baru Parent)
         DB::table('lab_steps')->truncate();
         DB::table('labs')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // =========================================================================
-        // LAB 1: FUNDAMENTAL & KONFIGURASI (Mencakup BAB 1)
-        // Fokus: Refactoring Inline CSS -> Utility Classes -> Config
-        // =========================================================================
-        
-        $lab1Id = DB::table('labs')->insertGetId([
-            'title' => 'Lab 1: Fundamental & Konfigurasi',
-            'slug' => 'lab-01-fundamental',
-            'description' => 'Memahami transisi dari CSS Tradisional ke Tailwind dan struktur utilitas.',
-            'duration_minutes' => 45,
-            'passing_grade' => 100,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
+        Schema::enableForeignKeyConstraints();
 
-        // --- TASK 1: CONTAINER (Masih Inline CSS) ---
-        $l1_t1_code = '<div style="background-color: white; padding: 24px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 400px; margin: 0 auto;">
-  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Selamat Datang</h2>
-  <p style="color: #6b7280;">Mari belajar Tailwind CSS dengan cara yang benar.</p>
-</div>';
-
-        // --- TASK 2: TYPOGRAPHY (Container sudah bersih, Font masih Inline) ---
-        $l1_t2_code = '<div class="bg-white p-6 border border-gray-200 rounded-lg max-w-md mx-auto shadow-sm">
-  <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">Selamat Datang</h2>
-  <p style="color: #4b5563; line-height: 1.625;">Mari belajar Tailwind CSS dengan cara yang benar.</p>
-</div>';
-
-        // --- TASK 3: BUTTON (Semua sudah bersih, Tambah Tombol) ---
-        $l1_t3_code = '<div class="bg-white p-6 border border-gray-200 rounded-lg max-w-md mx-auto shadow-sm">
-  <h2 class="text-2xl font-bold mb-4">Selamat Datang</h2>
-  <p class="text-gray-600 leading-relaxed mb-6">Mari belajar Tailwind CSS dengan cara yang benar.</p>
-  </div>';
-
-        // --- TASK 4: CONFIG (File berbeda) ---
-        $l1_t4_code = '<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          // Instruksi: Tambahkan warna "brand-blue": "#1e40af"
-        }
-      }
+        $this->seedLabBab1();
+        $this->seedLabBab2();
+        $this->seedLabBab3();
+        $this->seedLabFinal();
     }
-  }
-</script>
-<div class="bg-brand-blue p-4 text-white text-center rounded">
-  Testing Custom Theme
-</div>';
 
-        DB::table('lab_steps')->insert([
-            [
-                'lab_id' => $lab1Id,
-                'title' => 'Task 1: Refactor Container (1.4)',
-                'instruction' => "Hapus atribut `style` pada `div` pembungkus. Ganti dengan Utility Class:\n1. Background putih: `bg-white`\n2. Padding: `p-6`\n3. Border halus: `border border-gray-200`\n4. Radius: `rounded-lg`\n5. Lebar & Tengah: `max-w-md mx-auto`",
-                'initial_code' => $l1_t1_code,
-                'validation_rules' => json_encode(['bg-white', 'p-6', 'border-gray-200', 'rounded-lg', 'max-w-md', 'mx-auto']),
-                'points' => 25, 'order_index' => 1, 'created_at' => now(), 'updated_at' => now(),
-            ],
-            [
-                'lab_id' => $lab1Id,
-                'title' => 'Task 2: Refactor Typography (1.4)',
-                'instruction' => "Container sudah rapi. Sekarang perbaiki teks:\n1. Ubah `h2` menjadi: `text-2xl font-bold mb-4`.\n2. Ubah `p` menjadi warna abu-abu gelap (`text-gray-600`) dengan spasi baris santai (`leading-relaxed`).\n3. Tambahkan margin bawah pada paragraf (`mb-6`).",
-                'initial_code' => $l1_t2_code,
-                'validation_rules' => json_encode(['text-2xl', 'font-bold', 'text-gray-600', 'leading-relaxed', 'mb-6']),
-                'points' => 25, 'order_index' => 2, 'created_at' => now(), 'updated_at' => now(),
-            ],
-            [
-                'lab_id' => $lab1Id,
-                'title' => 'Task 3: Membuat Tombol (1.4)',
-                'instruction' => "Tambahkan elemen `<button>` di bawah paragraf.\nStyle tombol:\n1. Background biru: `bg-blue-600`\n2. Teks putih: `text-white`\n3. Padding: `px-4 py-2`\n4. Radius: `rounded`\n5. Efek Hover: `hover:bg-blue-700`",
-                'initial_code' => $l1_t3_code,
-                'validation_rules' => json_encode(['bg-blue-600', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-blue-700']),
-                'points' => 25, 'order_index' => 3, 'created_at' => now(), 'updated_at' => now(),
-            ],
-            [
-                'lab_id' => $lab1Id,
-                'title' => 'Task 4: Konfigurasi Tema (1.6)',
-                'instruction' => "Kita akan memodifikasi konfigurasi Tailwind.\nDi dalam objek `colors`, tambahkan properti `'brand-blue': '#1e40af'`. Ini akan memungkinkan penggunaan class `bg-brand-blue`.",
-                'initial_code' => $l1_t4_code,
-                'validation_rules' => json_encode(["'brand-blue':", "'#1e40af'"]),
-                'points' => 25, 'order_index' => 4, 'created_at' => now(), 'updated_at' => now(),
-            ]
-        ]);
-
-
-        // =========================================================================
-        // LAB 2: LAYOUTING SYSTEM (Mencakup BAB 2)
-        // Fokus: Flexbox Sidebar -> Grid Main Content -> Responsive
-        // =========================================================================
-
-        $lab2Id = DB::table('labs')->insertGetId([
-            'title' => 'Lab 2: Layouting System',
-            'slug' => 'lab-02-layouting',
-            'description' => 'Membangun layout dashboard responsif menggunakan Flexbox dan Grid System.',
+    /**
+     * LAB BAB 1: REFACORING LEGACY CODE
+     * Fokus: Konsep Dasar, Utility Classes, Spacing, Sizing
+     */
+    private function seedLabBab1()
+    {
+        $labId = DB::table('labs')->insertGetId([
+            'title' => 'Lab 01: Refactoring Legacy Code',
+            'slug' => 'lab-01-refactoring-legacy',
+            'description' => 'Misi: Bersihkan kode "jorok" penuh CSS inline dan ubah menjadi desain modern menggunakan Tailwind CSS.',
             'duration_minutes' => 60,
-            'passing_grade' => 100,
+            'passing_grade' => 70,
+            'is_active' => 1,
             'created_at' => now(), 'updated_at' => now(),
         ]);
 
-        // Task 1: Sidebar Basic
-        $l2_t1_code = '<div class="flex h-screen bg-gray-100">
-  <aside class="w-64 bg-slate-800 text-white p-6">
-    <div class="mb-8 font-bold text-xl">Dashboard</div>
-    <nav>
-      <a href="#" class="block py-2">Home</a>
-      <a href="#" class="block py-2">Analytics</a>
-      <a href="#" class="block py-2">Settings</a>
-    </nav>
-  </aside>
-  <main class="flex-1 p-8">Konten Utama</main>
-</div>';
-
-        // Task 2: Flex Column pada Sidebar (Sidebar sudah flex dari task 1)
-        $l2_t2_code = '<div class="flex h-screen bg-gray-100">
-  <aside class="w-64 bg-slate-800 text-white p-6 flex flex-col justify-between">
-    <div>
-      <div class="mb-8 font-bold text-xl">Dashboard</div>
-      <nav class="flex flex-col gap-2">
-        <a href="#" class="block py-2 px-4 bg-slate-700 rounded">Home</a>
-        <a href="#" class="block py-2 px-4 hover:bg-slate-700 rounded">Analytics</a>
-      </nav>
-    </div>
-    <div class="text-sm text-slate-400">© 2024 App</div>
-  </aside>
-  <main class="flex-1 p-8">
-    <div class="">
-      <div class="bg-white p-6 rounded shadow">Card 1</div>
-      <div class="bg-white p-6 rounded shadow">Card 2</div>
-      <div class="bg-white p-6 rounded shadow">Card 3</div>
-    </div>
-  </main>
-</div>';
-
-        // Task 3: Responsive Grid (Grid sudah ada, tinggal responsive)
-        $l2_t3_code = '<main class="flex-1 p-8">
-  <div class="grid grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded shadow">Statistik A</div>
-    <div class="bg-white p-6 rounded shadow">Statistik B</div>
-    <div class="bg-white p-6 rounded shadow">Statistik C</div>
-  </div>
-</main>';
-
-        // Task 4: Internal Card Flex
-        $l2_t4_code = '<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-  <div class="bg-white p-6 rounded shadow">
-    <div>
-      <h3 class="text-gray-500 text-sm">Total User</h3>
-      <span class="text-3xl font-bold">1,250</span>
-    </div>
-    <div class="bg-green-100 text-green-600 p-2 rounded-full">
-      Icon
-    </div>
-  </div>
-</div>';
-
-        DB::table('lab_steps')->insert([
+        $steps = [
             [
-                'lab_id' => $lab2Id,
-                'title' => 'Task 1: Sidebar Structure (2.1)',
-                'instruction' => "Rapikan Sidebar menggunakan Flexbox:\n1. Tambahkan `flex flex-col` pada elemen `<aside>` agar isinya vertikal.\n2. Tambahkan `justify-between` agar konten terpisah (menu di atas, footer di bawah nanti).\n3. Pada `<nav>`, tambahkan `flex flex-col gap-2` untuk jarak antar menu.",
-                'initial_code' => $l2_t1_code,
-                'validation_rules' => json_encode(['flex', 'flex-col', 'justify-between', 'gap-2']),
-                'points' => 25, 'order_index' => 1, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 1, 'points' => 10,
+                'title' => 'Task 1: Setup Tailwind (CDN)',
+                'instruction' => 'Browser belum kenal Tailwind. Masukkan script CDN Tailwind di dalam tag <head>.',
+                'initial_code' => "<!DOCTYPE html>\n<html>\n<head>\n    <title>Profil Karyawan</title>\n    \n</head>\n<body>...</body>",
+                'validation_rules' => json_encode(['<script src="https://cdn.tailwindcss.com"></script>']),
             ],
             [
-                'lab_id' => $lab2Id,
-                'title' => 'Task 2: Main Grid System (2.2)',
-                'instruction' => "Sekarang kita kerjakan area Main Content.\nUbah `div` pembungkus Card menjadi Grid Container:\n1. Class: `grid`\n2. Kolom: `grid-cols-3`\n3. Jarak: `gap-6`",
-                'initial_code' => $l2_t2_code,
-                'validation_rules' => json_encode(['grid', 'grid-cols-3', 'gap-6']),
-                'points' => 25, 'order_index' => 2, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 2, 'points' => 15,
+                'title' => 'Task 2: Container & Spacing',
+                'instruction' => 'Ganti style width/margin manual dengan `max-w-md mx-auto`. Tambahkan padding `p-6` dan background `bg-slate-100`.',
+                'initial_code' => '<div style="width: 50%; margin: 0 auto; background-color: #f0f0f0; padding: 20px;">',
+                'validation_rules' => json_encode(['max-w-md', 'mx-auto', 'p-6', 'bg-slate-100']),
             ],
             [
-                'lab_id' => $lab2Id,
-                'title' => 'Task 3: Responsive Grid (2.2)',
-                'instruction' => "Grid 3 kolom terlihat buruk di HP. Ubah menjadi Responsif:\n1. Default (Mobile): `grid-cols-1`\n2. Tablet/Desktop (md ke atas): `md:grid-cols-3`\n3. Ganti `grid-cols-3` yang lama dengan konfigurasi di atas.",
-                'initial_code' => $l2_t3_code,
-                'validation_rules' => json_encode(['grid-cols-1', 'md:grid-cols-3']),
-                'points' => 25, 'order_index' => 3, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 3, 'points' => 15,
+                'title' => 'Task 3: Card Styling',
+                'instruction' => 'Buat tampilan kartu profesional. Gunakan `bg-white`, `rounded-xl` (sudut membulat), dan `shadow-lg` (bayangan).',
+                'initial_code' => '<div style="border: 1px solid black; background: white;">',
+                'validation_rules' => json_encode(['bg-white', 'rounded-xl', 'shadow-lg']),
             ],
             [
-                'lab_id' => $lab2Id,
-                'title' => 'Task 4: Card Alignment (2.1)',
-                'instruction' => "Konten di dalam kartu masih berantakan (atas-bawah). Gunakan Flexbox untuk menyejajarkan kiri-kanan.\nPada `div` pembungkus konten kartu:\n1. Tambahkan `flex`\n2. Tambahkan `items-center` (vertikal tengah)\n3. Tambahkan `justify-between` (ujung ke ujung)",
-                'initial_code' => $l2_t4_code,
-                'validation_rules' => json_encode(['flex', 'items-center', 'justify-between']),
-                'points' => 25, 'order_index' => 4, 'created_at' => now(), 'updated_at' => now(),
-            ]
-        ]);
+                'lab_id' => $labId, 'order_index' => 4, 'points' => 15,
+                'title' => 'Task 4: Typography Hierarchy',
+                'instruction' => 'Judul nama harus menonjol: `text-2xl font-bold text-slate-800`. Jabatan: `text-indigo-600 font-medium`.',
+                'initial_code' => '<h3>Budi Santoso</h3><p style="color: blue;">Web Developer</p>',
+                'validation_rules' => json_encode(['text-2xl', 'font-bold', 'text-slate-800', 'text-indigo-600', 'font-medium']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 5, 'points' => 20,
+                'title' => 'Task 5: Avatar Styling',
+                'instruction' => 'Buat foto profil menjadi lingkaran sempurna (`rounded-full`) dengan ukuran fix `w-24 h-24` dan border `ring-4 ring-indigo-50`.',
+                'initial_code' => '<img src="/avatar.jpg" style="width: 100px; height: 100px;">',
+                'validation_rules' => json_encode(['rounded-full', 'w-24', 'h-24', 'ring-4', 'ring-indigo-50']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 6, 'points' => 10,
+                'title' => 'Task 6: Interactive Button',
+                'instruction' => 'Buat tombol "Hire Me": `bg-indigo-600`, teks putih, `rounded-lg`, dan efek `hover:bg-indigo-700`.',
+                'initial_code' => '<button>Hire Me</button>',
+                'validation_rules' => json_encode(['bg-indigo-600', 'text-white', 'rounded-lg', 'hover:bg-indigo-700']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 7, 'points' => 15,
+                'title' => 'Task 7: Final Layout',
+                'instruction' => 'Ratakan semua konten ke tengah dengan `text-center` pada container kartu dan beri jarak antar elemen dengan `space-y-4`.',
+                'initial_code' => '<div class="bg-white rounded-xl shadow-lg p-6">',
+                'validation_rules' => json_encode(['text-center', 'space-y-4']),
+            ],
+        ];
 
+        DB::table('lab_steps')->insert($steps);
+    }
 
-        // =========================================================================
-        // LAB 3: STYLING & EFFECTS (Mencakup BAB 3)
-        // Fokus: Gradient, Typography, Ring, Animation
-        // =========================================================================
-
-        $lab3Id = DB::table('labs')->insertGetId([
-            'title' => 'Lab 3: Advanced Styling',
-            'slug' => 'lab-03-styling',
-            'description' => 'Polesan akhir UI menggunakan Gradient, Efek, dan Animasi.',
-            'duration_minutes' => 60,
-            'passing_grade' => 100,
+    /**
+     * LAB BAB 2: MODERN LAYOUTING
+     * Fokus: Flexbox, Grid, Responsive Design
+     */
+    private function seedLabBab2()
+    {
+        $labId = DB::table('labs')->insertGetId([
+            'title' => 'Lab 02: Dashboard Layout Construction',
+            'slug' => 'lab-02-layouting-mastery',
+            'description' => 'Misi: Membangun struktur dashboard admin yang responsif menggunakan kekuatan Flexbox dan CSS Grid.',
+            'duration_minutes' => 75,
+            'passing_grade' => 75,
+            'is_active' => 1,
             'created_at' => now(), 'updated_at' => now(),
         ]);
 
-        // Task 1: Gradient
-        $l3_t1_code = '<div class="flex justify-center items-center min-h-screen bg-gray-50">
-  <div class="w-80 h-48 bg-gray-800 rounded-xl p-6 text-white">
-    <h2 class="font-bold text-xl">Premium Card</h2>
-  </div>
-</div>';
-
-        // Task 2: Typography (Gradient sudah diterapkan)
-        $l3_t2_code = '<div class="w-80 h-48 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white shadow-xl">
-  <h2>Membership Pro</h2>
-  <p class="mt-2 text-sm opacity-90">Akses tak terbatas ke semua fitur.</p>
-</div>';
-
-        // Task 3: Button Ring (Card sudah rapi)
-        $l3_t3_code = '<div class="w-80 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
-  <h2 class="font-bold text-gray-800 text-lg">Konfirmasi</h2>
-  <p class="text-gray-500 text-sm mb-4">Apakah Anda yakin ingin melanjutkan?</p>
-  <button class="w-full bg-indigo-600 text-white py-2 rounded-lg">
-    Terima & Lanjut
-  </button>
-</div>';
-
-        // Task 4: Animation & Transform
-        $l3_t4_code = '<div class="group w-64 p-4 bg-white border rounded-lg cursor-pointer">
-  <div class="w-12 h-12 bg-indigo-100 rounded-full mb-3"></div>
-  <h3 class="font-bold">Interactive Card</h3>
-  <p class="text-sm text-gray-500">Hover saya untuk melihat efek.</p>
-</div>';
-
-        DB::table('lab_steps')->insert([
+        $steps = [
             [
-                'lab_id' => $lab3Id,
-                'title' => 'Task 1: Background Gradient (3.2)',
-                'instruction' => "Ganti warna solid `bg-gray-800` menjadi Gradient:\n1. Arah: `bg-gradient-to-r` (kiri ke kanan)\n2. Warna Mulai: `from-purple-600`\n3. Warna Akhir: `to-blue-600`\n4. Tambahkan shadow: `shadow-xl`",
-                'initial_code' => $l3_t1_code,
-                'validation_rules' => json_encode(['bg-gradient-to-r', 'from-purple-600', 'to-blue-600', 'shadow-xl']),
-                'points' => 25, 'order_index' => 1, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 1, 'points' => 20,
+                'title' => 'Task 1: Sidebar & Main Content (Flex)',
+                'instruction' => 'Buat layout 2 kolom (Sidebar kiri, Konten kanan). Gunakan `flex` pada container utama. Sidebar `w-64`, Konten `flex-1`.',
+                'initial_code' => '<div class="h-screen bg-gray-100">\n  \n  <aside>Sidebar</aside>\n  \n  <main>Content</main>\n</div>',
+                'validation_rules' => json_encode(['flex', 'h-screen', 'w-64', 'flex-1']),
             ],
             [
-                'lab_id' => $lab3Id,
-                'title' => 'Task 2: Advanced Typography (3.1)',
-                'instruction' => "Styling Judul `h2`:\n1. Ukuran: `text-2xl`\n2. Tebal: `font-extrabold`\n3. Huruf kapital semua: `uppercase`\n4. Jarak antar huruf: `tracking-wider`",
-                'initial_code' => $l3_t2_code,
-                'validation_rules' => json_encode(['text-2xl', 'font-extrabold', 'uppercase', 'tracking-wider']),
-                'points' => 25, 'order_index' => 2, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 2, 'points' => 20,
+                'title' => 'Task 2: Navbar Alignment (Flex Justify)',
+                'instruction' => 'Di dalam <header>, buat logo di kiri dan profil user di kanan. Gunakan `flex`, `justify-between`, dan `items-center`.',
+                'initial_code' => '<header class="bg-white p-4 shadow">\n  <div>Logo</div>\n  <div>User Profile</div>\n</header>',
+                'validation_rules' => json_encode(['flex', 'justify-between', 'items-center']),
             ],
             [
-                'lab_id' => $lab3Id,
-                'title' => 'Task 3: Focus Ring (Accessibility) (3.3)',
-                'instruction' => "Buat tombol aksesibel saat di-klik/tab.\nTambahkan class pada `<button>`:\n1. `focus:outline-none`\n2. `focus:ring-2`\n3. `focus:ring-offset-2`\n4. `focus:ring-indigo-500`",
-                'initial_code' => $l3_t3_code,
-                'validation_rules' => json_encode(['focus:ring-2', 'focus:ring-offset-2', 'focus:ring-indigo-500']),
-                'points' => 25, 'order_index' => 3, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 3, 'points' => 30,
+                'title' => 'Task 3: Stats Grid (Responsive)',
+                'instruction' => 'Buat grid kartu statistik. Mobile 1 kolom (`grid-cols-1`), Tablet 2 kolom (`md:grid-cols-2`), Desktop 4 kolom (`lg:grid-cols-4`). Beri `gap-6`.',
+                'initial_code' => '<section class="mt-8">\n  \n  <div>\n    <div class="card">Stat 1</div>\n    <div class="card">Stat 2</div>\n    <div class="card">Stat 3</div>\n    <div class="card">Stat 4</div>\n  </div>\n</section>',
+                'validation_rules' => json_encode(['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-4', 'gap-6']),
             ],
             [
-                'lab_id' => $lab3Id,
-                'title' => 'Task 4: Hover & Transform (3.4)',
-                'instruction' => "Berikan efek interaktif pada div pembungkus (Card):\n1. Transisi halus: `transition duration-300`\n2. Saat Hover naik sedikit: `hover:-translate-y-1`\n3. Saat Hover bayangan menebal: `hover:shadow-lg`\n4. Border berubah warna: `hover:border-indigo-300`",
-                'initial_code' => $l3_t4_code,
-                'validation_rules' => json_encode(['transition', 'duration-300', 'hover:-translate-y-1', 'hover:shadow-lg', 'hover:border-indigo-300']),
-                'points' => 25, 'order_index' => 4, 'created_at' => now(), 'updated_at' => now(),
+                'lab_id' => $labId, 'order_index' => 4, 'points' => 30,
+                'title' => 'Task 4: Table Layout (Overflow)',
+                'instruction' => 'Tabel data seringkali lebar. Bungkus tabel dengan div yang memiliki `overflow-x-auto` agar bisa discroll horizontal pada layar kecil.',
+                'initial_code' => '<div>\n  <table class="w-full">...</table>\n</div>',
+                'validation_rules' => json_encode(['overflow-x-auto', 'w-full']),
             ]
+        ];
+
+        DB::table('lab_steps')->insert($steps);
+    }
+
+    /**
+     * LAB BAB 3: ADVANCED STYLING
+     * Fokus: Decoration, Effects, Transforms, Transitions
+     */
+    private function seedLabBab3()
+    {
+        $labId = DB::table('labs')->insertGetId([
+            'title' => 'Lab 03: Creative UI Components',
+            'slug' => 'lab-03-styling-magic',
+            'description' => 'Misi: Membuat komponen UI yang cantik dan interaktif menggunakan efek visual dan transisi.',
+            'duration_minutes' => 60,
+            'passing_grade' => 70,
+            'is_active' => 1,
+            'created_at' => now(), 'updated_at' => now(),
         ]);
+
+        $steps = [
+            [
+                'lab_id' => $labId, 'order_index' => 1, 'points' => 20,
+                'title' => 'Task 1: Gradient Button',
+                'instruction' => 'Buat tombol dengan background gradient. Gunakan `bg-gradient-to-r`, `from-purple-500`, `to-pink-500`.',
+                'initial_code' => '<button class="px-6 py-2 rounded-lg text-white">\n  Magic Button\n</button>',
+                'validation_rules' => json_encode(['bg-gradient-to-r', 'from-purple-500', 'to-pink-500']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 2, 'points' => 30,
+                'title' => 'Task 2: Hover & Transform Card',
+                'instruction' => 'Buat kartu produk. Saat di-hover, kartu harus naik sedikit (`hover:-translate-y-2`) dan shadow makin besar (`hover:shadow-2xl`). Jangan lupa `transition` dan `duration-300` agar halus.',
+                'initial_code' => '<div class="bg-white p-6 rounded-xl shadow-md">\n  <h3>Product Name</h3>\n</div>',
+                'validation_rules' => json_encode(['hover:-translate-y-2', 'hover:shadow-2xl', 'transition', 'duration-300']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 3, 'points' => 20,
+                'title' => 'Task 3: Glassmorphism Effect',
+                'instruction' => 'Buat panel transparan di atas background gelap. Gunakan `bg-white/10` (opacity), `backdrop-blur-md`, dan border tipis `border-white/20`.',
+                'initial_code' => '<div class="bg-black p-10">\n  \n  <div class="p-6 rounded-xl text-white">\n    Glass Content\n  </div>\n</div>',
+                'validation_rules' => json_encode(['bg-white/10', 'backdrop-blur-md', 'border-white/20']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 4, 'points' => 30,
+                'title' => 'Task 4: Text Gradient (Clip)',
+                'instruction' => 'Buat judul teks besar (`text-6xl`) yang warnanya gradient (bukan solid color). Gunakan `bg-clip-text` dan `text-transparent`.',
+                'initial_code' => '<h1 class="font-bold text-6xl">AMAZING HEADLINE</h1>',
+                'validation_rules' => json_encode(['bg-clip-text', 'text-transparent', 'bg-gradient-to']),
+            ]
+        ];
+
+        DB::table('lab_steps')->insert($steps);
+    }
+
+    /**
+     * FINAL PROJECT: CAPSTONE (BAB 1-3)
+     */
+    private function seedLabFinal()
+    {
+        $labId = DB::table('labs')->insertGetId([
+            'title' => 'Final Project: DevStudio Landing Page',
+            'slug' => 'final-project-ch1-3',
+            'description' => 'Tantangan Akhir: Bangun Landing Page Responsif lengkap dari nol. Gabungkan Layouting, Styling, dan Interaktivitas.',
+            'duration_minutes' => 90,
+            'passing_grade' => 75,
+            'is_active' => 1,
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $steps = [
+            [
+                'lab_id' => $labId, 'order_index' => 1, 'points' => 20,
+                'title' => 'Step 1: Navigasi (Fixed & Glass)',
+                'instruction' => "Buat navbar yang `fixed` di atas layar. \nGunakan `w-full`, `z-50`, `backdrop-blur-lg` untuk efek kaca. \nGunakan `flex` dan `justify-between` untuk logo dan menu.",
+                'initial_code' => "\n<nav>\n  \n</nav>",
+                'validation_rules' => json_encode(['fixed', 'w-full', 'z-50', 'backdrop-blur', 'flex', 'justify-between']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 2, 'points' => 30,
+                'title' => 'Step 2: Hero Section (Center & Gradient)',
+                'instruction' => "Buat Hero section dengan padding vertikal besar (`py-32`). \nKonten harus rata tengah (`text-center`). \nJudul H1 menggunakan Gradient Text (`bg-clip-text text-transparent`). \nTombol CTA harus punya efek hover scale.",
+                'initial_code' => "<section>\n  <h1>Build Faster</h1>\n  <button>Get Started</button>\n</section>",
+                'validation_rules' => json_encode(['py-32', 'text-center', 'bg-clip-text', 'text-transparent', 'hover:scale']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 3, 'points' => 40,
+                'title' => 'Step 3: Features Grid (Responsive)',
+                'instruction' => "Buat grid kartu fitur. \nMobile: 1 kolom. \nTablet: 2 kolom (`md:grid-cols-2`). \nDesktop: 3 kolom (`lg:grid-cols-3`). \nSetiap kartu harus punya `hover:shadow-xl` dan `transition`.",
+                'initial_code' => "<section class=\"container mx-auto px-6\">\n  \n  <div>\n    \n    \n    \n  </div>\n</section>",
+                'validation_rules' => json_encode(['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-', 'hover:shadow']),
+            ],
+            [
+                'lab_id' => $labId, 'order_index' => 4, 'points' => 10,
+                'title' => 'Step 4: Footer Minimalis',
+                'instruction' => "Buat footer dengan background gelap (`bg-slate-900`), teks putih pudar (`text-slate-400`), dan rata tengah.",
+                'initial_code' => "<footer>\n  &copy; 2024 DevStudio\n</footer>",
+                'validation_rules' => json_encode(['bg-slate-900', 'text-slate-400', 'text-center']),
+            ]
+        ];
+
+        DB::table('lab_steps')->insert($steps);
     }
 }

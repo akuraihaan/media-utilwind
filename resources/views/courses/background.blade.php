@@ -2,211 +2,355 @@
 @section('title', 'Bab 3.2 · Background Masterclass')
 
 @section('content')
-{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-blue-500/30"> --}}
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-blue-500/30 pt-20">
 
+    {{-- Background Effects --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-60"></div>
-        <div id="gradient-wave" class="absolute inset-0"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-50"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-blue-900/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-cyan-900/10 rounded-full blur-[100px]"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.035]"></div>
+        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.03]"></div>
         <div id="cursor-glow"></div>
     </div>
 
-        @include('layouts.partials.navbar')
-
+    @include('layouts.partials.navbar')
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
+        {{-- Sidebar --}}
         @include('layouts.partials.course-sidebar')
 
+        {{-- Main Content --}}
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
+            {{-- Sticky Header --}}
             <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-[#020617]/80 backdrop-blur-2xl border-b border-white/5 px-8 py-4 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400">3.2</div>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/20 flex items-center justify-center font-bold text-xs text-blue-400">3.2</div>
                     <div>
-                        <h1 class="text-sm font-bold text-white">Background masterclass</h1>
-                        <p class="text-[10px] text-white/50">Mastering background</p>
+                        <h1 class="text-sm font-bold text-white">Background Masterclass</h1>
+                        <p class="text-[10px] text-white/50">Images, Gradients & Masking</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="hidden sm:block w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-0 transition-all duration-500 shadow-[0_0_10px_#6366f1]"></div>
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 w-0 transition-all duration-500 shadow-[0_0_10px_#3b82f6]"></div>
                     </div>
-                    <span id="progressLabelTop" class="text-indigo-400 font-bold text-xs">0%</span>
+                    <span id="progressLabelTop" class="text-blue-400 font-bold text-xs">0%</span>
                 </div>
             </div>
 
-            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40"> 
+                
+                {{-- Hero & Objectives --}}
+                <div class="mb-24">
+                   
+
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Tujuan Pembelajaran
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-blue-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 font-bold text-xs">1</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Attachment</h4><p class="text-[11px] text-white/50 leading-relaxed">Menguasai perilaku scroll (Fixed, Scroll, Local) untuk efek Parallax.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 font-bold text-xs">2</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Posisi</h4><p class="text-[11px] text-white/50 leading-relaxed">Mengontrol Focal Point gambar agar responsif di berbagai layar.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xs">3</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Skala</h4><p class="text-[11px] text-white/50 leading-relaxed">Perbedaan Cover vs Contain untuk penanganan aspek rasio gambar.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-purple-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 font-bold text-xs">4</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Layering</h4><p class="text-[11px] text-white/50 leading-relaxed">Menggabungkan gambar dan gradien untuk keterbacaan teks.</p></div>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border border-blue-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition group h-full col-span-2 md:col-span-2">
+                            <div class="w-8 h-8 rounded bg-white/10 text-white flex items-center justify-center shrink-0 font-bold text-xs">🏁</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Final Mission: Hero Parallax</h4><p class="text-[11px] text-white/70 leading-relaxed">Studi Kasus: Membangun Hero Section Travel yang Imersif.</p></div>
+                        </div>
+                    </div>
+                </div>
+
                 <article class="space-y-40">
                     
+                    {{-- LESSON 52: ATTACHMENT & CLIP --}}
                     <section id="attachment" class="lesson-section scroll-mt-32" data-lesson-id="52">
-                        <div class="space-y-8">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[10px] font-bold uppercase tracking-widest">
-                                <!-- <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> -->
-                                Dasar Background
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
+                                <span class="text-blue-400 font-mono text-xs uppercase tracking-widest">Lesson 3.2.1</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">
+                                    Attachment & Clipping
+                                </h2>
                             </div>
                             
-                            <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                                Attachment & <br> 
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Clipping Mask</span>
-                            </h2>
-                            
-                            <div class="prose prose-invert max-w-none text-white/80 space-y-6">
-                                <p class="text-lg leading-relaxed">
-                                    Properti background tidak hanya sekadar warna. Tailwind memungkinkan Anda mengontrol bagaimana gambar latar bereaksi terhadap scroll (Attachment) dan bagaimana background dipotong relatif terhadap kontennya (Clip).
-                                </p>
-                                
-                                <h3 class="text-xl font-bold text-white mt-8">1. Background Attachment (Parallax)</h3>
-                                <p>
-                                    Mengatur apakah gambar latar ikut bergerak saat halaman digulir atau tetap diam di posisinya. Ini adalah kunci membuat efek "Parallax".
-                                </p>
-                                <ul class="list-disc pl-5 space-y-2 marker:text-blue-500">
-                                    <li><code class="text-blue-400">bg-scroll</code> (Default): Background menempel pada elemen, ikut bergerak saat halaman discroll.</li>
-                                    <li><code class="text-blue-400">bg-fixed</code>: Background diam relatif terhadap viewport. Menciptakan efek kedalaman.</li>
-                                    <li><code class="text-blue-400">bg-local</code>: Background ikut bergerak jika konten *di dalam* elemen tersebut discroll.</li>
-                                </ul>
-
-                                <div class="bg-[#0f141e] p-6 rounded-2xl border border-white/5 relative overflow-hidden group mt-6">
-                                    <h4 class="text-xs font-bold text-white/40 uppercase tracking-widest mb-4">Simulator Attachment</h4>
-                                    <div class="grid md:grid-cols-3 gap-6">
-                                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                                            <div class="h-32 overflow-y-scroll custom-scrollbar bg-fixed bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover border border-white/10 mb-3 relative group/scroll">
-                                                <div class="h-[200%] flex items-center justify-center">
-                                                    <span class="text-xs text-white/50 group-hover/scroll:text-white transition bg-black/50 px-2 py-1 rounded">Scroll Saya! (Fixed)</span>
-                                                </div>
+                            <div class="space-y-16">
+                                {{-- Part 1: Attachment --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">1</span>
+                                        Fisika Scrolling (Attachment)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Secara default (<code>bg-scroll</code>), gambar latar menempel pada elemennya dan ikut bergerak saat halaman digulir. Ini perilaku standar yang kita lihat di sebagian besar web.
+                                        </p>
+                                        <p>
+                                            Namun, untuk menciptakan efek premium atau "Parallax" sederhana, Tailwind menyediakan <code>bg-fixed</code>. Kelas ini memaku gambar latar ke viewport (jendela browser). Hasilnya? Konten di depan bergerak, tapi latar belakang terlihat diam di kejauhan, menciptakan ilusi kedalaman 3D tanpa JavaScript.
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 1 --}}
+                                    <div class="bg-[#0f141e] p-6 rounded-xl border border-white/5">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="text-xs font-bold text-white/50 uppercase">Simulator: Parallax Effect</span>
+                                            <div class="flex gap-2">
+                                                <button onclick="setMicroSim52('fixed')" class="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/50 rounded text-xs">bg-fixed</button>
+                                                <button onclick="setMicroSim52('scroll')" class="px-3 py-1 bg-white/5 text-white/50 border border-white/10 rounded text-xs">bg-scroll</button>
                                             </div>
-                                            <code class="text-xs text-blue-400 font-bold">bg-fixed</code>
-                                            <p class="text-[10px] text-white/40 mt-1">Gambar diam (Parallax).</p>
                                         </div>
-                                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                                            <div class="h-32 overflow-y-scroll custom-scrollbar bg-local bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover border border-white/10 mb-3 relative group/scroll">
-                                                <div class="h-[200%] flex items-center justify-center">
-                                                    <span class="text-xs text-white/50 group-hover/scroll:text-white transition bg-black/50 px-2 py-1 rounded">Scroll Saya! (Local)</span>
-                                                </div>
+                                        <div class="h-40 overflow-y-scroll custom-scrollbar border border-white/10 rounded-lg relative" id="sim52-target">
+                                            <div class="h-[200%] flex flex-col items-center justify-center space-y-12">
+                                                <div class="bg-black/70 p-4 rounded text-white backdrop-blur-sm">Scroll Down ↓</div>
+                                                <div class="bg-black/70 p-4 rounded text-white backdrop-blur-sm">Keep Scrolling...</div>
+                                                <div class="bg-black/70 p-4 rounded text-white backdrop-blur-sm">End of Content</div>
                                             </div>
-                                            <code class="text-xs text-blue-400 font-bold">bg-local</code>
-                                            <p class="text-[10px] text-white/40 mt-1">Gambar ikut konten.</p>
-                                        </div>
-                                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                                            <div class="h-32 overflow-y-scroll custom-scrollbar bg-scroll bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover border border-white/10 mb-3 relative group/scroll">
-                                                <div class="h-[200%] flex items-center justify-center">
-                                                    <span class="text-xs text-white/50 group-hover/scroll:text-white transition bg-black/50 px-2 py-1 rounded">Scroll Saya! (Scroll)</span>
-                                                </div>
-                                            </div>
-                                            <code class="text-xs text-blue-400 font-bold">bg-scroll</code>
-                                            <p class="text-[10px] text-white/40 mt-1">Default behavior.</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <h3 class="text-xl font-bold text-white mt-12">2. Background Clip</h3>
-                                <p>
-                                    Digunakan untuk memotong background sesuai bentuk elemen (Border, Padding, atau Content). Paling sering digunakan untuk <strong class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Teks Gradasi</strong>.
-                                </p>
-                                
-                                <div class="bg-[#0f141e] p-6 rounded-2xl border border-blue-500/30 shadow-lg shadow-blue-900/20 relative overflow-hidden group mt-6 text-center">
-                                    <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 animate-pulse block mb-2">
-                                        MAGIC TEXT
-                                    </span>
-                                    <code class="text-xs text-white/40 bg-white/5 px-2 py-1 rounded">bg-clip-text + text-transparent</code>
+                                {{-- Part 2: Clipping --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">2</span>
+                                        Magisnya Background Clip
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Properti <code>bg-clip</code> mengontrol seberapa jauh latar belakang merender dirinya. Defaultnya adalah <code>bg-clip-border</code> (sampai batas border terluar).
+                                        </p>
+                                        <p>
+                                            Fitur "killer" di sini adalah <code>bg-clip-text</code>. Dikombinasikan dengan <code>text-transparent</code>, ini memungkinkan gambar atau gradien untuk "mengisi" bentuk huruf teks Anda. Teknik ini sangat populer di desain web modern untuk membuat judul yang menonjol (Gradient Text).
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 2 --}}
+                                    <div class="bg-[#0f141e] p-8 rounded-xl border border-white/5 text-center group">
+                                        <h2 id="sim52-text" class="text-6xl font-black text-white transition-all duration-500">AWESOME</h2>
+                                        <div class="mt-6 flex justify-center gap-4">
+                                            <button onclick="toggleTextClip(false)" class="px-4 py-2 bg-white/5 rounded text-xs border border-white/10 hover:bg-white/10 transition">Normal Text</button>
+                                            <button onclick="toggleTextClip(true)" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded text-xs font-bold shadow-lg hover:shadow-cyan-500/50 transition">Activate Clip</button>
+                                        </div>
+                                        <p class="text-xs text-white/30 mt-4 font-mono">class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"</p>
+                                    </div>
+                                </div>
+
+                                {{-- Part 3: Local Attachment --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">3</span>
+                                        Local vs Scroll (Edge Case)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Ada satu nilai lagi: <code>bg-local</code>. Ini sering membingungkan pemula. Bedanya dengan <code>bg-scroll</code> adalah:
+                                            <br>• <strong>bg-scroll:</strong> Background diam relatif terhadap elemen itu sendiri (hanya bergerak jika body page discroll).
+                                            <br>• <strong>bg-local:</strong> Background menempel pada <em>konten</em> di dalam elemen. Jika elemen tersebut punya scrollbar sendiri (seperti sidebar), background akan ikut bergerak saat isinya discroll.
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 3 --}}
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-black/30 p-4 rounded border border-white/10 h-40 overflow-y-scroll bg-scroll bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                                            <p class="text-xs font-bold mb-2 sticky top-0 bg-blue-900/50">bg-scroll</p>
+                                            <div class="h-[200%] w-full bg-gradient-to-b from-blue-500/20 to-transparent"></div>
+                                        </div>
+                                        <div class="bg-black/30 p-4 rounded border border-white/10 h-40 overflow-y-scroll bg-local bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                                            <p class="text-xs font-bold mb-2 sticky top-0 bg-blue-900/50">bg-local</p>
+                                            <div class="h-[200%] w-full bg-gradient-to-b from-blue-500/20 to-transparent"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-center text-xs text-white/40 mt-2">Scroll kedua kotak di atas untuk melihat perbedaannya.</p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
+                    {{-- LESSON 53: POSITION & REPEAT --}}
                     <section id="position" class="lesson-section scroll-mt-32" data-lesson-id="53">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">3.2.2 Posisi & Warna</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
+                                <span class="text-blue-400 font-mono text-xs uppercase tracking-widest">Lesson 3.2.2</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">
+                                    Posisi, Pola & Fallback
+                                </h2>
+                            </div>
 
-                        <div class="prose prose-invert max-w-none text-white/80 space-y-6">
-                            <p>
-                                Mengontrol posisi gambar latar (Focal Point) sangat penting agar bagian utama gambar tidak terpotong pada layar kecil.
-                            </p>
-                            
-                            <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 mb-12 relative overflow-hidden shadow-2xl">
-                                <h3 class="text-lg font-bold text-white mb-6 text-center">Simulator Posisi</h3>
-                                
-                                <div class="flex justify-center gap-4 mb-6">
-                                    <button onclick="setSimPos('bg-left-top')" class="px-3 py-1 rounded border border-white/10 bg-white/5 hover:bg-white/10 text-xs transition">Left Top</button>
-                                    <button onclick="setSimPos('bg-center')" class="px-3 py-1 rounded border border-white/10 bg-white/5 hover:bg-white/10 text-xs transition">Center</button>
-                                    <button onclick="setSimPos('bg-right-bottom')" class="px-3 py-1 rounded border border-white/10 bg-white/5 hover:bg-white/10 text-xs transition">Right Bottom</button>
+                            <div class="space-y-16">
+                                {{-- Part 1: Position --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">1</span>
+                                        Mengontrol Focal Point (Position)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Pada desain responsif, gambar latar seringkali terpotong (cropped) saat ukuran layar berubah. Properti posisi (<code>bg-center</code>, <code>bg-top</code>, <code>bg-right-bottom</code>) memberi tahu browser bagian mana dari gambar yang paling penting ("Focal Point").
+                                        </p>
+                                        <p>
+                                            Misalnya, jika objek utama gambar ada di sisi kanan, gunakan <code>bg-right</code>. Ini menjamin objek tersebut tetap terlihat di layar ponsel (mobile view), sementara sisi kiri gambar yang "dikorbankan".
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 1 --}}
+                                    <div class="bg-[#0f141e] border border-white/10 rounded-xl p-6">
+                                        <div class="flex gap-2 mb-4 justify-center">
+                                            <button onclick="setSimPos('bg-left-top')" class="px-3 py-1 rounded bg-white/5 hover:bg-white/20 text-xs transition border border-white/10">Top Left</button>
+                                            <button onclick="setSimPos('bg-center')" class="px-3 py-1 rounded bg-white/5 hover:bg-white/20 text-xs transition border border-white/10">Center</button>
+                                            <button onclick="setSimPos('bg-right-bottom')" class="px-3 py-1 rounded bg-white/5 hover:bg-white/20 text-xs transition border border-white/10">Bottom Right</button>
+                                        </div>
+                                        <div id="demo-pos" class="h-48 w-full bg-black/40 rounded-lg border border-white/10 bg-[url('https://img.icons8.com/fluency/96/tailwind_css.png')] bg-no-repeat bg-center transition-all duration-500 relative">
+                                            <span class="absolute inset-0 flex items-center justify-center text-white/5 text-4xl font-black uppercase tracking-widest pointer-events-none">CANVAS</span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div id="demo-pos" class="h-48 w-full bg-black/40 rounded-xl border border-white/10 bg-[url('https://img.icons8.com/fluency/96/tailwind_css.png')] bg-no-repeat bg-center transition-all duration-500 relative shadow-inner">
-                                    <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-20">
-                                        <div class="border-r border-b border-white"></div><div class="border-r border-b border-white"></div><div class="border-b border-white"></div>
-                                        <div class="border-r border-b border-white"></div><div class="border-r border-b border-white"></div><div class="border-b border-white"></div>
-                                        <div class="border-r border-white"></div><div class="border-r border-white"></div><div></div>
+                                {{-- Part 2: Repeat --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">2</span>
+                                        Manajemen Tekstur (Repeat)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Untuk foto, kita hampir selalu menggunakan <code>bg-no-repeat</code> untuk mencegah gambar muncul berulang kali seperti ubin. Namun, untuk aset pola (pattern) atau tekstur noise, <code>bg-repeat</code> adalah teman terbaik Anda.
+                                        </p>
+                                        <p>
+                                            Tailwind juga menyediakan <code>bg-repeat-x</code> (ulang horizontal saja) dan <code>bg-repeat-y</code> (ulang vertikal saja). Ini berguna untuk membuat elemen dekoratif seperti garis putus-putus atau timeline vertikal menggunakan gambar kecil 1x10px.
+                                        </p>
                                     </div>
-                                    <span class="absolute inset-0 flex items-center justify-center text-white/5 text-4xl font-black uppercase tracking-widest">CANVAS</span>
+                                    {{-- Micro Sim 2 --}}
+                                    <div class="bg-[#0f141e] p-6 rounded-xl border border-white/10 flex gap-4 items-center">
+                                        <div id="demo-repeat" class="w-full h-32 bg-white/5 rounded border border-white/10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat"></div>
+                                        <div class="flex flex-col gap-2 shrink-0">
+                                            <button onclick="document.getElementById('demo-repeat').className='w-full h-32 bg-white/5 rounded border border-white/10 bg-[url(\'https://www.transparenttextures.com/patterns/cubes.png\')] bg-repeat'" class="px-3 py-2 bg-blue-600/20 text-blue-400 text-xs rounded border border-blue-500/30">Repeat</button>
+                                            <button onclick="document.getElementById('demo-repeat').className='w-full h-32 bg-white/5 rounded border border-white/10 bg-[url(\'https://www.transparenttextures.com/patterns/cubes.png\')] bg-no-repeat bg-center'" class="px-3 py-2 bg-white/5 text-white/50 text-xs rounded border border-white/10">No Repeat</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                
-                                <div class="mt-8 pt-6 border-t border-white/5 grid grid-cols-2 gap-6 text-center">
-                                    <div>
-                                        <code class="text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded">bg-repeat</code>
-                                        <p class="text-[10px] text-white/40 mt-1">Gambar diulang vertikal & horizontal (Default).</p>
+
+                                {{-- Part 3: Fallback --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">3</span>
+                                        Safety Net (Fallback Color)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Gambar latar belakang (terutama resolusi tinggi) membutuhkan waktu untuk diunduh. Jika koneksi lambat, pengguna mungkin melihat latar belakang putih kosong selama beberapa detik, membuat teks putih di atasnya tidak terbaca (Invisible Text).
+                                        </p>
+                                        <p>
+                                            <strong>Best Practice:</strong> Selalu tetapkan warna latar belakang (<code>bg-slate-900</code>) bersamaan dengan gambar latar. Warna ini akan muncul instan saat gambar sedang loading, menjaga teks tetap terbaca.
+                                        </p>
                                     </div>
-                                    <div>
-                                        <code class="text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded">bg-no-repeat</code>
-                                        <p class="text-[10px] text-white/40 mt-1">Gambar hanya muncul satu kali.</p>
+                                    {{-- Micro Sim 3 --}}
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="h-32 bg-white flex items-center justify-center text-center p-4 border border-white/10 relative">
+                                            <span class="text-white font-bold drop-shadow-md z-10">Teks Putih (Tanpa Fallback)</span>
+                                            <div class="absolute inset-0 flex items-center justify-center text-black/20 text-xs">Image Loading...</div>
+                                        </div>
+                                        <div class="h-32 bg-slate-800 flex items-center justify-center text-center p-4 border border-white/10 relative">
+                                            <span class="text-white font-bold z-10">Teks Putih (Dengan Fallback)</span>
+                                            <div class="absolute bottom-2 right-2 text-white/20 text-[10px]">bg-slate-800</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
+                    {{-- LESSON 54: SIZE & GRADIENT --}}
                     <section id="size" class="lesson-section scroll-mt-32" data-lesson-id="54">
-                        <div class="flex items-center gap-4 mb-8">
-                            <h2 class="text-3xl font-bold text-white">3.2.3 Ukuran & Gradien</h2>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                        </div>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
+                                <span class="text-blue-400 font-mono text-xs uppercase tracking-widest">Lesson 3.2.3</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">
+                                    Ukuran & Gradasi
+                                </h2>
+                            </div>
 
-                        <div class="prose prose-invert max-w-none text-white/80 space-y-6">
-                            <p>
-                                <code>bg-size</code> menentukan seberapa besar gambar latar ditampilkan. Dua nilai paling penting adalah <code>cover</code> (memenuhi area) dan <code>contain</code> (memuat seluruh gambar).
-                            </p>
-
-                            <div class="grid md:grid-cols-2 gap-8">
-                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/5">
-                                    <h4 class="text-white font-bold mb-4 flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Gradient Generator
-                                    </h4>
-                                    <div id="demo-grad" class="h-24 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg transition-all duration-500 flex items-center justify-center mb-4 border border-white/10">
-                                        <span class="font-bold text-white text-sm drop-shadow-md">Preview</span>
+                            <div class="space-y-16">
+                                {{-- Part 1: Cover vs Contain --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">1</span>
+                                        Dilema Cover vs Contain
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            • <strong>bg-cover:</strong> Memaksa gambar menutupi seluruh area elemen. Sisi gambar mungkin terpotong, tapi tidak ada ruang kosong. Ini standar untuk Hero Section.
+                                            <br>• <strong>bg-contain:</strong> Memaksa seluruh gambar terlihat utuh. Akan ada ruang kosong di sisi elemen jika rasio aspek tidak cocok. Cocok untuk menampilkan logo partner atau produk.
+                                        </p>
                                     </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <button onclick="setSimGrad('bg-gradient-to-r from-blue-500 to-indigo-500')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 text-white transition border border-white/5">Blue-Indigo</button>
-                                        <button onclick="setSimGrad('bg-gradient-to-br from-indigo-500 to-purple-500')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 text-white transition border border-white/5">Indigo-Purple</button>
-                                        <button onclick="setSimGrad('bg-gradient-to-t from-slate-900 to-blue-900')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 text-white transition border border-white/5">Deep Space</button>
+                                    {{-- Micro Sim 1 --}}
+                                    <div class="bg-[#0f141e] p-6 rounded-xl border border-white/10 grid grid-cols-2 gap-4">
+                                        <div>
+                                            <div class="h-24 w-full bg-black/50 rounded overflow-hidden relative border border-white/10 mb-2">
+                                                <div class="absolute inset-0 bg-cover bg-center opacity-80" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853');"></div>
+                                            </div>
+                                            <code class="text-xs text-blue-400 block text-center">bg-cover</code>
+                                        </div>
+                                        <div>
+                                            <div class="h-24 w-full bg-black/50 rounded overflow-hidden relative border border-white/10 mb-2">
+                                                <div class="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-80" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853');"></div>
+                                            </div>
+                                            <code class="text-xs text-blue-400 block text-center">bg-contain</code>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/5">
-                                    <h4 class="text-white font-bold mb-4 flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Size Comparison
-                                    </h4>
-                                    <div class="space-y-4">
-                                        <div class="group">
-                                            <div class="flex justify-between mb-1 text-xs text-white/40">
-                                                <code>bg-cover</code>
-                                                <span>Zoom & Crop</span>
-                                            </div>
-                                            <div class="h-20 w-full bg-black/50 rounded overflow-hidden relative border border-white/10">
-                                                <div class="absolute inset-0 bg-cover bg-center opacity-70" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853');"></div>
-                                            </div>
+                                {{-- Part 2: Gradient Engine --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">2</span>
+                                        Mesin Gradasi Modern
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Tailwind menyederhanakan sintaks CSS gradient yang rumit. Anda cukup mendefinisikan arah (<code>bg-gradient-to-r</code>), warna mulai (<code>from-blue-500</code>), warna tengah opsional (<code>via-purple-500</code>), dan warna akhir (<code>to-pink-500</code>).
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 2 --}}
+                                    <div class="bg-[#0f141e] p-6 rounded-xl border border-white/10">
+                                        <div id="demo-grad" class="h-20 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg transition-all duration-500 mb-4 border border-white/5"></div>
+                                        <div class="flex gap-2 justify-center">
+                                            <button onclick="setSimGrad('bg-gradient-to-r from-blue-500 to-cyan-500')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10">Right</button>
+                                            <button onclick="setSimGrad('bg-gradient-to-br from-indigo-500 to-purple-500')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10">Bottom Right</button>
+                                            <button onclick="setSimGrad('bg-gradient-to-t from-emerald-500 to-teal-500')" class="px-2 py-1 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10">Top</button>
                                         </div>
-                                        <div class="group">
-                                            <div class="flex justify-between mb-1 text-xs text-white/40">
-                                                <code>bg-contain</code>
-                                                <span>Fit All</span>
-                                            </div>
-                                            <div class="h-20 w-full bg-black/50 rounded overflow-hidden relative border border-white/10">
-                                                <div class="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-70" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853');"></div>
-                                            </div>
+                                    </div>
+                                </div>
+
+                                {{-- Part 3: Layering (Overlay) --}}
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px] text-white">3</span>
+                                        Teknik Layering (Overlay)
+                                    </h3>
+                                    <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed mb-6">
+                                        <p>
+                                            Teks putih di atas gambar terang adalah resep bencana keterbacaan. Solusi pro: Gunakan div absolut dengan gradasi hitam transparan di atas gambar.
+                                        </p>
+                                        <p>
+                                            Code pattern: <code>bg-gradient-to-t from-black/80 to-transparent</code>. Ini membuat bagian bawah gelap (tempat teks berada) dan bagian atas tetap jernih menampilkan gambar.
+                                        </p>
+                                    </div>
+                                    {{-- Micro Sim 3 --}}
+                                    <div class="relative h-40 w-full rounded-xl overflow-hidden group cursor-pointer border border-white/10">
+                                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')] bg-cover bg-center"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        <div class="absolute bottom-0 left-0 p-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                            <h4 class="text-white font-bold">Hover Me</h4>
+                                            <p class="text-xs text-white/70 opacity-0 group-hover:opacity-100 transition duration-500 delay-100">Overlay membuat teks ini terbaca.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -214,6 +358,7 @@
                         </div>
                     </section>
 
+                    {{-- LESSON 55: EXPERT CHALLENGE --}}
                     <section id="activity-expert" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="55" data-manual="true">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl text-center group hover:border-blue-500/30 transition-all duration-500">
                             
@@ -224,22 +369,16 @@
                                 </div>
                                 <h2 class="text-3xl font-black text-white mb-4">Studi Kasus: The Bali Experience</h2>
                                 <p class="text-white/60 text-sm max-w-2xl mx-auto leading-relaxed">
-                                    Buat Hero Section website travel yang memukau. Syarat: <strong>Gambar (Bali Temple)</strong> harus memenuhi layar, menggunakan efek <strong>Parallax (Fixed)</strong>, dan teks harus terbaca jelas dengan <strong>Overlay Gradient</strong>.
+                                    Anda diminta membuat Hero Section untuk website travel premium. Klien menginginkan gambar <strong>Pura Bali</strong> yang memenuhi layar, efek <strong>Parallax</strong> saat discroll, dan teks yang terbaca jelas menggunakan teknik <strong>Overlay Gradient</strong>.
                                 </p>
                             </div>
 
                             <div class="grid lg:grid-cols-12 min-h-[600px] text-left border-x border-b border-white/5 rounded-b-[2rem] bg-[#0f141e]">
                                 
+                                {{-- Controls --}}
                                 <div class="lg:col-span-4 bg-[#0f141e] border-r border-white/5 p-6 flex flex-col h-full">
-                                    <div class="flex items-center justify-between mb-6">
-                                        <h3 class="text-xs font-bold text-white/40 uppercase tracking-widest">Configurator</h3>
-                                        <div class="flex gap-1">
-                                            <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
-                                            <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
-                                            <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
-                                        </div>
-                                    </div>
-
+                                    <h3 class="text-xs font-bold text-white/40 uppercase tracking-widest mb-6">Configurator</h3>
+                                    
                                     <div class="flex-1 space-y-6 overflow-y-auto custom-scrollbar pr-2" id="practice-controls">
                                         </div>
                                     
@@ -251,6 +390,7 @@
                                     </div>
                                 </div>
 
+                                {{-- Preview --}}
                                 <div class="lg:col-span-8 bg-slate-100 text-slate-900 p-0 relative overflow-y-auto flex flex-col">
                                     <div class="absolute top-4 right-4 text-[10px] font-mono text-slate-400 bg-white/90 backdrop-blur px-2 py-1 rounded border border-slate-200 shadow-sm z-50">LIVE PREVIEW</div>
 
@@ -272,32 +412,19 @@
                                         <div class="bg-white py-16 px-8 max-w-5xl mx-auto space-y-12 w-full relative z-10">
                                             <div class="flex items-center gap-4 mb-8 opacity-50">
                                                 <div class="h-12 w-12 rounded-full bg-slate-200"></div>
-                                                <div>
-                                                    <div class="h-4 bg-slate-200 rounded w-32 mb-2"></div>
-                                                    <div class="h-3 bg-slate-100 rounded w-24"></div>
-                                                </div>
+                                                <div><div class="h-4 bg-slate-200 rounded w-32 mb-2"></div><div class="h-3 bg-slate-100 rounded w-24"></div></div>
                                             </div>
-                                            <div class="space-y-6 opacity-50">
-                                                <div class="h-4 bg-slate-200 rounded w-full"></div>
-                                                <div class="h-4 bg-slate-200 rounded w-full"></div>
-                                                <div class="h-4 bg-slate-200 rounded w-5/6"></div>
-                                            </div>
-                                            <div class="grid grid-cols-3 gap-6 opacity-50">
-                                                <div class="aspect-square bg-slate-200 rounded-xl"></div>
-                                                <div class="aspect-square bg-slate-200 rounded-xl"></div>
-                                                <div class="aspect-square bg-slate-200 rounded-xl"></div>
-                                            </div>
+                                            <div class="space-y-6 opacity-50"><div class="h-4 bg-slate-200 rounded w-full"></div><div class="h-4 bg-slate-200 rounded w-full"></div></div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </section>
 
                 </article>
 
+                {{-- Navigation Footer --}}
                 <div class="mt-32 pt-10 border-t border-white/10 flex justify-between items-center">
                     <a href="{{ route('courses.typography') }}" class="group flex items-center gap-3 text-slate-400 hover:text-white transition">
                         <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">←</div>
@@ -325,40 +452,22 @@
 </div>
 
 <style>
-    /* UTILS & ANIMATION */
     .nav-link.active { color: #60a5fa; position: relative; } /* Blue-400 */
     .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#60a5fa,#6366f1); box-shadow: 0 0 12px rgba(96,165,250,0.8); border-radius: 2px; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .shake { animation: shake 0.4s ease-in-out; }
-
     #animated-bg{ background: radial-gradient(600px circle at 20% 20%, rgba(59,130,246,.15), transparent 40%), radial-gradient(700px circle at 80% 30%, rgba(99,102,241,.15), transparent 40%), radial-gradient(800px circle at 50% 80%, rgba(139,92,246,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
     @keyframes bgMove{to{transform:scale(1.15)}}
-    
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #60a5fa; background: rgba(96, 165, 250, 0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #60a5fa; box-shadow: 0 0 8px #60a5fa; transform: scale(1.2); }
-
-    /* SIDEBAR COMPATIBILITY */
-    .sb-group.open .accordion-content { max-height: 1000px; opacity: 1; }
-    .sb-group:not(.open) .accordion-content { max-height: 0; opacity: 0; overflow: hidden; }
-    .sb-group.open svg { transform: rotate(180deg); }
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #22d3ee; background: rgba(34,211,238,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    .shake { animation: shake 0.4s ease-in-out; }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     /* --- CONFIGURATION --- */
-    window.SUBBAB_LESSON_IDS = [52, 53, 54]; 
+    window.SUBBAB_LESSON_IDS = [52, 53, 54, 55]; 
     window.INIT_COMPLETED_LESSONS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedLessons = new Set(window.INIT_COMPLETED_LESSONS);
     
@@ -373,21 +482,49 @@
         initVisualEffects();
         initSidebarScroll();
         renderControls();
-        updatePreview(); // Init preview state
+        updatePreview();
+        
+        // Init Micro Sim 52
+        setMicroSim52('scroll');
         
         if (activityCompleted) {
             disableExpertUI();
         }
     });
 
-    /* --- 2. SIMULATORS UI --- */
-    function setSimPos(cls) { 
-        document.getElementById('demo-pos').className = `h-48 w-full bg-black/40 rounded-xl border border-white/10 bg-[url('https://img.icons8.com/fluency/96/tailwind_css.png')] bg-no-repeat transition-all duration-500 relative shadow-inner ${cls} bg-center`; 
-        if(cls !== 'bg-center') document.getElementById('demo-pos').classList.remove('bg-center');
+    /* --- 2. MICRO SIMULATORS UI (Lesson 52-54) --- */
+    
+    // Lesson 52 Sim 1: Fixed vs Scroll
+    window.setMicroSim52 = function(mode) {
+        const target = document.getElementById('sim52-target');
+        target.classList.remove('bg-fixed', 'bg-scroll');
+        target.classList.add('bg-' + mode);
+        // Force redraw hint
+        target.style.backgroundImage = "url('https://grainy-gradients.vercel.app/noise.svg')";
+        target.classList.add('bg-cover');
+    }
+
+    // Lesson 52 Sim 2: Text Clip
+    window.toggleTextClip = function(active) {
+        const el = document.getElementById('sim52-text');
+        if(active) {
+            el.className = "text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 transition-all duration-500";
+        } else {
+            el.className = "text-6xl font-black text-white transition-all duration-500";
+        }
+    }
+
+    // Lesson 53 Sim 1: Position
+    window.setSimPos = function(cls) { 
+        const el = document.getElementById('demo-pos');
+        el.className = `h-48 w-full bg-black/40 rounded-lg border border-white/10 bg-[url('https://img.icons8.com/fluency/96/tailwind_css.png')] bg-no-repeat transition-all duration-500 relative shadow-inner ${cls}`;
+        // Ensure not center if specific class
+        if(cls !== 'bg-center') el.classList.remove('bg-center');
     }
     
-    function setSimGrad(cls) { 
-        document.getElementById('demo-grad').className = `h-24 rounded-xl shadow-lg transition-all duration-500 flex items-center justify-center mb-4 border border-white/10 ${cls}`; 
+    // Lesson 54 Sim 2: Gradient
+    window.setSimGrad = function(cls) { 
+        document.getElementById('demo-grad').className = `h-20 rounded-lg shadow-lg transition-all duration-500 mb-4 border border-white/5 ${cls}`; 
     }
 
     /* --- 3. EXPERT CHALLENGE LOGIC --- */
@@ -440,7 +577,6 @@
                 <div class="grid gap-2">`;
             
             data.options.forEach(opt => {
-                // Check if active
                 const isActive = userChoices[key] === opt.val;
                 const activeClass = isActive 
                     ? 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-900/20' 
@@ -459,11 +595,8 @@
     window.selectOption = function(key, val) {
         if(activityCompleted) return;
         userChoices[key] = val;
-        
-        // Re-render controls to update active state
         $('#practice-controls').empty();
         renderControls();
-        
         updatePreview();
     }
 
@@ -471,14 +604,11 @@
         const hero = document.getElementById('target-hero');
         const overlay = document.getElementById('target-overlay');
         
-        // 1. Reset Classes
         hero.className = `relative w-full h-[500px] flex items-center justify-center transition-all duration-700 ease-in-out border-b-8 border-blue-500 bg-center bg-no-repeat overflow-hidden group`;
         
-        // 2. Apply Props
         hero.classList.add(userChoices.size);
         hero.classList.add(userChoices.attachment);
         
-        // 3. Handle Image via Style (URL)
         if (userChoices.image !== 'none') {
             hero.style.backgroundImage = `url('${userChoices.image}')`;
             hero.classList.remove('bg-slate-800');
@@ -487,7 +617,6 @@
             hero.classList.add('bg-slate-800');
         }
         
-        // 4. Handle Overlay
         overlay.className = `absolute inset-0 z-0 transition-all duration-500 ${userChoices.overlay}`;
     }
 
@@ -496,12 +625,10 @@
         let isCorrect = true;
         let errorMsg = "";
 
-        // Check logic
         Object.entries(challengeData).forEach(([key, data]) => {
             const correctVal = data.options.find(o => o.correct).val;
             if(userChoices[key] !== correctVal) {
                 isCorrect = false;
-                // Specific Feedback
                 if(key === 'image') errorMsg = "Pilih gambar 'Bali Temple'.";
                 else if(key === 'size') errorMsg = "Ukuran harus 'Cover' agar penuh.";
                 else if(key === 'attachment') errorMsg = "Efek harus 'Fixed' (Parallax).";
@@ -536,8 +663,8 @@
         btn.innerHTML = "Menyimpan...";
         try {
             await fetch('/activity/complete', { method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json'}, body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) });
-            await saveLessonToDB(53); // Mark last lesson done
-            completedLessons.add(53);
+            await saveLessonToDB(55); // Mark last lesson done
+            completedLessons.add(55);
             activityCompleted = true;
             updateProgressUI();
             disableExpertUI();

@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuizQuestion extends Model
 {
-    protected $guarded = [];
+    protected $table = 'quiz_questions';
+    protected $guarded = ['id'];
 
-    // Soal punya banyak opsi jawaban
+    // Relasi ke Opsi Jawaban (Pilihan A, B, C, D)
     public function options()
     {
-        return $this->hasMany(QuizOption::class);
+        return $this->hasMany(QuizOption::class, 'quiz_question_id');
     }
-
-    // TAMBAHKAN INI: Relasi ke Jawaban Siswa (Untuk Analisis)
+    
+    // [PENTING] Relasi ke Jawaban Siswa (Ini yang menyebabkan error sebelumnya)
+    // Digunakan untuk menghitung statistik berapa orang yang menjawab benar/salah
     public function answers()
     {
         return $this->hasMany(QuizAttemptAnswer::class, 'quiz_question_id');

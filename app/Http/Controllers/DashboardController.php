@@ -10,6 +10,7 @@ use App\Models\CourseLesson;
 use App\Models\Lab;
 use App\Models\LabHistory;
 use App\Models\QuizAttempt;
+use App\Models\ClassGroup; // TAMBAHKAN IMPORT INI
 
 class DashboardController extends Controller
 {
@@ -159,5 +160,46 @@ class DashboardController extends Controller
             'activity_timeline' => $lessonActivity,
             'activity_log' => $activityLog
         ]);
+    }
+
+    /**
+     * FUNGSI GABUNG KELAS MENGGUNAKAN TOKEN
+     */
+    public function joinClass(Request $request)
+    {
+        // 1. Validasi Token (Wajib 6 Karakter)
+        $request->validate([
+            'token' => 'required|string|size:6'
+        ], [
+            'token.size' => 'Token kelas harus terdiri dari 6 karakter.'
+        ]);
+
+        // Pastikan kapital
+        $token = strtoupper($request->token);
+
+        // 2. Cek eksistensi dan status kelas di Database
+        $class = ClassGroup::where('token', $token)->first();
+
+        if (!$class) {
+            return redirect()->back()->with('error', 'Token tidak ditemukan. Periksa kembali token yang diberikan instruktur Anda.');
+        }
+
+        if (!$class->is_active) {
+            return redirect()->back()->with('error', 'Gagal! Kelas ini sudah ditutup dan tidak lagi menerima siswa baru.');
+        }
+
+        // 3. Eksekusi Join Kelas
+        $user = Auth::user();
+        
+        // Cek jika siswa sudah berada di kelas ini
+        if ($user->class_group === $class->name) {
+            return redirect()->back()->with('info', 'Anda sudah tergabung di kelas ' . $class->name . '.');
+        }
+
+        // Update data siswa
+        $user->class_group = $class->name;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Berhasil bergabung dengan kelas ' . $class->name . '!');
     }
 }

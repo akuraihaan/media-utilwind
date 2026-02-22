@@ -8,10 +8,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\UserLessonProgress;
 use App\Models\QuizAttempt;
 use App\Models\QuizQuestion;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
+// use Barryvdh\DomPDF\Facade\Pdf;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\LabHistory;
+use App\Models\Lab;
+use App\Models\CourseLesson;
+use App\Models\UserActivityProgress;
+use App\Models\ClassGroup;
 
 class AdminDashboardController extends Controller
 {
@@ -83,14 +90,19 @@ class AdminDashboardController extends Controller
             ->get();
 
         $recentActivities = QuizAttempt::with('user')->latest()->take(5)->get();
+        $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
         
         // 5. DATA USER MANAGEMENT
         $users = User::orderByDesc('created_at')->limit(50)->get(); // Limit agar tidak berat
 
         return view('admin.dashboard', compact(
             'totalStudents', 'totalAttempts', 'globalAverage', 'remedialCount', 'totalLabsCompleted',
-            'chartLabels', 'chartScores', 'questionStats', 'topStudents', 'recentActivities', 'users'
+            'chartLabels', 'chartScores', 'questionStats', 'topStudents', 'recentActivities', 'users',
+'availableClasses'
+            
         ));
+
+        
     }
 
     /**
@@ -109,7 +121,11 @@ class AdminDashboardController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'class_group' => $request->class_group,
+            // HAPUS INI:
+// 'class_group' => 'required|in:A1,A2,A3',
+
+// GANTI JADI INI:
+'class_group' => 'nullable|exists:class_groups,name',
             'institution' => $request->institution,
             'password' => Hash::make($request->password),
             'role' => 'student',
@@ -171,6 +187,58 @@ class AdminDashboardController extends Controller
     }
 
     /**
+     * EXPORT PDF SPESIFIK SISWA (MENGGUNAKAN METODE VIEW NATIVE)
+     */
+    public function exportStudentPdf($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // 1. Data Riwayat Lab
+        $labHistories = DB::table('lab_histories')
+            ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
+            ->where('lab_histories.user_id', $id)
+            ->select('labs.title', 'lab_histories.lab_id', 'lab_histories.status', 'lab_histories.final_score', 'lab_histories.duration_seconds', 'lab_histories.created_at')
+            ->orderByDesc('lab_histories.created_at')
+            ->get();
+            
+        // 2. Data Riwayat Kuis
+        $quizAttempts = DB::table('quiz_attempts')
+            ->where('user_id', $id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        // 3. Data Progress Materi (Lesson)
+        $completedLessonIds = DB::table('user_lesson_progress')
+            ->where('user_id', $id)
+            ->where('completed', true)
+            ->pluck('course_lesson_id')
+            ->toArray();
+
+        // 4. Kalkulasi Map Kelulusan untuk Tracker
+        $passedLabIds = $labHistories->where('status', 'passed')->pluck('lab_id')->unique()->toArray();
+        
+        $quizScoresMap = $quizAttempts->groupBy('chapter_id')
+            ->mapWithKeys(function ($attempts, $chapterId) {
+                return ['quiz_' . $chapterId => $attempts->max('score')];
+            })
+            ->toArray();
+
+        // 5. Kalkulasi Global Progress
+        $totalItemsEstimasi = 73; // Sesuai dengan estimasi di halaman detail Anda
+        $countLessons = count($completedLessonIds);
+        $countLabs = count($passedLabIds);
+        $countQuizzes = count(array_filter($quizScoresMap, fn($s) => $s >= 70));
+        
+        $totalDone = $countLessons + $countLabs + $countQuizzes;
+        $globalProgress = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
+        $globalProgress = min($globalProgress, 100);
+
+        return view('admin.exports.student_detail_print', compact(
+            'user', 'labHistories', 'quizAttempts', 
+            'completedLessonIds', 'passedLabIds', 'quizScoresMap', 'globalProgress'
+        ));
+    }
+    /**
      * EXPORT CSV (Update agar lebih rapi)
      */
     public function exportUsers()
@@ -204,6 +272,86 @@ class AdminDashboardController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+      /**
+     * EXPORT CSV SPESIFIK SISWA (DARI DETAIL)
+     */
+    public function exportStudentCsv($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Ambil Data Lab
+        $labHistories = DB::table('lab_histories')
+            ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
+            ->where('lab_histories.user_id', $id)
+            ->select('labs.title', 'lab_histories.status', 'lab_histories.final_score', 'lab_histories.duration_seconds', 'lab_histories.created_at')
+            ->orderByDesc('lab_histories.created_at')
+            ->get();
+            
+        // Ambil Data Kuis
+        $quizAttempts = DB::table('quiz_attempts')
+            ->where('user_id', $id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $response = new StreamedResponse(function() use ($user, $labHistories, $quizAttempts) {
+            $handle = fopen('php://output', 'w');
+            
+            // 1. Tulis Profil Siswa
+            fputcsv($handle, ['--- PROFIL SISWA ---']);
+            fputcsv($handle, ['Nama Lengkap', $user->name]);
+            fputcsv($handle, ['Email', $user->email]);
+            fputcsv($handle, ['Kelas', $user->class_group ?? 'Tidak ada data']);
+            fputcsv($handle, ['Institusi', $user->institution ?? 'Tidak ada data']);
+            fputcsv($handle, []); // Baris Kosong Pemisah
+            
+            // 2. Tulis Riwayat Lab
+            fputcsv($handle, ['--- RIWAYAT PRAKTIKUM LAB ---']);
+            fputcsv($handle, ['Nama Modul', 'Status', 'Skor Akhir', 'Durasi (Detik)', 'Tanggal Dikerjakan']);
+            
+            if ($labHistories->isEmpty()) {
+                fputcsv($handle, ['Belum ada riwayat pengerjaan lab']);
+            } else {
+                foreach ($labHistories as $lab) {
+                    fputcsv($handle, [
+                        $lab->title, 
+                        strtoupper($lab->status), 
+                        $lab->final_score, 
+                        $lab->duration_seconds, 
+                        $lab->created_at
+                    ]);
+                }
+            }
+            fputcsv($handle, []); // Baris Kosong Pemisah
+
+            // 3. Tulis Riwayat Kuis
+            fputcsv($handle, ['--- RIWAYAT EVALUASI TEORI (KUIS) ---']);
+            fputcsv($handle, ['Bab Evaluasi', 'Status', 'Skor', 'Tanggal Dikerjakan']);
+            
+            if ($quizAttempts->isEmpty()) {
+                fputcsv($handle, ['Belum ada riwayat pengerjaan kuis']);
+            } else {
+                foreach ($quizAttempts as $quiz) {
+                    $status = $quiz->score >= 70 ? 'LULUS' : 'GAGAL';
+                    $babName = $quiz->chapter_id == 99 ? 'Evaluasi Akhir' : 'Bab ' . $quiz->chapter_id;
+                    fputcsv($handle, [
+                        $babName, 
+                        $status, 
+                        $quiz->score, 
+                        $quiz->created_at
+                    ]);
+                }
+            }
+            fclose($handle);
+        });
+
+        // Set Header untuk Download File
+        $fileName = 'Laporan_Siswa_' . Str::slug($user->name) . '_' . date('Ymd_His') . '.csv';
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$fileName.'"');
+
+        return $response;
+    }
 /**
      * UPDATE STUDENT PROFILE (FULL CRUD)
      */
@@ -215,7 +363,12 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email,'.$id, // Ignore current user email
-            'class_group'   => 'nullable|in:A1,A2,A3',
+            // HAPUS INI:
+// 'class_group' => 'nullable|in:A1,A2,A3',
+
+// GANTI JADI INI:
+// PASTIKAN BEGINI (Jangan ada in:A1,A2,A3)
+'class_group' => 'nullable|string|max:255',
             'institution'   => 'nullable|string|max:255',
             'study_program' => 'nullable|string|max:255',
             'phone'         => 'nullable|string|max:20',
@@ -232,10 +385,7 @@ class AdminDashboardController extends Controller
 
         // 3. Handle Avatar Upload
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika bukan default (Opsional, sesuaikan path)
-            // if ($user->avatar && file_exists(public_path('uploads/avatars/'.$user->avatar))) {
-            //    unlink(public_path('uploads/avatars/'.$user->avatar));
-            // }
+     
 
             $file = $request->file('avatar');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -263,57 +413,150 @@ class AdminDashboardController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Password reset successful']);
     }
 
-    public function deleteUser($id) {
-        if(auth()->id() == $id) return response()->json(['status' => 'error'], 403);
-        User::findOrFail($id)->delete();
-        return response()->json(['status' => 'success']);
-    }
 
-    /**
-     * INSIGHT: STUDENT DETAIL
-     */
-    public function studentDetail($id)
+    public function deleteUser($id) 
     {
+        // Mencegah admin menghapus akunnya sendiri secara tidak sengaja
+        if(auth()->id() == $id) {
+            return redirect()->route('admin.dashboard')->with('error', 'Akses ditolak: Anda tidak dapat menghapus akun Anda sendiri!');
+        }
+
+        // Cari data siswa dan hapus dari database
         $user = User::findOrFail($id);
+        $user->delete();
 
-        // A. LAB DATA
-        $labHistories = DB::table('lab_histories')
-            ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
-            ->select('lab_histories.*', 'labs.title as lab_title')
-            ->where('user_id', $id)
-            ->orderByDesc('created_at')
-            ->get();
-
-        $labStats = [
-            'total' => $labHistories->count(),
-            'passed' => $labHistories->where('status', 'passed')->count(),
-            'avg_score' => $labHistories->avg('final_score') ?? 0,
-            'total_duration' => $labHistories->sum('duration_seconds'),
-        ];
-
-        // B. QUIZ DATA
-        $quizAttempts = DB::table('quiz_attempts') 
-            ->select('*') 
-            ->where('user_id', $id)
-            ->orderByDesc('created_at')
-            ->get();
-
-        $quizStats = [
-            'total' => $quizAttempts->count(),
-            'avg_score' => $quizAttempts->avg('score') ?? 0,
-            'highest' => $quizAttempts->max('score') ?? 0,
-        ];
-
-        // C. CHART DATA
-        $chartData = $labHistories->sortBy('created_at')->take(-10);
-        $chartLabels = $chartData->map(fn($item) => Str::limit($item->lab_title, 12))->values();
-        $chartScores = $chartData->pluck('final_score')->values();
-
-        return view('admin.student_detail', compact(
-            'user', 'labHistories', 'labStats', 'quizAttempts', 'quizStats', 'chartLabels', 'chartScores'
-        ));
+        // Kembalikan ke halaman dashboard dengan pesan sukses
+        return redirect()->route('admin.dashboard')->with('success', 'Data siswa berhasil dihapus secara permanen!');
     }
+    
 
+ public function studentDetail($id)
+{
+    // Ambil data user, pilih hanya kolom yang dipakai di UI
+    $user = User::select('id', 'name', 'email', 'class_group', 'phone', 'avatar')->findOrFail($id);
+
+    // =====================================================================
+    // 1. DATA PROGRESS MATERI (LESSON)
+    // =====================================================================
+    $lessonProgress = UserLessonProgress::select('course_lesson_id')
+        ->where('user_id', $id)
+        ->where('completed', true)
+        ->get();
+        
+    $completedLessonIds = $lessonProgress->pluck('course_lesson_id')->toArray(); 
+
+    // =====================================================================
+    // 2. DATA LAB & PRAKTIK
+    // =====================================================================
+    $labHistories = LabHistory::with(['lab' => function($query) {
+            // Relasi ke tabel Labs: Cukup ID dan Title agar ringan
+            $query->select('id', 'title');
+        }])
+        // 🟢 SESUAIKAN KOLOM LAB_HISTORIES DI SINI BERDASARKAN GAMBAR ANDA:
+        // Wajib sertakan 'id', 'user_id', dan 'lab_id' untuk relasi.
+        // Ganti 'status', 'final_score', 'created_at' jika di database namanya berbeda.
+        ->select(
+            'id', 
+            'user_id', 
+            'lab_id', 
+            'status',        // Cek gambar: Apakah namanya 'status'?
+            'final_score',   // Cek gambar: Apakah namanya 'final_score' atau 'score'?
+            'duration_seconds',
+            'last_code_snapshot',
+            'created_at'     // Tanggal untuk tabel
+        )
+        ->where('user_id', $id)
+        ->latest('created_at')
+        ->get();
+
+    // ID Lab yang lulus (Sesuaikan string 'passed' jika di DB pakainya angka/string lain)
+    $passedLabIds = $labHistories->where('status', 'passed')
+        ->pluck('lab_id')
+        ->unique()
+        ->toArray();
+
+    // =====================================================================
+    // 3. DATA QUIZ & EVALUASI
+    // =====================================================================
+    $quizAttempts = QuizAttempt::select(
+            // 🟢 SESUAIKAN KOLOM QUIZ_ATTEMPT DI SINI BERDASARKAN GAMBAR ANDA:
+            // Wajib sertakan 'id' dan 'user_id'.
+            'id', 
+            'user_id', 
+            'chapter_id',    // Cek gambar: Kolom penanda bab
+            'score',         // Cek gambar: Kolom nilai
+            'time_spent_seconds',
+            'created_at'
+        )
+        ->where('user_id', $id)
+        ->latest('created_at')
+        ->get();
+
+    // Map kuis untuk mengambil skor tertinggi per bab
+    $quizScoresMap = $quizAttempts->groupBy('chapter_id')
+        ->mapWithKeys(function ($attempts, $chapterId) {
+            return ['quiz_' . $chapterId => $attempts->max('score')]; // Ganti 'score' jika namanya beda
+        })
+        ->toArray();
+
+    // =====================================================================
+    // 4. KALKULASI GLOBAL PROGRESS
+    // =====================================================================
+    $totalItemsEstimasi = 73; // Total materi + lab + quiz
+    
+    $countLessons = count($completedLessonIds);
+    $countLabs = count($passedLabIds);
+    $countQuizzes = count(array_filter($quizScoresMap, fn($s) => $s >= 70)); // Batas lulus kuis: 70
+
+    $totalDone = $countLessons + $countLabs + $countQuizzes;
+    
+    // Cegah error pembagian nol dan batasi max 100%
+    $globalProgress = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
+    $globalProgress = min($globalProgress, 100);
+
+    // =====================================================================
+    // 5. STATS DETAIL
+    // =====================================================================
+    $labStats = [
+        'total' => $countLabs,
+        // Ganti 'final_score' di bawah ini jika di DB beda namanya
+        'avg_score' => $countLabs > 0 ? round($labHistories->where('status', 'passed')->avg('final_score'), 1) : 0
+    ];
+
+    $quizStats = [
+        'total' => $countQuizzes,
+        'avg_score' => count($quizScoresMap) > 0 ? round(collect($quizScoresMap)->avg(), 1) : 0
+    ];
+
+    // =====================================================================
+    // 6. CHART DATA
+    // =====================================================================
+    $chartData = $labHistories->where('status', 'passed')
+        ->take(10)
+        ->reverse() 
+        ->values(); 
+    
+    $chartLabels = $chartData->map(fn($h) => $h->lab->title ?? 'Lab #'.$h->lab_id)->toArray();
+    // Ganti 'final_score' di bawah ini jika di DB beda namanya
+    $chartScores = $chartData->pluck('final_score')->toArray();
+    // [TAMBAHKAN BARIS INI] Ambil daftar kelas yang aktif untuk form Edit
+    $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
+
+    return view('admin.student_detail', compact(
+        'user', 
+        'completedLessonIds', 
+        'passedLabIds', 
+        'quizScoresMap', 
+        'labHistories', 
+        'quizAttempts',
+        'labStats', 
+        'quizStats',
+        'globalProgress',
+        'chartLabels',
+        'chartScores',
+        'availableClasses'
+    ));
+}
     /**
      * INSIGHT: LAB ANALYTICS
      */
@@ -374,7 +617,7 @@ class AdminDashboardController extends Controller
      */
      public function questionAnalytics() 
     {
-        $questions = \App\Models\QuizQuestion::with(['answers.attempt.user'])
+        $questions = \App\Models\QuizQuestion::with(['answers.attempt.user', 'options'])
             ->get()
             ->map(function ($q) {
                 $answers = $q->answers;
@@ -417,8 +660,34 @@ class AdminDashboardController extends Controller
 
                 return $q;
             });
+            // [TAMBAHAN BARU] Data Analisis Siswa untuk Bagian Bawah
+    $studentStats = DB::table('quiz_attempts')
+        ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+        ->select(
+            'users.name', 
+            'users.email',
+            'users.class_group',
+            DB::raw('COUNT(quiz_attempts.id) as total_attempts'),
+            DB::raw('ROUND(AVG(quiz_attempts.score), 1) as avg_score'),
+            DB::raw('MAX(quiz_attempts.score) as highest_score'),
+            // Estimasi durasi (menit) dari created_at ke updated_at
+            DB::raw('ROUND(AVG(TIMESTAMPDIFF(MINUTE, quiz_attempts.created_at, quiz_attempts.updated_at)), 0) as avg_time')
+        )
+        ->whereNotNull('completed_at')
+        ->groupBy('users.id', 'users.name', 'users.email', 'users.class_group')
+        ->orderByDesc('avg_score')
+        ->limit(10) // Top 10 Siswa
+        ->get();
 
-        return view('admin.question_analytics', compact('questions'));
+    // [TAMBAHAN BARU] Aktivitas Terbaru
+    $recentActivities = \App\Models\QuizAttempt::with('user')
+        ->whereNotNull('completed_at')
+        ->latest('completed_at')
+        ->take(6)
+        ->get();
+        
+
+        return view('admin.question_analytics', compact('questions', 'studentStats', 'recentActivities'));
     }
 
     /**
@@ -469,4 +738,163 @@ class AdminDashboardController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+
+
+    /**
+     * =========================================================================
+     * TAMBAHAN: CRUD KUIS (UPDATE & DELETE)
+     * =========================================================================
+     */
+
+    /**
+     * UPDATE QUESTION (EDIT)
+     */
+    public function updateQuestion(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'question_text'  => 'required|string',
+            'chapter_id'     => 'required|integer',
+            'option_a'       => 'required|string',
+            'option_b'       => 'required|string',
+            'option_c'       => 'required|string',
+            'option_d'       => 'required|string',
+            'correct_answer' => 'required|in:option_a,option_b,option_c,option_d',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // 1. Update Pertanyaan Utama
+            DB::table('quiz_questions')->where('id', $id)->update([
+                'chapter_id'    => $validated['chapter_id'],
+                'question_text' => $validated['question_text'],
+                'updated_at'    => now(),
+            ]);
+
+            // 2. Hapus Opsi Lama (Cara paling aman untuk update opsi)
+            DB::table('quiz_options')->where('quiz_question_id', $id)->delete();
+
+            // 3. Masukkan Opsi Baru
+            $optionsData = [
+                'option_a' => $validated['option_a'],
+                'option_b' => $validated['option_b'],
+                'option_c' => $validated['option_c'],
+                'option_d' => $validated['option_d'],
+            ];
+
+            foreach ($optionsData as $key => $text) {
+                DB::table('quiz_options')->insert([
+                    'quiz_question_id' => $id,
+                    'option_text'      => $text,
+                    'is_correct'       => ($key === $validated['correct_answer']) ? 1 : 0,
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Soal berhasil diperbarui']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * DELETE QUESTION (HAPUS)
+     */
+    public function destroyQuestion($id)
+    {
+        DB::beginTransaction();
+        try {
+            // Hapus Opsi Terkait dulu (Cascade manual jika di DB tidak diset)
+            DB::table('quiz_options')->where('quiz_question_id', $id)->delete();
+            
+            // Hapus Soal
+            DB::table('quiz_questions')->where('id', $id)->delete();
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Soal berhasil dihapus']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'message' => 'Gagal menghapus: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * =========================================================================
+     * TAMBAHAN: QUIZ ANALYTICS (LENGKAP SEPERTI LABS)
+     * =========================================================================
+     */
+
+    public function quizAnalytics(Request $request)
+    {
+        $chapterId = $request->get('chapterId'); // Filter per Bab jika ada
+
+        // 1. STATISTIK UTAMA
+        $query = DB::table('quiz_attempts')->whereNotNull('completed_at');
+        if ($chapterId) $query->where('chapter_id', $chapterId);
+
+        $totalAttempts = $query->count();
+        $avgScore      = round($query->avg('score') ?? 0, 1);
+        $highestScore  = $query->max('score') ?? 0;
+        $lowestScore   = $query->min('score') ?? 0;
+        
+        // Menghitung Lulus/Gagal (Asumsi KKM 70)
+        $passedCount = (clone $query)->where('score', '>=', 70)->count();
+        $failedCount = (clone $query)->where('score', '<', 70)->count();
+        $passRate    = $totalAttempts > 0 ? round(($passedCount / $totalAttempts) * 100) : 0;
+
+        // 2. ANALISIS PER BAB (TABEL RINGKASAN)
+        $chaptersData = DB::table('quiz_attempts')
+            ->select(
+                'chapter_id',
+                DB::raw('count(*) as total_participants'),
+                DB::raw('avg(score) as avg_score'),
+                DB::raw('max(score) as max_score'),
+                DB::raw('sum(case when score >= 70 then 1 else 0 end) as passed_count')
+            )
+            ->whereNotNull('completed_at')
+            ->groupBy('chapter_id')
+            ->orderBy('chapter_id')
+            ->get()
+            ->map(function($c) {
+                $c->pass_rate = $c->total_participants > 0 ? round(($c->passed_count / $c->total_participants) * 100) : 0;
+                return $c;
+            });
+
+        // 3. LEADERBOARD SISWA (TOP 10)
+        $topStudents = DB::table('quiz_attempts')
+            ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+            ->select(
+                'users.id', 'users.name', 'users.email', 'users.class_group',
+                DB::raw('avg(quiz_attempts.score) as avg_score'),
+                DB::raw('count(quiz_attempts.id) as total_quizzes')
+            )
+            ->whereNotNull('completed_at')
+            ->groupBy('users.id', 'users.name', 'users.email', 'users.class_group')
+            ->orderByDesc('avg_score')
+            ->limit(10)
+            ->get();
+
+        // 4. CHART DATA (Tren Skor Mingguan)
+        $weeklyTrend = DB::table('quiz_attempts')
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('AVG(score) as avg_score'))
+            ->where('created_at', '>=', now()->subDays(7))
+            ->when($chapterId, function($q) use ($chapterId) { return $q->where('chapter_id', $chapterId); })
+            ->groupBy('date')->orderBy('date', 'asc')->get();
+
+        $chartLabels = $weeklyTrend->pluck('date')->map(fn($d) => Carbon::parse($d)->format('d M'));
+        $chartData   = $weeklyTrend->pluck('avg_score')->map(fn($s) => round($s));
+
+        // 5. LIST CHAPTER UNTUK FILTER DROPDOWN
+        $chaptersList = DB::table('quiz_questions')->select('chapter_id')->distinct()->orderBy('chapter_id')->pluck('chapter_id');
+
+        return view('admin.quiz_analytics_dashboard', compact(
+            'totalAttempts', 'avgScore', 'highestScore', 'lowestScore', 
+            'passedCount', 'failedCount', 'passRate',
+            'chaptersData', 'topStudents', 'chartLabels', 'chartData', 'chaptersList', 'chapterId'
+        ));
+    }
+
+    
 }

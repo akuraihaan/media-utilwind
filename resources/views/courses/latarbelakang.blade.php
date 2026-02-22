@@ -68,7 +68,7 @@
 
                 <article class="space-y-40">
                     
-                    <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="12">
+                    <section id="section-12" class="lesson-section scroll-mt-32" data-lesson-id="12">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
                                 <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 1.3.1</span>
@@ -133,7 +133,7 @@
                         </div>
                     </section>
 
-                    <section id="section-2" class="lesson-section scroll-mt-32" data-lesson-id="13">
+                    <section id="section-13" class="lesson-section scroll-mt-32" data-lesson-id="13">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
                                 <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 1.3.2</span>
@@ -181,7 +181,7 @@
                         </div>
                     </section>
 
-                    <section id="section-3" class="lesson-section scroll-mt-32" data-lesson-id="14">
+                    <section id="section-14" class="lesson-section scroll-mt-32" data-lesson-id="14">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
                                 <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 1.3.3</span>
@@ -235,7 +235,7 @@
                         </div>
                     </section>
 
-                    <section id="section-4" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="15" data-type="activity">
+                    <section id="section-15" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="15" data-type="activity">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
                             
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>

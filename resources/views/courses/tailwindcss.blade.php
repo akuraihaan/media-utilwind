@@ -73,7 +73,7 @@
 
                 <article class="space-y-40">
                     
-                    <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="7">
+                    <section id="section-7" class="lesson-section scroll-mt-32" data-lesson-id="7">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.1</span>
@@ -129,7 +129,7 @@
                         </div>
                     </section>
 
-                    <section id="section-2" class="lesson-section scroll-mt-32" data-lesson-id="8">
+                    <section id="section-8" class="lesson-section scroll-mt-32" data-lesson-id="8">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.2</span>
@@ -197,7 +197,7 @@
                         </div>
                     </section>
 
-                    <section id="section-3" class="lesson-section scroll-mt-32" data-lesson-id="9">
+                    <section id="section-9" class="lesson-section scroll-mt-32" data-lesson-id="9">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.3</span>
@@ -262,7 +262,7 @@
                         </div>
                     </section>
 
-                    <section id="section-4" class="lesson-section scroll-mt-32" data-lesson-id="10">
+                    <section id="section-10" class="lesson-section scroll-mt-32" data-lesson-id="10">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
                                 <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.4</span>
@@ -328,7 +328,7 @@
                         </div>
                     </section>
 
-                    <section id="section-5" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="11" data-type="activity">
+                    <section id="section-11" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="11" data-type="activity">
                         <div class="relative rounded-[2rem] bg-[#0b0f19] border border-white/10 p-8 overflow-hidden shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
                             
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none"></div>

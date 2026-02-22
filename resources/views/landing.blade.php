@@ -62,7 +62,7 @@
                 
                 {{-- Primary Action --}}
                 @auth
-                    <a href="{{ route('dashboard') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.4)] ring-1 ring-white/20 flex justify-center items-center gap-2">
+                    <a href="{{ route('courses.curriculum') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.4)] ring-1 ring-white/20 flex justify-center items-center gap-2">
                         <span>Lanjutkan Belajar</span>
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     </a>

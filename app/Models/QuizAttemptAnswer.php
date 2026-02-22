@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QuizAttemptAnswer extends Model
 {
-    protected $guarded = [];
-protected $fillable = [
+    use HasFactory;
+
+    protected $table = 'quiz_attempt_answers';
+
+    // DAFTARKAN SEMUA KOLOM INI AGAR BISA DIISI
+    protected $fillable = [
         'quiz_attempt_id',
         'quiz_question_id',
-        'quiz_option_id',
-        'is_correct',
-        'is_flagged', // <--- Tambahkan ini
+        'quiz_option_id',  // Pastikan ejaannya sama persis dengan di database
+        'is_flagged',
+        'is_correct'       // Tambahkan ini agar analisis jawaban benar/salah tersimpan
     ];
-    public function attempt()
-    {
-        return $this->belongsTo(QuizAttempt::class, 'quiz_attempt_id'); // Pastikan foreign key benar
-    }
 
-    public function question()
-    {
-        return $this->belongsTo(QuizQuestion::class, 'quiz_question_id');
+    // Relasi (Opsional tapi berguna nanti)
+    public function attempt() {
+        return $this->belongsTo(QuizAttempt::class, 'quiz_attempt_id');
     }
 }

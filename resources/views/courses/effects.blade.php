@@ -2,10 +2,9 @@
 @section('title', 'Bab 3.4 · Efek Visual Masterclass')
 
 @section('content')
-{{-- <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30"> --}}
-<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
+<div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-purple-500/30 pt-20">
 
-    {{-- DYNAMIC BACKGROUND --}}
+    {{-- DYNAMIC BACKGROUND SYSTEM --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-60"></div>
         <div id="gradient-wave" class="absolute inset-0"></div>
@@ -14,23 +13,22 @@
         <div id="cursor-glow"></div>
     </div>
 
-    {{-- NAVBAR --}}
-            @include('layouts.partials.navbar')
-
+    @include('layouts.partials.navbar')
 
     <div class="flex flex-1 overflow-hidden relative z-20">
 
+        {{-- Sidebar --}}
         @include('layouts.partials.course-sidebar')
 
+        {{-- Main Content --}}
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
             {{-- STICKY HEADER --}}
-
             <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-[#020617]/80 backdrop-blur-2xl border-b border-white/5 px-8 py-4 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400">3.3</div>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400">3.4</div>
                     <div>
-                        <h1 class="text-base font-bold text-white tracking-tight">Efek Visual</h1>
+                        <h1 class="text-sm font-bold text-white">Efek Visual</h1>
                         <p class="text-[10px] text-white/50 font-mono uppercase tracking-widest">Shadows, Filters & Animations</p>
                     </div>
                 </div>
@@ -42,76 +40,102 @@
                 </div>
             </div>
 
-            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40"> 
+                
+                {{-- HERO & OBJECTIVES --}}
+                <div class="mb-24 animate-fade-in-up">
+                    
+                    
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Tujuan Pembelajaran
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-purple-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 font-bold text-xs">1</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Kedalaman</h4><p class="text-[11px] text-white/50 leading-relaxed">Membangun hierarki visual 3D pada layar 2D menggunakan manipulasi bayangan (Shadow).</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-pink-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0 font-bold text-xs">2</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Fisika UI</h4><p class="text-[11px] text-white/50 leading-relaxed">Menerapkan prinsip animasi dan transisi agar interaksi terasa natural dan tidak robotik.</p></div>
+                        </div>
+                        <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
+                            <div class="w-8 h-8 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xs">3</div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Rendering</h4><p class="text-[11px] text-white/50 leading-relaxed">Memanipulasi piksel menggunakan Filter dan Transform untuk performa GPU maksimal.</p></div>
+                        </div>
+                    </div>
+                </div>
+
                 <article class="space-y-40">
                     
-                    {{-- INTRO --}}
-                    <header class="space-y-8 animate-fade-in-up">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-widest">
-                                <!-- <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> -->
-                                Dasar Efek Styling
+                    {{-- LESSON 60: BOX SHADOW --}}
+                    <section id="box-shadow" class="lesson-section scroll-mt-32" data-lesson-id="60">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.4.1</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">Box Shadow & Color</h2>
                             </div>
-                        <h1 class="text-8xl lg:text-7xl font-black text-white leading-tight">
-                            Mastering <br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 animate-gradient-x">Visual Effects</span>
-                        </h1>
-                        <p class="text-l text-white/60 max-w-3xl leading-relaxed border-l-4 border-purple-500/30 pl-6">
-                            Efek visual bukan sekadar hiasan, melainkan alat komunikasi. Shadow menciptakan hierarki, Opacity menunjukkan status, dan Animasi memberikan nyawa. Modul ini akan mengajarkan Anda cara memanipulasi properti visual tersebut menggunakan utilitas Tailwind CSS yang powerful.
-                        </p>
-                    </header>
 
-                    {{-- 1. BOX SHADOW --}}
-                    <section id="box-shadow" class="lesson-section scroll-mt-2" data-lesson-id="60">
-                        <div class="space-y-8">
-                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-sm shadow-lg shadow-purple-500/30">1</span>
-                                Box Shadow & Color
-                            </h2>
-                            
-                            <div class="prose prose-invert max-w-none text-white/80 space-y-6">
-                                <p class="text-lg leading-relaxed">
-                                    <strong>Box Shadow</strong> memberikan ilusi kedalaman (depth) pada desain 2D. Dalam Material Design, ini disebut "elevasi". Semakin besar shadow, semakin "tinggi" elemen tersebut melayang dari permukaan, yang biasanya menandakan bahwa elemen tersebut penting atau bisa diinteraksi (seperti tombol atau kartu).
-                                </p>
-                                <p>
-                                    Tailwind menyediakan serangkaian utilitas shadow yang telah dikalibrasi secara profesional, mulai dari <code>shadow-sm</code> (halus) hingga <code>shadow-2xl</code> (sangat menonjol).
-                                </p>
-
-                                <div class="bg-purple-900/10 border border-purple-500/20 p-4 rounded-xl text-sm text-purple-200">
-                                    <strong>💡 Pro Tip:</strong> Gunakan <code>shadow-inner</code> untuk formulir input agar terlihat "tenggelam" ke dalam, memberikan affordance bahwa area tersebut dapat diisi.
+                            <div class="grid lg:grid-cols-2 gap-12">
+                                <div class="space-y-6 text-white/80 leading-relaxed text-sm md:text-base">
+                                    <p>
+                                        Dalam desain antarmuka, <strong>Box Shadow</strong> bukan sekadar hiasan, melainkan indikator hierarki. Konsep ini, yang dipopulerkan oleh Material Design, menggunakan bayangan untuk mensimulasikan "elevasi" (ketinggian) pada sumbu Z. Semakin besar dan kabur bayangannya (<code>shadow-xl</code> atau <code>shadow-2xl</code>), semakin tinggi elemen tersebut tampak melayang dari permukaan, menandakan bahwa elemen tersebut penting atau dapat diinteraksi (seperti modal atau tombol mengambang).
+                                    </p>
+                                    <p>
+                                        Tailwind CSS memperluas konsep ini dengan fitur modern: <strong>Colored Shadows</strong>. Secara default, bayangan berwarna hitam transparan. Namun, dalam desain *Dark Mode* atau *Cyberpunk*, bayangan hitam sering kali tidak terlihat atau membuat desain tampak kotor. Menggunakan warna yang senada dengan elemen (misalnya <code>shadow-purple-500/50</code>) menciptakan efek "Glow" atau neon yang memukau.
+                                    </p>
+                                    <p>
+                                        Sebaliknya, utilitas <code>shadow-inner</code> memberikan ilusi bahwa elemen tersebut ditekan ke dalam permukaan (embossed). Teknik ini sangat efektif untuk formulir input, panel indikator, atau status tombol yang sedang aktif (*active state*), memberikan umpan balik visual yang realistis kepada pengguna.
+                                    </p>
                                 </div>
-                                
-                                {{-- Simulator Shadow --}}
-                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-8 mt-6 relative overflow-hidden shadow-2xl">
-                                    <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl font-black text-white pointer-events-none">SHADOW</div>
-                                    <h3 class="text-sm font-bold text-white/50 uppercase tracking-widest mb-6">Interactive Lab: Shadow Depth</h3>
+
+                                {{-- SIMULATOR 60 --}}
+                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 shadow-2xl relative flex flex-col justify-between">
+                                    <div class="absolute top-4 right-4 text-[10px] font-mono text-white/30 uppercase tracking-widest">Simulasi: Shadow Physics</div>
                                     
-                                    <div class="grid md:grid-cols-2 gap-10 items-center">
-                                        <div class="space-y-4">
-                                            <p class="text-xs text-white/40 mb-2">Pilih intensitas bayangan:</p>
-                                            <div class="grid grid-cols-2 gap-3">
-                                                <button onclick="updateShadow('shadow-none')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-none</button>
-                                                <button onclick="updateShadow('shadow-sm')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-sm</button>
-                                                <button onclick="updateShadow('shadow-md')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-md</button>
-                                                <button onclick="updateShadow('shadow-xl')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-xl</button>
-                                                <button onclick="updateShadow('shadow-2xl')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-2xl</button>
-                                                <button onclick="updateShadow('shadow-inner')" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg text-xs border border-white/10 text-left transition group"><span class="text-purple-400 group-hover:text-white">●</span> shadow-inner</button>
+                                    <div class="flex-1 flex items-center justify-center min-h-[200px] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] rounded-xl mb-6 border border-white/5">
+                                        <div id="sim60-target" class="w-32 h-32 bg-white rounded-2xl flex items-center justify-center text-slate-900 font-bold transition-all duration-500 shadow-none">
+                                            BOX
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-5">
+                                        {{-- Part 1: Elevation --}}
+                                        <div>
+                                            <label class="text-[10px] text-purple-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>1. Elevation (Ketinggian)</span>
+                                                <span class="text-white/30">Z-Axis</span>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <button onclick="updateSim60('elevation', 'shadow-none')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Flat</button>
+                                                <button onclick="updateSim60('elevation', 'shadow-md')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Medium</button>
+                                                <button onclick="updateSim60('elevation', 'shadow-2xl')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">High (2XL)</button>
                                             </div>
                                         </div>
                                         
-                                        <div class="flex justify-center py-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover rounded-xl border border-white/5">
-                                            <div id="shadow-target" class="w-40 h-40 bg-white rounded-2xl flex items-center justify-center text-slate-800 font-bold transition-all duration-500 shadow-none transform hover:-translate-y-1">
-                                                Box Element
+                                        {{-- Part 2: Color --}}
+                                        <div>
+                                            <label class="text-[10px] text-blue-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>2. Atmosphere (Warna)</span>
+                                                <span class="text-white/30">Glow Effect</span>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <button onclick="updateSim60('color', 'shadow-black/50')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-blue-500">Realistic</button>
+                                                <button onclick="updateSim60('color', 'shadow-purple-500/50')" class="flex-1 py-2 bg-purple-500/10 text-purple-300 rounded text-[10px] hover:bg-purple-500/20 border border-purple-500/30 transition focus:ring-2 focus:ring-purple-500">Neon Purple</button>
+                                                <button onclick="updateSim60('color', 'shadow-cyan-400/50')" class="flex-1 py-2 bg-cyan-500/10 text-cyan-300 rounded text-[10px] hover:bg-cyan-500/20 border border-cyan-500/30 transition focus:ring-2 focus:ring-cyan-500">Neon Cyan</button>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="mt-8 border-t border-white/5 pt-6">
-                                        <h4 class="text-sm font-bold text-white mb-4">Shadow Color (Glow Effect)</h4>
-                                        <p class="text-xs text-white/60 mb-4">Tailwind memungkinkan kita mewarnai bayangan untuk efek neon atau glow. Ini sangat populer dalam desain "Cyberpunk" atau "Dark Mode".</p>
-                                        <div class="flex flex-wrap gap-4">
-                                            <button onclick="updateShadowColor('shadow-blue-500/50')" class="px-4 py-2 rounded-lg bg-blue-500/10 text-blue-300 text-xs border border-blue-500/30 hover:bg-blue-500/30 transition shadow-[0_0_10px_rgba(59,130,246,0.2)]">Blue Glow</button>
-                                            <button onclick="updateShadowColor('shadow-purple-500/50')" class="px-4 py-2 rounded-lg bg-purple-500/10 text-purple-300 text-xs border border-purple-500/30 hover:bg-purple-500/30 transition shadow-[0_0_10px_rgba(168,85,247,0.2)]">Purple Glow</button>
-                                            <button onclick="updateShadowColor('shadow-emerald-500/50')" class="px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-xs border border-emerald-500/30 hover:bg-emerald-500/30 transition shadow-[0_0_10px_rgba(16,185,129,0.2)]">Emerald Glow</button>
+                                        {{-- Part 3: Inset --}}
+                                        <div>
+                                            <label class="text-[10px] text-pink-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>3. Direction (Arah)</span>
+                                                <span class="text-white/30">Depth</span>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <button onclick="updateSim60('inset', false)" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-pink-500">Outer (Float)</button>
+                                                <button onclick="updateSim60('inset', true)" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-pink-500">Inner (Sink)</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -119,41 +143,72 @@
                         </div>
                     </section>
 
-                    {{-- 2. OPACITY --}}
+                    {{-- LESSON 61: OPACITY --}}
                     <section id="opacity" class="lesson-section scroll-mt-32" data-lesson-id="61">
-                        <div class="space-y-8">
-                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-sm shadow-lg shadow-purple-500/30">2</span>
-                                Opacity
-                            </h2>
-                            
-                            <div class="prose prose-invert max-w-none text-white/80 space-y-6">
-                                <p>
-                                    Utilitas <code>opacity-{amount}</code> mengatur transparansi seluruh elemen, termasuk konten dan anak elemennya (child elements). Ini berbeda dengan mengubah alpha channel pada warna background (RGBA), yang hanya mentransparankan latar belakang.
-                                </p>
-                                <ul class="list-disc pl-5 space-y-2 marker:text-purple-500">
-                                    <li><code>opacity-0</code>: Elemen sepenuhnya tidak terlihat (tapi masih ada di DOM dan bisa di-klik jika tidak di-hidden).</li>
-                                    <li><code>opacity-50</code>: Semi-transparan, sering digunakan untuk state "disabled".</li>
-                                    <li><code>opacity-100</code>: Opasitas penuh (default).</li>
-                                </ul>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.4.2</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">Opacity & Visibility</h2>
+                            </div>
 
-                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-8 mt-4">
-                                    <div class="flex flex-col md:flex-row gap-8 items-center">
-                                        <div class="w-full md:w-1/2 space-y-6">
-                                            <div class="flex justify-between items-center">
-                                                <label class="text-sm font-bold text-white">Atur Tingkat Opasitas</label>
-                                                <span id="opacity-val" class="text-xs font-mono text-purple-400 bg-purple-900/30 px-2 py-1 rounded">opacity-100</span>
-                                            </div>
-                                            <input type="range" min="0" max="100" step="10" value="100" class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all" oninput="updateOpacity(this.value)">
-                                            <p class="text-xs text-white/40">Geser slider untuk melihat efek transparansi pada elemen di sebelah kanan.</p>
+                            <div class="grid lg:grid-cols-2 gap-12">
+                                <div class="space-y-6 text-white/80 leading-relaxed text-sm md:text-base">
+                                    <p>
+                                        Utilitas <strong>Opacity</strong> mengontrol transparansi elemen. Namun, ada perbedaan krusial antara `opacity-{n}` dan `bg-opacity` (atau alpha channel pada warna).
+                                        <br>• <strong>Element Opacity (`opacity-50`):</strong> Mempengaruhi seluruh elemen, termasuk teks, border, dan gambar di dalamnya. Ini bisa menurunkan keterbacaan (aksesibilitas) jika tidak hati-hati.
+                                        <br>• <strong>Background Alpha (`bg-blue-500/50`):</strong> Hanya mentransparankan latar belakang, sementara teks di atasnya tetap 100% solid. Ini adalah metode yang disarankan untuk membuat overlay teks yang terbaca.
+                                    </p>
+                                    <p>
+                                        Opacity juga memainkan peran kunci dalam <strong>Stacking Context</strong>. Elemen dengan opacity kurang dari 1 akan membentuk konteks tumpukan baru, yang bisa mempengaruhi bagaimana `z-index` bekerja.
+                                    </p>
+                                    <p>
+                                        Penggunaan paling umum adalah untuk indikasi status: `opacity-100` untuk aktif, `opacity-50` untuk non-aktif (disabled), dan `hover:opacity-80` untuk memberikan umpan balik interaksi pada tombol.
+                                    </p>
+                                </div>
+
+                                {{-- SIMULATOR 61 --}}
+                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 shadow-2xl relative flex flex-col justify-between">
+                                    <div class="absolute top-4 right-4 text-[10px] font-mono text-white/30 uppercase tracking-widest">Simulasi: Visibility</div>
+                                    
+                                    <div class="flex-1 flex items-center justify-center min-h-[200px] bg-[url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop')] bg-cover rounded-xl mb-6 border border-white/5 relative group">
+                                        <div id="sim61-target" class="w-48 h-24 bg-purple-600 rounded-xl flex flex-col items-center justify-center text-white transition-all duration-300 border border-white/20">
+                                            <span class="font-bold">Content Text</span>
+                                            <span class="text-xs">Sub-content</span>
                                         </div>
-                                        <div class="w-full md:w-1/2 flex justify-center bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover rounded-xl p-10 border border-white/5 relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-grid-white/[0.05]"></div>
-                                            <div id="opacity-target" class="w-full h-32 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-2xl transition-opacity duration-200 border border-white/20">
-                                                <div class="text-center">
-                                                    <span class="font-bold text-white text-lg">Konten Utama</span>
-                                                    <p class="text-[10px] text-white/70">Ikut transparan</p>
-                                                </div>
+                                    </div>
+
+                                    <div class="space-y-5">
+                                        {{-- Part 1: Global Opacity --}}
+                                        <div>
+                                            <label class="text-[10px] text-purple-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>1. Intensity (Nilai)</span>
+                                                <span id="opacity-val-label" class="text-white/30">100%</span>
+                                            </label>
+                                            <input type="range" min="0" max="100" value="100" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" oninput="updateSim61('global', this.value)">
+                                        </div>
+
+                                        {{-- Part 2: Context --}}
+                                        <div>
+                                            <label class="text-[10px] text-blue-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>2. Context (Target)</span>
+                                                <span class="text-white/30">Scope</span>
+                                            </label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <button onclick="updateSim61('mode', 'element')" class="py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-blue-500">Whole Element</button>
+                                                <button onclick="updateSim61('mode', 'bg')" class="py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-blue-500">Background Only</button>
+                                            </div>
+                                            <p id="sim61-desc" class="text-[10px] text-white/40 mt-2 italic">Mode: Mempengaruhi seluruh elemen.</p>
+                                        </div>
+
+                                        {{-- Part 3: State --}}
+                                        <div>
+                                            <label class="text-[10px] text-pink-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>3. State (Interaksi)</span>
+                                                <span class="text-white/30">Hover</span>
+                                            </label>
+                                            <div class="flex items-center gap-3 bg-white/5 p-2 rounded-lg border border-white/5">
+                                                <input type="checkbox" id="sim61-hover" onchange="updateSim61('hover', this.checked)" class="accent-pink-500 w-4 h-4 rounded cursor-pointer">
+                                                <span class="text-xs text-white/70">Aktifkan `hover:opacity-100` (Arahkan mouse ke box)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -162,122 +217,154 @@
                         </div>
                     </section>
 
-                    {{-- 3. FILTERS --}}
+                    {{-- LESSON 62: FILTERS --}}
                     <section id="filters" class="lesson-section scroll-mt-32" data-lesson-id="62">
-                        <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-sm shadow-lg shadow-purple-500/30">3</span>
-                            Filters (Blur & Effects)
-                        </h2>
-                        
-                        <div class="prose prose-invert max-w-none text-white/80 space-y-6 mb-8">
-                            <p>
-                                Tailwind membawa kekuatan Photoshop langsung ke browser. Anda bisa memanipulasi rendering elemen menggunakan CSS Filters. Ini sangat berguna untuk image processing ringan atau efek UI seperti <em>Glassmorphism</em> (menggunakan backdrop-blur).
-                            </p>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {{-- Simulator Image --}}
-                            <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 flex items-center justify-center relative group">
-                                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 rounded-2xl pointer-events-none"></div>
-                                <div class="relative overflow-hidden rounded-xl shadow-2xl border border-white/10">
-                                    <img id="filter-img" src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop" alt="Demo" class="w-full max-w-sm rounded-xl transition-all duration-500 object-cover h-64">
-                                    <div class="absolute top-2 right-2 bg-black/60 backdrop-blur px-3 py-1 rounded-full text-[10px] text-white/90 font-mono border border-white/10">Original Image</div>
-                                </div>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.4.3</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">Filters & Backdrop Blur</h2>
                             </div>
 
-                            {{-- Controls --}}
-                            <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-8 space-y-8">
-                                <div>
-                                    <label class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-3">Blur Effect (Keburaman)</label>
-                                    <div class="flex flex-wrap gap-2">
-                                        <button onclick="setFilter('blur', 'blur-none')" class="px-3 py-1.5 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600 hover:border-purple-500 transition text-white">None</button>
-                                        <button onclick="setFilter('blur', 'blur-sm')" class="px-3 py-1.5 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600 hover:border-purple-500 transition text-white">sm</button>
-                                        <button onclick="setFilter('blur', 'blur-md')" class="px-3 py-1.5 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600 hover:border-purple-500 transition text-white">md</button>
-                                        <button onclick="setFilter('blur', 'blur-xl')" class="px-3 py-1.5 bg-white/5 border border-white/10 rounded text-xs hover:bg-purple-600 hover:border-purple-500 transition text-white">xl</button>
-                                    </div>
-                                    <p class="text-[10px] text-white/40 mt-2">Digunakan untuk background overlay atau menyembunyikan konten sensitif.</p>
+                            <div class="grid lg:grid-cols-2 gap-12">
+                                <div class="space-y-6 text-white/80 leading-relaxed text-sm md:text-base">
+                                    <p>
+                                        Tailwind membawa kekuatan pemrosesan gambar langsung ke browser melalui utilitas <strong>Filters</strong>. Tidak seperti mengedit gambar di Photoshop, filter CSS dirender secara <em>real-time</em> oleh GPU pengguna. Ini memungkinkan efek dinamis seperti mengubah gambar menjadi <code>grayscale</code> saat non-aktif dan berwarna saat di-hover.
+                                    </p>
+                                    <p>
+                                        Konsep terpenting di sini adalah perbedaan antara <strong>Blur</strong> dan <strong>Backdrop Blur</strong>:
+                                        <br>• <code>blur-{n}</code>: Memburamkan <strong>elemen itu sendiri</strong>. Berguna untuk menyensor konten sensitif atau membuat efek bayangan lembut.
+                                        <br>• <code>backdrop-blur-{n}</code>: Memburamkan <strong>apa pun yang ada di belakang</strong> elemen tersebut. Ini adalah kunci dari teknik desain <em>Glassmorphism</em> (kaca buram) yang dipopulerkan oleh ekosistem iOS dan Windows 11.
+                                    </p>
+                                    <p>
+                                        <strong>Tips Performa:</strong> Meskipun kuat, filter (terutama blur) cukup berat bagi browser. Gunakan dengan bijak pada elemen yang dianimasikan.
+                                    </p>
                                 </div>
-                                <div>
-                                    <label class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-3">Color Adjustments</label>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <button onclick="toggleFilter('grayscale')" class="px-4 py-3 bg-white/5 rounded-lg text-xs border border-white/10 hover:border-purple-500 hover:bg-white/10 transition text-left flex justify-between items-center group">
-                                            Grayscale <span id="st-grayscale" class="text-white/20 group-hover:text-purple-400 transition">●</span>
-                                        </button>
-                                        <button onclick="toggleFilter('sepia')" class="px-4 py-3 bg-white/5 rounded-lg text-xs border border-white/10 hover:border-purple-500 hover:bg-white/10 transition text-left flex justify-between items-center group">
-                                            Sepia <span id="st-sepia" class="text-white/20 group-hover:text-purple-400 transition">●</span>
-                                        </button>
-                                        <button onclick="toggleFilter('brightness-125')" class="px-4 py-3 bg-white/5 rounded-lg text-xs border border-white/10 hover:border-purple-500 hover:bg-white/10 transition text-left flex justify-between items-center group">
-                                            Brightness + <span id="st-brightness-125" class="text-white/20 group-hover:text-purple-400 transition">●</span>
-                                        </button>
-                                        <button onclick="toggleFilter('contrast-150')" class="px-4 py-3 bg-white/5 rounded-lg text-xs border border-white/10 hover:border-purple-500 hover:bg-white/10 transition text-left flex justify-between items-center group">
-                                            High Contrast <span id="st-contrast-150" class="text-white/20 group-hover:text-purple-400 transition">●</span>
-                                        </button>
+
+                                {{-- SIMULATOR 62 --}}
+                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 shadow-2xl relative flex flex-col justify-between">
+                                    <div class="absolute top-4 right-4 text-[10px] font-mono text-white/30 uppercase tracking-widest">Simulasi: Lens Effect</div>
+                                    
+                                    <div class="relative h-48 rounded-xl mb-6 overflow-hidden border border-white/5 group">
+                                        {{-- Base Image --}}
+                                        <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-all duration-500" id="sim62-img">
+                                        
+                                        {{-- Overlay for Backdrop --}}
+                                        <div id="sim62-overlay" class="absolute inset-0 flex items-center justify-center transition-all duration-500 bg-transparent">
+                                            <span class="font-bold text-white text-xl drop-shadow-lg hidden" id="sim62-text">Glass Overlay</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-5">
+                                        {{-- Part 1: Standard Filters --}}
+                                        <div>
+                                            <label class="text-[10px] text-purple-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>1. Correction (Warna)</span>
+                                                <span class="text-white/30">Filter</span>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <button onclick="updateSim62('filter', 'none')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Normal</button>
+                                                <button onclick="updateSim62('filter', 'grayscale')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">B&W</button>
+                                                <button onclick="updateSim62('filter', 'sepia')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Sepia</button>
+                                            </div>
+                                        </div>
+
+                                        {{-- Part 2: Blur Intensity --}}
+                                        <div>
+                                            <label class="text-[10px] text-blue-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>2. Blur Strength (Kekuatan)</span>
+                                                <span class="text-white/30">Pixel Radius</span>
+                                            </label>
+                                            <input type="range" min="0" max="16" step="4" value="0" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateSim62('blur', this.value)">
+                                        </div>
+
+                                        {{-- Part 3: Backdrop Mode --}}
+                                        <div>
+                                            <label class="text-[10px] text-pink-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>3. Render Mode (Teknik)</span>
+                                                <span class="text-white/30">Effect Type</span>
+                                            </label>
+                                            <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10">
+                                                <span class="text-xs text-white/70 ml-2">Glassmorphism Mode (Backdrop)</span>
+                                                <button onclick="updateSim62('mode', 'toggle')" id="sim62-mode-btn" class="px-3 py-1 bg-white/10 rounded text-[10px] hover:bg-pink-500 transition border border-white/10">OFF</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {{-- 4. TRANSITIONS & ANIMATIONS --}}
+                    {{-- LESSON 63: TRANSITIONS --}}
                     <section id="transitions" class="lesson-section scroll-mt-32" data-lesson-id="63">
-                        <div class="space-y-8">
-                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-sm shadow-lg shadow-purple-500/30">4</span>
-                                Transitions & Animation
-                            </h2>
-                            
-                            <div class="prose prose-invert max-w-none text-white/80">
-                                <p>
-                                    Tanpa transisi, perubahan state (seperti hover) akan terasa kaku dan robotik. Tailwind menyediakan utilitas <code>transition</code>, <code>duration</code>, dan <code>ease</code> untuk membuat pergerakan UI terasa alami.
-                                </p>
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.4.4</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">Transitions & Animations</h2>
                             </div>
 
-                            <div class="grid md:grid-cols-2 gap-8 mt-6">
-                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-                                    <div class="absolute top-0 right-0 p-4 opacity-5 text-4xl font-black text-white pointer-events-none">TRANSITION</div>
-                                    <h3 class="text-sm font-bold text-purple-400 mb-6 uppercase tracking-widest">Hover Transitions</h3>
-                                    
-                                    <div class="space-y-6">
-                                        <div class="group flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-blue-500/50 transition duration-300">
-                                            <div class="w-10 h-10 bg-blue-500 rounded-lg transition-all duration-75 ease-linear group-hover:w-32 flex items-center justify-center overflow-hidden">
-                                                <span class="text-[10px] text-white opacity-0 group-hover:opacity-100 transition delay-75 whitespace-nowrap">Instant (75ms)</span>
-                                            </div>
-                                            <span class="text-xs font-mono text-white/50">duration-75 ease-linear</span>
-                                        </div>
-                                        <div class="group flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-purple-500/50 transition duration-300">
-                                            <div class="w-10 h-10 bg-purple-500 rounded-lg transition-all duration-500 ease-out group-hover:w-48 flex items-center justify-center overflow-hidden">
-                                                <span class="text-[10px] text-white opacity-0 group-hover:opacity-100 transition delay-100 whitespace-nowrap">Smooth (500ms)</span>
-                                            </div>
-                                            <span class="text-xs font-mono text-white/50">duration-500 ease-out</span>
-                                        </div>
-                                        <div class="group flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-pink-500/50 transition duration-300">
-                                            <div class="w-10 h-10 bg-pink-500 rounded-lg transition-all duration-1000 ease-in-out group-hover:w-full flex items-center justify-center overflow-hidden">
-                                                <span class="text-[10px] text-white opacity-0 group-hover:opacity-100 transition delay-200 whitespace-nowrap">Cinematic (1000ms)</span>
-                                            </div>
-                                            <span class="text-xs font-mono text-white/50">duration-1000 in-out</span>
-                                        </div>
-                                    </div>
+                            <div class="grid lg:grid-cols-2 gap-12">
+                                <div class="space-y-6 text-white/80 leading-relaxed text-sm md:text-base">
+                                    <p>
+                                        Tanpa <strong>Transitions</strong>, perubahan state di web (seperti hover) terjadi secara instan (0ms), yang terasa kaku dan robotik bagi otak manusia. Transisi berfungsi untuk menginterpolasi nilai antara dua state, membuat perubahan terasa halus dan alami.
+                                    </p>
+                                    <p>
+                                        <strong>Fisika Gerak (Duration & Ease):</strong>
+                                        <br>• <strong>Duration:</strong> Standar industri untuk mikro-interaksi UI adalah <code>150ms</code> hingga <code>300ms</code>. Lebih cepat tidak terlihat, lebih lambat terasa <em>laggy</em>.
+                                        <br>• <strong>Easing:</strong> <code>ease-out</code> (cepat di awal, melambat di akhir) terasa paling natural karena meniru gesekan di dunia nyata (seperti mengerem mobil). <code>linear</code> sering terasa membosankan dan mesin-like.
+                                    </p>
+                                    <p>
+                                        Untuk gerakan yang terus-menerus (loop), Tailwind menyediakan <strong>Animations</strong> bawaan seperti <code>animate-spin</code> (loading indicators), <code>animate-pulse</code> (skeleton screens), dan <code>animate-bounce</code> (notifikasi perhatian).
+                                    </p>
                                 </div>
 
-                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-                                    <div class="absolute top-0 right-0 p-4 opacity-5 text-4xl font-black text-white pointer-events-none">ANIMATE</div>
-                                    <h3 class="text-sm font-bold text-pink-400 mb-6 uppercase tracking-widest">Infinite Animations</h3>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="p-6 bg-white/5 rounded-xl flex flex-col items-center justify-center gap-3 border border-white/5 hover:bg-white/10 transition">
-                                            <div class="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                                            <code class="text-[10px] text-blue-300">animate-spin</code>
+                                {{-- SIMULATOR 63 --}}
+                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 shadow-2xl relative flex flex-col justify-between">
+                                    <div class="absolute top-4 right-4 text-[10px] font-mono text-white/30 uppercase tracking-widest">Simulasi: Motion Lab</div>
+                                    
+                                    <div class="flex-1 h-48 bg-white/5 rounded-xl mb-6 border border-white/5 relative overflow-hidden flex items-center justify-center">
+                                        <div id="sim63-object" class="w-16 h-16 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-xl shadow-lg border border-white/20 transition-all"></div>
+                                        
+                                        {{-- Track line for move demo --}}
+                                        <div class="absolute bottom-4 left-4 right-4 h-px bg-white/10 flex justify-between text-[8px] text-white/30 font-mono uppercase">
+                                            <span>Start</span>
+                                            <span>End</span>
                                         </div>
-                                        <div class="p-6 bg-white/5 rounded-xl flex flex-col items-center justify-center gap-3 border border-white/5 hover:bg-white/10 transition">
-                                            <div class="w-3 h-3 bg-purple-400 rounded-full animate-ping"></div>
-                                            <code class="text-[10px] text-purple-300">animate-ping</code>
+                                    </div>
+
+                                    <div class="space-y-5">
+                                        {{-- Part 1: Transition Logic --}}
+                                        <div>
+                                            <label class="text-[10px] text-purple-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>1. Easing (Percepatan)</span>
+                                                <span class="text-white/30">Physics</span>
+                                            </label>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <button onclick="updateSim63('ease', 'ease-linear')" class="py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Linear</button>
+                                                <button onclick="updateSim63('ease', 'ease-out')" class="py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">Ease Out</button>
+                                                <button onclick="updateSim63('ease', 'ease-in-out')" class="py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-purple-500">In-Out</button>
+                                            </div>
                                         </div>
-                                        <div class="p-6 bg-white/5 rounded-xl flex flex-col items-center justify-center gap-3 border border-white/5 hover:bg-white/10 transition">
-                                            <div class="w-8 h-8 bg-pink-400 rounded-full animate-bounce"></div>
-                                            <code class="text-[10px] text-pink-300">animate-bounce</code>
+
+                                        {{-- Part 2: Duration --}}
+                                        <div>
+                                            <label class="text-[10px] text-blue-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>2. Duration (Durasi)</span>
+                                                <span id="sim63-dur-label" class="text-white/30">300ms</span>
+                                            </label>
+                                            <input type="range" min="100" max="2000" step="100" value="300" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateSim63('duration', this.value)">
                                         </div>
-                                        <div class="p-6 bg-white/5 rounded-xl flex flex-col items-center justify-center gap-3 border border-white/5 hover:bg-white/10 transition">
-                                            <div class="w-8 h-8 bg-green-400 rounded animate-pulse"></div>
-                                            <code class="text-[10px] text-green-300">animate-pulse</code>
+
+                                        {{-- Part 3: Trigger / Animation --}}
+                                        <div>
+                                            <label class="text-[10px] text-pink-400 font-bold uppercase mb-2 block flex justify-between">
+                                                <span>3. Action (Pemicu)</span>
+                                                <span class="text-white/30">Event</span>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <button onclick="updateSim63('action', 'move')" class="flex-1 py-2 bg-purple-600 text-white rounded text-[10px] hover:bg-purple-500 transition shadow-lg shadow-purple-900/50">Test Move</button>
+                                                <button onclick="updateSim63('action', 'spin')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-pink-500">Loop Spin</button>
+                                                <button onclick="updateSim63('action', 'bounce')" class="flex-1 py-2 bg-white/5 rounded text-[10px] hover:bg-white/10 border border-white/10 transition focus:ring-2 focus:ring-pink-500">Loop Bounce</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -285,51 +372,75 @@
                         </div>
                     </section>
 
-                    {{-- 5. TRANSFORMS --}}
+                    {{-- LESSON 64: TRANSFORMS --}}
                     <section id="transforms" class="lesson-section scroll-mt-32" data-lesson-id="64">
-                        <div class="space-y-8">
-                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-sm shadow-lg shadow-purple-500/30">5</span>
-                                Transforms (2D & 3D)
-                            </h2>
-                            
-                            <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-8 overflow-hidden relative shadow-2xl">
-                                <div class="grid md:grid-cols-2 gap-12 items-center">
-                                    <div class="space-y-8">
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <label class="text-xs font-bold text-white/50 uppercase">Scale (Ukuran)</label>
-                                                <span id="val-scale" class="text-xs font-mono text-purple-400">100%</span>
-                                            </div>
-                                            <input type="range" min="50" max="150" step="10" value="100" class="w-full h-1 bg-white/10 rounded accent-purple-500 hover:accent-purple-400 cursor-pointer" oninput="updateTransform('scale', this.value)">
-                                        </div>
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <label class="text-xs font-bold text-white/50 uppercase">Rotate (Putar)</label>
-                                                <span id="val-rotate" class="text-xs font-mono text-purple-400">0deg</span>
-                                            </div>
-                                            <input type="range" min="0" max="360" step="15" value="0" class="w-full h-1 bg-white/10 rounded accent-purple-500 hover:accent-purple-400 cursor-pointer" oninput="updateTransform('rotate', this.value)">
-                                        </div>
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <label class="text-xs font-bold text-white/50 uppercase">Translate X (Geser)</label>
-                                                <span id="val-translate" class="text-xs font-mono text-purple-400">0px</span>
-                                            </div>
-                                            <input type="range" min="-100" max="100" step="10" value="0" class="w-full h-1 bg-white/10 rounded accent-purple-500 hover:accent-purple-400 cursor-pointer" oninput="updateTransform('translate', this.value)">
-                                        </div>
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <label class="text-xs font-bold text-white/50 uppercase">Skew (Miring)</label>
-                                                <span id="val-skew" class="text-xs font-mono text-purple-400">0deg</span>
-                                            </div>
-                                            <input type="range" min="-20" max="20" step="5" value="0" class="w-full h-1 bg-white/10 rounded accent-purple-500 hover:accent-purple-400 cursor-pointer" oninput="updateTransform('skew', this.value)">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                                <span class="text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.4.5</span>
+                                <h2 class="text-3xl lg:text-4xl font-black text-white leading-[1.1]">Transform (2D & 3D)</h2>
+                            </div>
+
+                            <div class="grid lg:grid-cols-2 gap-12">
+                                <div class="space-y-6 text-white/80 leading-relaxed text-sm md:text-base">
+                                    <p>
+                                        <strong>Hardware Acceleration:</strong><br>
+                                        Properti <strong>Transform</strong> (`scale`, `rotate`, `translate`, `skew`) adalah cara paling efisien untuk memindahkan atau mengubah bentuk elemen. Berbeda dengan mengubah `margin` atau `width` yang memicu kalkulasi ulang tata letak (*layout thrashing*), Transform diproses di <em>Composite Layer</em> browser menggunakan GPU. Hasilnya adalah animasi yang sangat mulus (60fps) bahkan pada perangkat lambat.
+                                    </p>
+                                    <p>
+                                        <strong>Kombinasi Utilitas:</strong><br>
+                                        Di Tailwind, Anda dapat menggabungkan beberapa transformasi sekaligus. Contoh umum adalah efek kartu: `hover:scale-105 hover:-rotate-1`. Ini menciptakan efek "pop" yang dinamis dan menyenangkan.
+                                    </p>
+                                    <p>
+                                        <strong>Origin Point:</strong><br>
+                                        Secara default, transformasi terjadi dari titik tengah (`origin-center`). Gunakan `origin-bottom-left` atau lainnya untuk mengubah poros putaran, memberikan nuansa fisik seperti kertas yang tertiup angin.
+                                    </p>
+                                </div>
+
+                                {{-- SIMULATOR 64 --}}
+                                <div class="bg-[#0f141e] border border-white/10 rounded-2xl p-6 shadow-2xl relative flex flex-col justify-between">
+                                    <div class="absolute top-4 right-4 text-[10px] font-mono text-white/30 uppercase tracking-widest">Simulasi: Geometric</div>
+                                    
+                                    <div class="flex-1 h-48 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] rounded-xl mb-6 border border-white/5 flex items-center justify-center overflow-hidden">
+                                        <div id="sim64-target" class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-xl flex items-center justify-center font-bold text-white transition-transform duration-300 ease-out">
+                                            TF
                                         </div>
                                     </div>
-                                    
-                                    <div class="flex items-center justify-center bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover rounded-xl border border-white/5 min-h-[350px] relative overflow-hidden">
-                                        <div class="absolute inset-0 bg-grid-white/[0.05]"></div>
-                                        <div id="transform-target" class="w-32 h-32 bg-gradient-to-br from-pink-500 to-orange-400 rounded-2xl shadow-2xl flex items-center justify-center font-bold text-white text-xl transition-transform duration-300 ease-out border border-white/20">
-                                            BOX
+
+                                    <div class="space-y-5">
+                                        {{-- Part 1: Scale --}}
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <label class="text-[10px] text-purple-400 font-bold uppercase">1. Scale (Zoom)</label>
+                                                <span id="sim64-scale-val" class="text-[10px] text-white/50">100%</span>
+                                            </div>
+                                            <input type="range" min="50" max="150" step="10" value="100" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" oninput="updateSim64('scale', this.value)">
+                                        </div>
+
+                                        {{-- Part 2: Rotate & Skew --}}
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <label class="text-[10px] text-blue-400 font-bold uppercase">2. Rotate</label>
+                                                    <span id="sim64-rotate-val" class="text-[10px] text-white/50">0deg</span>
+                                                </div>
+                                                <input type="range" min="-180" max="180" step="15" value="0" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateSim64('rotate', this.value)">
+                                            </div>
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <label class="text-[10px] text-blue-400 font-bold uppercase">Skew</label>
+                                                    <span id="sim64-skew-val" class="text-[10px] text-white/50">0deg</span>
+                                                </div>
+                                                <input type="range" min="-20" max="20" step="5" value="0" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateSim64('skew', this.value)">
+                                            </div>
+                                        </div>
+
+                                        {{-- Part 3: Translate --}}
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <label class="text-[10px] text-pink-400 font-bold uppercase">3. Translate X (Geser)</label>
+                                                <span id="sim64-trans-val" class="text-[10px] text-white/50">0px</span>
+                                            </div>
+                                            <input type="range" min="-100" max="100" step="10" value="0" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-pink-500" oninput="updateSim64('translate', this.value)">
                                         </div>
                                     </div>
                                 </div>
@@ -389,8 +500,8 @@
                                 <div class="lg:col-span-8 bg-slate-100 text-slate-900 p-0 relative overflow-y-auto flex flex-col items-center justify-center">
                                     <div class="absolute top-4 right-4 text-[10px] font-mono text-slate-400 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-slate-200 shadow-sm z-50 flex items-center gap-2">
                                         <span class="relative flex h-2 w-2">
-                                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                         </span>
                                         LIVE PREVIEW (Hover Me)
                                     </div>
@@ -426,13 +537,13 @@
 
                 {{-- FOOTER --}}
                 <div class="mt-32 pt-10 border-t border-white/10 flex justify-between items-center animate-fade-in-up">
-                    <a href="#" class="group flex items-center gap-4 text-slate-400 hover:text-white transition">
+                    <a href="{{ route('courses.borders') }}" class="group flex items-center gap-4 text-slate-400 hover:text-white transition">
                         <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300">
                             <span class="text-lg group-hover:-translate-x-1 transition-transform">←</span>
                         </div>
                         <div class="text-left">
                             <div class="text-[10px] uppercase tracking-widest opacity-50 mb-1">Sebelumnya</div>
-                            <div class="font-bold text-sm">3.3 Tata Letak</div>
+                            <div class="font-bold text-sm">3.3 Borders & Effects</div>
                         </div>
                     </a>
 
@@ -454,7 +565,7 @@
 </div>
 
 <style>
-    /* UTILS & ANIMATION (Indigo Theme) */
+    /* UTILS & ANIMATION (Indigo/Purple Theme) */
     .nav-link.active { color: #818cf8; position: relative; }
     .nav-link.active::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(to right,#818cf8,#a78bfa); box-shadow: 0 0 12px rgba(129,140,248,.8); border-radius: 2px; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
@@ -472,16 +583,6 @@
     .nav-item.active { color: #818cf8; background: rgba(129, 140, 248, 0.05); font-weight: 600; }
     .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
     .nav-item.active .dot { background: #818cf8; box-shadow: 0 0 8px #818cf8; transform: scale(1.2); }
-
-    /* SIDEBAR COMPATIBILITY */
-    .sb-group.open .accordion-content { max-height: 1000px; opacity: 1; }
-    .sb-group:not(.open) .accordion-content { max-height: 0; opacity: 0; overflow: hidden; }
-    .sb-group.open svg { transform: rotate(180deg); }
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #22d3ee; background: rgba(34,211,238,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -490,7 +591,7 @@
     window.SUBBAB_LESSON_IDS = [60, 61, 62, 63, 64, 65]; 
     window.INIT_COMPLETED_LESSONS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedLessons = new Set(window.INIT_COMPLETED_LESSONS);
-    const ACTIVITY_ID = {{ $activityId ?? 13 }}; // Visual Effects Activity
+    const ACTIVITY_ID = {{ $activityId ?? 13 }}; 
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -505,54 +606,130 @@
         }
     });
 
-    /* --- SIMULATORS --- */
-    function updateShadow(cls) {
-        document.getElementById('shadow-target').className = `w-40 h-40 bg-white rounded-2xl flex items-center justify-center text-slate-800 font-bold transition-all duration-500 ${cls}`;
-    }
+    /* --- SIMULATORS (VANILLA JS FOR PERFORMANCE) --- */
     
-    function updateShadowColor(cls) {
-        const el = document.getElementById('shadow-target');
-        // Clear color shadows
-        el.className = el.className.replace(/\bshadow-(blue|purple|green|emerald)-500\/50\b/g, '');
-        el.classList.add(cls);
-        if(!el.classList.value.includes('shadow-')) el.classList.add('shadow-xl'); // ensure base shadow
-    }
-    
-    function updateOpacity(val) {
-        document.getElementById('opacity-target').style.opacity = val / 100;
-        document.getElementById('opacity-val').innerText = `opacity-${val}`;
-    }
-    
-    let activeFilters = new Set();
-    function setFilter(type, cls) {
-        const img = document.getElementById('filter-img');
-        img.className = img.className.replace(/\bblur-(none|sm|md|xl)\b/g, '');
-        if(cls !== 'blur-none') img.classList.add(cls);
-    }
-    function toggleFilter(cls) {
-        const img = document.getElementById('filter-img');
-        const indicator = document.getElementById('st-' + cls);
-        if (activeFilters.has(cls)) {
-            activeFilters.delete(cls);
-            img.classList.remove(cls);
-            indicator.classList.remove('text-purple-400');
-            indicator.classList.add('text-white/20');
-        } else {
-            activeFilters.add(cls);
-            img.classList.add(cls);
-            indicator.classList.add('text-purple-400');
-            indicator.classList.remove('text-white/20');
+    // Sim 60: Box Shadow
+    let sim60State = { elevation: 'shadow-none', color: 'shadow-black/50', inset: false };
+    window.updateSim60 = function(key, val) {
+        sim60State[key] = val;
+        const target = document.getElementById('sim60-target');
+        // Reset classes
+        target.className = 'w-32 h-32 bg-white rounded-2xl flex items-center justify-center text-slate-900 font-bold transition-all duration-500';
+        
+        // Build classes
+        let shadowClass = sim60State.elevation;
+        if(sim60State.inset) shadowClass = 'shadow-inner';
+        
+        // Add classes
+        target.classList.add(shadowClass);
+        if(!sim60State.inset && sim60State.elevation !== 'shadow-none') {
+            target.classList.add(sim60State.color);
         }
     }
 
-    let transformState = { scale: 100, rotate: 0, translate: 0, skew: 0 };
-    function updateTransform(prop, val) {
-        transformState[prop] = val;
-        // Update Label
-        document.getElementById(`val-${prop}`).innerText = val + (prop === 'translate' ? 'px' : prop === 'scale' ? '%' : 'deg');
-        // Apply Style
-        const el = document.getElementById('transform-target');
-        el.style.transform = `scale(${transformState.scale/100}) rotate(${transformState.rotate}deg) translateX(${transformState.translate}px) skewY(${transformState.skew}deg)`;
+    // Sim 61: Opacity
+    let sim61State = { global: 100, mode: 'element', hover: false };
+    window.updateSim61 = function(key, val) {
+        sim61State[key] = val;
+        const target = document.getElementById('sim61-target');
+        const desc = document.getElementById('sim61-desc');
+        const label = document.getElementById('opacity-val-label');
+        
+        if(key === 'global') label.innerText = val + '%';
+
+        // Reset style/classes
+        target.style.opacity = '';
+        target.className = 'w-48 h-24 bg-purple-600 rounded-xl flex flex-col items-center justify-center text-white transition-all duration-300 border border-white/20';
+        
+        // Apply Mode
+        if(sim61State.mode === 'element') {
+            target.style.opacity = sim61State.global / 100;
+            desc.innerText = "Mode: Opasitas elemen (teks ikut transparan).";
+        } else {
+            // Background opacity simulation using RGBA
+            target.style.backgroundColor = `rgba(147, 51, 234, ${sim61State.global / 100})`; // purple-600
+            desc.innerText = "Mode: Opasitas background (teks tetap jelas).";
+        }
+
+        // Apply Hover
+        if(sim61State.hover) {
+            target.classList.add('hover:opacity-100', 'cursor-pointer');
+            if(sim61State.mode === 'element') target.style.opacity = '0.5'; // force dimmed state to show hover
+        }
+    }
+
+    // Sim 62: Filters
+    let sim62State = { filter: 'none', blur: 0, mode: 'off' };
+    window.updateSim62 = function(key, val) {
+        const img = document.getElementById('sim62-img');
+        const overlay = document.getElementById('sim62-overlay');
+        const text = document.getElementById('sim62-text');
+        const btnMode = document.getElementById('sim62-mode-btn');
+
+        if(key === 'filter') {
+            img.style.filter = val === 'none' ? '' : `${val}(100%)`;
+        } else if(key === 'blur') {
+            if(sim62State.mode === 'on') {
+                overlay.style.backdropFilter = `blur(${val}px)`;
+            } else {
+                img.style.filter = `blur(${val}px)`;
+            }
+        } else if(key === 'mode') {
+            sim62State.mode = sim62State.mode === 'off' ? 'on' : 'off';
+            btnMode.innerText = sim62State.mode.toUpperCase();
+            
+            if(sim62State.mode === 'on') {
+                img.style.filter = ''; // Reset img blur
+                overlay.classList.remove('bg-transparent');
+                overlay.classList.add('bg-white/10');
+                text.classList.remove('hidden');
+            } else {
+                overlay.style.backdropFilter = '';
+                overlay.classList.add('bg-transparent');
+                overlay.classList.remove('bg-white/10');
+                text.classList.add('hidden');
+            }
+        }
+    }
+
+    // Sim 63: Transition
+    let sim63State = { ease: 'ease-linear', duration: 300, action: null };
+    window.updateSim63 = function(key, val) {
+        sim63State[key] = val;
+        const obj = document.getElementById('sim63-object');
+        const durLabel = document.getElementById('sim63-dur-label');
+
+        if(key === 'duration') durLabel.innerText = val + 'ms';
+
+        // Apply styles
+        obj.style.transitionTimingFunction = sim63State.ease;
+        obj.style.transitionDuration = sim63State.duration + 'ms';
+
+        // Actions
+        obj.className = 'w-16 h-16 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-xl shadow-lg border border-white/20 transition-all'; // Reset
+        
+        if(key === 'action') {
+            if(val === 'move') {
+                // Toggle move
+                obj.classList.toggle('translate-x-48');
+            } else if (val === 'spin') {
+                obj.classList.add('animate-spin');
+            } else if (val === 'bounce') {
+                obj.classList.add('animate-bounce');
+            }
+        }
+    }
+
+    // Sim 64: Transform
+    let sim64State = { scale: 100, rotate: 0, skew: 0, translate: 0 };
+    window.updateSim64 = function(key, val) {
+        sim64State[key] = val;
+        // Update Labels
+        document.getElementById(`sim64-${key === 'translate' ? 'trans' : key}-val`).innerText = val + (key === 'translate' ? 'px' : key === 'scale' ? '%' : 'deg');
+        
+        // Apply Transform
+        const el = document.getElementById('sim64-target');
+        el.style.transform = `scale(${sim64State.scale/100}) rotate(${sim64State.rotate}deg) skewX(${sim64State.skew}deg) translateX(${sim64State.translate}px)`;
     }
 
     /* --- EXPERT CHALLENGE LOGIC --- */
@@ -561,7 +738,7 @@
             label: "1. Shadow Depth",
             options: [
                 { val: 'shadow-none', label: 'Flat' },
-                { val: 'shadow-xl', label: 'Deep (Correct)', correct: true },
+                { val: 'shadow-xl', label: 'Deep ', correct: true },
                 { val: 'shadow-inner', label: 'Inner' }
             ]
         },
@@ -569,7 +746,7 @@
             label: "2. Corner Radius",
             options: [
                 { val: 'rounded-none', label: 'Square' },
-                { val: 'rounded-2xl', label: 'Smooth (Correct)', correct: true },
+                { val: 'rounded-2xl', label: 'Smooth ', correct: true },
                 { val: 'rounded-full', label: 'Pill' }
             ]
         },
@@ -577,7 +754,7 @@
             label: "3. Hover Effect",
             options: [
                 { val: 'hover:opacity-50', label: 'Fade' },
-                { val: 'hover:-translate-y-2 hover:scale-105', label: 'Lift & Zoom (Correct)', correct: true },
+                { val: 'hover:-translate-y-2 hover:scale-105', label: 'Lift & Zoom ', correct: true },
                 { val: 'hover:rotate-12', label: 'Spin' }
             ]
         }
@@ -722,8 +899,7 @@
         if(btn && activityCompleted) {
             btn.className = "group flex items-center gap-4 text-right text-purple-400 hover:text-purple-300 transition cursor-pointer opacity-100 animate-fade-in-up";
             btn.innerHTML = `<div class="text-right"><div class="text-[10px] uppercase tracking-widest opacity-70 mb-1">Modul Berikutnya</div><div class="font-bold text-sm">Bab 4: Komponen</div></div><div class="w-12 h-12 rounded-full border border-purple-500/30 bg-purple-500/10 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.3)]">→</div>`;
-            // Redirect logic if needed
-            // btn.onclick = () => window.location.href = '/courses/next';
+            btn.onclick = () => window.location.href = "{{ route('lab.start', ['id' => 3]) }}"; // Adjust route
         }
     }
 

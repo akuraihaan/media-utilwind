@@ -9,11 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   // di file migration baru
-public function up()
+    public function up()
 {
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('avatar')->nullable()->after('email');
+    Schema::table('quiz_attempts', function (Blueprint $table) {
+        // Ubah kolom menjadi nullable
+        $table->timestamp('completed_at')->nullable()->change();
     });
 }
 
@@ -22,7 +22,7 @@ public function up()
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('quiz_attempts', function (Blueprint $table) {
             //
         });
     }

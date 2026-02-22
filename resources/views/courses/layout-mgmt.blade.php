@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title','Bab 2.3 · Mengelola Layout Tingkat Lanjut')
+@section('title', 'Bab 2.3 · Mengelola Layout Tingkat Lanjut')
 
 @section('content')
 <div id="courseRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20">
@@ -28,7 +28,7 @@
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400">2.3</div>
                     <div>
                         <h1 class="text-sm font-bold text-white">Mengelola Layout</h1>
-                        <p class="text-[10px] text-white/50">Mastering Layout Flow & Positioning</p>
+                        <p class="text-[10px] text-white/50">Container, Position & Z-Index</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -43,7 +43,7 @@
             <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 
                 {{-- LEARNING OBJECTIVES --}}
-                <div class="mb-24">
+                <div class="mb-24 animate-fade-in-up">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                         Tujuan Pembelajaran
@@ -51,77 +51,73 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xs">1</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Container Logic</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami cara kerja container responsif di Tailwind.</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Container</h4><p class="text-[11px] text-white/50 leading-relaxed">Menguasai logika max-width dan viewport meta tag.</p></div>
                         </div>
                         <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-violet-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-violet-500/10 text-violet-400 flex items-center justify-center shrink-0 font-bold text-xs">2</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Positioning</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami Relative, Absolute, Fixed, dan Sticky.</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Posisi</h4><p class="text-[11px] text-white/50 leading-relaxed">Membedakan Relative, Absolute, Fixed, dan Sticky.</p></div>
                         </div>
                         <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-fuchsia-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center shrink-0 font-bold text-xs">3</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Z-Index</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami tumpukan elemen (Stacking Context).</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Z-Index</h4><p class="text-[11px] text-white/50 leading-relaxed">Mengelola tumpukan elemen (Stacking Context).</p></div>
                         </div>
                         <div class="bg-[#1e1e1e] border border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-pink-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0 font-bold text-xs">4</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Table Layouts</h4><p class="text-[11px] text-white/50 leading-relaxed">Memahami algoritma table-auto vs table-fixed.</p></div>
-                        </div>
-                        <div class="bg-gradient-to-br from-indigo-900/40 to-violet-900/40 border border-indigo-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition group h-full col-span-2 md:col-span-2">
-                            <div class="w-8 h-8 rounded bg-white/10 text-white flex items-center justify-center shrink-0 font-bold text-xs">🏁</div>
-                            <div><h4 class="text-sm font-bold text-white mb-1">Final Mission</h4><p class="text-[11px] text-white/70 leading-relaxed">Live Code: Membuat Notification Badge System.</p></div>
+                            <div><h4 class="text-sm font-bold text-white mb-1">Memahami Tabel</h4><p class="text-[11px] text-white/50 leading-relaxed">Analisis performa Table Auto vs Table Fixed.</p></div>
                         </div>
                     </div>
                 </div>
 
                 <article class="space-y-40">
                     
-                   {{-- LESSON 41: CONTAINER & VIEWPORT --}}
-    <section id="section-41" class="lesson-section scroll-mt-32" data-lesson-id="41">
-        <div class="space-y-10">
-            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
-                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.3.1</span>
-                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
-                    Container & <br> 
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Logika Viewport</span>
-                </h2>
-            </div>
-            
-            {{-- Materi Part 1 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white">A</span> Menguasai Viewport Meta Tag</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Sebelum kita menyentuh CSS, kita harus memahami kanvas tempat kita bekerja: <strong>Browser Viewport</strong>. Dalam buku <em>"Ultimate Tailwind CSS Handbook"</em>, dijelaskan bahwa browser seluler secara default mencoba mensimulasikan layar desktop. Tanpa instruksi khusus, iPhone atau Android akan merender situs web Anda pada lebar virtual (biasanya 980px) dan kemudian "mengecilkannya" (zoom out) agar muat di layar kecil. Hasilnya? Teks yang sangat kecil dan pengalaman pengguna yang buruk.
-                    </p>
-                    <p>
-                        Solusi fundamental untuk tata letak responsif modern adalah mengendalikan perilaku ini menggunakan meta tag viewport: <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code>. Baris kode ini memerintahkan browser untuk merender halaman dengan rasio 1:1 piksel logis perangkat, memastikan bahwa kelas utilitas responsif Tailwind (seperti <code>md:</code> atau <code>lg:</code>) terpicu pada titik yang tepat.
-                    </p>
-                </div>
-            </div>
+                    {{-- LESSON 41: CONTAINER & VIEWPORT --}}
+                    <section id="section-41" class="lesson-section scroll-mt-32" data-lesson-id="41">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.3.1</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Container & <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Logika Viewport</span>
+                                </h2>
+                            </div>
+                            
+                            {{-- Materi Part 1 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white">A</span> Menguasai Viewport Meta Tag</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Sebelum kita menyentuh CSS, kita harus memahami kanvas tempat kita bekerja: <strong>Browser Viewport</strong>. Dalam buku <em>"Ultimate Tailwind CSS Handbook"</em>, dijelaskan bahwa browser seluler secara default mencoba mensimulasikan layar desktop. Tanpa instruksi khusus, iPhone atau Android akan merender situs web Anda pada lebar virtual (biasanya 980px) dan kemudian "mengecilkannya" (zoom out) agar muat di layar kecil. Hasilnya? Teks yang sangat kecil dan pengalaman pengguna yang buruk.
+                                    </p>
+                                    <p>
+                                        Solusi fundamental untuk tata letak responsif modern adalah mengendalikan perilaku ini menggunakan meta tag viewport: <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code>. Baris kode ini memerintahkan browser untuk merender halaman dengan rasio 1:1 piksel logis perangkat, memastikan bahwa kelas utilitas responsif Tailwind (seperti <code>md:</code> atau <code>lg:</code>) terpicu pada titik yang tepat.
+                                    </p>
+                                </div>
+                            </div>
 
-            {{-- Materi Part 2 --}}
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-violet-600 flex items-center justify-center text-[10px] text-white">B</span> Anatomi Kelas .container</h3>
-                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
-                    <p>
-                        Kelas <code>.container</code> di Tailwind sering disalahpahami oleh pengembang yang bermigrasi dari Bootstrap. Di Tailwind, <code>.container</code> <strong>tidak otomatis berada di tengah</strong> dan <strong>tidak memiliki padding bawaan</strong>.
-                    </p>
-                    <p>
-                        Cara kerja <code>.container</code> di Tailwind sangat spesifik: ia menetapkan <code>max-width</code> elemen agar sesuai dengan <code>min-width</code> dari breakpoint saat ini.
-                    </p>
-                    <ul class="list-disc pl-5 space-y-2 marker:text-indigo-500">
-                        <li>Jika lebar layar < 640px, container adalah 100% lebar layar.</li>
-                        <li>Jika lebar layar ≥ 640px (sm), container dikunci pada 640px.</li>
-                        <li>Jika lebar layar ≥ 768px (md), container dikunci pada 768px.</li>
-                        <li>Dan seterusnya hingga 2xl (1536px).</li>
-                    </ul>
-                    <p>
-                        Untuk membuat layout halaman standar yang rapi, pola terbaik yang disarankan adalah menggabungkan tiga utilitas: <code>container mx-auto px-4</code>. 
-                        <br>1. <code>container</code> membatasi lebar maksimal agar tidak terlalu lebar di monitor besar.
-                        <br>2. <code>mx-auto</code> memberikan margin kiri-kanan otomatis untuk memusatkan container.
-                        <br>3. <code>px-4</code> memberikan "ruang bernapas" (gutter) agar konten tidak menempel ke tepi layar pada perangkat seluler.
-                    </p>
-                </div>
-            </div>
+                            {{-- Materi Part 2 --}}
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2"><span class="w-6 h-6 rounded bg-violet-600 flex items-center justify-center text-[10px] text-white">B</span> Anatomi Kelas .container</h3>
+                                <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed space-y-4">
+                                    <p>
+                                        Kelas <code>.container</code> di Tailwind sering disalahpahami oleh pengembang yang bermigrasi dari Bootstrap. Di Tailwind, <code>.container</code> <strong>tidak otomatis berada di tengah</strong> dan <strong>tidak memiliki padding bawaan</strong>.
+                                    </p>
+                                    <p>
+                                        Cara kerja <code>.container</code> di Tailwind sangat spesifik: ia menetapkan <code>max-width</code> elemen agar sesuai dengan <code>min-width</code> dari breakpoint saat ini.
+                                    </p>
+                                    <ul class="list-disc pl-5 space-y-2 marker:text-indigo-500">
+                                        <li>Jika lebar layar < 640px, container adalah 100% lebar layar.</li>
+                                        <li>Jika lebar layar ≥ 640px (sm), container dikunci pada 640px.</li>
+                                        <li>Jika lebar layar ≥ 768px (md), container dikunci pada 768px.</li>
+                                        <li>Dan seterusnya hingga 2xl (1536px).</li>
+                                    </ul>
+                                    <p>
+                                        Untuk membuat layout halaman standar yang rapi, pola terbaik yang disarankan adalah menggabungkan tiga utilitas: <code>container mx-auto px-4</code>. 
+                                        <br>1. <code>container</code> membatasi lebar maksimal agar tidak terlalu lebar di monitor besar.
+                                        <br>2. <code>mx-auto</code> memberikan margin kiri-kanan otomatis untuk memusatkan container.
+                                        <br>3. <code>px-4</code> memberikan "ruang bernapas" (gutter) agar konten tidak menempel ke tepi layar pada perangkat seluler.
+                                    </p>
+                                </div>
+                            </div>
 
                             {{-- SIMULATOR 1 --}}
                             <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
@@ -146,34 +142,37 @@
                         </div>
                     </section>
 
-                   {{-- LESSON 42: FLOAT (LEGACY) --}}
-    <section id="section-42" class="lesson-section scroll-mt-32" data-lesson-id="42">
-        <div class="space-y-10">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-bold text-white">2. Legacy Layout: Float & Clear</h2>
-                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-            </div>
+                    {{-- LESSON 42: FLOAT & CLEAR --}}
+                    <section id="section-42" class="lesson-section scroll-mt-32" data-lesson-id="42">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.3.2</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Legacy Layout: <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Float & Clear</span>
+                                </h2>
+                            </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="space-y-6 text-white/70">
-                    <h4 class="font-bold text-white mb-2">Mengapa Masih Relevan?</h4>
-                    <p class="text-lg leading-relaxed">
-                        Di era Flexbox dan Grid, properti <code>float</code> mungkin tampak usang. Namun, <em>"Tailwind CSS by Ivaylo Gerchev"</em> mengingatkan kita bahwa ada satu hal yang bisa dilakukan Float yang tidak bisa dilakukan oleh Grid atau Flexbox: <strong>Text Wrapping</strong> (teks yang mengalir mengelilingi gambar).
-                    </p>
-                    <p class="leading-relaxed">
-                        Properti <code>float</code> secara harfiah "mengangkat" elemen dari aliran dokumen normal dan mendorongnya ke sisi kiri atau kanan wadah. Teks dan elemen inline lainnya kemudian akan "mengalir" mengisi ruang kosong di sisi elemen yang mengapung tersebut, mirip dengan tata letak majalah cetak.
-                    </p>
-                    
-                    <div class="bg-orange-900/10 border-l-4 border-orange-500 p-4 rounded-r-lg mt-4">
-                        <strong class="text-orange-400 text-sm block mb-1">Masalah "Container Collapse"</strong>
-                        <p class="text-xs leading-relaxed">
-                            Karena elemen float keluar dari aliran dokumen, elemen induk (parent) seringkali kehilangan tingginya (collapse) seolah-olah elemen float tersebut tidak ada. Solusi modern di Tailwind adalah menggunakan kelas <code>flow-root</code> pada parent. Ini menciptakan <em>Block Formatting Context</em> baru yang memaksa parent untuk membungkus elemen float di dalamnya.
-                        </p>
-                    </div>
-                </div>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div class="space-y-6 text-white/70">
+                                    <h4 class="font-bold text-white mb-2 text-xl">Mengapa Masih Relevan?</h4>
+                                    <p class="text-lg leading-relaxed">
+                                        Di era Flexbox dan Grid, properti <code>float</code> mungkin tampak usang. Namun, <em>"Tailwind CSS by Ivaylo Gerchev"</em> mengingatkan kita bahwa ada satu hal yang bisa dilakukan Float yang tidak bisa dilakukan oleh Grid atau Flexbox: <strong>Text Wrapping</strong> (teks yang mengalir mengelilingi gambar).
+                                    </p>
+                                    <p class="leading-relaxed">
+                                        Properti <code>float</code> secara harfiah "mengangkat" elemen dari aliran dokumen normal dan mendorongnya ke sisi kiri atau kanan wadah. Teks dan elemen inline lainnya kemudian akan "mengalir" mengisi ruang kosong di sisi elemen yang mengapung tersebut, mirip dengan tata letak majalah cetak.
+                                    </p>
+                                    
+                                    <div class="bg-orange-900/10 border-l-4 border-orange-500 p-4 rounded-r-lg mt-4">
+                                        <strong class="text-orange-400 text-sm block mb-1">Masalah "Container Collapse"</strong>
+                                        <p class="text-xs leading-relaxed">
+                                            Karena elemen float keluar dari aliran dokumen, elemen induk (parent) seringkali kehilangan tingginya (collapse) seolah-olah elemen float tersebut tidak ada. Solusi modern di Tailwind adalah menggunakan kelas <code>flow-root</code> pada parent. Ini menciptakan <em>Block Formatting Context</em> baru yang memaksa parent untuk membungkus elemen float di dalamnya.
+                                        </p>
+                                    </div>
+                                </div>
 
                                 {{-- SIMULATOR 2 --}}
-                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 relative group">
+                                <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 relative group h-full">
                                     <div class="absolute top-4 right-4 flex gap-2 z-10">
                                         <button onclick="toggleFloat('left')" class="px-3 py-1 bg-orange-600/20 text-orange-400 text-xs rounded border border-orange-500/30 hover:bg-orange-600/30 transition">Float Left</button>
                                         <button onclick="toggleFloat('right')" class="px-3 py-1 bg-white/5 text-white/50 text-xs rounded border border-white/10 hover:bg-white/10 transition">Float Right</button>
@@ -190,112 +189,126 @@
                         </div>
                     </section>
 
-                   {{-- LESSON 42: FLOAT (LEGACY) --}}
-    <section id="section-42" class="lesson-section scroll-mt-32" data-lesson-id="42">
-        <div class="space-y-10">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-bold text-white">2. Legacy Layout: Float & Clear</h2>
-                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-            </div>
+                    {{-- LESSON 43: POSITION & Z-INDEX --}}
+                    <section id="section-43" class="lesson-section scroll-mt-32" data-lesson-id="43">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.3.3</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Position & <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">Z-Index Layers</span>
+                                </h2>
+                            </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="space-y-6 text-white/70">
-                    <h4 class="font-bold text-white mb-2">Mengapa Masih Relevan?</h4>
-                    <p class="text-lg leading-relaxed">
-                        Di era Flexbox dan Grid, properti <code>float</code> mungkin tampak usang. Namun, <em>"Tailwind CSS by Ivaylo Gerchev"</em> mengingatkan kita bahwa ada satu hal yang bisa dilakukan Float yang tidak bisa dilakukan oleh Grid atau Flexbox: <strong>Text Wrapping</strong> (teks yang mengalir mengelilingi gambar).
-                    </p>
-                    <p class="leading-relaxed">
-                        Properti <code>float</code> secara harfiah "mengangkat" elemen dari aliran dokumen normal dan mendorongnya ke sisi kiri atau kanan wadah. Teks dan elemen inline lainnya kemudian akan "mengalir" mengisi ruang kosong di sisi elemen yang mengapung tersebut, mirip dengan tata letak majalah cetak.
-                    </p>
-                    
-                    <div class="bg-orange-900/10 border-l-4 border-orange-500 p-4 rounded-r-lg mt-4">
-                        <strong class="text-orange-400 text-sm block mb-1">Masalah "Container Collapse"</strong>
-                        <p class="text-xs leading-relaxed">
-                            Karena elemen float keluar dari aliran dokumen, elemen induk (parent) seringkali kehilangan tingginya (collapse) seolah-olah elemen float tersebut tidak ada. Solusi modern di Tailwind adalah menggunakan kelas <code>flow-root</code> pada parent. Ini menciptakan <em>Block Formatting Context</em> baru yang memaksa parent untuk membungkus elemen float di dalamnya.
-                        </p>
-                    </div>
-                </div>
+                            <div class="prose prose-invert max-w-none text-white/70 text-lg leading-relaxed">
+                                <p>
+                                    Jika Flexbox dan Grid adalah tentang menata elemen secara berdampingan, <strong>Position</strong> adalah tentang menumpuk elemen di atas satu sama lain pada sumbu Z. 
+                                </p>
+                                <ul class="grid md:grid-cols-2 gap-4 list-none pl-0">
+                                    <li class="bg-white/5 p-4 rounded-lg border border-white/5">
+                                        <strong class="text-blue-400 block mb-1">relative</strong>
+                                        Elemen diposisikan normal dalam aliran dokumen, tetapi menjadi "jangkar" (anchor) bagi anak-anaknya yang berposisi absolute. Juga membuka akses ke properti z-index.
+                                    </li>
+                                    <li class="bg-white/5 p-4 rounded-lg border border-white/5">
+                                        <strong class="text-red-400 block mb-1">absolute</strong>
+                                        Elemen dihapus dari aliran dokumen (melayang). Ia akan mencari elemen induk terdekat yang memiliki posisi <code>relative</code> dan memposisikan dirinya relatif terhadap induk tersebut.
+                                    </li>
+                                    <li class="bg-white/5 p-4 rounded-lg border border-white/5">
+                                        <strong class="text-green-400 block mb-1">fixed</strong>
+                                        Diposisikan relatif terhadap <em>viewport</em> (jendela browser). Elemen ini akan tetap diam di layar saat halaman digulir (seperti navbar sticky header).
+                                    </li>
+                                    <li class="bg-white/5 p-4 rounded-lg border border-white/5">
+                                        <strong class="text-yellow-400 block mb-1">sticky</strong>
+                                        Hibrida. Bersifat <code>relative</code> sampai mencapai ambang batas scroll yang ditentukan (misal <code>top-0</code>), lalu berubah menjadi <code>fixed</code>.
+                                    </li>
+                                </ul>
+                                <p class="mt-4">
+                                    <strong>Stacking Context (Z-Index):</strong> Ketika elemen bertumpuk, properti <code>z-index</code> menentukan urutannya. Bayangkan ini seperti lapisan kertas. <code>z-0</code> adalah dasar, <code>z-10</code> di atasnya, dan <code>z-50</code> paling atas (seperti modal). Penting: <code>z-index</code> hanya bekerja pada elemen yang memiliki posisi (selain static).
+                                </p>
+                            </div>
 
-                                {{-- SIMULATOR 3 (3D LAYERS) --}}
-                                <div class="bg-[#0b0f19] p-10 rounded-2xl border border-white/10 shadow-2xl relative flex items-center justify-center h-96 overflow-hidden group perspective-1000">
-                                    <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"></div>
-                                    
-                                    <div class="relative w-48 h-48 cursor-pointer transform-style-3d group-hover:rotate-y-12 transition-transform duration-700">
-                                        {{-- Layer 0 (Parent) --}}
-                                        <div class="absolute inset-0 bg-indigo-900/40 border-2 border-dashed border-indigo-500/50 rounded-xl flex items-center justify-center z-0 backdrop-blur-sm transform transition-transform group-hover:rotate-x-12">
-                                            <div class="text-center">
-                                                <p class="text-indigo-300 font-bold text-xs">Parent</p>
-                                                <code class="text-[10px] bg-black/50 px-1 rounded text-white">relative</code>
-                                            </div>
-                                        </div>
-                                        {{-- Layer 1 --}}
-                                        <div class="absolute top-0 left-0 w-full h-full bg-red-600/80 rounded-xl border border-red-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-20 group-hover:-translate-x-4 group-hover:-translate-y-4">
-                                            <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-10</span>
-                                        </div>
-                                        {{-- Layer 2 --}}
-                                        <div class="absolute top-0 left-0 w-full h-full bg-blue-600/80 rounded-xl border border-blue-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-40 group-hover:translate-x-0 group-hover:translate-y-0 delay-75">
-                                            <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-20</span>
-                                        </div>
-                                        {{-- Layer 3 --}}
-                                        <div class="absolute top-0 left-0 w-full h-full bg-green-600/90 rounded-xl border border-green-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-60 group-hover:translate-x-4 group-hover:translate-y-4 delay-150">
-                                            <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-30</span>
+                            {{-- SIMULATOR 3 (3D LAYERS) --}}
+                            <div class="bg-[#0b0f19] p-10 rounded-2xl border border-white/10 shadow-2xl relative flex items-center justify-center h-96 overflow-hidden group perspective-1000">
+                                <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"></div>
+                                <div class="absolute top-4 left-4 text-xs font-mono text-white/30">Hover to Explode Layers (Z-Index Visualization)</div>
+                                
+                                <div class="relative w-48 h-48 cursor-pointer transform-style-3d group-hover:rotate-y-12 transition-transform duration-700">
+                                    {{-- Layer 0 (Parent) --}}
+                                    <div class="absolute inset-0 bg-indigo-900/40 border-2 border-dashed border-indigo-500/50 rounded-xl flex items-center justify-center z-0 backdrop-blur-sm transform transition-transform group-hover:rotate-x-12">
+                                        <div class="text-center">
+                                            <p class="text-indigo-300 font-bold text-xs">Parent</p>
+                                            <code class="text-[10px] bg-black/50 px-1 rounded text-white">relative</code>
                                         </div>
                                     </div>
-                                    <p class="absolute bottom-6 text-[10px] text-white/30 uppercase tracking-widest font-mono">Hover to Explode Layers</p>
+                                    {{-- Layer 1 --}}
+                                    <div class="absolute top-0 left-0 w-full h-full bg-red-600/80 rounded-xl border border-red-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-20 group-hover:-translate-x-4 group-hover:-translate-y-4">
+                                        <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-10</span>
+                                    </div>
+                                    {{-- Layer 2 --}}
+                                    <div class="absolute top-0 left-0 w-full h-full bg-blue-600/80 rounded-xl border border-blue-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-40 group-hover:translate-x-0 group-hover:translate-y-0 delay-75">
+                                        <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-20</span>
+                                    </div>
+                                    {{-- Layer 3 --}}
+                                    <div class="absolute top-0 left-0 w-full h-full bg-green-600/90 rounded-xl border border-green-400/50 shadow-lg flex items-start p-4 justify-start transform transition-all duration-500 ease-out group-hover:translate-z-60 group-hover:translate-x-4 group-hover:translate-y-4 delay-150">
+                                        <span class="text-white font-bold text-xs bg-black/30 px-2 py-1 rounded backdrop-blur-md shadow-lg">z-30</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 44: TABLES --}}
-    <section id="section-44" class="lesson-section scroll-mt-32" data-lesson-id="44">
-        <div class="space-y-10">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-bold text-white">4. Table Layout Algorithms</h2>
-                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-            </div>
+                    {{-- LESSON 44: TABLE LAYOUTS --}}
+                    <section id="section-44" class="lesson-section scroll-mt-32" data-lesson-id="44">
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 2.3.4</span>
+                                <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1]">
+                                    Table Layout: <br> 
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-500">Auto vs Fixed</span>
+                                </h2>
+                            </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                {{-- Table Auto --}}
-                <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10 hover:border-cyan-500/30 transition shadow-lg flex flex-col h-full">
-                    <div class="flex justify-between mb-4 items-center">
-                        <code class="text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">.table-auto</code>
-                        <span class="text-[10px] text-white/50 bg-white/5 px-2 py-1 rounded">Algoritma Default</span>
-                    </div>
-                    <p class="text-xs text-white/60 mb-6 flex-1 leading-relaxed">
-                        Dalam mode <code>table-auto</code> (standar browser), lebar kolom ditentukan oleh <strong>panjang konten</strong> di dalamnya. Browser harus membaca seluruh tabel, mengukur sel terpanjang di setiap kolom, baru kemudian menghitung layout.
-                        <br><br>
-                        Meskipun fleksibel, ini bisa menjadi lambat untuk tabel dengan ribuan baris data. Selain itu, layout bisa "melompat" saat data dimuat.
-                    </p>
-                    <div class="overflow-hidden rounded-lg border border-white/5 bg-black/20 mt-auto">
-                        <table class="table-auto w-full text-xs text-left text-white/70">
-                            <thead class="bg-white/5 text-white"><tr><th class="p-3">Nama</th><th class="p-3">Bio (Panjang)</th></tr></thead>
-                            <tbody><tr class="border-b border-white/5"><td class="p-3 whitespace-nowrap">Budi</td><td class="p-3">Bio ini sangat panjang sehingga akan mendesak kolom Nama menjadi sempit.</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                {{-- Table Auto --}}
+                                <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10 hover:border-cyan-500/30 transition shadow-lg flex flex-col h-full">
+                                    <div class="flex justify-between mb-4 items-center">
+                                        <code class="text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">.table-auto</code>
+                                        <span class="text-[10px] text-white/50 bg-white/5 px-2 py-1 rounded">Algoritma Default</span>
+                                    </div>
+                                    <p class="text-xs text-white/60 mb-6 flex-1 leading-relaxed">
+                                        Dalam mode <code>table-auto</code> (standar browser), lebar kolom ditentukan oleh <strong>panjang konten</strong> di dalamnya. Browser harus membaca seluruh tabel, mengukur sel terpanjang di setiap kolom, baru kemudian menghitung layout.
+                                        <br><br>
+                                        Meskipun fleksibel, ini bisa menjadi lambat untuk tabel dengan ribuan baris data. Selain itu, layout bisa "melompat" saat data dimuat.
+                                    </p>
+                                    <div class="overflow-hidden rounded-lg border border-white/5 bg-black/20 mt-auto">
+                                        <table class="table-auto w-full text-xs text-left text-white/70">
+                                            <thead class="bg-white/5 text-white"><tr><th class="p-3">Nama</th><th class="p-3">Bio (Panjang)</th></tr></thead>
+                                            <tbody><tr class="border-b border-white/5"><td class="p-3 whitespace-nowrap">Budi</td><td class="p-3">Bio ini sangat panjang sehingga akan mendesak kolom Nama menjadi sempit.</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
-                {{-- Table Fixed --}}
-                <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10 hover:border-pink-500/30 transition shadow-lg flex flex-col h-full">
-                    <div class="flex justify-between mb-4 items-center">
-                        <code class="text-pink-400 bg-pink-500/10 px-2 py-1 rounded border border-pink-500/20">.table-fixed</code>
-                        <span class="text-[10px] text-white/50 bg-white/5 px-2 py-1 rounded">Performa Tinggi</span>
-                    </div>
-                    <p class="text-xs text-white/60 mb-6 flex-1 leading-relaxed">
-                        Dengan <code>table-fixed</code>, lebar kolom <strong>mengabaikan konten</strong> di dalamnya. Lebar kolom ditentukan semata-mata oleh lebar baris pertama (header) atau lebar yang ditentukan secara eksplisit (seperti <code>w-1/4</code>).
-                        <br><br>
-                        Browser bisa mulai merender tabel segera setelah menerima baris pertama. Ini jauh lebih cepat dan mencegah tabel bergeser. Teks yang terlalu panjang harus ditangani dengan <code>truncate</code> atau <code>break-words</code>.
-                    </p>
-                    <div class="overflow-hidden rounded-lg border border-white/5 bg-black/20 mt-auto">
-                        <table class="table-fixed w-full text-xs text-left text-white/70">
-                            <thead class="bg-white/5 text-white"><tr><th class="p-3 w-1/4">Nama (25%)</th><th class="p-3 w-3/4">Bio (75%)</th></tr></thead>
-                            <tbody><tr class="border-b border-white/5"><td class="p-3">Budi</td><td class="p-3 truncate text-white/40">Bio ini akan terpotong karena lebar fix...</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                                {{-- Table Fixed --}}
+                                <div class="bg-[#1e1e1e] p-6 rounded-xl border border-white/10 hover:border-pink-500/30 transition shadow-lg flex flex-col h-full">
+                                    <div class="flex justify-between mb-4 items-center">
+                                        <code class="text-pink-400 bg-pink-500/10 px-2 py-1 rounded border border-pink-500/20">.table-fixed</code>
+                                        <span class="text-[10px] text-white/50 bg-white/5 px-2 py-1 rounded">Performa Tinggi</span>
+                                    </div>
+                                    <p class="text-xs text-white/60 mb-6 flex-1 leading-relaxed">
+                                        Dengan <code>table-fixed</code>, lebar kolom <strong>mengabaikan konten</strong> di dalamnya. Lebar kolom ditentukan semata-mata oleh lebar baris pertama (header) atau lebar yang ditentukan secara eksplisit (seperti <code>w-1/4</code>).
+                                        <br><br>
+                                        Browser bisa mulai merender tabel segera setelah menerima baris pertama. Ini jauh lebih cepat dan mencegah tabel bergeser. Teks yang terlalu panjang harus ditangani dengan <code>truncate</code> atau <code>break-words</code>.
+                                    </p>
+                                    <div class="overflow-hidden rounded-lg border border-white/5 bg-black/20 mt-auto">
+                                        <table class="table-fixed w-full text-xs text-left text-white/70">
+                                            <thead class="bg-white/5 text-white"><tr><th class="p-3 w-1/4">Nama (25%)</th><th class="p-3 w-3/4">Bio (75%)</th></tr></thead>
+                                            <tbody><tr class="border-b border-white/5"><td class="p-3">Budi</td><td class="p-3 truncate text-white/40">Bio ini akan terpotong karena lebar fix...</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     {{-- LESSON 45: FINAL ACTIVITY (ID 45) --}}
                     <section id="section-45" class="lesson-section scroll-mt-32 pt-10 border-t border-white/10" data-lesson-id="45" data-type="activity">
@@ -425,7 +438,7 @@
                         <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">←</div>
                         <div class="text-left"><div class="text-[10px] uppercase tracking-widest opacity-50">Sebelumnya</div><div class="font-bold text-sm">Grid Layout</div></div>
                     </a>
-                    {{-- Tombol Next Chapter (Menuju Lab) --}}
+                    
                     <div id="nextChapterBtn" class="group flex items-center gap-3 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right">
                             <div id="nextLabel" class="text-[10px] uppercase tracking-widest opacity-50">Terkunci</div>
@@ -454,23 +467,6 @@
     #animated-bg{ background: radial-gradient(600px circle at 20% 20%, rgba(168,85,247,.15), transparent 40%), radial-gradient(700px circle at 80% 30%, rgba(217,70,239,.15), transparent 40%), radial-gradient(800px circle at 50% 80%, rgba(34,211,238,.15), transparent 40%); animation:bgMove 20s ease-in-out infinite alternate; }
     @keyframes bgMove{to{transform:scale(1.15)}}
     
-    /* SCROLLSPY ACTIVE STATES */
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #c084fc; background: rgba(192,132,252,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #c084fc; box-shadow: 0 0 8px #c084fc; transform: scale(1.2); }
-    
-    /* SIDEBAR COMPATIBILITY */
-    .sb-group.open .accordion-content { max-height: 1000px; opacity: 1; }
-    .sb-group:not(.open) .accordion-content { max-height: 0; opacity: 0; overflow: hidden; }
-    .sb-group.open svg { transform: rotate(180deg); }
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.5); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: #22d3ee; background: rgba(34,211,238,0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: all 0.3s; }
-    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
-
     /* 3D CLASSES MANUAL (NO PLUGIN NEEDED) */
     .perspective-1000 { perspective: 1000px; }
     .transform-style-3d { transform-style: preserve-3d; }
@@ -493,7 +489,6 @@
     const ACTIVITY_LESSON_ID = 45; // ID Lesson Penutup
 
     document.addEventListener('DOMContentLoaded', () => {
-        initScrollSpy();
         initLessonObserver();
         initVisualEffects();
         initSidebarScroll();
@@ -680,47 +675,6 @@
 
     async function saveLessonToDB(id) {
         await fetch('/lesson/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: new URLSearchParams({ lesson_id: id }) });
-    }
-
-    // Sidebar ScrollSpy (HIGHLIGHT LOGIC)
-    function initScrollSpy() {
-        const mainScroll = document.getElementById('mainScroll');
-        const sections = document.querySelectorAll('.lesson-section');
-        const navLinks = document.querySelectorAll('.sidebar-nav-link');
-
-        // Styles for Active State
-        const activeDotClasses = ['bg-indigo-500', 'shadow-[0_0_8px_#6366f1]', 'scale-125'];
-        const inactiveDotClasses = ['bg-slate-600', 'group-hover/item:bg-white'];
-        const activeTextClasses = ['text-indigo-300', 'font-bold'];
-        const inactiveTextClasses = ['text-slate-400', 'group-hover/item:text-white'];
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = '#' + entry.target.id;
-                    
-                    navLinks.forEach(link => {
-                        const dot = link.querySelector('.dot-indicator');
-                        const label = link.querySelector('.label');
-                        if(!dot || !label) return;
-
-                        // Reset
-                        link.classList.remove('bg-white/5');
-                        dot.classList.remove(...activeDotClasses); dot.classList.add(...inactiveDotClasses);
-                        label.classList.remove(...activeTextClasses); label.classList.add(...inactiveTextClasses);
-
-                        // Highlight
-                        if (link.dataset.target === id) {
-                            link.classList.add('bg-white/5');
-                            dot.classList.remove(...inactiveDotClasses); dot.classList.add(...activeDotClasses);
-                            label.classList.remove(...inactiveTextClasses); label.classList.add(...activeTextClasses);
-                        }
-                    });
-                }
-            });
-        }, { root: mainScroll, rootMargin: '-20% 0px -60% 0px', threshold: 0 });
-
-        sections.forEach(section => observer.observe(section));
     }
 
     function initSidebarScroll(){const m=document.getElementById('mainScroll');const l=document.querySelectorAll('.accordion-content .nav-item');m.addEventListener('scroll',()=>{let c='';document.querySelectorAll('.lesson-section').forEach(s=>{if(m.scrollTop>=s.offsetTop-250)c='#'+s.id;});l.forEach(k=>{k.classList.remove('active');if(k.getAttribute('data-target')===c)k.classList.add('active')})});l.forEach(k=>k.addEventListener('click',(e)=>{const t=document.querySelector(k.getAttribute('data-target'));if(t)m.scrollTo({top:t.offsetTop-120,behavior:'smooth'})}));}

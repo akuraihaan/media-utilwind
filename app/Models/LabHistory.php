@@ -8,14 +8,18 @@ class LabHistory extends Model
 {
     protected $guarded = [];
     protected $dates = ['completed_at'];
+// app/Models/LabHistory.php
+
 protected $fillable = [
     'user_id', 
     'lab_id', 
-    'final_score', 
-    'duration_seconds', 
     'last_code_snapshot', 
-    'completed_at',
-    'status' // <--- PASTIKAN INI ADA
+    'source_code',
+    'status', 
+    'final_score', 
+    'duration_seconds',
+    'completed_steps', // <--- TAMBAHKAN INI
+    'completed_at'
 ];
     // Relasi ke tabel Labs (judul lab, slug, dll)
     public function lab()
