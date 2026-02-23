@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Bank Soal & Analisis · Utilwind Admin</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -169,6 +170,7 @@
 
         <div x-show="sidebarOpen" class="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden" @click="sidebarOpen = false" x-transition.opacity style="display: none;"></div>
 
+    {{-- ==================== SIDEBAR ==================== --}}
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-24 flex items-center justify-between px-8 border-b border-white/5 relative overflow-hidden group">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -210,7 +212,6 @@
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-400' : 'text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                         Lab Analytics
                     </a>
-                    {{-- MENU BARU: CLASS MANAGEMENT --}}
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-400' : 'text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         Class Management
@@ -273,10 +274,10 @@
                                         </li>
                                     </ol>
                                 </nav>
-                                <h2 class="text-white font-bold text-lg md:text-xl tracking-tight" x-text="currentView === 'dashboard' ? 'Quiz Management Center' : 'Details: ' + activeChapterName"></h2>
+                                <h2 class="text-white font-bold text-lg md:text-xl tracking-tight" x-text="currentView === 'dashboard' ? 'Quiz Management Center' : 'Detail Bab: ' + activeChapterName"></h2>
                                 <p class="text-[9px] md:text-xs text-white/40 flex items-center gap-1.5 mt-0.5">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                    <span x-text="currentView === 'dashboard' ? 'Performance Overview & Database' : 'Bank Soal & Edit Mode'"></span>
+                                    <span x-text="currentView === 'dashboard' ? 'Tinjauan Performa & Basis Data' : 'Bank Soal & Mode Edit'"></span>
                                 </p>
                             </div>
                         </div>
@@ -295,7 +296,7 @@
                         {{-- Action Button (Hanya Muncul di Mode Tabel Bank Soal) --}}
                         <div class="border-l border-white/10 pl-5 ml-1 hidden lg:block" x-show="currentView === 'table'">
                             <button onclick="openModal('create')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-400">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Question
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Tambah Soal
                             </button>
                         </div>
 
@@ -325,42 +326,42 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 reveal">
                             <div class="glass-card rounded-2xl p-5 border-l-4 border-l-cyan-500 cursor-pointer group transition-all" @click="showQuestionsModal = true">
                                 <div class="flex justify-between items-start">
-                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Total Questions</p>
+                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Total Soal</p>
                                     <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-cyan-400">?</div>
                                         <div class="tooltip-content">
-                                            <span class="block font-bold text-cyan-400 mb-1 border-b border-white/10 pb-1">Total Questions</span>
-                                            Total accumulation of all theoretical questions in the database.
+                                            <span class="block font-bold text-cyan-400 mb-1 border-b border-white/10 pb-1">Total Soal</span>
+                                            Total akumulasi seluruh soal teori yang ada di dalam database saat ini.
                                         </div>
                                     </div>
                                 </div>
                                 <h3 class="text-2xl md:text-3xl font-black text-white mt-2">{{ $totalQuestions }}</h3>
-                                <p class="text-[9px] text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Database &rarr;</p>
+                                <p class="text-[9px] text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Database &rarr;</p>
                             </div>
 
                             <div class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all" @click="showParticipantsModal = true">
                                 <div class="flex justify-between items-start">
-                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-indigo-400 transition">Participants</p>
+                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-indigo-400 transition">Peserta Ujian</p>
                                     <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-indigo-400">?</div>
                                         <div class="tooltip-content">
-                                            <span class="block font-bold text-indigo-400 mb-1 border-b border-white/10 pb-1">Participants</span>
-                                            Total unique students who have submitted at least one quiz.
+                                            <span class="block font-bold text-indigo-400 mb-1 border-b border-white/10 pb-1">Total Peserta</span>
+                                            Total siswa unik yang telah mengumpulkan setidaknya satu evaluasi kuis.
                                         </div>
                                     </div>
                                 </div>
                                 <h3 class="text-2xl md:text-3xl font-black text-white mt-2">{{ $totalParticipants }}</h3>
-                                <p class="text-[9px] text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Ranking &rarr;</p>
+                                <p class="text-[9px] text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Peringkat &rarr;</p>
                             </div>
 
                             <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 cursor-pointer group transition-all" @click="showAccuracyModal = true">
                                 <div class="flex justify-between items-start">
-                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Global Accuracy</p>
+                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Akurasi Global</p>
                                     <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-emerald-400">?</div>
                                         <div class="tooltip-content">
-                                            <span class="block font-bold text-emerald-400 mb-1 border-b border-white/10 pb-1">Global Accuracy</span>
-                                            Calculated mean accuracy score across all answered questions.
+                                            <span class="block font-bold text-emerald-400 mb-1 border-b border-white/10 pb-1">Akurasi Rata-rata</span>
+                                            Kalkulasi persentase ketepatan jawaban rata-rata dari seluruh soal yang pernah dijawab.
                                         </div>
                                     </div>
                                 </div>
@@ -368,22 +369,22 @@
                                     <h3 class="text-2xl md:text-3xl font-black text-white">{{ $globalAcc }}</h3>
                                     <span class="text-[10px] text-emerald-500 font-bold">%</span>
                                 </div>
-                                <p class="text-[9px] text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Breakdown &rarr;</p>
+                                <p class="text-[9px] text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Rincian &rarr;</p>
                             </div>
 
                             <div class="glass-card rounded-2xl p-5 border-l-4 border-l-red-500 cursor-pointer group transition-all" @click="showHardModal = true">
                                 <div class="flex justify-between items-start">
-                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-red-400 transition">Hard Questions</p>
+                                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-red-400 transition">Soal Sulit</p>
                                     <div class="tooltip-container tooltip-red tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-red-400">?</div>
                                         <div class="tooltip-content">
-                                            <span class="block font-bold text-red-400 mb-1 border-b border-white/10 pb-1">Review Needed</span>
-                                            Number of specific questions with a failure rate above 50%.
+                                            <span class="block font-bold text-red-400 mb-1 border-b border-white/10 pb-1">Butuh Perhatian</span>
+                                            Jumlah spesifik soal yang memiliki tingkat kegagalan (salah jawab) di atas 50%.
                                         </div>
                                     </div>
                                 </div>
                                 <h3 class="text-2xl md:text-3xl font-black text-red-500 mt-2 drop-shadow-[0_0_8px_#ef4444]">{{ $hardQuestionsCount }}</h3>
-                                <p class="text-[9px] text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Review Questions &rarr;</p>
+                                <p class="text-[9px] text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Tinjau Soal &rarr;</p>
                             </div>
                         </div>
 
@@ -391,15 +392,15 @@
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 md:mb-12">
                             {{-- KOLOM KIRI: MATERI REGULER --}}
                             <div class="lg:col-span-2 space-y-6">
-                                <h3 class="text-lg font-bold text-white flex items-center gap-2"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Regular Chapters</h3>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Direktori Bank Soal</h3>
                                 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 reveal" style="animation-delay: 0.1s;">
                                     @php
                                         // Meta mapping warna & judul untuk chapter standard
                                         $chapterMeta = [
-                                            1 => ['title' => 'BAB 1: Pendahuluan', 'desc' => 'HTML, CSS & Tailwind Basics', 'color' => 'cyan'],
-                                            2 => ['title' => 'BAB 2: Layouting', 'desc' => 'Flexbox & Grid Systems', 'color' => 'indigo'],
-                                            3 => ['title' => 'BAB 3: Styling', 'desc' => 'Decoration, Effects & Typography', 'color' => 'fuchsia'],
+                                            1 => ['title' => 'BAB 1: Pendahuluan', 'desc' => 'Dasar HTML, CSS & Tailwind', 'color' => 'cyan'],
+                                            2 => ['title' => 'BAB 2: Layouting', 'desc' => 'Sistem Flexbox & Grid', 'color' => 'indigo'],
+                                            3 => ['title' => 'BAB 3: Styling', 'desc' => 'Efek, Dekorasi & Tipografi', 'color' => 'fuchsia'],
                                         ];
                                     @endphp
 
@@ -422,7 +423,7 @@
                                                         <span class="text-xl md:text-2xl font-black font-mono text-{{ $meta['color'] }}-400 bg-{{ $meta['color'] }}-500/10 px-3 py-1 rounded-lg border border-{{ $meta['color'] }}-500/20">0{{ $id }}</span>
                                                         <div class="text-right">
                                                             <p class="text-xl md:text-2xl font-black text-white">{{ $cnt }}</p>
-                                                            <p class="text-[9px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold">Questions</p>
+                                                            <p class="text-[9px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold">Soal</p>
                                                         </div>
                                                     </div>
                                                     <h3 class="text-base md:text-lg font-bold text-white group-hover:text-{{ $meta['color'] }}-400 transition">{{ $meta['title'] }}</h3>
@@ -434,14 +435,14 @@
                                             </div>
                                         @endforeach
                                     @else
-                                        <div class="col-span-2 text-center py-10 text-white/30 text-xs italic bg-[#0a0e17]/50 rounded-xl border border-dashed border-white/10">Belum ada soal terdaftar untuk chapter reguler.</div>
+                                        <div class="col-span-2 text-center py-10 text-white/30 text-xs italic bg-[#0a0e17]/50 rounded-xl border border-dashed border-white/10">Belum ada soal terdaftar untuk bab reguler.</div>
                                     @endif
                                 </div>
                             </div>
 
                             {{-- KOLOM KANAN: DISTRIBUTION CHART --}}
                             <div class="lg:col-span-1 space-y-6 reveal" style="animation-delay: 0.2s;">
-                                <h3 class="text-lg font-bold text-white flex items-center gap-2"><svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg> Difficulty Breakdown</h3>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2"><svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg> Rasio Kesulitan Soal</h3>
                                 <div class="glass-card rounded-3xl p-6 flex flex-col items-center justify-center h-auto lg:h-[calc(100%-3rem)]">
                                     <div class="w-40 h-40 md:w-48 md:h-48 relative">
                                         <canvas id="difficultyChart"></canvas>
@@ -453,15 +454,15 @@
                                     <div class="grid grid-cols-3 gap-2 mt-6 w-full text-center">
                                         <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                                             <span class="block text-emerald-400 font-bold text-xs md:text-sm">{{ $questions->where('status', 'Mudah')->count() }}</span>
-                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Easy</span>
+                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Mudah</span>
                                         </div>
                                         <div class="p-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
                                             <span class="block text-yellow-400 font-bold text-xs md:text-sm">{{ $questions->where('status', 'Sedang')->count() }}</span>
-                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Medium</span>
+                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Sedang</span>
                                         </div>
                                         <div class="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
                                             <span class="block text-red-400 font-bold text-xs md:text-sm">{{ $hardQuestionsCount }}</span>
-                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Hard</span>
+                                            <span class="text-[8px] md:text-[9px] text-white/40 uppercase">Sulit</span>
                                         </div>
                                     </div>
                                 </div>
@@ -475,7 +476,7 @@
                             $finalAcc = $finalCnt > 0 ? round($finalExam->avg('accuracy')) : 0;
                         @endphp
                         <div class="mb-8 md:mb-12 reveal" style="animation-delay: 0.3s;">
-                            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg> Comprehensive Evaluation</h3>
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg> Evaluasi Komprehensif</h3>
                             <div @click="selectChapter(99, 'FINAL EXAM: Evaluasi Akhir')" 
                                 class="glass-card rounded-3xl p-6 md:p-8 cursor-pointer group hover:border-yellow-500/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 bg-gradient-to-r from-yellow-900/10 to-transparent border-t-2 border-yellow-500/50">
                                 
@@ -488,18 +489,18 @@
                                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3">
                                         <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> Capstone Exam
                                     </div>
-                                    <h3 class="text-2xl md:text-3xl font-black text-white mb-2">Final Evaluation (Ch 1 - 3)</h3>
-                                    <p class="text-xs text-white/60">Combined questions from all materials to test comprehensive understanding.</p>
+                                    <h3 class="text-2xl md:text-3xl font-black text-white mb-2">Evaluasi Akhir (Bab 1 - 3)</h3>
+                                    <p class="text-xs text-white/60">Kumpulan seluruh soal teori dari semua materi untuk menguji tingkat pemahaman komprehensif siswa.</p>
                                 </div>
 
                                 <div class="relative z-10 flex gap-6 md:gap-8 text-center w-full md:w-auto justify-around md:justify-end border-t md:border-none border-white/10 pt-4 md:pt-0">
                                     <div>
                                         <p class="text-3xl md:text-4xl font-black text-white group-hover:scale-110 transition">{{ $finalCnt }}</p>
-                                        <p class="text-[9px] md:text-[10px] text-white/40 uppercase font-bold tracking-widest mt-1">Questions</p>
+                                        <p class="text-[9px] md:text-[10px] text-white/40 uppercase font-bold tracking-widest mt-1">Soal</p>
                                     </div>
                                     <div>
                                         <p class="text-3xl md:text-4xl font-black {{ $finalAcc >= 70 ? 'text-emerald-400' : 'text-yellow-400' }} group-hover:scale-110 transition">{{ $finalAcc }}%</p>
-                                        <p class="text-[9px] md:text-[10px] text-white/40 uppercase font-bold tracking-widest mt-1">Avg Score</p>
+                                        <p class="text-[9px] md:text-[10px] text-white/40 uppercase font-bold tracking-widest mt-1">Avg Skor</p>
                                     </div>
                                     <div class="flex items-center hidden sm:flex">
                                         <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-black transition">
@@ -520,12 +521,12 @@
                         {{-- Controls --}}
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                             <div class="relative w-full md:w-96 group">
-                                <input x-model="search" type="text" placeholder="Search questions, options..." class="w-full bg-[#0a0e17] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition shadow-inner">
+                                <input x-model="search" type="text" placeholder="Cari teks pertanyaan, atau opsi jawaban..." class="w-full bg-[#0a0e17] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition shadow-inner">
                                 <div class="absolute left-3 top-3 md:top-3.5 text-white/30 group-focus-within:text-indigo-400 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
                             </div>
                             <div class="flex gap-3 w-full md:w-auto">
                                 <select x-model="difficulty" class="w-full md:w-auto bg-[#0a0e17] border border-white/10 text-white text-xs rounded-xl px-4 py-3 outline-none focus:border-indigo-500 cursor-pointer min-w-[150px] shadow-inner">
-                                    <option value="all">Semua Status</option>
+                                    <option value="all">Semua Kesulitan</option>
                                     <option value="Sulit">🔥 Sulit (< 50%)</option>
                                     <option value="Sedang">⚖️ Sedang (50-79%)</option>
                                     <option value="Mudah">✅ Mudah (≥ 80%)</option>
@@ -533,17 +534,17 @@
                             </div>
                         </div>
 
-                        {{-- Main Table Bank Soal (Tampil jika controller meloloskan $questions) --}}
+                        {{-- Main Table Bank Soal (Tampil jika ada $questions) --}}
                         @if($questions->count() > 0)
                         <div class="glass-card rounded-2xl overflow-hidden border-t border-white/10">
                             <div class="overflow-x-auto custom-scrollbar rounded-2xl">
                                 <table class="w-full text-sm text-left min-w-[800px]">
                                     <thead class="bg-[#0f141e] text-white/40 text-[10px] uppercase font-bold border-b border-white/5 sticky top-0 z-10 shadow-lg">
                                         <tr>
-                                            <th class="px-6 py-4 w-[50%]">Pertanyaan & Opsi</th>
-                                            <th class="px-6 py-4 text-center">Analisis Jawaban</th>
-                                            <th class="px-6 py-4 text-center">Status</th>
-                                            <th class="px-6 py-4 text-right">Aksi</th>
+                                            <th class="px-6 py-4 w-[50%]">Teks Pertanyaan & Opsi Jawaban</th>
+                                            <th class="px-6 py-4 text-center">Analisis Rasio Jawaban</th>
+                                            <th class="px-6 py-4 text-center">Status Label</th>
+                                            <th class="px-6 py-4 text-right">Aksi Panel</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-white/5 bg-[#0a0e17]/30">
@@ -581,7 +582,7 @@
                                                             <div class="w-full h-full bg-white/5"></div>
                                                         @endif
                                                     </div>
-                                                    <div class="text-center mt-1"><span class="text-xs font-black text-white">{{ $q->total_attempts ?? 0 }}</span> <span class="text-[9px] md:text-[10px] text-white/30">Total</span></div>
+                                                    <div class="text-center mt-1"><span class="text-xs font-black text-white">{{ $q->total_attempts ?? 0 }}</span> <span class="text-[9px] md:text-[10px] text-white/30">Total Dicoba</span></div>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-5 text-center align-middle">
@@ -589,9 +590,9 @@
                                             </td>
                                             <td class="px-6 py-5 text-right align-middle">
                                                 <div class="flex justify-end gap-2 sm:opacity-0 group-hover:opacity-100 transition duration-300">
-                                                    <button onclick='openInsightModal(@json($q->list_correct ?? []), @json($q->list_wrong ?? []))' class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-indigo-500 text-white sm:text-indigo-400 hover:text-white transition shadow-inner border border-white/10 hover:border-indigo-400" title="User Insight"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
-                                                    <button onclick='openModal("edit", @json($q))' class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-amber-500 text-white sm:text-amber-400 hover:text-white transition shadow-inner border border-white/10 hover:border-amber-400" title="Edit Question"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                                                    <button onclick="confirmDelete('{{ $q->id }}')" class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-red-500 text-white sm:text-red-400 hover:text-white transition shadow-inner border border-white/10 hover:border-red-400" title="Delete Question"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                                                    <button onclick='openInsightModal(@json($q->list_correct ?? []), @json($q->list_wrong ?? []))' class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-indigo-500 text-white sm:text-indigo-400 hover:text-white transition shadow-inner border border-white/10 hover:border-indigo-400" title="Lihat Daftar Siswa"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+                                                    <button onclick='openModal("edit", @json($q))' class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-amber-500 text-white sm:text-amber-400 hover:text-white transition shadow-inner border border-white/10 hover:border-amber-400" title="Edit Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                                                    <button onclick="confirmDelete('{{ $q->id }}')" class="p-2 rounded-lg bg-white/10 sm:bg-[#020617] hover:bg-red-500 text-white sm:text-red-400 hover:text-white transition shadow-inner border border-white/10 hover:border-red-400" title="Hapus Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -604,7 +605,7 @@
                         <div class="glass-card rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[300px] opacity-60">
                             <div class="text-4xl mb-4 grayscale">📂</div>
                             <h3 class="text-white font-bold">Data Bank Soal Kosong</h3>
-                            <p class="text-xs text-white/50 mt-2">Tidak ada pertanyaan yang ditemukan di database.</p>
+                            <p class="text-xs text-white/50 mt-2">Tidak ada data pertanyaan yang ditemukan di database untuk bab ini.</p>
                         </div>
                         @endif
                     </div>
@@ -614,7 +615,7 @@
         </main>
     </div>
 
-    {{-- ==================== MODALS HERO INSIGHT ==================== --}}
+    {{-- ==================== MODALS HERO INSIGHT (DASHBOARD CARDS) ==================== --}}
 
     {{-- 1. MODAL: TOTAL QUESTIONS --}}
     <div x-show="showQuestionsModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
@@ -624,9 +625,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        Question Database Overview
+                        Tinjauan Basis Data Soal
                     </h3>
-                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">List of all theoretical questions in the system.</p>
+                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">Daftar seluruh soal teori yang tersedia di sistem.</p>
                 </div>
                 <button @click="showQuestionsModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -635,14 +636,14 @@
                 <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-[#0a0e17]/80 border border-white/5 hover:border-cyan-500/30 transition group">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-white truncate" title="{{ $q->question_text }}">{{ $q->question_text }}</p>
-                        <p class="text-[10px] text-white/50 font-mono mt-0.5">Chapter {{ $q->chapter_id }}</p>
+                        <p class="text-[10px] text-white/50 font-mono mt-0.5">Bab {{ $q->chapter_id }}</p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="text-[9px] font-bold uppercase tracking-widest border px-2 py-1 rounded {{ $q->status == 'Sulit' ? 'bg-red-500/10 text-red-400 border-red-500/20' : ($q->status == 'Sedang' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20') }}">{{ $q->status }}</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-white/40 text-center py-10">No question data available.</p>
+                <p class="text-[11px] text-white/40 text-center py-10">Belum ada data soal yang dimasukkan.</p>
                 @endforelse
             </div>
         </div>
@@ -656,9 +657,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Quiz Participants
+                        Daftar Peserta Kuis
                     </h3>
-                    <p class="text-[10px] text-indigo-400 mt-1 font-mono">List of unique students who attempted quizzes.</p>
+                    <p class="text-[10px] text-indigo-400 mt-1 font-mono">Data siswa unik yang telah berpartisipasi mencoba kuis.</p>
                 </div>
                 <button @click="showParticipantsModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -672,11 +673,11 @@
                     </div>
                     <div class="text-right shrink-0">
                         <span class="block text-sm font-black {{ $stat->avg_score >= 70 ? 'text-emerald-400' : 'text-red-400' }}">{{ $stat->avg_score }} Avg</span>
-                        <span class="text-[9px] text-white/40">{{ $stat->total_attempts }} Attempts</span>
+                        <span class="text-[9px] text-white/40">{{ $stat->total_attempts }} Evaluasi Selesai</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-white/40 text-center py-10">No participants data available.</p>
+                <p class="text-[11px] text-white/40 text-center py-10">Belum ada siswa yang berpartisipasi.</p>
                 @endforelse
             </div>
         </div>
@@ -690,9 +691,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Accuracy Breakdown
+                        Rincian Akurasi per Bab
                     </h3>
-                    <p class="text-[10px] text-emerald-400 mt-1 font-mono">Average accuracy calculated per chapter.</p>
+                    <p class="text-[10px] text-emerald-400 mt-1 font-mono">Menampilkan persentase ketepatan jawaban rata-rata untuk setiap materi.</p>
                 </div>
                 <button @click="showAccuracyModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -707,8 +708,8 @@
                             0{{ $id }}
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-white">Quiz Chapter {{ $id }}</p>
-                            <p class="text-[10px] text-white/50 mt-0.5">{{ $chQs->count() }} Questions Evaluated</p>
+                            <p class="text-sm font-bold text-white">Materi Bab {{ $id }}</p>
+                            <p class="text-[10px] text-white/50 mt-0.5">{{ $chQs->count() }} Soal Dievaluasi</p>
                         </div>
                     </div>
                     <div class="text-right">
@@ -716,7 +717,7 @@
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-white/40 text-center py-10">No accuracy data available.</p>
+                <p class="text-[11px] text-white/40 text-center py-10">Belum ada data akurasi yang dihitung.</p>
                 @endforelse
             </div>
         </div>
@@ -730,9 +731,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        Critical Questions List
+                        Daftar Soal Kritis (Banyak yang Gagal)
                     </h3>
-                    <p class="text-[10px] text-red-400 mt-1 font-mono">Questions with fail rate > 50%</p>
+                    <p class="text-[10px] text-red-400 mt-1 font-mono">Hanya menampilkan soal dengan rasio kegagalan > 50%</p>
                 </div>
                 <button @click="showHardModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -740,10 +741,10 @@
                 <table class="w-full text-sm text-left">
                     <thead class="bg-white/5 text-white/40 text-[10px] uppercase font-bold sticky top-0 z-10">
                         <tr>
-                            <th class="px-4 py-3 rounded-tl-lg border-b border-white/5">Question Excerpt</th>
-                            <th class="px-4 py-3 text-center border-b border-white/5">Chapter</th>
-                            <th class="px-4 py-3 text-center border-b border-white/5">Wrong / Total</th>
-                            <th class="px-4 py-3 text-right rounded-tr-lg border-b border-white/5">Fail Rate</th>
+                            <th class="px-4 py-3 rounded-tl-lg border-b border-white/5">Kutipan Soal</th>
+                            <th class="px-4 py-3 text-center border-b border-white/5">Bab</th>
+                            <th class="px-4 py-3 text-center border-b border-white/5">Salah / Total Coba</th>
+                            <th class="px-4 py-3 text-right rounded-tr-lg border-b border-white/5">Rasio Kegagalan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5 bg-[#0a0e17]/30">
@@ -752,7 +753,7 @@
                             <td class="px-4 py-4 text-white/80 text-[11px]" title="{{ $q->question_text }}">
                                 {{ \Illuminate\Support\Str::limit($q->question_text, 60) }}
                             </td>
-                            <td class="px-4 py-4 text-center text-white/50 text-[10px] font-bold">Ch. {{ $q->chapter_id }}</td>
+                            <td class="px-4 py-4 text-center text-white/50 text-[10px] font-bold">Bab {{ $q->chapter_id }}</td>
                             <td class="px-4 py-4 text-center">
                                 <span class="text-red-400 font-bold">{{ $q->wrong_count }}</span> <span class="text-white/30">/ {{ $q->total_attempts }}</span>
                             </td>
@@ -761,7 +762,7 @@
                             </td>
                         </tr>
                         @empty
-                        <tr><td colspan="4" class="text-center py-10 text-emerald-400 text-xs font-bold uppercase tracking-widest">No Critical Questions Found</td></tr>
+                        <tr><td colspan="4" class="text-center py-10 text-emerald-400 text-xs font-bold uppercase tracking-widest">Aman! Tidak Ditemukan Soal Sulit.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -776,7 +777,7 @@
         <div class="absolute inset-0 bg-[#020617]/90 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
         <div id="modalContent" class="relative w-full max-w-2xl bg-[#0f141e] border border-white/10 rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]">
             <div class="p-5 md:p-6 border-b border-white/5 flex justify-between items-center bg-[#0a0e17] rounded-t-3xl">
-                <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2" id="modalTitle"><span class="p-1.5 bg-indigo-500/20 rounded-lg text-indigo-400 text-[10px] tracking-widest border border-indigo-500/30 shadow-inner">NEW</span> Add Question</h3>
+                <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2" id="modalTitle"><span class="p-1.5 bg-indigo-500/20 rounded-lg text-indigo-400 text-[10px] tracking-widest border border-indigo-500/30 shadow-inner">BARU</span> Tambah Soal</h3>
                 <button onclick="closeModal()" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 p-2 rounded-full border border-transparent hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] relative">
@@ -785,10 +786,10 @@
                     @csrf
                     <input type="hidden" id="questionId" name="id">
                     <div class="space-y-6">
-                        <div><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Question Text</label><textarea name="question_text" id="inputQuestion" rows="3" class="w-full bg-[#0a0e17] border border-white/10 rounded-xl p-4 text-white text-sm outline-none focus:border-indigo-500 transition resize-none shadow-inner" placeholder="Enter question..." required></textarea></div>
+                        <div><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Teks Pertanyaan</label><textarea name="question_text" id="inputQuestion" rows="3" class="w-full bg-[#0a0e17] border border-white/10 rounded-xl p-4 text-white text-sm outline-none focus:border-indigo-500 transition resize-none shadow-inner" placeholder="Tuliskan pertanyaan di sini..." required></textarea></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Chapter</label>
+                                <label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Materi Bab</label>
                                 <select name="chapter_id" id="inputChapter" class="w-full bg-[#0a0e17] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-indigo-500 cursor-pointer shadow-inner">
                                     <option value="1">Bab 1: Pendahuluan</option>
                                     <option value="2">Bab 2: Layouting</option>
@@ -796,19 +797,19 @@
                                     <option value="99">Evaluasi Akhir (Final)</option>
                                 </select>
                             </div>
-                            <div><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Correct Answer</label><select name="correct_answer" id="inputCorrect" class="w-full bg-[#0a0e17] border border-emerald-500/30 rounded-xl px-4 py-3 text-emerald-400 text-sm font-bold outline-none focus:border-emerald-500 cursor-pointer shadow-inner"><option value="option_a">Option A</option><option value="option_b">Option B</option><option value="option_c">Option C</option><option value="option_d">Option D</option></select></div>
+                            <div><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 block">Jawaban Benar</label><select name="correct_answer" id="inputCorrect" class="w-full bg-[#0a0e17] border border-emerald-500/30 rounded-xl px-4 py-3 text-emerald-400 text-sm font-bold outline-none focus:border-emerald-500 cursor-pointer shadow-inner"><option value="option_a">Pilihan A</option><option value="option_b">Pilihan B</option><option value="option_c">Pilihan C</option><option value="option_d">Pilihan D</option></select></div>
                         </div>
-                        <div class="space-y-3"><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider block">Answers Options</label>
+                        <div class="space-y-3"><label class="text-[10px] font-bold text-white/50 uppercase tracking-wider block">Opsi Jawaban</label>
                             @foreach(['a','b','c','d'] as $opt)
-                            <div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-[#0a0e17] border border-white/10 shadow-inner flex items-center justify-center font-black text-white/50 text-xs uppercase shrink-0">{{ $opt }}</span><input type="text" name="option_{{ $opt }}" id="inputOption_{{ $opt }}" class="flex-1 bg-[#0a0e17] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-indigo-500 text-sm shadow-inner transition" placeholder="Option {{ strtoupper($opt) }}" required></div>
+                            <div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-[#0a0e17] border border-white/10 shadow-inner flex items-center justify-center font-black text-white/50 text-xs uppercase shrink-0">{{ $opt }}</span><input type="text" name="option_{{ $opt }}" id="inputOption_{{ $opt }}" class="flex-1 bg-[#0a0e17] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-indigo-500 text-sm shadow-inner transition" placeholder="Pilihan {{ strtoupper($opt) }}" required></div>
                             @endforeach
                         </div>
                     </div>
                 </form>
             </div>
             <div class="p-5 md:p-6 border-t border-white/5 bg-[#0a0e17] flex justify-end gap-3 rounded-b-3xl">
-                <button onclick="closeModal()" class="px-5 md:px-6 py-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 font-bold text-xs transition border border-transparent hover:border-white/10">Cancel</button>
-                <button onclick="submitForm()" class="px-6 md:px-8 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-[0_0_15px_rgba(99,102,241,0.4)] transition transform hover:-translate-y-0.5 border border-indigo-400">Save Question</button>
+                <button onclick="closeModal()" class="px-5 md:px-6 py-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 font-bold text-xs transition border border-transparent hover:border-white/10">Batal</button>
+                <button onclick="submitForm()" class="px-6 md:px-8 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-[0_0_15px_rgba(99,102,241,0.4)] transition transform hover:-translate-y-0.5 border border-indigo-400">Simpan Soal</button>
             </div>
         </div>
     </div>
@@ -818,17 +819,17 @@
         <div class="absolute inset-0 bg-[#020617]/90 backdrop-blur-md transition-opacity" onclick="closeInsightModal()"></div>
         <div id="insightContent" class="relative w-full max-w-md bg-[#0f141e] border border-white/10 rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[85vh]">
             <div class="p-5 md:p-6 border-b border-white/5 bg-[#0a0e17] flex justify-between items-center rounded-t-3xl">
-                <h3 class="font-bold text-white text-lg flex items-center gap-2"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> User Insight</h3>
+                <h3 class="font-bold text-white text-lg flex items-center gap-2"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Tinjauan Siswa</h3>
                 <button onclick="closeInsightModal()" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 p-2 rounded-full border border-transparent hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
                 <div>
-                    <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Correct Answers</p><span id="countCorrect" class="text-[10px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg font-bold border border-emerald-500/20">0 Users</span></div>
+                    <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Jawaban Benar</p><span id="countCorrect" class="text-[10px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg font-bold border border-emerald-500/20">0 Siswa</span></div>
                     <div id="listCorrect" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
                 <div class="h-px bg-white/5 w-full"></div>
                 <div>
-                    <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-red-400 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Wrong Answers</p><span id="countWrong" class="text-[10px] bg-red-500/10 text-red-400 px-3 py-1 rounded-lg font-bold border border-red-500/20">0 Users</span></div>
+                    <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-red-400 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Jawaban Salah</p><span id="countWrong" class="text-[10px] bg-red-500/10 text-red-400 px-3 py-1 rounded-lg font-bold border border-red-500/20">0 Siswa</span></div>
                     <div id="listWrong" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
             </div>
@@ -845,7 +846,7 @@
             new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Easy', 'Medium', 'Hard'],
+                    labels: ['Mudah', 'Sedang', 'Sulit'],
                     datasets: [{
                         data: [
                             {{ $questions->where('status', 'Mudah')->count() }},
@@ -865,10 +866,10 @@
             $('#quizModal').removeClass('hidden');
             setTimeout(() => { $('#modalContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'); }, 10);
             if(mode === 'create') {
-                $('#modalTitle').html('<span class="p-1.5 bg-indigo-500/20 rounded-lg text-indigo-400 text-[10px] tracking-widest border border-indigo-500/30 shadow-inner">NEW</span> Add Question');
+                $('#modalTitle').html('<span class="p-1.5 bg-indigo-500/20 rounded-lg text-indigo-400 text-[10px] tracking-widest border border-indigo-500/30 shadow-inner">BARU</span> Tambah Soal');
                 $('#quizForm')[0].reset(); $('#questionId').val(''); $('#inputChapter').val(1);
             } else {
-                $('#modalTitle').html('<span class="p-1.5 bg-amber-500/20 rounded-lg text-amber-400 text-[10px] tracking-widest border border-amber-500/30 shadow-inner">EDIT</span> Update Question');
+                $('#modalTitle').html('<span class="p-1.5 bg-amber-500/20 rounded-lg text-amber-400 text-[10px] tracking-widest border border-amber-500/30 shadow-inner">EDIT</span> Perbarui Soal');
                 $('#questionId').val(data.id); $('#inputQuestion').val(data.question_text); $('#inputChapter').val(data.chapter_id);
                 if(data.options && data.options.length >= 4) {
                     $('#inputOption_a').val(data.options[0].option_text); $('#inputOption_b').val(data.options[1].option_text);
@@ -883,17 +884,17 @@
         function submitForm() {
             const form = $('#quizForm'); const id = $('#questionId').val(); const url = id ? `/admin/questions/update/${id}` : `{{ route('admin.questions.store') }}`;
             if(!form[0].checkValidity()) { form[0].reportValidity(); return; }
-            Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading(), background: '#0f141e', color: '#fff' });
-            $.post(url, form.serialize()).done((res) => { Swal.fire({ title: 'Success!', text: res.message, icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1' }).then(() => location.reload()); }).fail((err) => { Swal.fire({ title: 'Error', text: err.responseJSON?.message || 'Error occurred', icon: 'error', background: '#0f141e', color: '#fff', confirmButtonColor: '#ef4444' }); });
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: '#0f141e', color: '#fff' });
+            $.post(url, form.serialize()).done((res) => { Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1' }).then(() => location.reload()); }).fail((err) => { Swal.fire({ title: 'Error', text: err.responseJSON?.message || 'Terjadi kesalahan sistem', icon: 'error', background: '#0f141e', color: '#fff', confirmButtonColor: '#ef4444' }); });
         }
 
         function confirmDelete(id) {
-            Swal.fire({ title: 'Delete Question?', text: "This action cannot be undone!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#334155', confirmButtonText: 'Yes, Delete!', cancelButtonText: 'Cancel', background: '#0f141e', color: '#fff' }).then((result) => { if (result.isConfirmed) { $.ajax({ url: `/admin/questions/delete/${id}`, type: 'DELETE', success: function(res) { Swal.fire({ title: 'Deleted!', text: res.message, icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1' }).then(() => location.reload()); } }); } });
+            Swal.fire({ title: 'Hapus Pertanyaan?', text: "Tindakan ini akan menghapus soal secara permanen!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal', background: '#0f141e', color: '#fff' }).then((result) => { if (result.isConfirmed) { $.ajax({ url: `/admin/questions/delete/${id}`, type: 'DELETE', success: function(res) { Swal.fire({ title: 'Terhapus!', text: res.message, icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1' }).then(() => location.reload()); } }); } });
         }
 
         function openInsightModal(correct, wrong) {
-            $('#countCorrect').text(correct.length + ' Users'); $('#countWrong').text(wrong.length + ' Users');
-            const renderList = (list, color) => list.length ? list.map(name => `<div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0a0e17] border border-${color}-500/20 text-xs text-white shadow-inner transition hover:border-${color}-500/50"><div class="w-6 h-6 rounded-lg bg-${color}-500/20 border border-${color}-500/30 text-${color}-400 flex items-center justify-center font-bold text-[10px] shadow-inner shrink-0">${name.charAt(0)}</div><span class="font-medium truncate">${name}</span></div>`).join('') : `<div class="col-span-full"><p class="text-[10px] text-white/30 italic pl-1 border border-dashed border-white/10 p-3 rounded-xl text-center bg-[#0a0e17]/50">No participants found.</p></div>`;
+            $('#countCorrect').text(correct.length + ' Siswa'); $('#countWrong').text(wrong.length + ' Siswa');
+            const renderList = (list, color) => list.length ? list.map(name => `<div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0a0e17] border border-${color}-500/20 text-xs text-white shadow-inner transition hover:border-${color}-500/50"><div class="w-6 h-6 rounded-lg bg-${color}-500/20 border border-${color}-500/30 text-${color}-400 flex items-center justify-center font-bold text-[10px] shadow-inner shrink-0">${name.charAt(0)}</div><span class="font-medium truncate">${name}</span></div>`).join('') : `<div class="col-span-full"><p class="text-[10px] text-white/30 italic pl-1 border border-dashed border-white/10 p-3 rounded-xl text-center bg-[#0a0e17]/50">Tidak ada peserta pada kategori ini.</p></div>`;
             $('#listCorrect').html(renderList(correct, 'emerald')); $('#listWrong').html(renderList(wrong, 'red'));
             $('#insightModal').removeClass('hidden'); setTimeout(() => { $('#insightContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'); }, 10);
         }

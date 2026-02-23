@@ -13,7 +13,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
-
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <style>
         /* --- THEME CONFIG (ORIGINAL DARK-GLASSMORPHISM) --- */
         :root { 
@@ -475,7 +475,7 @@
                         {{-- 2. Labs Passed --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-indigo-500/40 cursor-pointer" @click="showLabModal = true">
                             <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-indigo-400 transition">Labs Passed</p>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-indigo-400 transition">Labs Lulus</p>
                                 <div class="flex items-center gap-2">
                                     <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-indigo-400">?</div>
@@ -527,7 +527,7 @@
                         {{-- 4. Avg Lab Score --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-emerald-500/40 cursor-pointer" @click="showAvgLabModal = true">
                             <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-emerald-400 transition">Avg Lab Score</p>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-emerald-400 transition">Rata Rata nilai Labs</p>
                                 <div class="flex items-center gap-2">
                                     <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-emerald-400">?</div>
@@ -553,7 +553,7 @@
                         {{-- 5. Avg Quiz Score --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-amber-500/40 cursor-pointer" @click="showAvgQuizModal = true">
                             <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-amber-400 transition">Avg Quiz Score</p>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest group-hover:text-amber-400 transition">Rata Rata nilai Kuis</p>
                                 <div class="flex items-center gap-2">
                                     <div class="tooltip-container tooltip-yellow tooltip-down tooltip-left">
                                         <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-yellow-400">?</div>

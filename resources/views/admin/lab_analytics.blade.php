@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Lab Intelligence · Global Overview</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -274,7 +275,7 @@
                         {{-- 1. Attempts --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all" @click="showAttemptsModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-indigo-400 transition">Total Attempts</p>
+                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-indigo-400 transition">Total Percobaan</p>
                                 <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-indigo-400">?</div>
                                     <div class="tooltip-content border-indigo-glow">
@@ -293,7 +294,7 @@
                         {{-- 2. Success Rate --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 cursor-pointer group transition-all" @click="showSuccessRateModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Success Rate</p>
+                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Rasio Kelulusan</p>
                                 <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-emerald-400">?</div>
                                     <div class="tooltip-content border-emerald-glow">
@@ -316,7 +317,7 @@
                         {{-- 3. Avg Score --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-yellow-500 cursor-pointer group transition-all" @click="showAvgScoreModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-yellow-400 transition">Avg Score</p>
+                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-yellow-400 transition">Rata Rata Nilai</p>
                                 <div class="tooltip-container tooltip-yellow tooltip-down tooltip-left">
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-yellow-400">?</div>
                                     <div class="tooltip-content border-yellow-glow">
@@ -327,7 +328,7 @@
                             </div>
                             <div class="flex items-baseline gap-1 mt-2">
                                 <h3 class="text-2xl md:text-3xl font-black text-white">{{ $avgScore }}</h3>
-                                <span class="text-[10px] text-yellow-400 font-bold">Pts</span>
+                                <span class="text-[10px] text-yellow-400 font-bold"></span>
                             </div>
                             <p class="text-[9px] text-yellow-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Insights &rarr;</p>
                         </div>
@@ -335,7 +336,7 @@
                         {{-- 4. Avg Time --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-cyan-500 cursor-pointer group transition-all" @click="showDurationModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Avg Duration</p>
+                                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Rata Rata Durasi</p>
                                 <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-cyan-400">?</div>
                                     <div class="tooltip-content border-cyan-glow">

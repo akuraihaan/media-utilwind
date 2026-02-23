@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <title>Laporan Data Siswa</title>
     <style>
         /* Reset & Base */

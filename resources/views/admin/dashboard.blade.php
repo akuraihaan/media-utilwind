@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Dashboard · Utilwind</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -190,7 +191,7 @@
         } catch (\Exception $e) {}
     @endphp
 
-   {{-- ==================== 1. SIDEBAR (RESPONSIVE) ==================== --}}
+    {{-- ==================== 1. SIDEBAR (RESPONSIVE) ==================== --}}
     <div x-show="sidebarOpen" class="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden" @click="sidebarOpen = false" x-transition.opacity style="display: none;"></div>
 
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
@@ -234,7 +235,6 @@
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-400' : 'text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                         Lab Analytics
                     </a>
-                    {{-- MENU BARU: CLASS MANAGEMENT --}}
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-400' : 'text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         Class Management
@@ -349,12 +349,12 @@
 
                         <div class="p-6 relative z-20 flex flex-col h-full">
                             <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
-                                Passed Quizzes
+                                Kuis Lulus
                                 <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="font-bold text-cyan-400 block mb-1">Filter Applied:</span>
-                                        Shows the latest unique quiz submissions that successfully reached KKM (Score >= 70).
+                                        <span class="font-bold text-cyan-400 block mb-1">Filter Aktif:</span>
+                                        Menampilkan pengumpulan kuis unik terbaru yang berhasil mencapai KKM (Skor >= 70).
                                     </div>
                                 </div>
                             </h3>
@@ -367,17 +367,17 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs font-bold text-white truncate">{{ $act->name }}</p>
-                                        <p class="text-[9px] text-white/40 mt-0.5">Score: {{ $act->score }} • {{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</p>
+                                        <p class="text-[9px] text-white/40 mt-0.5">Skor: {{ $act->score }} • {{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</p>
                                     </div>
                                 </div>
                                 @empty
-                                <p class="text-xs text-white/30 italic text-center py-4">No passed quizzes found.</p>
+                                <p class="text-xs text-white/30 italic text-center py-4">Belum ada kuis yang lulus.</p>
                                 @endforelse
                             </div>
 
                             <div class="pt-3 border-t border-white/5 mt-auto">
                                 <button @click="showQuizModal = true" class="text-[10px] font-bold text-cyan-400 hover:text-white transition flex items-center gap-1 w-max">
-                                    View Full Passed List &rarr;
+                                    Lihat Daftar Kelulusan &rarr;
                                 </button>
                             </div>
                         </div>
@@ -393,12 +393,12 @@
 
                         <div class="p-6 relative z-20 flex flex-col h-full">
                             <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
-                                Remedial Warning
+                                Peringatan Remedial
                                 <div class="tooltip-container tooltip-red tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="font-bold text-red-400 block mb-1">Filter Rule:</span>
-                                        Unique students currently failing the passing score (Score < 70). Already passed students are excluded.
+                                        <span class="font-bold text-red-400 block mb-1">Aturan Filter:</span>
+                                        Siswa unik yang saat ini gagal mencapai nilai KKM (Skor < 70). Siswa yang sudah lulus dikecualikan.
                                     </div>
                                 </div>
                             </h3>
@@ -409,12 +409,12 @@
                                     <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-xs font-bold text-red-400 border border-red-500/30">!</div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs font-bold text-white truncate">{{ $act->name }}</p>
-                                        <p class="text-[9px] text-red-400 mt-0.5">Score: {{ $act->score }} (Deficit: {{ 70 - $act->score }})</p>
+                                        <p class="text-[9px] text-red-400 mt-0.5">Skor: {{ $act->score }} (Kurang: {{ 70 - $act->score }})</p>
                                     </div>
                                 </div>
                                 @empty
                                 <div class="flex items-center justify-center gap-2 py-6 text-emerald-400">
-                                    <span class="text-xs font-bold uppercase tracking-widest">All Clear!</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Semua Aman!</span>
                                     <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 </div>
                                 @endforelse
@@ -422,7 +422,7 @@
 
                             <div class="pt-3 border-t border-white/5 mt-auto">
                                 <button @click="showRemedialModal = true" class="text-[10px] font-bold text-red-400 hover:text-white transition flex items-center gap-1 w-max">
-                                    Check Action List &rarr;
+                                    Cek Daftar Tindakan &rarr;
                                 </button>
                             </div>
                         </div>
@@ -438,12 +438,12 @@
                         
                         <div class="p-6 relative z-20 flex flex-col h-full">
                             <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
-                                Lab Completion
+                                Penyelesaian Lab
                                 <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="font-bold text-fuchsia-400 block mb-1">Data Source:</span>
-                                        Total validated practical lab sessions evaluated with 'passed' status.
+                                        <span class="font-bold text-fuchsia-400 block mb-1">Sumber Data:</span>
+                                        Total sesi praktikum lab tervalidasi yang dievaluasi dengan status 'lulus'.
                                     </div>
                                 </div>
                             </h3>
@@ -451,11 +451,11 @@
                             <div class="flex items-center justify-between mt-2 flex-1">
                                 <div>
                                     <span class="text-4xl font-black text-white drop-shadow-md">{{ $realLabCount }}</span>
-                                    <span class="text-sm text-white/40 block mt-1">Total Passed</span>
+                                    <span class="text-sm text-white/40 block mt-1">Total Lulus</span>
                                 </div>
                                 <div class="text-right">
                                     <button @click="showLabModal = true" class="px-3 py-1.5 rounded-lg bg-fuchsia-600/20 text-fuchsia-400 text-[10px] font-bold border border-fuchsia-600/30 hover:bg-fuchsia-600 hover:text-white transition">
-                                        View Data
+                                        Lihat Data
                                     </button>
                                 </div>
                             </div>
@@ -464,7 +464,7 @@
                                 <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden shadow-inner border border-white/5">
                                     <div class="h-full bg-gradient-to-r from-fuchsia-600 to-fuchsia-400 w-3/4 animate-pulse relative"></div>
                                 </div>
-                                <p class="text-[9px] text-white/30 mt-2 text-right">Global Progress</p>
+                                <p class="text-[9px] text-white/30 mt-2 text-right">Progres Global</p>
                             </div>
                         </div>
                     </div>
@@ -479,59 +479,59 @@
                     {{-- Total Students --}}
                     <div class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all" @click="showStudentModal = true">
                         <div class="flex justify-between items-start">
-                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-indigo-400 transition">Students</p>
+                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-indigo-400 transition">Total Siswa</p>
                             <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-indigo-400">?</div>
-                                <div class="tooltip-content">Total active user accounts currently registered with the 'student' role.</div>
+                                <div class="tooltip-content">Total akun pengguna aktif yang saat ini terdaftar dengan peran 'siswa'.</div>
                             </div>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-black text-white mt-2">{{ number_format($totalStudents) }}</h3>
-                        <p class="text-[9px] text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View List &rarr;</p>
+                        <p class="text-[9px] text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Daftar &rarr;</p>
                     </div>
 
                     {{-- Passed Quizzes --}}
                     <div class="glass-card rounded-2xl p-5 border-l-4 border-l-cyan-500 cursor-pointer group transition-all" @click="showQuizModal = true">
                         <div class="flex justify-between items-start">
-                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-cyan-400 transition">Passed Quizzes</p>
+                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-cyan-400 transition">Kuis Lulus</p>
                             <div class="tooltip-container tooltip-cyan tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-cyan-400">?</div>
-                                <div class="tooltip-content">Total quiz submissions that successfully reached KKM (Score >= 70).</div>
+                                <div class="tooltip-content">Total pengumpulan kuis yang berhasil mencapai KKM (Skor >= 70).</div>
                             </div>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-black text-white mt-2">{{ number_format($totalPassedQuizzesCount) }}</h3>
-                        <p class="text-[9px] text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View History &rarr;</p>
+                        <p class="text-[9px] text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Riwayat &rarr;</p>
                     </div>
 
                     {{-- Global Avg --}}
                     <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 cursor-pointer group transition-all" @click="showAvgModal = true">
                         <div class="flex justify-between items-start">
-                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-emerald-400 transition">Global Avg</p>
+                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-emerald-400 transition">Rata-rata Global</p>
                             <div class="tooltip-container tooltip-emerald tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-emerald-400">?</div>
-                                <div class="tooltip-content">Calculated mean score from all theoretical quizzes evaluated in the system.</div>
+                                <div class="tooltip-content">Perhitungan nilai rata-rata dari semua kuis teori yang dievaluasi di dalam sistem.</div>
                             </div>
                         </div>
                         <div class="flex items-baseline gap-1 mt-2">
                             <h3 class="text-2xl md:text-3xl font-black text-white">{{ $globalAverage }}</h3>
                             <span class="text-[10px] text-emerald-500 font-bold">Pts</span>
                         </div>
-                        <p class="text-[9px] text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Chapters &rarr;</p>
+                        <p class="text-[9px] text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Bab &rarr;</p>
                     </div>
 
                     {{-- Pass Rate --}}
                     <div class="glass-card rounded-2xl p-5 border-l-4 border-l-violet-500 cursor-pointer group transition-all" @click="showPassedModal = true">
                         <div class="flex justify-between items-start">
-                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-violet-400 transition">Pass Rate</p>
+                            <p class="text-[10px] uppercase font-bold text-white/40 tracking-widest group-hover:text-violet-400 transition">Tingkat Kelulusan</p>
                             <div class="tooltip-container tooltip-violet tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-violet-400">?</div>
-                                <div class="tooltip-content">Percentage of total quiz submissions that successfully passed the minimum score threshold.</div>
+                                <div class="tooltip-content">Persentase dari total pengumpulan kuis yang berhasil melewati ambang batas nilai minimum.</div>
                             </div>
                         </div>
                         <div class="flex items-baseline gap-1 mt-2">
                             <h3 class="text-2xl md:text-3xl font-black text-white">{{ $passRate }}</h3>
                             <span class="text-lg text-violet-400 font-bold">%</span>
                         </div>
-                        <p class="text-[9px] text-violet-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">View Details &rarr;</p>
+                        <p class="text-[9px] text-violet-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Detail &rarr;</p>
                     </div>
                 </div>
 
@@ -544,11 +544,11 @@
                     <div class="lg:col-span-2 glass-card rounded-2xl p-6 flex flex-col relative z-20">
                         <div class="flex justify-between items-center mb-6 relative z-10">
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                                Performance Trend (7 Days)
+                                Tren Performa (7 Hari)
                                 <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        Tracks the average daily quiz scores submitted to measure stability.
+                                        Melacak rata-rata skor kuis harian yang dikumpulkan untuk mengukur stabilitas.
                                     </div>
                                 </div>
                             </h3>
@@ -565,16 +565,16 @@
                     {{-- Leaderboard --}}
                     <div class="glass-card rounded-2xl p-6 flex flex-col h-full z-20 border-t-2 border-t-yellow-500/50">
                         <h3 class="text-lg font-bold text-white mb-1 flex items-center justify-between">
-                            <span class="flex items-center gap-2"><span class="text-yellow-400 drop-shadow-[0_0_8px_#eab308]">🏆</span> Top 5 Students</span>
+                            <span class="flex items-center gap-2"><span class="text-yellow-400 drop-shadow-[0_0_8px_#eab308]">🏆</span> Top 5 Siswa</span>
                             <div class="tooltip-container tooltip-yellow tooltip-up tooltip-left">
                                 <div class="tooltip-trigger text-[#020617]">?</div>
                                 <div class="tooltip-content">
-                                    <span class="font-bold text-yellow-400 block mb-1">Ranking Algorithm:</span>
-                                    Calculated from the highest average quiz scores. Excludes lab validation metrics.
+                                    <span class="font-bold text-yellow-400 block mb-1">Algoritma Peringkat:</span>
+                                    Dihitung dari rata-rata nilai kuis tertinggi. Mengecualikan metrik validasi lab.
                                 </div>
                             </div>
                         </h3>
-                        <p class="text-[10px] text-white/40 mb-4 pb-2 border-b border-white/5">Ranking based on highest quiz average.</p>
+                        <p class="text-[10px] text-white/40 mb-4 pb-2 border-b border-white/5">Peringkat berdasarkan rata-rata kuis tertinggi.</p>
                         
                         <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
                             @forelse($topStudents as $index => $student)
@@ -594,7 +594,7 @@
                                 </div>
                             </div>
                             @empty
-                            <div class="text-center py-10 text-white/30 text-xs bg-[#0a0e17]/50 rounded-xl border border-dashed border-white/10">No ranking data available.</div>
+                            <div class="text-center py-10 text-white/30 text-xs bg-[#0a0e17]/50 rounded-xl border border-dashed border-white/10">Belum ada data peringkat.</div>
                             @endforelse
                         </div>
                     </div>
@@ -607,19 +607,19 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-4">
                         <div>
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                                Question Analysis (Top 10)
+                                Analisis Soal (Top 10)
                                 <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        Accuracy rate per specific question to identify difficult topics that need to be reviewed.
+                                        Tingkat akurasi per soal spesifik untuk mengidentifikasi topik sulit yang perlu ditinjau ulang.
                                     </div>
                                 </div>
                             </h3>
-                            <p class="text-[10px] text-white/40 mt-1">Metrics to review curriculum effectiveness.</p>
+                            <p class="text-[10px] text-white/40 mt-1">Metrik untuk meninjau efektivitas kurikulum.</p>
                         </div>
                         
                         <a href="{{ route('admin.analytics.questions') }}" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow-[0_0_15px_rgba(99,102,241,0.3)] transition flex items-center gap-1.5 border border-indigo-400">
-                            Full Analysis <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            Analisis Penuh <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
                     </div>
                     
@@ -627,10 +627,10 @@
                         <table class="w-full text-sm text-left whitespace-nowrap md:whitespace-normal">
                             <thead class="bg-[#0f141e] text-white/40 text-[10px] uppercase font-bold border-b border-white/5">
                                 <tr>
-                                    <th class="px-5 py-4 w-[50%]">Question Excerpt</th>
-                                    <th class="px-5 py-4 text-center">Answers</th>
-                                    <th class="px-5 py-4 text-center">Accuracy Rate</th>
-                                    <th class="px-5 py-4 text-right">Difficulty Label</th>
+                                    <th class="px-5 py-4 w-[50%]">Kutipan Soal</th>
+                                    <th class="px-5 py-4 text-center">Jawaban</th>
+                                    <th class="px-5 py-4 text-center">Tingkat Akurasi</th>
+                                    <th class="px-5 py-4 text-right">Tingkat Kesulitan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-white/5">
@@ -642,7 +642,7 @@
                                             <span class="truncate max-w-[200px] md:max-w-[400px]">{{ \Illuminate\Support\Str::limit($q->question_text, 65) }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4 text-center text-white/50 text-[10px] font-mono">{{ $q->total_answers }} Users</td>
+                                    <td class="px-5 py-4 text-center text-white/50 text-[10px] font-mono">{{ $q->total_answers }} Siswa</td>
                                     <td class="px-5 py-4 text-center">
                                         <div class="flex items-center justify-center gap-3">
                                             <div class="flex-1 max-w-[100px] h-1.5 bg-[#020617] rounded-full overflow-hidden border border-white/5 hidden md:block shadow-inner">
@@ -662,7 +662,7 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="4" class="text-center py-10 text-white/30 text-[10px] italic">No analytics data available.</td></tr>
+                                <tr><td colspan="4" class="text-center py-10 text-white/30 text-[10px] italic">Belum ada data analitik yang tersedia.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -676,21 +676,21 @@
                     <div class="p-6 border-b border-white/5 bg-[#020617]/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 rounded-t-2xl">
                         <div>
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                                <span class="text-indigo-400">👥</span> Student Directory
+                                <span class="text-indigo-400">👥</span> Direktori Siswa
                                 <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="font-bold text-indigo-400 block mb-1">Zero Duplication:</span>
-                                        Clean table design. The <b>Green Dot</b> on user avatars automatically signifies an ACTIVE & Validated account.
+                                        <span class="font-bold text-indigo-400 block mb-1">Tanpa Duplikasi:</span>
+                                        Desain tabel bersih. Titik Hijau pada avatar pengguna menandakan akun yang AKTIF & Tervalidasi.
                                     </div>
                                 </div>
                             </h3>
-                            <p class="text-xs text-white/40 mt-1">Managing {{ $totalStudents }} active students.</p>
+                            <p class="text-xs text-white/40 mt-1">Mengelola {{ $totalStudents }} siswa aktif.</p>
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-40">
                             <div class="relative w-full sm:w-64">
-                                <input type="text" x-model="searchQuery" placeholder="Search by name or email..." 
+                                <input type="text" x-model="searchQuery" placeholder="Cari berdasarkan nama atau email..." 
                                     class="w-full bg-[#0a0e17] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:border-indigo-500 outline-none transition shadow-inner placeholder-white/20">
                                 <svg class="w-3.5 h-3.5 absolute left-3 top-3 text-white/30 group-focus-within:text-indigo-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </div>
@@ -698,23 +698,23 @@
                             <div class="flex gap-2 w-full sm:w-auto relative z-50">
                                 <div class="relative flex-1 sm:flex-none" x-data="{ exportOpen: false }">
                                     <button @click="exportOpen = !exportOpen" @click.away="exportOpen = false" class="w-full justify-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[11px] font-bold transition">
-                                        Export <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        Ekspor <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                     </button>
                                     <div x-show="exportOpen" class="absolute right-0 mt-2 w-48 bg-[#0f141e] border border-white/10 rounded-xl shadow-[0_15px_50px_rgba(0,0,0,0.9)] z-[9999] overflow-hidden" style="display: none;" x-transition>
-                                        <div class="px-4 py-2 border-b border-white/5 text-[9px] font-bold text-white/30 uppercase tracking-widest bg-[#0a0e17]">Select Format</div>
+                                        <div class="px-4 py-2 border-b border-white/5 text-[9px] font-bold text-white/30 uppercase tracking-widest bg-[#0a0e17]">Pilih Format</div>
                                         <a href="{{ route('admin.user.export.csv') }}" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-white hover:bg-white/5 transition border-b border-white/5">
-                                            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Export CSV
+                                            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Ekspor CSV
                                         </a>
                                         <a href="{{ route('admin.user.export.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-white hover:bg-white/5 transition">
-                                            <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> Print PDF
+                                            <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> Cetak PDF
                                         </a>
                                     </div>
                                 </div>
-                                <button @click="showImport = true" class="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white transition text-xs" title="Import Data">
+                                <button @click="showImport = true" class="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white transition text-xs" title="Impor Data">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                                 </button>
                                 <button @click="showAdd = true" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 border border-emerald-400 text-white text-[11px] font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)] transition hover:-translate-y-0.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Add New
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Tambah Baru
                                 </button>
                             </div>
                         </div>
@@ -724,10 +724,10 @@
                         <table class="w-full text-sm text-left whitespace-nowrap sm:whitespace-normal border border-white/5 rounded-xl shadow-inner bg-[#0a0e17]/30">
                             <thead class="bg-[#0f141e] text-white/40 text-[10px] uppercase font-bold border-b border-white/5 sticky top-0 z-20">
                                 <tr>
-                                    <th class="px-6 py-4 border-b border-white/5">Student Profile (Active)</th> 
-                                    <th class="px-6 py-4 border-b border-white/5">Class Group</th>
-                                    <th class="px-6 py-4 border-b border-white/5">Institution</th>
-                                    <th class="px-6 py-4 text-right border-b border-white/5">Panel Action</th>
+                                    <th class="px-6 py-4 border-b border-white/5">Profil Siswa (Aktif)</th> 
+                                    <th class="px-6 py-4 border-b border-white/5">Grup Kelas</th>
+                                    <th class="px-6 py-4 border-b border-white/5">Institusi</th>
+                                    <th class="px-6 py-4 text-right border-b border-white/5">Aksi Panel</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-white/5">
@@ -740,7 +740,7 @@
                                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow-inner border border-white/10 relative group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition">
                                                 {{ substr($user->name, 0, 2) }}
                                                 {{-- GREEN DOT INDICATOR --}}
-                                                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#020617] rounded-full shadow-[0_0_5px_#10b981]" title="Active Account"></span>
+                                                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#020617] rounded-full shadow-[0_0_5px_#10b981]" title="Akun Aktif"></span>
                                             </div>
                                             <div>
                                                 <p class="font-bold text-white text-xs group-hover:text-indigo-300 transition">{{ $user->name }}</p>
@@ -753,17 +753,17 @@
                                             {{ $user->class_group ?? 'N/A' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-white/50 text-[11px] font-medium">{{ $user->institution ?? 'Not Defined' }}</td>
+                                    <td class="px-6 py-4 text-white/50 text-[11px] font-medium">{{ $user->institution ?? 'Belum Ditentukan' }}</td>
                                     <td class="px-6 py-4 text-right">
                                         <a href="{{ route('admin.student.detail', $user->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#020617] hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-white text-[10px] font-bold transition shadow-inner hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] group/btn relative z-30">
                                             <svg class="w-3.5 h-3.5 text-indigo-400 group-hover/btn:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            View Insight
+                                            Lihat Insight
                                         </a>
                                     </td>
                                 </tr>
                                 @endif
                                 @empty
-                                <tr><td colspan="4" class="text-center py-16 text-white/30 text-xs italic bg-[#0a0e17]/50 rounded-xl m-4 block border border-dashed border-white/10">No student data found in the directory.</td></tr>
+                                <tr><td colspan="4" class="text-center py-16 text-white/30 text-xs italic bg-[#0a0e17]/50 rounded-xl m-4 block border border-dashed border-white/10">Belum ada data siswa ditemukan di direktori.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -784,9 +784,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Registered Student List
+                        Daftar Siswa Terdaftar
                     </h3>
-                    <p class="text-[10px] text-indigo-400 mt-1 font-mono">10 Most Recent Registrations</p>
+                    <p class="text-[10px] text-indigo-400 mt-1 font-mono">10 Pendaftaran Terbaru</p>
                 </div>
                 <button @click="showStudentModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -799,11 +799,11 @@
                         <p class="text-[10px] text-white/50 font-mono mt-0.5">{{ $usr->email }}</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="text-[9px] font-bold text-indigo-300 bg-[#020617] px-3 py-1.5 rounded-lg border border-white/10 uppercase tracking-widest">Class: {{ $usr->class_group ?? 'N/A' }}</span>
+                        <span class="text-[9px] font-bold text-indigo-300 bg-[#020617] px-3 py-1.5 rounded-lg border border-white/10 uppercase tracking-widest">Kelas: {{ $usr->class_group ?? 'N/A' }}</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-white/40 text-center py-10">No student data available.</p>
+                <p class="text-[11px] text-white/40 text-center py-10">Belum ada data siswa.</p>
                 @endforelse
             </div>
         </div>
@@ -817,9 +817,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Passed Quizzes Log
+                        Log Kuis Lulus
                     </h3>
-                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">15 Most Recent Valid Submissions (Score >= 70)</p>
+                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">15 Pengumpulan Valid Terbaru (Skor >= 70)</p>
                 </div>
                 <button @click="showQuizModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -829,7 +829,7 @@
                     <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-sm font-bold text-cyan-400 border border-cyan-500/30 shrink-0">{{ substr($act->name, 0, 2) }}</div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-white truncate">{{ $act->name }}</p>
-                        <p class="text-[11px] text-white/50 mt-0.5">Quiz Chapter <span class="font-bold text-white">{{ $act->chapter_id ?? 'Eval' }}</span></p>
+                        <p class="text-[11px] text-white/50 mt-0.5">Kuis Bab <span class="font-bold text-white">{{ $act->chapter_id ?? 'Eval' }}</span></p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="block text-sm font-black text-emerald-400">{{ $act->score }} Pts</span>
@@ -838,7 +838,7 @@
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10">
-                    <p class="text-[11px] text-white/40 italic">No passed quiz data available.</p>
+                    <p class="text-[11px] text-white/40 italic">Belum ada data kuis lulus.</p>
                 </div>
                 @endforelse
             </div>
@@ -853,9 +853,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Pass Rate Detail
+                        Detail Tingkat Kelulusan
                     </h3>
-                    <p class="text-[10px] text-violet-400 mt-1 font-mono">15 Most Recent Successes</p>
+                    <p class="text-[10px] text-violet-400 mt-1 font-mono">15 Kesuksesan Terbaru</p>
                 </div>
                 <button @click="showPassedModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -865,7 +865,7 @@
                     <div class="w-10 h-10 rounded-full bg-violet-500/10 flex items-center justify-center text-sm font-bold text-violet-400 border border-violet-500/30 shrink-0">{{ substr($act->name, 0, 2) }}</div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-white truncate">{{ $act->name }}</p>
-                        <p class="text-[11px] text-white/50 mt-0.5">Quiz Chapter <span class="font-bold text-white">{{ $act->chapter_id ?? 'Eval' }}</span></p>
+                        <p class="text-[11px] text-white/50 mt-0.5">Kuis Bab <span class="font-bold text-white">{{ $act->chapter_id ?? 'Eval' }}</span></p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="block text-sm font-black text-emerald-400">{{ $act->score }} Pts</span>
@@ -874,7 +874,7 @@
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10">
-                    <p class="text-[11px] text-white/40 italic">No passed quiz data available.</p>
+                    <p class="text-[11px] text-white/40 italic">Belum ada data kuis lulus.</p>
                 </div>
                 @endforelse
             </div>
@@ -889,9 +889,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-fuchsia-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Completion History
+                        Riwayat Penyelesaian Lab
                     </h3>
-                    <p class="text-[10px] text-fuchsia-400 mt-1 font-mono">Status: Passed | 15 Most Recent</p>
+                    <p class="text-[10px] text-fuchsia-400 mt-1 font-mono">Status: Lulus | 15 Terbaru</p>
                 </div>
                 <button @click="showLabModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -907,21 +907,21 @@
                         <p class="text-[10px] text-white/50 mt-0.5">Lab ID: <span class="text-white/80 font-bold">#{{ $lab->lab_id }}</span></p>
                     </div>
                     <div class="flex-1 text-center hidden sm:block">
-                        <p class="text-[11px] text-white/60 bg-white/5 px-3 py-1.5 rounded-lg inline-block truncate max-w-full font-medium" title="{{ $lab->lab_title ?? 'Lab Assignment' }}">{{ $lab->lab_title ?? 'Lab Assignment' }}</p>
+                        <p class="text-[11px] text-white/60 bg-white/5 px-3 py-1.5 rounded-lg inline-block truncate max-w-full font-medium" title="{{ $lab->lab_title ?? 'Tugas Lab' }}">{{ $lab->lab_title ?? 'Tugas Lab' }}</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-[11px] font-black text-emerald-400 mb-1">Score: {{ $lab->final_score ?? 'N/A' }}</span>
+                        <span class="block text-[11px] font-black text-emerald-400 mb-1">Skor: {{ $lab->final_score ?? 'N/A' }}</span>
                         <span class="text-[9px] font-mono text-white/40 hidden sm:block">{{ \Carbon\Carbon::parse($lab->created_at)->diffForHumans() }}</span>
                     </div>
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10">
-                    <p class="text-[11px] text-white/40 italic">No lab sessions have been completed yet.</p>
+                    <p class="text-[11px] text-white/40 italic">Belum ada sesi lab yang diselesaikan.</p>
                 </div>
                 @endforelse
             </div>
             <div class="mt-6 pt-4 border-t border-white/5 text-center">
-                <a href="{{ route('admin.lab.analytics') }}" class="text-[11px] font-bold text-fuchsia-400 hover:text-white transition bg-fuchsia-500/10 px-4 py-2 rounded-lg border border-fuchsia-500/30">View Lab Analytics Panel &rarr;</a>
+                <a href="{{ route('admin.lab.analytics') }}" class="text-[11px] font-bold text-fuchsia-400 hover:text-white transition bg-fuchsia-500/10 px-4 py-2 rounded-lg border border-fuchsia-500/30">Lihat Panel Analitik Lab &rarr;</a>
             </div>
         </div>
     </div>
@@ -934,7 +934,7 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Average Score per Chapter
+                        Skor Rata-rata per Bab
                     </h3>
                 </div>
                 <button @click="showAvgModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -943,15 +943,15 @@
                 @forelse($chapterAverages as $avg)
                 <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#0a0e17]/80 border border-white/5 hover:border-emerald-500/30 transition group">
                     <div>
-                        <p class="text-sm font-bold text-white">Quiz Chapter {{ $avg->chapter_id }}</p>
-                        <p class="text-[10px] text-white/50 mt-0.5">Total Attempts: <span class="text-white">{{ $avg->total }}</span></p>
+                        <p class="text-sm font-bold text-white">Kuis Bab {{ $avg->chapter_id }}</p>
+                        <p class="text-[10px] text-white/50 mt-0.5">Total Percobaan: <span class="text-white">{{ $avg->total }}</span></p>
                     </div>
                     <div class="text-right">
                         <span class="text-xl font-black {{ $avg->avg_score >= 70 ? 'text-emerald-400' : 'text-red-400' }}">{{ $avg->avg_score }}</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-white/40 text-center py-10">No average data.</p>
+                <p class="text-[11px] text-white/40 text-center py-10">Belum ada data rata-rata.</p>
                 @endforelse
             </div>
         </div>
@@ -965,9 +965,9 @@
                 <div>
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        Remedial Warning List
+                        Daftar Peringatan Remedial
                     </h3>
-                    <p class="text-[10px] text-red-400 mt-1 font-mono">Filtered automatically (Unique & Passed students excluded)</p>
+                    <p class="text-[10px] text-red-400 mt-1 font-mono">Disaring secara otomatis (Siswa lulus & duplikat dikecualikan)</p>
                 </div>
                 <button @click="showRemedialModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -977,16 +977,16 @@
                     <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-sm font-black text-red-500 border border-red-500/30 shrink-0">!</div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-white truncate">{{ $act->name }}</p>
-                        <p class="text-[10px] text-red-400/80 mt-0.5">Quiz Chapter: <span class="font-bold text-red-300">{{ $act->chapter_id ?? 'N/A' }}</span></p>
+                        <p class="text-[10px] text-red-400/80 mt-0.5">Kuis Bab: <span class="font-bold text-red-300">{{ $act->chapter_id ?? 'N/A' }}</span></p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="block text-sm font-black text-red-500">{{ $act->score }} Pts</span>
-                        <span class="text-[9px] text-red-300 font-bold bg-red-500/10 px-2 py-0.5 rounded mt-1 hidden sm:inline-block">Minus {{ 70 - $act->score }} from KKM</span>
+                        <span class="text-[9px] text-red-300 font-bold bg-red-500/10 px-2 py-0.5 rounded mt-1 hidden sm:inline-block">Kurang {{ 70 - $act->score }} dari KKM</span>
                     </div>
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10 text-emerald-400">
-                    <span class="text-xs font-bold tracking-widest uppercase text-center">All Students Passed!<br>No Action Needed.</span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-center">Semua Siswa Lulus!<br>Tidak Ada Tindakan Diperlukan.</span>
                 </div>
                 @endforelse
             </div>
@@ -999,18 +999,18 @@
     <div x-show="showImport" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-[#020617]/90 backdrop-blur-md" @click="showImport = false"></div>
         <div class="relative w-full max-w-md bg-[#0f141e] border border-white/10 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.9)] p-6" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
-            <h3 class="text-lg font-bold text-white mb-2">Import Student Data</h3>
-            <p class="text-[10px] text-white/50 mb-6 border-b border-white/5 pb-4">Required CSV Headers: <code class="bg-[#0a0e17] px-1.5 py-0.5 rounded text-indigo-300 font-mono font-bold mt-1 inline-block border border-white/5">Name, Email, Class, Institution, Password</code></p>
+            <h3 class="text-lg font-bold text-white mb-2">Impor Data Siswa</h3>
+            <p class="text-[10px] text-white/50 mb-6 border-b border-white/5 pb-4">Header CSV yang Dibutuhkan: <code class="bg-[#0a0e17] px-1.5 py-0.5 rounded text-indigo-300 font-mono font-bold mt-1 inline-block border border-white/5">Name, Email, Class, Institution, Password</code></p>
             <form action="{{ route('admin.user.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="relative w-full h-32 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:border-indigo-500/50 bg-[#0a0e17] group cursor-pointer mb-5 shadow-inner transition-colors">
                     <input type="file" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required onchange="document.getElementById('fileName').innerText = this.files[0].name">
                     <svg class="w-8 h-8 text-white/30 group-hover:text-indigo-400 mb-2 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                    <span id="fileName" class="text-[10px] font-bold text-white/50 group-hover:text-white transition">Click to select (.csv)</span>
+                    <span id="fileName" class="text-[10px] font-bold text-white/50 group-hover:text-white transition">Klik untuk memilih (.csv)</span>
                 </div>
                 <div class="flex justify-end gap-3 mt-2">
-                    <button type="button" @click="showImport = false" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-xs font-bold transition border border-transparent hover:border-white/10">Cancel</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-400">Execute Import</button>
+                    <button type="button" @click="showImport = false" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-xs font-bold transition border border-transparent hover:border-white/10">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-400">Jalankan Impor</button>
                 </div>
             </form>
         </div>
@@ -1020,14 +1020,14 @@
     <div x-show="showAdd" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-[#020617]/90 backdrop-blur-md" @click="showAdd = false"></div>
         <div class="relative w-full max-w-md bg-[#0f141e] border border-white/10 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.9)] p-6" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
-            <h3 class="text-lg font-bold text-white mb-6 border-b border-white/5 pb-3">Enroll New Student</h3>
+            <h3 class="text-lg font-bold text-white mb-6 border-b border-white/5 pb-3">Daftarkan Siswa Baru</h3>
             <form action="{{ route('admin.user.store') }}" method="POST" class="space-y-4">
                 @csrf
-                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Full Name</label><input type="text" name="name" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
-                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Email Address</label><input type="email" name="email" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
+                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Nama Lengkap</label><input type="text" name="name" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
+                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Alamat Email</label><input type="email" name="email" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Class Group</label>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Grup Kelas</label>
                         <div class="relative">
                             <select name="class_group" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 appearance-none cursor-pointer">
                                 <option value="" class="bg-[#0f141e] text-slate-400">-- Pilih Kelas --</option>
@@ -1046,14 +1046,14 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Institution</label>
+                        <label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Institusi</label>
                         <input type="text" name="institution" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]">
                     </div>
                 </div>
-                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Password</label><input type="password" name="password" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
+                <div><label class="text-[9px] font-bold text-white/50 uppercase mb-1.5 block tracking-widest">Kata Sandi</label><input type="password" name="password" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-[#0a0e17]" required></div>
                 <div class="flex justify-end gap-3 pt-5 border-t border-white/5 mt-5">
-                    <button type="button" @click="showAdd = false" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-xs font-bold transition border border-transparent hover:border-white/10">Cancel</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-400">Save Data</button>
+                    <button type="button" @click="showAdd = false" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-xs font-bold transition border border-transparent hover:border-white/10">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-400">Simpan Data</button>
                 </div>
             </form>
         </div>
@@ -1075,7 +1075,7 @@
                     data: {
                         labels: {!! json_encode($chartLabels) !!},
                         datasets: [{
-                            label: 'Average Score', 
+                            label: 'Skor Rata-rata', 
                             data: {!! json_encode($chartScores) !!},
                             borderColor: '#818cf8', backgroundColor: gradient, borderWidth: 3,
                             pointBackgroundColor: '#0f141e', pointBorderColor: '#818cf8', pointBorderWidth: 2, pointRadius: 5, fill: true, tension: 0.4,
@@ -1108,7 +1108,7 @@
         }
 
         // SWAL
-        @if(session('success')) Swal.fire({ title: 'Success!', text: "{{ session('success') }}", icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1', customClass: { popup: 'rounded-2xl border border-white/10 shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
+        @if(session('success')) Swal.fire({ title: 'Berhasil!', text: "{{ session('success') }}", icon: 'success', background: '#0f141e', color: '#fff', confirmButtonColor: '#6366f1', customClass: { popup: 'rounded-2xl border border-white/10 shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
         @if(session('error')) Swal.fire({ title: 'Error!', text: "{{ session('error') }}", icon: 'error', background: '#0f141e', color: '#fff', confirmButtonColor: '#ef4444', customClass: { popup: 'rounded-2xl border border-white/10 shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
     </script>
 

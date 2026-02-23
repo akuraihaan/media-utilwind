@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-
+<link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 @section('title', 'UI Component Gallery · Utilwind')
 
 @php
