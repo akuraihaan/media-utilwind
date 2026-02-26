@@ -39,7 +39,7 @@
                         $isUnlocked = Auth::user() && (Auth::user()->role === 'admin' || !empty(Auth::user()->class_group));
                     @endphp
                     @if($isUnlocked)
-                        <a href="{{ route('courses.htmldancss') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
+                        <a href="{{ route('courses.curriculum') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
                             <span class="grayscale group-hover:grayscale-0 transition text-lg">📚</span>
                             Materi Belajar
                         </a>

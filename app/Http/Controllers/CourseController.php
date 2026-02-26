@@ -179,7 +179,7 @@ class CourseController extends Controller
         // 2. Tandai slide sebagai selesai di database
         UserLessonProgress::updateOrCreate(
             ['user_id' => $user->id, 'course_lesson_id' => $data['lesson_id']], 
-            ['completed' => true]
+            ['completed' => 1]
         );
 
         // 3. LOGIKA GAMIFIKASI: Berikan XP hanya jika slide INI BARU PERTAMA KALI diselesaikan

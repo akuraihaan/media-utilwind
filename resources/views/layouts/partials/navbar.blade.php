@@ -136,11 +136,11 @@
                     @endauth
                 </div>
 
-                {{-- MOBILE HAMBURGER --}}
+                {{-- MOBILE HAMBURGER ICON --}}
                 <div class="md:hidden">
                     <button onclick="toggleMobileMenu()" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition focus:outline-none active:scale-95">
                         <svg id="hamburger-icon" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg id="close-icon" class="w-8 h-8 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg id="close-icon" class="w-8 h-8 hidden text-fuchsia-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
@@ -148,9 +148,13 @@
         </div>
     </div>
 
-    {{-- MOBILE MENU DRAWER --}}
-    <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-[#020617]/95 backdrop-blur-2xl border-b border-white/5 shadow-2xl transition-all duration-300 origin-top transform scale-y-95 opacity-0 h-screen overflow-y-auto">
+    {{-- =====================================================================
+         MOBILE MENU DRAWER (RESPONSIVE DROPDOWN)
+         ===================================================================== --}}
+    <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-[#020617]/95 backdrop-blur-2xl border-b border-white/5 shadow-2xl transition-all duration-300 origin-top transform scale-y-95 opacity-0 h-screen overflow-y-auto z-40">
         <div class="px-6 py-8 space-y-6 pb-40">
+            
+            {{-- User Info Mobile --}}
             @auth
                 <div class="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden">
                     @if(Auth::user()->avatar)
@@ -167,12 +171,29 @@
             @endauth
 
             <div class="space-y-3">
-                @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="block px-6 py-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 font-bold text-lg transition flex justify-between items-center group mb-4">
-                        ⚡ Panel Admin <span class="text-indigo-400 group-hover:translate-x-1 transition">→</span>
-                    </a>
+                
+                {{-- TOMBOL MENU UTAMA (ADMIN / DASHBOARD) MOBILE --}}
+                @if(auth()->check())
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="block px-5 py-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 font-bold text-lg transition flex justify-between items-center group mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">⚡</span> 
+                                Panel Admin
+                            </div>
+                            <span class="text-indigo-400 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    @elseif(auth()->user()->role === 'student')
+                        <a href="{{ route('dashboard') }}" class="block px-5 py-4 rounded-2xl bg-blue-600/20 border border-blue-500/40 text-blue-300 font-bold text-lg transition flex justify-between items-center group mb-4 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">📊</span> 
+                                Dashboard Siswa
+                            </div>
+                            <span class="text-blue-400 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    @endif
                 @endif
 
+                {{-- Main Public Navigation --}}
                 @foreach(['Beranda' => route('landing'), 'Materi' => route('courses.curriculum'), 'Sandbox' => route('sandbox')] as $label => $link)
                     <a href="{{ $link }}" class="block px-6 py-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 text-white font-bold text-lg transition flex justify-between items-center group">
                         {{ $label }} <span class="text-white/20 group-hover:text-white group-hover:translate-x-1 transition">→</span>
@@ -182,10 +203,10 @@
                 {{-- Mobile Resources Link --}}
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <a href="{{ route('cheatsheet.index') }}" class="block px-4 py-4 rounded-2xl bg-white/[0.02] border border-white/5 text-white font-bold text-center hover:bg-white/10">
-                        <span class="block text-fuchsia-400 mb-1">⚡</span> Cheat Sheet
+                        <span class="block text-fuchsia-400 mb-1 text-2xl">⚡</span> Cheat Sheet
                     </a>
                     <a href="{{ route('gallery.index') }}" class="block px-4 py-4 rounded-2xl bg-white/[0.02] border border-white/5 text-white font-bold text-center hover:bg-white/10">
-                        <span class="block text-cyan-400 mb-1">🎨</span> UI Gallery
+                        <span class="block text-cyan-400 mb-1 text-2xl">🎨</span> UI Gallery
                     </a>
                 </div>
             </div>
@@ -194,7 +215,9 @@
                 @auth
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
-                        <button class="w-full py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-lg hover:bg-red-500/20 transition flex items-center justify-center gap-3">Keluar Aplikasi</button>
+                        <button class="w-full py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-lg hover:bg-red-500/20 transition flex items-center justify-center gap-3">
+                            Keluar Aplikasi
+                        </button>
                     </form>
                 @else
                     <div class="grid grid-cols-1 gap-4">
@@ -228,6 +251,7 @@
             closeUserMenu();
         }
     }
+    
     function closeUserMenu() {
         const menu = document.getElementById('user-dropdown');
         const chevron = document.getElementById('menu-chevron');
@@ -257,6 +281,7 @@
             closeResourceMenu();
         }
     }
+    
     function closeResourceMenu() {
         const menu = document.getElementById('resource-dropdown');
         const chevron = document.getElementById('resource-chevron');
@@ -272,22 +297,35 @@
         const mobileMenu = document.getElementById('mobile-menu');
         const hamburger = document.getElementById('hamburger-icon');
         const close = document.getElementById('close-icon');
+        
         if (mobileMenu.classList.contains('hidden')) {
+            // Membuka menu
             mobileMenu.classList.remove('hidden');
             hamburger.classList.add('hidden');
             close.classList.remove('hidden');
+            
+            // Animasi turun
             setTimeout(() => {
                 mobileMenu.classList.remove('scale-y-95', 'opacity-0');
                 mobileMenu.classList.add('scale-y-100', 'opacity-100');
             }, 10);
+            
+            // Mencegah scroll pada body saat menu terbuka
+            document.body.style.overflow = 'hidden';
+            
         } else {
+            // Menutup menu
             mobileMenu.classList.remove('scale-y-100', 'opacity-100');
             mobileMenu.classList.add('scale-y-95', 'opacity-0');
+            
             setTimeout(() => {
                 mobileMenu.classList.add('hidden');
                 hamburger.classList.remove('hidden');
                 close.classList.add('hidden');
             }, 300);
+            
+            // Mengembalikan scroll
+            document.body.style.overflow = 'auto';
         }
     }
 
