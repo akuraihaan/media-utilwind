@@ -129,28 +129,37 @@
     <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
 
         {{-- HERO SECTION --}}
-        <div class="flex flex-col lg:flex-row justify-between items-end mb-24 gap-12 reveal-up">
-            <div class="space-y-6 max-w-3xl">
-                <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-                    </span>
-                    <span class="text-[11px] font-bold tracking-[0.2em] text-cyan-200 uppercase">Learning Path</span>
-                </div>
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-12 reveal-up">
+            <div class="space-y-4 max-w-3xl w-full">
+                
+                {{-- BREADCRUMB START --}}
+                <nav class="flex items-center gap-2 mb-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40" aria-label="Breadcrumb">
+                    <a href="/" class="hover:text-white transition-colors flex items-center gap-1.5">
+                        <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        Home
+                    </a>
+                    <span class="text-white/20">/</span>
+                    <a href="{{ route('dashboard') }}" class="hover:text-white transition-colors">Dashboard</a>
+                    <span class="text-white/20">/</span>
+                    <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">Materi</span>
+                </nav>
+                {{-- BREADCRUMB END --}}
+
+               
+                
                 <h1 class="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight">
                     Kurikulum <br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-400">
-                        Tailwind Mastery
+                        Utilwind
                     </span>
                 </h1>
-                <p class="text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed">
+                <p class="text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed mt-4">
                     Selesaikan Materi, kerjakan Hands-on Lab, lalu taklukkan Kuis untuk membuka level berikutnya.
                 </p>
             </div>
 
             {{-- Progress Stats --}}
-            <div class="w-full lg:w-96 glass-card rounded-3xl p-8 relative overflow-hidden group hover:border-cyan-500/30 transition duration-500">
+            <div class="w-full lg:w-96 glass-card rounded-3xl p-8 relative overflow-hidden group hover:border-cyan-500/30 transition duration-500 shrink-0">
                 <div class="absolute -right-12 -top-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition duration-500"></div>
                 <div class="flex justify-between items-end mb-6">
                     <div>
@@ -334,7 +343,7 @@
                         $isQuizPassed = !empty($completedLessonsMap[$chapter['quiz_key_db']]);
                     @endphp
 
-                    <div class="p-6 pt-2 border-t border-white/5 bg-white/[0.02] mt-2">
+                    <div class="p-6 pt-2 border-t border-white/5 bg-white/[0.02] mt-2 rounded-b-[2rem]">
                         @if($isQuizPassed)
                             <div class="w-full py-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

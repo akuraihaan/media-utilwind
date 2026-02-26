@@ -27,38 +27,53 @@
     <div class="pt-20 h-screen flex flex-col">
         
         {{-- TOOLBAR AREA (Secondary Nav specific for Sandbox) --}}
-        <div class="h-14 bg-[#0b0f19]/90 border-b border-white/5 flex items-center justify-between px-4 lg:px-6 backdrop-blur-sm shrink-0 z-40">
+        <div class="h-14 bg-[#0b0f19]/90 border-b border-white/5 flex items-center justify-between px-3 md:px-4 lg:px-6 backdrop-blur-sm shrink-0 z-40 overflow-x-auto no-scrollbar">
             
-            {{-- Left: Status --}}
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <span class="relative flex h-2.5 w-2.5">
+            {{-- Left: Breadcrumb & Status --}}
+            <div class="flex items-center gap-3 md:gap-4 shrink-0">
+                
+                {{-- BREADCRUMB START --}}
+                <nav class="flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/40" aria-label="Breadcrumb">
+                    <a href="/" class="hover:text-white transition-colors flex items-center gap-1 hidden sm:flex">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    </a>
+                    <span class="text-white/20 hidden sm:inline">/</span>
+                    <a href="{{ route('dashboard') }}" class="hover:text-white transition-colors hidden md:inline">Dashboard</a>
+                    <span class="text-white/20 hidden md:inline">/</span>
+                    <span class="text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">Sandbox</span>
+                </nav>
+                {{-- BREADCRUMB END --}}
+
+                <div class="h-4 w-px bg-white/10 mx-1 md:mx-2 hidden sm:block"></div>
+
+                <div class="flex items-center gap-2 border border-white/10 bg-white/5 px-2.5 py-1 rounded-md">
+                    <span class="relative flex h-2 w-2">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">Live Environment</span>
+                    <span class="text-[9px] md:text-[10px] font-bold text-emerald-400 tracking-wider uppercase whitespace-nowrap">Live Env<span class="hidden md:inline">ironment</span></span>
                 </div>
-                <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
-                <span id="saveStatus" class="text-[10px] text-white/40 hidden sm:block font-mono">Changes saved locally</span>
+                
+                <span id="saveStatus" class="text-[9px] text-white/40 hidden lg:block font-mono">Changes saved locally</span>
             </div>
 
             {{-- Right: Actions --}}
-            <div class="flex items-center gap-3">
-                <button onclick="copyEditorCode()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition text-xs font-medium border border-transparent hover:border-white/10 group">
-                    <svg class="w-4 h-4 text-white/40 group-hover:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                    <span class="hidden sm:inline">Copy Code</span>
+            <div class="flex items-center gap-1.5 md:gap-3 shrink-0 ml-4">
+                <button onclick="copyEditorCode()" class="flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition text-[10px] md:text-xs font-medium border border-transparent hover:border-white/10 group">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-white/40 group-hover:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span class="hidden sm:inline whitespace-nowrap">Copy Code</span>
                 </button>
 
-                <button onclick="resetCode()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-white/60 hover:text-red-400 transition text-xs font-medium border border-transparent hover:border-red-500/20 group">
-                    <svg class="w-4 h-4 text-white/40 group-hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <button onclick="resetCode()" class="flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-white/60 hover:text-red-400 transition text-[10px] md:text-xs font-medium border border-transparent hover:border-red-500/20 group">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-white/40 group-hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     <span class="hidden sm:inline">Reset</span>
                 </button>
 
-                <div class="h-4 w-px bg-white/10 mx-1"></div>
+                <div class="h-4 w-px bg-white/10 mx-0.5 md:mx-1"></div>
 
-                <button onclick="runPreview()" class="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20 transition hover:scale-105 active:scale-95">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
-                    RUN <span class="hidden md:inline opacity-50 ml-1 font-normal">(Ctrl+Enter)</span>
+                <button onclick="runPreview()" class="flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-1.5 md:py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-[10px] md:text-xs font-bold shadow-lg shadow-indigo-500/20 transition hover:scale-105 active:scale-95 whitespace-nowrap">
+                    <svg class="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                    RUN <span class="hidden lg:inline opacity-50 ml-1 font-normal">(Ctrl+Enter)</span>
                 </button>
             </div>
         </div>
@@ -67,10 +82,10 @@
         <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
             
             {{-- ================= LEFT: EDITOR PANE ================= --}}
-            <div class="w-full md:w-1/2 flex flex-col bg-[#1e1e1e] border-r border-white/10 relative group/editor">
+            <div class="w-full md:w-1/2 flex flex-col bg-[#1e1e1e] border-r border-white/10 relative group/editor h-1/2 md:h-full">
                 
                 {{-- Editor Tabs --}}
-                <div class="h-9 bg-[#0f141e] flex items-end px-2 border-b border-white/5 select-none">
+                <div class="h-9 bg-[#0f141e] flex items-end px-2 border-b border-white/5 select-none shrink-0">
                     <div class="px-4 py-2 bg-[#1e1e1e] text-cyan-400 text-[11px] font-bold border-t-2 border-cyan-500 rounded-t flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                         index.html
@@ -81,10 +96,10 @@
                 </div>
 
                 {{-- Monaco Container --}}
-                <div id="monaco-container" class="flex-1 relative"></div>
+                <div id="monaco-container" class="flex-1 relative min-h-[150px]"></div>
 
                 {{-- Console / Validation Panel --}}
-                <div class="h-auto min-h-[40px] max-h-32 bg-[#0f141e] border-t border-white/10 flex flex-col transition-all">
+                <div class="h-auto min-h-[40px] max-h-24 md:max-h-32 bg-[#0f141e] border-t border-white/10 flex flex-col transition-all shrink-0">
                     <div class="px-3 py-1.5 bg-[#0b0f19] border-b border-white/5 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg class="w-3 h-3 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -99,10 +114,10 @@
             </div>
 
             {{-- ================= RIGHT: PREVIEW PANE ================= --}}
-            <div class="w-full md:w-1/2 flex flex-col bg-white relative">
+            <div class="w-full md:w-1/2 flex flex-col bg-white relative h-1/2 md:h-full border-t-4 border-[#0b0f19] md:border-t-0">
                 
                 {{-- Mockup Browser Toolbar --}}
-                <div class="h-9 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3 select-none">
+                <div class="h-9 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3 select-none shrink-0">
                     <div class="flex gap-1.5">
                         <div class="w-2.5 h-2.5 rounded-full bg-red-400/80 border border-red-500/20"></div>
                         <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/80 border border-yellow-500/20"></div>
@@ -113,7 +128,7 @@
                     <div class="flex-1 mx-4">
                         <div class="bg-white border border-gray-300 rounded-md px-3 py-0.5 flex items-center justify-center gap-2 shadow-sm">
                             <svg class="w-2.5 h-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                            <span class="text-[10px] font-mono text-gray-500">localhost:3000/preview</span>
+                            <span class="text-[10px] font-mono text-gray-500 truncate">localhost:3000/preview</span>
                         </div>
                     </div>
 
@@ -133,13 +148,13 @@
     </div>
 
     {{-- TOAST NOTIFICATION --}}
-    <div id="toast" class="fixed bottom-10 right-10 bg-[#0f141e] border border-cyan-500/30 text-white px-5 py-3 rounded-xl shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 z-[100] flex items-center gap-3 backdrop-blur-md">
-        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <div id="toast" class="fixed bottom-10 right-10 max-w-[80vw] bg-[#0f141e] border border-cyan-500/30 text-white px-4 md:px-5 py-3 rounded-xl shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 z-[100] flex items-center gap-3 backdrop-blur-md">
+        <div class="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         </div>
         <div>
-            <h4 class="text-xs font-bold text-white">Notification</h4>
-            <p id="toast-msg" class="text-[10px] text-white/60">Action completed successfully.</p>
+            <h4 class="text-[11px] md:text-xs font-bold text-white">Notification</h4>
+            <p id="toast-msg" class="text-[9px] md:text-[10px] text-white/60 truncate">Action completed successfully.</p>
         </div>
     </div>
 
@@ -154,6 +169,10 @@
     ::-webkit-scrollbar-track { background: #0f141e; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Hide scrollbar completely on toolbar to keep it clean on mobile */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     /* Animated Background */
     #animated-bg {
@@ -183,8 +202,8 @@
     let isLive = true;
 
     // DEFAULT TEMPLATE (Jika kosong)
-    const DEFAULT_CODE = `<div class="min-h-screen flex items-center justify-center bg-slate-50">
-  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300 group">
+    const DEFAULT_CODE = `<div class="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 group">
     <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
         <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 p-1 bg-white rounded-full">
             <img src="https://ui-avatars.com/api/?name=Util+Wind&background=0D9488&color=fff" class="w-16 h-16 rounded-full border-2 border-white">
@@ -192,7 +211,7 @@
     </div>
     <div class="pt-12 pb-8 px-8 text-center">
         <h2 class="text-2xl font-bold text-slate-800 group-hover:text-indigo-600 transition">Hello, Utilwind!</h2>
-        <p class="text-slate-500 mt-2 text-sm">
+        <p class="text-slate-500 mt-2 text-sm leading-relaxed">
             Selamat datang di Sandbox. Coba edit kode ini atau import komponen dari Gallery.
         </p>
         <button class="mt-6 px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-full shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition active:scale-95">
@@ -233,15 +252,16 @@
             value: initialCode,
             language: 'html',
             theme: 'vs-dark', // Dark theme matching UI
-            fontSize: 14,
+            fontSize: window.innerWidth < 768 ? 12 : 14, // Responsive font size
             fontFamily: 'Menlo, Monaco, "Courier New", monospace',
             minimap: { enabled: false }, // Hemat tempat
             automaticLayout: true,
-            padding: { top: 20, bottom: 20 },
+            padding: { top: 16, bottom: 16 },
             scrollBeyondLastLine: false,
             renderLineHighlight: 'all',
             smoothScrolling: true,
-            tabSize: 2
+            tabSize: 2,
+            wordWrap: 'on' // Penting untuk mobile agar tidak perlu scroll horizontal
         });
 
         // First Run
@@ -280,9 +300,9 @@
                     html { scroll-behavior: smooth; }
                     body { font-family: 'Inter', sans-serif; }
                     /* Scrollbar custom di dalam iframe */
-                    ::-webkit-scrollbar { width: 8px; }
+                    ::-webkit-scrollbar { width: 6px; height: 6px; }
                     ::-webkit-scrollbar-track { background: #f1f1f1; }
-                    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+                    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
                     ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
                 </style>
             </head>
@@ -328,7 +348,7 @@
             logs += `<div class="text-yellow-400 mb-1">⚠ Warning: Tidak ada utility class Tailwind ditemukan.</div>`;
         }
         
-        // Cek 2: Struktur Div
+        // Cek 2: Struktur Div (Sederhana)
         const openDivs = (code.match(/<div/g) || []).length;
         const closeDivs = (code.match(/<\/div>/g) || []).length;
         if (openDivs !== closeDivs) {
@@ -361,17 +381,18 @@
         }
     });
 
-    // 6. MOUSE GLOW & STARS (Visuals)
-    $(document).mousemove(function(e) { $('#cursor-glow').css({ left: e.clientX, top: e.clientY }); });
+    // 6. MOUSE GLOW & STARS (Visuals) - Desktop Only
+    if (window.innerWidth > 768) {
+        $(document).mousemove(function(e) { $('#cursor-glow').css({ left: e.clientX, top: e.clientY }); });
 
-    const c = document.getElementById('stars');
-    if (c) {
-        const x = c.getContext('2d');
-        let s = [];
-        function initStars() { c.width = window.innerWidth; c.height = window.innerHeight; s=[]; for(let i=0;i<60;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5,v:Math.random()*0.2+0.1}); }
-        function animateStars() { x.clearRect(0,0,c.width,c.height); x.fillStyle='rgba(255,255,255,0.3)'; s.forEach(t=>{ x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill(); t.y-=t.v; if(t.y<0)t.y=c.height; }); requestAnimationFrame(animateStars); }
-        window.addEventListener('resize', initStars); initStars(); animateStars();
+        const c = document.getElementById('stars');
+        if (c) {
+            const x = c.getContext('2d');
+            let s = [];
+            function initStars() { c.width = window.innerWidth; c.height = window.innerHeight; s=[]; for(let i=0;i<60;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5,v:Math.random()*0.2+0.1}); }
+            function animateStars() { x.clearRect(0,0,c.width,c.height); x.fillStyle='rgba(255,255,255,0.3)'; s.forEach(t=>{ x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill(); t.y-=t.v; if(t.y<0)t.y=c.height; }); requestAnimationFrame(animateStars); }
+            window.addEventListener('resize', initStars); initStars(); animateStars();
+        }
     }
-
 </script>
 @endsection

@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Dashboard Siswa · TailwindLearn')
+@section('title', 'Dashboard Siswa ')
 
 @section('content')
 <div id="appRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-fuchsia-500/30 pt-20">
@@ -96,8 +96,19 @@
                      ========================================================= --}}
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                     <div>
+                        {{-- BREADCRUMB START --}}
+                        <nav class="flex items-center gap-2 mb-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40" aria-label="Breadcrumb">
+                            <a href="/" class="hover:text-white transition-colors flex items-center gap-1.5">
+                                <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                Home
+                            </a>
+                            <span class="text-white/20">/</span>
+                            <span class="text-fuchsia-400 drop-shadow-[0_0_8px_rgba(217,70,239,0.5)]">Dashboard</span>
+                        </nav>
+                        {{-- BREADCRUMB END --}}
+
                         <h1 class="text-4xl font-black text-white mb-2 tracking-tight">
-                            Developer <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Dashboard</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Dashboard</span>
                         </h1>
                         <p class="text-white/60 text-lg">Pantau pencapaian materi, XP, koleksi lencana, dan analitik Anda.</p>
                         

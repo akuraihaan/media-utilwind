@@ -63,7 +63,6 @@
                 </nav>
             </div>
             
-           
         </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
@@ -72,11 +71,23 @@
             {{-- HEADER CONTENT --}}
             <header class="flex flex-col justify-center px-6 md:px-10 py-6 shrink-0 sticky top-0 z-40 bg-[#020617]/80 backdrop-blur-xl border-b border-white/5">
                 <div class="flex items-center justify-between w-full max-w-7xl mx-auto">
-                    <div class="flex items-center gap-4">
-                        <button @click="sidebarOpen = true" class="lg:hidden p-2 bg-white/5 rounded-lg text-white hover:bg-white/10 transition">
+                    <div class="flex items-start gap-4">
+                        <button @click="sidebarOpen = true" class="lg:hidden p-2 bg-white/5 rounded-lg text-white hover:bg-white/10 transition mt-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                         <div>
+                            {{-- BREADCRUMB START --}}
+                            <nav class="flex items-center gap-2 mb-3 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40" aria-label="Breadcrumb">
+                                <a href="/" class="hover:text-white transition-colors flex items-center gap-1.5">
+                                    <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                    Home
+                                </a>
+                                <span class="text-white/20">/</span>
+                                
+                                <span class="text-fuchsia-400 drop-shadow-[0_0_8px_rgba(217,70,239,0.5)]">Informasi</span>
+                            </nav>
+                            {{-- BREADCRUMB END --}}
+
                             <h2 class="text-white font-bold text-2xl md:text-3xl tracking-tight">Project & Developer Hub</h2>
                             <p class="text-sm text-white/60 mt-1">Informasi penelitian dan penyusun media.</p>
                         </div>
@@ -182,7 +193,7 @@
                                     <svg class="w-48 h-48 -mb-10 -mr-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                                 </div>
                                 
-                                <h4 class="text-[10px] text-white/40 uppercase font-black tracking-widest mb-6">Tim Pembimbing</h4>
+                                <h4 class="text-[10px] text-white/40 uppercase font-black tracking-widest mb-6">Dosen Pembimbing</h4>
                                 
                                 <div class="space-y-5 relative z-10">
                                     <div class="flex items-start gap-4">
