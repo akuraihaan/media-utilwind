@@ -1,230 +1,237 @@
 @extends('layouts.landing')
 
-@section('title', 'Utilwind · Media Pembelajaran Interaktif')
+@section('title', 'Beranda')
 
 @section('content')
-<div id="landingRoot" class="relative min-h-screen bg-[#020617] text-slate-200 font-sans overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
+<div id="landingRoot" class="relative min-h-screen bg-[#020617] text-slate-300 font-sans overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
 
     {{-- ======================================================================
-         1. ATMOSPHERE LAYER (Global Effects)
+         1. ATMOSPHERE LAYER (Warna Asli: #020617 + Cyan & Fuchsia Glow)
          ====================================================================== --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-60"></div>
-        <div id="gradient-wave" class="absolute inset-0"></div>
-        <canvas id="stars" class="absolute inset-0 pointer-events-none"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.04]"></div>
-        <div id="cursor-glow"></div>
+        {{-- Base Background Asli --}}
+        <div class="absolute inset-0 bg-[#020617]"></div>
+        
+        {{-- Dynamic Glows (Bergerak perlahan via CSS/JS) --}}
+        <div id="glow-1" class="absolute top-[-10%] -left-[10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-fuchsia-600/10 rounded-full blur-[100px] transition-transform duration-[3s]"></div>
+        <div id="glow-2" class="absolute bottom-[-10%] -right-[10%] w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-cyan-600/10 rounded-full blur-[100px] transition-transform duration-[4s]"></div>
+        <div id="glow-3" class="absolute top-[30%] left-[40%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-indigo-600/10 rounded-full blur-[120px] transition-transform duration-[5s]"></div>
+        
+        {{-- Bintang Interaktif --}}
+        <canvas id="starsCanvas" class="absolute inset-0 z-0 opacity-60"></canvas>
+        
+        {{-- Tech Grid & Noise --}}
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDMpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDQwaDQwVjBIMHoiLz48L2c+PC9zdmc+')] opacity-50 z-0"></div>
+        <div class="absolute inset-0 opacity-[0.04] mix-blend-overlay z-10" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 200\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E');"></div>
     </div>
 
     @include('layouts.partials.navbar')
 
-    {{-- Scroll Progress Bar --}}
-    <div id="scrollProgress" class="fixed top-[70px] md:top-[80px] left-0 h-[3px] bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 z-[60] shadow-[0_0_15px_#d946ef] transition-all duration-100" style="width:0%"></div>
+    {{-- Progress Bar Gradien Khas Utilwind --}}
+    <div id="scrollProgress" class="fixed top-[60px] md:top-[80px] left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 z-[60] shadow-[0_0_15px_#d946ef] transition-all duration-100" style="width:0%"></div>
 
     {{-- ======================================================================
-         2. HERO SECTION
-         Transisi: Background Transparent (mengikuti Global BG) -> Menuju Toolkit
+         2. HERO SECTION (Dengan 3D Tilt, Auto Typing, & Auth Logic)
          ====================================================================== --}}
-    <section id="hero" class="relative pt-32 pb-24 md:pt-48 md:pb-40 px-6 lg:px-8 overflow-hidden min-h-[90vh] flex items-center justify-center z-20">
-        
-        {{-- Parallax Orbs --}}
-        <div class="absolute top-1/4 left-[5%] w-40 h-40 md:w-64 md:h-64 bg-fuchsia-600/10 rounded-full blur-[80px] parallax" data-speed="2"></div>
-        <div class="absolute bottom-1/4 right-[5%] w-60 h-60 md:w-80 md:h-80 bg-cyan-600/10 rounded-full blur-[100px] parallax" data-speed="-2"></div>
-
-        <div class="max-w-6xl mx-auto text-center relative z-10">
+    <section id="hero" class="relative pt-32 pb-20 md:pt-40 md:pb-32 px-5 lg:px-8 min-h-[95vh] flex items-center z-20">
+        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             
-            {{-- LOGO UTAMA --}}
-            <div class="mb-10 animate-fade-in-up flex justify-center">
-                {{-- <img src="{{ asset('images/logo.png') }}" 
-                     alt="Logo Utilwind" 
-                     class="h-20 md:h-28 lg:h-32 w-auto object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.1)] hover:scale-105 transition duration-500"> --}}
-            </div>
+            {{-- Left: Copywriting --}}
+            <div class="text-center lg:text-left relative z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs font-bold font-mono tracking-widest text-fuchsia-400 mb-6 animate-fade-in-up backdrop-blur-md shadow-lg floating-element">
+                    <span class="w-2 h-2 rounded-full bg-fuchsia-500 animate-pulse"></span>
+                    Utility-First Mastery
+                </div>
 
-            {{-- Headline --}}
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.1] mb-8 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
-                Belajar <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-purple-400 to-cyan-400 animate-gradient-x">Web Design</span> <br>
-                Dengan Tutorial Terstruktur
-            </h1>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
+                    Berhenti Menulis <br class="hidden sm:block">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-indigo-400 animate-gradient-x pb-2">CSS Tradisional.</span>
+                </h1>
 
-            @auth
-                <p class="mt-4 text-emerald-400 font-bold text-lg animate-fade-in-up" style="animation-delay: 0.2s;">
-                    👋 Selamat datang kembali, {{ Auth::user()->name }}
+                <p class="text-base sm:text-lg text-slate-400 leading-relaxed animate-fade-in-up max-w-2xl mx-auto lg:mx-0 mb-10 font-medium" style="animation-delay: 0.2s;">
+                    Pelajari framework Tailwind CSS melalui environment <strong class="text-cyan-400 font-bold">Live Sandbox</strong>, kurikulum terstruktur, dan rasakan kecepatan membangun UI tanpa perlu meninggalkan file HTML Anda.
                 </p>
-            @endauth
 
-            {{-- Deskripsi --}}
-            <p class="mt-8 max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl text-white/60 leading-relaxed animate-fade-in-up px-4" style="animation-delay: 0.2s;">
-                Platform pembelajaran berbasis web yang dirancang untuk mendukung proses belajar secara bertahap, interaktif, dan terukur melalui sistem monitoring progress.
-            </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+                    
+                    {{-- AUTENTIKASI LOGIC: Jika sudah login, sapa user dan arahkan ke materi. Jika belum, tampilkan tombol registrasi. --}}
+                    @auth
+                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                            <a href="{{ route('courses.curriculum') }}" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-bold text-sm md:text-base transition-all shadow-[0_0_30px_rgba(217,70,239,0.3)] hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                                Lanjutkan Belajar <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            <span class="text-sm font-medium text-emerald-400">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</span>
+                        </div>
+                    @else
+                        <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white hover:bg-slate-200 text-[#020617] font-black text-sm md:text-base transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 flex items-center justify-center">
+                            Mulai Koding Gratis
+                        </a>
+                        <a href="#fitur" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#0f141e]/80 border border-white/10 text-white font-bold text-sm md:text-base hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm group">
+                            <svg class="w-4 h-4 text-cyan-400 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                            Jelajahi Fitur
+                        </a>
+                    @endauth
+                </div>
+            </div>
 
-            {{-- CTA Buttons Area --}}
-            <div class="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up w-full px-4" style="animation-delay: 0.3s;">
+            {{-- Right: INTERACTIVE Code Editor Mockup (Bergerak 3D & Auto Typing) --}}
+            <div class="relative w-full max-w-lg mx-auto lg:max-w-none animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="absolute -inset-1 bg-gradient-to-tr from-cyan-500 via-fuchsia-500 to-indigo-500 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
                 
-                {{-- Primary Action --}}
-                @auth
-                    <a href="{{ route('courses.curriculum') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.4)] ring-1 ring-white/20 flex justify-center items-center gap-2">
-                        <span>Lanjutkan Belajar</span>
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                    </a>
-                @else
-                    <a href="{{ route('register') }}" class="w-full sm:w-auto group relative px-8 py-4 rounded-2xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)] overflow-hidden text-center flex justify-center items-center gap-2">
-                        <span class="relative z-10">Mulai Belajar Gratis</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-100 to-fuchsia-100 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                    </a>
-                @endauth
-
-                {{-- Secondary Toolkit Actions --}}
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-                    <a href="{{ route('cheatsheet.index') }}" class="flex-1 sm:flex-none px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 hover:border-cyan-500/50 transition flex items-center justify-center gap-2 group backdrop-blur-sm">
-                        <span class="text-cyan-400 group-hover:scale-110 transition">⚡</span> Cheat Sheet
-                    </a>
-                    <a href="{{ route('gallery.index') }}" class="flex-1 sm:flex-none px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 hover:border-fuchsia-500/50 transition flex items-center justify-center gap-2 group backdrop-blur-sm">
-                        <span class="text-fuchsia-400 group-hover:scale-110 transition">🧩</span> Gallery
-                    </a>
+                {{-- 3D Tilt Container --}}
+                <div id="tiltEditor" class="relative rounded-2xl bg-[#0a0e17] border border-white/10 shadow-2xl overflow-hidden transform transition-transform duration-100 ease-out preserve-3d" style="transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);">
+                    
+                    {{-- Mac OS Header --}}
+                    <div class="flex items-center px-4 py-3 bg-[#020617] border-b border-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_5px_#ef4444]"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_5px_#eab308]"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500/80 shadow-[0_0_5px_#10b981]"></div>
+                        </div>
+                        <div class="mx-auto text-[10px] font-mono text-slate-500 font-bold">App.blade.php</div>
+                    </div>
+                    
+                    {{-- Code Area dengan Efek Mengetik Sendiri --}}
+                    <div class="p-5 font-mono text-xs sm:text-sm overflow-x-auto text-slate-300 leading-loose min-h-[200px]">
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">1</span> <span><span class="text-fuchsia-400">&lt;div</span> <span class="text-cyan-300">class=</span><span class="text-indigo-300">"max-w-md mx-auto bg-white rounded-xl shadow-md"</span><span class="text-fuchsia-400">&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">2</span> <span>&nbsp;&nbsp;<span class="text-fuchsia-400">&lt;div</span> <span class="text-cyan-300">class=</span><span class="text-indigo-300">"p-8"</span><span class="text-fuchsia-400">&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">3</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-fuchsia-400">&lt;div</span> <span class="text-cyan-300">class=</span><span class="text-indigo-300">"<span id="autoType" class="text-yellow-300 bg-yellow-500/10 px-1 rounded"></span><span class="animate-pulse bg-white/50 w-2 h-4 inline-block ml-[1px] align-middle"></span>"</span><span class="text-fuchsia-400">&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">4</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utilwind</span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">5</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-fuchsia-400">&lt;/div&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">6</span> <span>&nbsp;&nbsp;<span class="text-fuchsia-400">&lt;/div&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 text-slate-600 select-none">7</span> <span><span class="text-fuchsia-400">&lt;/div&gt;</span></span></div>
+                    </div>
                 </div>
             </div>
 
-            {{-- Scroll Indicator --}}
-            <div id="scrollHint" class="absolute bottom-[-50px] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-bounce opacity-50 cursor-pointer" onclick="document.getElementById('fitur').scrollIntoView({behavior: 'smooth'})">
-                <span class="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll Down</span>
-                <div class="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center p-1">
-                    <div class="w-1 h-2 bg-white/50 rounded-full animate-scroll-dot"></div>
-                </div>
-            </div>
         </div>
     </section>
 
     {{-- ======================================================================
-         3. TOOLKIT & EKOSISTEM (GRADIENT TRANSITION 1)
-         Transisi: Dari Dark (#020617) -> Smooth Fade ke Medium Dark (#0b0f19)
+         3. BENTO GRID FEATURES (Desain Gelap & Elegan)
          ====================================================================== --}}
-    <section id="fitur" class="py-24 md:py-32 relative bg-gradient-to-b from-[#020617] via-[#060a14] to-[#0b0f19] border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <section id="fitur" class="py-24 relative border-t border-white/5 bg-[#020617]">
+        <div class="max-w-7xl mx-auto px-5 lg:px-8">
+            
             <div class="text-center mb-16 md:mb-24 reveal">
-                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Toolkit & Ekosistem</h2>
-                <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto">
-                    Akses alat bantu development yang kami sediakan untuk mempercepat workflow Anda.
-                </p>
+                <div class="inline-block px-4 py-1.5 rounded-full border border-cyan-500/30 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    Ekosistem Belajar
+                </div>
+                <h2 class="text-3xl md:text-5xl font-black text-white">Senjata <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Developer</span></h2>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- BENTO GRID --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 
-                {{-- CARD 1: MATERI --}}
-                <a href="{{ route('courses.htmldancss') }}" class="group relative p-8 rounded-[2.5rem] bg-[#0f141e] border border-white/5 hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 reveal hover:shadow-2xl hover:shadow-emerald-900/20 h-full flex flex-col overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-3xl mb-8 border border-emerald-500/20 group-hover:scale-110 transition shadow-inner shadow-emerald-500/20 relative z-10">📚</div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition">Materi Course</h3>
-                        <p class="text-white/50 text-sm leading-relaxed mb-8 flex-1">Kurikulum langkah-demi-langkah dari HTML dasar hingga teknik layouting advanced.</p>
-                        <div class="flex items-center text-emerald-400 text-xs font-bold uppercase tracking-wider">
-                            Mulai Belajar <span class="ml-2 group-hover:translate-x-2 transition">→</span>
+                {{-- Feature 1: Kurikulum (Besar) --}}
+                <div class="md:col-span-2 group p-8 rounded-[2rem] bg-[#0f141e] border border-white/5 hover:border-indigo-500/30 transition-all duration-500 reveal flex flex-col justify-between overflow-hidden relative interactive-card">
+                    <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] group-hover:bg-indigo-500/20 transition duration-700"></div>
+                    
+                    <div class="relative z-10 flex-1">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition">Kurikulum Terstruktur</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed max-w-md mb-8">Materi disusun bertahap. Dari memahami Fundamental Box Model, Flexbox, hingga teknik Grid Layout dan Breakpoints responsif.</p>
+                        
+                        <a href="{{ route('courses.htmldancss') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600/20 text-indigo-400 font-bold text-xs hover:bg-indigo-600 hover:text-white transition border border-indigo-500/30">
+                            Mulai Belajar &rarr;
+                        </a>
                     </div>
-                </a>
+                </div>
 
-                {{-- CARD 2: CHEAT SHEET --}}
-                <a href="{{ route('cheatsheet.index') }}" class="group relative p-8 rounded-[2.5rem] bg-[#0f141e] border border-white/5 hover:border-cyan-500/50 transition-all duration-500 hover:-translate-y-2 reveal hover:shadow-2xl hover:shadow-cyan-900/20 h-full flex flex-col overflow-hidden" style="transition-delay: 100ms">
-                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-3xl mb-8 border border-cyan-500/20 group-hover:scale-110 transition shadow-inner shadow-cyan-500/20 relative z-10">⚡</div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition">Cheat Sheet</h3>
-                        <p class="text-white/50 text-sm leading-relaxed mb-8 flex-1">Kamus lengkap class utilitas dengan fitur pencarian instan dan one-click copy.</p>
-                        <div class="flex items-center text-cyan-400 text-xs font-bold uppercase tracking-wider">
-                            Buka Kamus <span class="ml-2 group-hover:translate-x-2 transition">→</span>
+                {{-- Feature 2: Cheat Sheet --}}
+                <div class="group p-8 rounded-[2rem] bg-[#0f141e] border border-white/5 hover:border-fuchsia-500/30 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden interactive-card" style="transition-delay: 100ms">
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-fuchsia-500/10 rounded-full blur-[60px] group-hover:bg-fuchsia-500/20 transition duration-700"></div>
+                    <div class="relative z-10 flex-1">
+                        <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center mb-6 text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.2)]">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </div>
+                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-fuchsia-400 transition">Cheat Sheet</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Mesin pencari instan untuk menemukan ribuan nama class (Flex, Spacing, Color) dengan sekali klik copy.</p>
+                        <a href="{{ route('cheatsheet.index') }}" class="text-xs font-bold text-fuchsia-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">
+                            Buka Kamus &rarr;
+                        </a>
                     </div>
-                </a>
+                </div>
 
-                {{-- CARD 3: COMPONENT GALLERY --}}
-                <a href="{{ route('gallery.index') }}" class="group relative p-8 rounded-[2.5rem] bg-[#0f141e] border border-white/5 hover:border-fuchsia-500/50 transition-all duration-500 hover:-translate-y-2 reveal hover:shadow-2xl hover:shadow-fuchsia-900/20 h-full flex flex-col overflow-hidden" style="transition-delay: 200ms">
-                    <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-3xl mb-8 border border-fuchsia-500/20 group-hover:scale-110 transition shadow-inner shadow-fuchsia-500/20 relative z-10">🧩</div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-fuchsia-400 transition">UI Gallery</h3>
-                        <p class="text-white/50 text-sm leading-relaxed mb-8 flex-1">Koleksi komponen modern (Card, Button, Navbar) siap pakai. Copy, paste, selesai.</p>
-                        <div class="flex items-center text-fuchsia-400 text-xs font-bold uppercase tracking-wider">
-                            Lihat Komponen <span class="ml-2 group-hover:translate-x-2 transition">→</span>
+                {{-- Feature 3: Live Sandbox --}}
+                <div class="group p-8 rounded-[2rem] bg-[#0f141e] border border-white/5 hover:border-cyan-500/30 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden interactive-card" style="transition-delay: 200ms">
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-[60px] group-hover:bg-cyan-500/20 transition duration-700"></div>
+                    <div class="relative z-10 flex-1">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                         </div>
+                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition">Live Sandbox</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Playground koding interaktif. Tulis class utilitas dan lihat perubahan UI secara seketika tanpa setup Node.js.</p>
+                        <a href="{{ route('sandbox') }}" class="text-xs font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">
+                            Mulai Koding &rarr;
+                        </a>
                     </div>
-                </a>
+                </div>
 
-                {{-- CARD 4: SANDBOX --}}
-                <a href="{{ route('sandbox') }}" class="group relative p-8 rounded-[2.5rem] bg-[#0f141e] border border-white/5 hover:border-amber-500/50 transition-all duration-500 hover:-translate-y-2 reveal hover:shadow-2xl hover:shadow-amber-900/20 h-full flex flex-col overflow-hidden" style="transition-delay: 300ms">
-                    <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-3xl mb-8 border border-amber-500/20 group-hover:scale-110 transition shadow-inner shadow-amber-500/20 relative z-10">🛠️</div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition">Live Sandbox</h3>
-                        <p class="text-white/50 text-sm leading-relaxed mb-8 flex-1">Editor kode real-time. Bereksperimen dengan Tailwind tanpa perlu setup environment.</p>
-                        <div class="flex items-center text-amber-400 text-xs font-bold uppercase tracking-wider">
-                            Mulai Coding <span class="ml-2 group-hover:translate-x-2 transition">→</span>
+                {{-- Feature 4: Analytics (Large) --}}
+                <div class="md:col-span-2 group p-8 rounded-[2rem] bg-[#0f141e] border border-white/5 hover:border-emerald-500/30 transition-all duration-500 reveal flex flex-col md:flex-row items-center gap-8 overflow-hidden relative interactive-card" style="transition-delay: 300ms">
+                    <div class="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] group-hover:bg-emerald-500/20 transition duration-700"></div>
+                    
+                    <div class="flex-1 relative z-10">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition">Analitik Performa Koding</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">Sistem dasbor cerdas mencatat durasi praktik Anda, nilai evaluasi kuis, dan riwayat lab untuk memetakan pertumbuhan skill secara objektif.</p>
+                        <a href="{{ route('dashboard') }}" class="text-xs font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                            Lihat Dasbor &rarr;
+                        </a>
+                    </div>
+                    
+                    {{-- Animated Bar Chart Mockup (Bisa bergerak sendiri dengan jQuery) --}}
+                    <div class="relative z-10 w-full md:w-64 h-32 bg-[#020617] rounded-xl border border-white/5 flex items-end gap-3 p-4 pt-10 shadow-lg">
+                        <div class="w-full bg-[#1e293b] rounded-t-md bar-anim" data-h="40%"></div>
+                        <div class="w-full bg-[#334155] rounded-t-md bar-anim" data-h="65%"></div>
+                        <div class="w-full bg-emerald-500 rounded-t-md bar-anim shadow-[0_0_15px_rgba(16,185,129,0.4)] relative flex justify-center" data-h="95%">
+                            <span class="absolute -top-6 text-[10px] font-black text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity delay-300">95%</span>
                         </div>
                     </div>
-                </a>
+                </div>
 
             </div>
         </div>
     </section>
 
     {{-- ======================================================================
-         4. METODE BELAJAR (SOLID BACKGROUND)
-         Bagian Tengah: Warna Solid Medium Dark (#0b0f19)
+         4. DEVELOPMENT WORKFLOW (Terminal Style)
          ====================================================================== --}}
-    <section id="tentang" class="py-24 md:py-32 relative bg-[#0b0f19]">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-                <div class="reveal">
-                    <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6">
-                        Metode Belajar <br>
-                        <span class="text-fuchsia-400">Step-by-Step</span>
-                    </h2>
-                    <p class="text-white/60 text-lg leading-relaxed mb-8">
-                        Utilwind dikembangkan untuk mendukung proses pembelajaran mandiri. Evaluasi quiz dan pencatatan attempt digunakan untuk memonitor perkembangan secara objektif.
-                    </p>
-                    <div class="flex flex-wrap gap-3">
-                        @foreach(['Materi Terstruktur', 'Evaluasi Quiz', 'Tracking Progress', 'Gamifikasi'] as $tag)
-                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white/70 hover:bg-white/10 transition cursor-default">{{ $tag }}</span>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- 3D Tilt Card --}}
-                <div class="tilt-card group relative p-1 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 hover:from-cyan-500/50 hover:to-fuchsia-500/50 transition-all duration-500 reveal">
-                    <div class="relative h-full bg-[#0e121d] rounded-[22px] p-8 md:p-10 overflow-hidden border border-white/5">
-                        <div class="absolute top-0 right-0 w-40 h-40 bg-fuchsia-500/10 rounded-full blur-[50px]"></div>
-                        <ul class="space-y-6">
-                            @foreach(['Materi dari dasar hingga mahir', 'Studi kasus nyata', 'Quiz interaktif', 'Sandbox coding live'] as $item)
-                            <li class="flex items-start gap-4 text-white/80">
-                                <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs mt-0.5 shrink-0 border border-emerald-500/20">✓</div>
-                                <span class="leading-snug">{{ $item }}</span>
-                            </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ======================================================================
-         5. ROADMAP ALUR (GRADIENT TRANSITION 2)
-         Transisi: Medium Dark (#0b0f19) -> Smooth Fade Back to Dark (#020617)
-         ====================================================================== --}}
-    <section id="alur" class="py-24 md:py-32 relative bg-gradient-to-b from-[#0b0f19] to-[#020617]">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <h2 class="text-3xl md:text-5xl font-black text-center text-white mb-20 reveal">Roadmap Belajar</h2>
+    <section class="py-20 md:py-32 relative bg-[#060a14] border-t border-white/5 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-5 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-black text-center text-white mb-16 reveal">Workflow <span class="font-mono text-fuchsia-400">Pembelajaran</span></h2>
             
-            <div class="relative">
-                <div class="absolute top-12 left-0 w-full h-0.5 bg-white/5 hidden md:block"></div>
+            <div class="relative max-w-4xl mx-auto">
+                {{-- Vertical Line --}}
+                <div class="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-500/20 via-fuchsia-500/20 to-transparent hidden sm:block md:-translate-x-1/2"></div>
 
-                <div class="grid md:grid-cols-4 gap-12 md:gap-8 relative z-10">
-                    @foreach(['Daftar Akun', 'Pilih Materi', 'Kerjakan Quiz', 'Lihat Progress'] as $i => $step)
-                    <div class="group text-center reveal" style="transition-delay: {{ $i * 100 }}ms">
-                        <div class="w-24 h-24 mx-auto rounded-full bg-[#0f141e] border border-white/10 flex items-center justify-center text-4xl font-black text-white mb-6 shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-cyan-500/50 group-hover:scale-110 transition duration-500 relative overflow-hidden">
-                            <div class="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition duration-500 rounded-full"></div>
-                            <span class="relative z-10 group-hover:text-cyan-400 transition">{{ $i+1 }}</span>
+                <div class="space-y-12">
+                    @foreach([
+                        ['icon' => '🔑', 'title' => 'Input Token & Registrasi', 'desc' => 'Dapatkan akses kelas eksklusif dari instruktur Anda.'],
+                        ['icon' => '📖', 'title' => 'Pelajari Konsep', 'desc' => 'Baca teori fundamental web layouting dan tipografi.'],
+                        ['icon' => '💻', 'title' => 'Praktikum Live Code', 'desc' => 'Terapkan Utility Class di dalam Interactive Code Editor.'],
+                        ['icon' => '📊', 'title' => 'Validasi & Analitik', 'desc' => 'Uji pemahaman dan pantau perkembangan skor di Dasbor.']
+                    ] as $i => $step)
+                    <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-normal md:odd:flex-row-reverse group reveal">
+                        
+                        {{-- Node Marker --}}
+                        <div class="absolute left-0 md:left-1/2 w-14 h-14 bg-[#0a0e17] border-[3px] border-white/10 rounded-full flex items-center justify-center text-xl shadow-lg z-10 group-hover:border-cyan-500 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition duration-500 md:-translate-x-1/2 hidden sm:flex floating-element" style="animation-delay: {{ $i * 0.2 }}s">
+                            {{ $step['icon'] }}
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">{{ $step }}</h3>
-                        <p class="text-sm text-white/40">Langkah {{ $i+1 }} menuju pro.</p>
+
+                        {{-- Content Box --}}
+                        <div class="w-full sm:pl-20 md:pl-0 md:w-[45%]">
+                            <div class="p-6 bg-[#020617] border border-white/5 rounded-2xl group-hover:bg-white/[0.03] group-hover:border-white/10 transition duration-300 shadow-lg">
+                                <span class="text-[10px] font-mono text-cyan-500 mb-2 block font-bold">Langkah 0{{ $i+1 }}</span>
+                                <h3 class="text-base md:text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition">{{ $step['title'] }}</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">{{ $step['desc'] }}</p>
+                            </div>
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -233,134 +240,70 @@
     </section>
 
     {{-- ======================================================================
-         6. DASHBOARD PREVIEW (DEEP DARK MODE)
-         Menggunakan Background Gelap Penuh (#020617) untuk kontras tinggi
+         5. CALL TO ACTION (Final Push with Intense Glow & Auth Logic)
          ====================================================================== --}}
     <section class="py-24 md:py-32 relative bg-[#020617] overflow-hidden border-t border-white/5">
-        
-        {{-- Background Spotlight --}}
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[600px] md:h-[900px] bg-indigo-900/10 rounded-full blur-[150px] pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 rounded-full blur-[150px] pointer-events-none"></div>
 
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
+        <div class="max-w-3xl mx-auto px-5 text-center relative z-10 reveal">
+            {{-- LOGIKA CTA AUTENTIKASI: Ubah Call To Action sesuai state user --}}
+            @guest
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">Siap mempercepat <br> workflow koding Anda?</h2>
+                <p class="text-slate-400 text-base md:text-lg mb-10 max-w-xl mx-auto">Bergabung sekarang dan rasakan kecepatan membangun UI modern dengan framework Utility-first paling populer.</p>
                 
-                {{-- Content Text --}}
-                <div class="reveal">
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
-                        Intip Dashboard <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Anda</span>
-                    </h2>
-                    <p class="text-white/60 text-lg md:text-xl mb-10 leading-relaxed">
-                        Pantau performa belajar dengan visualisasi data yang menarik. Lihat progress, nilai rata-rata, dan riwayat aktivitas Anda di satu tempat.
-                    </p>
-                    
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="px-10 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition inline-block border border-white/10 text-lg">Lihat Dashboard Saya</a>
-                    @else
-                        <a href="{{ route('register') }}" class="px-10 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition inline-block shadow-lg shadow-indigo-900/40 text-lg">Daftar Sekarang</a>
-                    @endauth
-                </div>
-
-                {{-- MOCKUP VISUALISASI --}}
-                <div class="reveal relative group perspective-1000">
-                    <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 to-fuchsia-600 rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                    
-                    {{-- Container Card --}}
-                    <div class="relative bg-[#0f141e]/90 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] group-hover:-rotate-1">
-                        
-                        {{-- Mockup Header --}}
-                        <div class="flex items-center justify-between mb-10 border-b border-white/5 pb-6">
-                            <div>
-                                <div class="h-3 w-32 bg-white/10 rounded-full mb-3 animate-pulse"></div>
-                                <div class="h-8 w-64 bg-white/10 rounded-lg animate-pulse"></div>
-                            </div>
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-lg border-2 border-white/20"></div>
-                        </div>
-
-                        {{-- Mockup Stats Grid --}}
-                        <div class="grid grid-cols-2 gap-6 mb-10">
-                            {{-- Stat 1 --}}
-                            <div class="bg-[#020617] p-6 rounded-2xl border border-white/5 relative overflow-hidden group/stat">
-                                <div class="absolute inset-0 bg-fuchsia-500/5 opacity-0 group-hover/stat:opacity-100 transition"></div>
-                                <p class="text-[10px] text-white/40 uppercase font-bold tracking-wider mb-2">Progress Belajar</p>
-                                <p class="text-4xl md:text-5xl font-black text-white counter" data-target="72">0%</p>
-                                <div class="w-full h-2 bg-white/10 mt-6 rounded-full overflow-hidden">
-                                    <div id="demoBar1" class="h-full bg-fuchsia-500 w-0 transition-all duration-[2000ms] ease-out shadow-[0_0_10px_#d946ef]"></div>
-                                </div>
-                            </div>
-                            {{-- Stat 2 --}}
-                            <div class="bg-[#020617] p-6 rounded-2xl border border-white/5 relative overflow-hidden group/stat">
-                                <div class="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover/stat:opacity-100 transition"></div>
-                                <p class="text-[10px] text-white/40 uppercase font-bold tracking-wider mb-2">Modul Selesai</p>
-                                <p class="text-4xl md:text-5xl font-black text-white counter" data-target="8">0</p>
-                                <div class="w-full h-2 bg-white/10 mt-6 rounded-full overflow-hidden">
-                                    <div id="demoBar2" class="h-full bg-cyan-500 w-0 transition-all duration-[2000ms] ease-out shadow-[0_0_10px_#22d3ee]"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Mockup Activity --}}
-                        <div class="space-y-4">
-                            <p class="text-xs font-bold text-white/30 uppercase mb-2 px-1">Aktivitas Terakhir</p>
-                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/5 transition">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold border border-emerald-500/20">✓</div>
-                                <div class="flex-1">
-                                    <div class="h-3 w-40 bg-white/20 rounded-full mb-2"></div>
-                                    <div class="h-2 w-20 bg-white/10 rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-white text-[#020617] font-black text-lg hover:bg-slate-200 hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+                    Buat Akun Gratis
+                </a>
+            @else
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">Lanjutkan progres <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">belajar Anda</span></h2>
+                <p class="text-slate-400 text-base md:text-lg mb-10 max-w-xl mx-auto">Anda telah masuk sebagai <b>{{ Auth::user()->name }}</b>. Terus kembangkan skill UI/UX Anda hari ini dengan menguasai studi kasus berikutnya.</p>
+                
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-500 text-white font-black text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(6,182,212,0.3)]">
+                    Akses Dasbor Saya
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            @endauth
         </div>
     </section>
 
     {{-- ======================================================================
-         7. FOOTER
+         6. FOOTER (Minimalist, Vercel Style)
          ====================================================================== --}}
-    <footer class="border-t border-white/10 bg-[#020617] relative overflow-hidden pt-24 pb-12">
-        <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent pointer-events-none"></div>
-        
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
-                <div class="lg:col-span-2">
-                    <h3 class="text-2xl font-black text-white flex items-center gap-3 mb-6">
-                        <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="h-8 w-auto">
-                        Utilwind
-                    </h3>
-                    <p class="text-white/40 text-sm leading-relaxed max-w-sm">
-                        Platform edukasi open-source untuk membantu developer Indonesia menguasai modern web development dengan standar industri.
-                    </p>
+    <footer class="bg-[#020617] border-t border-white/10 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-5 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+                
+                {{-- Logo --}}
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="h-6 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500" onerror="this.style.display='none'">
+                    <span class="text-xl font-black text-white tracking-tight">Utilwind</span>
                 </div>
                 
-                <div>
-                    <h4 class="font-bold text-white mb-6 uppercase tracking-widest text-xs">Produk</h4>
-                    <ul class="space-y-4 text-sm text-white/60">
-                        <li><a href="{{ route('courses.htmldancss') }}" class="hover:text-fuchsia-400 transition flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-white/20"></span> Course</a></li>
-                        <li><a href="{{ route('cheatsheet.index') }}" class="hover:text-fuchsia-400 transition flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-white/20"></span> Cheat Sheet</a></li>
-                        <li><a href="{{ route('gallery.index') }}" class="hover:text-fuchsia-400 transition flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-white/20"></span> UI Gallery</a></li>
-                        <li><a href="{{ route('sandbox') }}" class="hover:text-fuchsia-400 transition flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-white/20"></span> Sandbox</a></li>
-                    </ul>
+                {{-- Horizontal Links --}}
+                <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+                    <a href="{{ route('courses.htmldancss') }}" class="hover:text-cyan-400 transition">Course</a>
+                    <a href="{{ route('sandbox') }}" class="hover:text-cyan-400 transition">Sandbox</a>
+                    <a href="{{ route('cheatsheet.index') }}" class="hover:text-fuchsia-400 transition">Cheat Sheet</a>
+                    <a href="{{ route('gallery.index') }}" class="hover:text-emerald-400 transition">Gallery</a>
                 </div>
-                
-                <div>
-                    <h4 class="font-bold text-white mb-6 uppercase tracking-widest text-xs">Akun</h4>
-                    <ul class="space-y-4 text-sm text-white/60">
-                        <li><a href="{{ route('login') }}" class="hover:text-fuchsia-400 transition">Masuk</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:text-fuchsia-400 transition">Daftar</a></li>
-                        <li><a href="{{ route('dashboard') }}" class="hover:text-fuchsia-400 transition">Dashboard</a></li>
-                    </ul>
+
+                {{-- Action / Auth Logic Footer --}}
+                <div class="flex gap-4 text-sm font-bold">
+                    @guest
+                        <a href="{{ route('login') }}" class="text-slate-400 hover:text-white transition px-4 py-2">Masuk</a>
+                        <a href="{{ route('register') }}" class="text-[#020617] bg-white hover:bg-slate-200 transition px-4 py-2 rounded-lg">Daftar</a>
+                    @else
+                        <a href="{{ route('profile.edit') }}" class="text-slate-400 hover:text-white transition px-4 py-2">Profil</a>
+                        <a href="{{ route('dashboard') }}" class="text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 transition px-4 py-2 rounded-lg border border-indigo-500/20">Ke Dasbor &rarr;</a>
+                    @endguest
                 </div>
             </div>
             
-            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/30 font-mono">
-                <p>&copy; {{ date('Y') }} Utilwind. Created with ❤️ for Education.</p>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:text-white transition">Privacy</a>
-                    <a href="#" class="hover:text-white transition">Terms</a>
+            <div class="border-t border-white/5 pt-6 text-center md:text-left text-[11px] text-slate-600 font-mono flex flex-col md:flex-row justify-between items-center gap-3">
+                <p>&copy; {{ date('Y') }} Utilwind Academy. Coded with ❤️ for Developers.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-slate-400 transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-slate-400 transition">Terms of Service</a>
                 </div>
             </div>
         </div>
@@ -368,120 +311,176 @@
 
 </div>
 
-{{-- SCRIPT & STYLE --}}
+{{-- SCRIPT & STYLE TAMBAHAN --}}
 <style>
+    /* CSS Animasi Asli */
     .animate-gradient-x { background-size: 200% 200%; animation: gradient-x 5s ease infinite; }
     @keyframes gradient-x { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     
     .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes scrollDot { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(6px); opacity: 0.5; } }
-    .animate-scroll-dot { animation: scrollDot 1.5s infinite; }
 
     .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
     .reveal.show { opacity: 1; transform: translateY(0); }
 
-    .parallax { transition: transform 0.1s ease-out; }
-    
-    #animated-bg {
-        background: radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.1), transparent 50%),
-                    radial-gradient(circle at 0% 0%, rgba(217, 70, 239, 0.05), transparent 40%);
-        animation: bgMove 20s ease-in-out infinite alternate;
-    }
-    @keyframes bgMove { to { transform: scale(1.15); } }
-    
-    #gradient-wave {
-        background: linear-gradient(120deg,rgba(217,70,239,.03),rgba(34,211,238,.03),rgba(168,85,247,.03));
-        background-size: 400% 400%; animation: gradient-x 26s ease infinite;
-    }
-    
-    #cursor-glow {
-        position: fixed; width: 400px; height: 400px; border-radius: 50%;
-        background: radial-gradient(circle, rgba(217,70,239,.08), transparent 70%);
-        filter: blur(80px); pointer-events: none; z-index: 999; transform: translate(-50%,-50%); transition: width 0.3s, height 0.3s;
-    }
-    #noise-overlay {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        mix-blend-mode: overlay;
-    }
-    .tilt-card { transform-style: preserve-3d; perspective: 1000px; }
+    /* 3D Perspective untuk Mockup Editor */
+    .preserve-3d { transform-style: preserve-3d; }
+    .perspective-1000 { perspective: 1000px; }
+
+    /* Animasi Mengambang (Floating) */
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+    .floating-element { animation: float 4s ease-in-out infinite; }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 $(document).ready(function() {
     
-    // 1. SCROLL PROGRESS
+    // 1. SCROLL PROGRESS BAR
     $(window).scroll(function() {
-        const top = $(this).scrollTop();
-        const height = $(document).height() - $(window).height();
-        const p = (top / height) * 100;
-        $('#scrollProgress').css('width', p+'%');
+        let winScroll = $(this).scrollTop();
+        let height = $(document).height() - $(window).height();
+        let scrolled = (winScroll / height) * 100;
+        $("#scrollProgress").css("width", scrolled + "%");
     });
 
-    // 2. PARALLAX
-    $(window).scroll(function() {
-        const scrolled = $(window).scrollTop();
-        $('.parallax').each(function() {
-            const speed = $(this).data('speed');
-            $(this).css('transform', `translateY(${scrolled * speed * 0.1}px)`);
+    // 2. PARALLAX GLOW BACKGROUNDS (Interaksi Mouse)
+    if(window.innerWidth > 768) {
+        $(document).mousemove(function(e) { 
+            let x = e.clientX / window.innerWidth;
+            let y = e.clientY / window.innerHeight;
+            
+            $('#glow-1').css('transform', `translate(${x * 40}px, ${y * 40}px)`);
+            $('#glow-2').css('transform', `translate(-${x * 30}px, -${y * 30}px)`);
+            $('#glow-3').css('transform', `translate(${x * 50}px, -${y * 50}px)`);
         });
-    });
+    }
 
-    // 3. REVEAL & COUNTER
+    // 3. 3D TILT EFFECT MOUSE INTERACTION PADA EDITOR CODE (JQUERY)
+    if(window.innerWidth > 1024) {
+        $('.perspective-1000').on('mousemove', function(e) {
+            let el = $('#tiltEditor');
+            let offset = $(this).offset();
+            let w = $(this).width();
+            let h = $(this).height();
+            
+            // Kalkulasi posisi mouse dari tengah elemen
+            let mouseX = e.pageX - offset.left - w / 2;
+            let mouseY = e.pageY - offset.top - h / 2;
+            
+            // Putar elemen
+            let rotateX = (mouseY / h) * 15; // Max 15 derajat
+            let rotateY = (mouseX / w) * -15;
+            
+            el.css('transform', `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`);
+        });
+
+        $('.perspective-1000').on('mouseleave', function() {
+            $('#tiltEditor').css({
+                'transform': 'perspective(1000px) rotateY(-5deg) rotateX(5deg) scale3d(1, 1, 1)',
+                'transition': 'transform 0.5s ease-out'
+            });
+            setTimeout(() => { $('#tiltEditor').css('transition', 'transform 0.1s ease-out'); }, 500);
+        });
+    }
+
+    // 4. AUTO TYPING EFFECT (JQUERY) PADA KODE TAILWIND
+    const classesToType = ["uppercase tracking-wide", "text-sm text-indigo-500", "font-semibold rounded-md"];
+    let typeIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typeElement = $('#autoType');
+
+    function typeEffect() {
+        let currentString = classesToType[typeIndex];
+        
+        if (isDeleting) {
+            typeElement.text(currentString.substring(0, charIndex - 1));
+            charIndex--;
+        } else {
+            typeElement.text(currentString.substring(0, charIndex + 1));
+            charIndex++;
+        }
+
+        let typeSpeed = isDeleting ? 30 : 80;
+
+        if (!isDeleting && charIndex === currentString.length) {
+            typeSpeed = 2000; // Pause sebelum menghapus
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            typeIndex++;
+            if (typeIndex >= classesToType.length) typeIndex = 0;
+            typeSpeed = 500; // Pause sebelum ngetik kata baru
+        }
+
+        setTimeout(typeEffect, typeSpeed);
+    }
+    setTimeout(typeEffect, 1500); // Mulai setelah animasi hero selesai
+
+    // 5. INTERSECTION OBSERVER (REVEAL & ANIMASI BAR)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('show');
+                // Munculkan elemen
+                $(entry.target).addClass('show');
                 
-                if($(entry.target).find('#demoBar1').length) {
-                    $('#demoBar1').css('width', '72%');
-                    $('#demoBar2').css('width', '88%');
-                }
-
-                $(entry.target).find('.counter').each(function() {
-                    const $this = $(this);
-                    if ($this.data('animated')) return;
-                    $this.data('animated', true);
-                    const target = $this.data('target');
-                    $({ val: 0 }).animate({ val: target }, {
-                        duration: 2000, easing: 'swing',
-                        step: function() { 
-                            let txt = Math.ceil(this.val);
-                            if($this.text().includes('%')) txt += '%';
-                            $this.text(txt); 
-                        }
+                // Jika elemen tersebut adalah Interactive Card, jalankan animasi Bar Chart
+                if($(entry.target).hasClass('interactive-card')) {
+                    $(entry.target).find('.bar-anim').each(function() {
+                        let h = $(this).data('h');
+                        $(this).css('height', h);
                     });
-                });
+                }
+                
+                observer.unobserve(entry.target); 
             }
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.2 });
 
     $('.reveal').each(function() { observer.observe(this); });
 
-    // 4. MOUSE GLOW
-    $(document).mousemove(function(e) { 
-        $('#cursor-glow').css({ left: e.clientX, top: e.clientY }); 
-    });
+    // 6. CANVAS PARTICLES / BINTANG (Sesuai request dari tema sebelumnya)
+    if(window.innerWidth > 768) {
+        const canvas = document.getElementById('starsCanvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            $(window).on('resize', resize);
+            resize();
 
-    // 5. TILT
-    $('.tilt-card').mousemove(function(e) {
-        const el = $(this); const offset = el.offset();
-        const w = el.width(); const h = el.height();
-        const mouseX = e.pageX - offset.left - w/2;
-        const mouseY = e.pageY - offset.top - h/2;
-        const rotateX = (mouseY / h) * -10;
-        const rotateY = (mouseX / w) * 10;
-        el.children().css('transform', `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`);
-    });
-    $('.tilt-card').mouseleave(function() { $(this).children().css('transform', 'perspective(1000px) rotateX(0) rotateY(0) scale(1)'); });
+            for(let i=0; i<70; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    vx: Math.random() * 0.5 - 0.25,
+                    vy: Math.random() * 0.5 - 0.25
+                });
+            }
 
-    // 6. STARS
-    const c = document.getElementById('stars'); const x = c.getContext('2d');
-    let s = []; 
-    function initStars() { c.width = window.innerWidth; c.height = window.innerHeight; s=[]; for(let i=0;i<80;i++) s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5,v:Math.random()*0.2+0.1}); }
-    function animateStars() { x.clearRect(0,0,c.width,c.height); x.fillStyle='rgba(255,255,255,0.4)'; s.forEach(t=>{ x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill(); t.y-=t.v; if(t.y<0) t.y=c.height; }); requestAnimationFrame(animateStars); }
-    window.addEventListener('resize', initStars); initStars(); animateStars();
+            function drawParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.beginPath();
+                particles.forEach(p => {
+                    ctx.moveTo(p.x, p.y);
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    
+                    // Move particles
+                    p.x += p.vx; p.y += p.vy;
+                    // Reset if out of bounds
+                    if(p.x < 0 || p.x > canvas.width) p.vx = -p.vx;
+                    if(p.y < 0 || p.y > canvas.height) p.vy = -p.vy;
+                });
+                ctx.fill();
+                requestAnimationFrame(drawParticles);
+            }
+            drawParticles();
+        }
+    }
 });
 </script>
 @endsection

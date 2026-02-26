@@ -73,5 +73,42 @@ class User extends Authenticatable
         // Relasi: Kolom 'class_group' di tabel users terhubung ke kolom 'name' di tabel class_groups
         return $this->belongsTo(ClassGroup::class, 'class_group', 'name');
     }
+
+    public function badges() {
+        return $this->belongsToMany(Badge::class, 'user_badges', 'user_id', 'badge_id');
+    }
+
+   // Update fungsi getDeveloperTitleAttribute Anda di Model User
+    public function getDeveloperTitleAttribute() {
+        $xp = $this->xp;
+        if ($xp >= 4000) return 'Tailwind Architect'; // Level Tertinggi (Lulus Semua)
+        if ($xp >= 2500) return 'Component Crafter';  // Level 4 (Bisa bikin komponen utuh)
+        if ($xp >= 1000) return 'Frontend Stylist';   // Level 3 (Paham tata letak & warna)
+        if ($xp >= 300)  return 'Utility Apprentice'; // Level 2 (Baru lulus bab 1)
+        return 'CSS Novice';                          // Level 1 (Baru daftar)
+    }
+
+    // Update target XP agar sinkron
+    public function getNextLevelXpAttribute() {
+        $xp = $this->xp;
+        if ($xp < 300) return 300;
+        if ($xp < 1000) return 1000;
+        if ($xp < 2500) return 2500;
+        if ($xp < 4000) return 4000;
+        return $xp; // Maxed out
+    }
+
+    public function getXpProgressAttribute() {
+        $xp = $this->xp;
+        $next = $this->next_level_xp;
+        
+        $prev = 0;
+        if ($xp >= 2500) $prev = 2500;
+        elseif ($xp >= 1000) $prev = 1000;
+        elseif ($xp >= 300) $prev = 300;
+
+        if ($next - $prev == 0) return 100;
+        return round((($xp - $prev) / ($next - $prev)) * 100);
+    }
 }
 

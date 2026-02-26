@@ -110,7 +110,7 @@
                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs border border-white/10 shadow-lg">AD</div>
                     <div class="overflow-hidden">
                         <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                        <p class="text-[10px] text-white/40 truncate">System Authority</p>
+                        <p class="text-[10px] text-white/40 truncate">System Admin</p>
                     </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}">

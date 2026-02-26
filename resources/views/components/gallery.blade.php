@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-@section('title', 'UI Component Gallery · Utilwind')
+@section('title', 'Kamus Komponen')
 
 @php
     // =======================================================================
@@ -305,11 +305,9 @@
             <div class="max-w-6xl mx-auto mb-16">
                 <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-8">
                     <div>
-                        <span class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-widest mb-4">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span> Ready to Copy
-                        </span>
+                       
                         <h1 class="text-4xl md:text-6xl font-black text-white mb-4">
-                            Component <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500">Gallery</span>
+                            Kamus <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500">Komponen</span>
                         </h1>
                         <p class="text-white/50 text-lg max-w-2xl">Kumpulan komponen UI modern siap pakai. Salin kodenya atau modifikasi langsung di Sandbox.</p>
                     </div>

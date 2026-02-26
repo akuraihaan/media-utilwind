@@ -48,10 +48,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/student/join-class', [DashboardController::class, 'joinClass'])->name('student.join_class');
     Route::get('/api/dashboard/progress', [DashboardController::class, 'progress'])->name('api.dashboard.progress');
     
+    // [TAMBAHKAN DI SINI] Rute Informasi Pengembang
+    Route::get('/developer-info', function () {
+        return view('developer_info'); // Memanggil file resources/views/developer_info.blade.php
+    })->name('developer.info');
+    
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    
 
 });
 

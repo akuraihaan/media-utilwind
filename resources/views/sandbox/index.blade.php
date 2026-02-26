@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Live Sandbox · Utilwind')
+@section('title', 'Sandbox')
 
 @section('content')
 <div class="relative min-h-screen bg-[#020617] text-slate-200 font-sans overflow-hidden selection:bg-cyan-500/30 selection:text-white">

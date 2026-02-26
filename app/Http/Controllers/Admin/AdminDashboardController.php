@@ -430,133 +430,160 @@ class AdminDashboardController extends Controller
     }
     
 
- public function studentDetail($id)
-{
-    // Ambil data user, pilih hanya kolom yang dipakai di UI
-    $user = User::select('id', 'name', 'email', 'class_group', 'phone', 'avatar')->findOrFail($id);
-
-    // =====================================================================
-    // 1. DATA PROGRESS MATERI (LESSON)
-    // =====================================================================
-    $lessonProgress = UserLessonProgress::select('course_lesson_id')
-        ->where('user_id', $id)
-        ->where('completed', true)
-        ->get();
+public function studentDetail($id)
+    {
+        // 1. DATA USER & KELAS (GAMIFIKASI INCLUDED)
+        // Ambil data utuh agar accessor model (XP progress, Level Title) bisa berjalan
+        $user = \App\Models\User::findOrFail($id);
         
-    $completedLessonIds = $lessonProgress->pluck('course_lesson_id')->toArray(); 
+        // Ambil Data Kelas (Untuk mengecek Token Kelas & Status)
+        $classGroup = null;
+        if (!empty($user->class_group)) {
+            $classGroup = \App\Models\ClassGroup::where('name', $user->class_group)->first();
+        }
 
-    // =====================================================================
-    // 2. DATA LAB & PRAKTIK
-    // =====================================================================
-    $labHistories = LabHistory::with(['lab' => function($query) {
-            // Relasi ke tabel Labs: Cukup ID dan Title agar ringan
-            $query->select('id', 'title');
-        }])
-        // 🟢 SESUAIKAN KOLOM LAB_HISTORIES DI SINI BERDASARKAN GAMBAR ANDA:
-        // Wajib sertakan 'id', 'user_id', dan 'lab_id' untuk relasi.
-        // Ganti 'status', 'final_score', 'created_at' jika di database namanya berbeda.
-        ->select(
-            'id', 
-            'user_id', 
-            'lab_id', 
-            'status',        // Cek gambar: Apakah namanya 'status'?
-            'final_score',   // Cek gambar: Apakah namanya 'final_score' atau 'score'?
-            'duration_seconds',
-            'last_code_snapshot',
-            'created_at'     // Tanggal untuk tabel
-        )
-        ->where('user_id', $id)
-        ->latest('created_at')
-        ->get();
+        // =====================================================================
+        // 2. DATA GAMIFIKASI (BADGES & LEADERBOARD)
+        // =====================================================================
+        $unlockedBadges = \Illuminate\Support\Facades\DB::table('user_badges')
+                            ->where('user_id', $user->id)
+                            ->pluck('badge_id')
+                            ->toArray();
+        $allBadges = \Illuminate\Support\Facades\DB::table('badges')->get();
 
-    // ID Lab yang lulus (Sesuaikan string 'passed' jika di DB pakainya angka/string lain)
-    $passedLabIds = $labHistories->where('status', 'passed')
-        ->pluck('lab_id')
-        ->unique()
-        ->toArray();
+        $leaderboard = [];
+        if (!empty($user->class_group)) {
+            // Leaderboard spesifik di kelas siswa ini
+            $leaderboard = \App\Models\User::where('class_group', $user->class_group)
+                               ->where('role', 'student')
+                               ->orderByDesc('xp')
+                               ->take(5)
+                               ->get();
+        }
 
-    // =====================================================================
-    // 3. DATA QUIZ & EVALUASI
-    // =====================================================================
-    $quizAttempts = QuizAttempt::select(
-            // 🟢 SESUAIKAN KOLOM QUIZ_ATTEMPT DI SINI BERDASARKAN GAMBAR ANDA:
-            // Wajib sertakan 'id' dan 'user_id'.
-            'id', 
-            'user_id', 
-            'chapter_id',    // Cek gambar: Kolom penanda bab
-            'score',         // Cek gambar: Kolom nilai
-            'time_spent_seconds',
-            'created_at'
-        )
-        ->where('user_id', $id)
-        ->latest('created_at')
-        ->get();
+        // =====================================================================
+        // 3. DATA PROGRESS MATERI (LESSON)
+        // =====================================================================
+        $totalLessons = \App\Models\CourseLesson::count();
+        $lessonProgress = \App\Models\UserLessonProgress::where('user_id', $id)
+                            ->where('completed', true)
+                            ->get();
+                            
+        $completedLessonIds = $lessonProgress->pluck('course_lesson_id')->toArray(); 
+        $lessonsCompleted = count($completedLessonIds);
 
-    // Map kuis untuk mengambil skor tertinggi per bab
-    $quizScoresMap = $quizAttempts->groupBy('chapter_id')
-        ->mapWithKeys(function ($attempts, $chapterId) {
-            return ['quiz_' . $chapterId => $attempts->max('score')]; // Ganti 'score' jika namanya beda
-        })
-        ->toArray();
+        // =====================================================================
+        // 4. DATA LAB & PRAKTIK
+        // =====================================================================
+        $totalLabs = \App\Models\Lab::where('is_active', 1)->count(); 
+        $labHistories = \App\Models\LabHistory::with(['lab' => function($q) {
+                $q->select('id', 'title');
+            }])
+            ->select('id', 'user_id', 'lab_id', 'status', 'final_score', 'duration_seconds', 'last_code_snapshot', 'created_at')
+            ->where('user_id', $id)
+            ->latest('created_at')
+            ->get();
 
-    // =====================================================================
-    // 4. KALKULASI GLOBAL PROGRESS
-    // =====================================================================
-    $totalItemsEstimasi = 73; // Total materi + lab + quiz
-    
-    $countLessons = count($completedLessonIds);
-    $countLabs = count($passedLabIds);
-    $countQuizzes = count(array_filter($quizScoresMap, fn($s) => $s >= 70)); // Batas lulus kuis: 70
+        $passedLabIds = $labHistories->where('status', 'passed')->pluck('lab_id')->unique()->toArray();
+        $labsCompleted = count($passedLabIds);
 
-    $totalDone = $countLessons + $countLabs + $countQuizzes;
-    
-    // Cegah error pembagian nol dan batasi max 100%
-    $globalProgress = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
-    $globalProgress = min($globalProgress, 100);
+        $labStats = [
+            'total' => $labsCompleted,
+            'avg_score' => $labsCompleted > 0 ? round($labHistories->where('status', 'passed')->avg('final_score'), 1) : 0
+        ];
 
-    // =====================================================================
-    // 5. STATS DETAIL
-    // =====================================================================
-    $labStats = [
-        'total' => $countLabs,
-        // Ganti 'final_score' di bawah ini jika di DB beda namanya
-        'avg_score' => $countLabs > 0 ? round($labHistories->where('status', 'passed')->avg('final_score'), 1) : 0
-    ];
+        // =====================================================================
+        // 5. DATA QUIZ & EVALUASI
+        // =====================================================================
+        $quizAttempts = \App\Models\QuizAttempt::select('id', 'user_id', 'chapter_id', 'score', 'time_spent_seconds', 'created_at')
+            ->where('user_id', $id)
+            ->whereNotNull('completed_at')
+            ->latest('created_at')
+            ->get();
 
-    $quizStats = [
-        'total' => $countQuizzes,
-        'avg_score' => count($quizScoresMap) > 0 ? round(collect($quizScoresMap)->avg(), 1) : 0
-    ];
+        $quizzesCompleted = $quizAttempts->count();
+        $quizAverage = $quizzesCompleted > 0 ? $quizAttempts->avg('score') : 0;
 
-    // =====================================================================
-    // 6. CHART DATA
-    // =====================================================================
-    $chartData = $labHistories->where('status', 'passed')
-        ->take(10)
-        ->reverse() 
-        ->values(); 
-    
-    $chartLabels = $chartData->map(fn($h) => $h->lab->title ?? 'Lab #'.$h->lab_id)->toArray();
-    // Ganti 'final_score' di bawah ini jika di DB beda namanya
-    $chartScores = $chartData->pluck('final_score')->toArray();
-    // [TAMBAHKAN BARIS INI] Ambil daftar kelas yang aktif untuk form Edit
-    $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
+        $quizScoresMap = $quizAttempts->groupBy('chapter_id')
+            ->mapWithKeys(fn ($attempts, $chapterId) => ['quiz_' . $chapterId => $attempts->max('score')])
+            ->toArray();
 
-    return view('admin.student_detail', compact(
-        'user', 
-        'completedLessonIds', 
-        'passedLabIds', 
-        'quizScoresMap', 
-        'labHistories', 
-        'quizAttempts',
-        'labStats', 
-        'quizStats',
-        'globalProgress',
-        'chartLabels',
-        'chartScores',
-        'availableClasses'
-    ));
-}
+        // Hitung bab yang lulus (Score >= 70)
+        $chaptersPassed = count(array_filter($quizScoresMap, fn($s) => $s >= 70));
+
+        $quizStats = [
+            'total' => $chaptersPassed, // Jumlah evaluasi lulus
+            'avg_score' => $quizAverage
+        ];
+
+        // =====================================================================
+        // 6. KALKULASI GLOBAL PROGRESS
+        // =====================================================================
+        // Asumsi Total = Materi + Lab (Misal 4) + Kuis (Misal 4)
+        $totalItemsEstimasi = $totalLessons + $totalLabs + 4; 
+        $totalDone = $lessonsCompleted + $labsCompleted + $chaptersPassed;
+        
+        $globalProgress = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
+        $globalProgress = min($globalProgress, 100);
+
+        // =====================================================================
+        // 7. CHART DATA (KUIS & LABS)
+        // =====================================================================
+        // Chart Kuis
+        $bestQuizScores = \App\Models\QuizAttempt::where('user_id', $id)
+            ->whereNotNull('completed_at')
+            ->select('chapter_id', \Illuminate\Support\Facades\DB::raw('MAX(score) as max_score'))
+            ->groupBy('chapter_id')
+            ->orderBy('chapter_id')
+            ->get();
+
+        $chartData = [
+            'labels' => $bestQuizScores->map(fn($q) => $q->chapter_id == 99 ? 'Final' : 'Bab ' . $q->chapter_id)->toArray(),
+            'scores' => $bestQuizScores->pluck('max_score')->toArray(),
+        ];
+
+        // Chart Labs
+        $labChartRaw = $labHistories->where('status', 'passed')->take(10)->reverse()->values();
+        $chartLabels = $labChartRaw->map(fn($h) => $h->lab->title ?? 'Lab #'.$h->lab_id)->toArray();
+        $chartScores = $labChartRaw->pluck('final_score')->toArray();
+
+        // =====================================================================
+        // 8. DATA RIWAYAT GABUNGAN (UNTUK TABEL LOG)
+        // =====================================================================
+        $mappedLabs = $labHistories->take(15)->map(fn ($item) => [
+            'id' => 'lab-' . $item->id,
+            'name' => $item->lab->title ?? 'Lab #'.$item->lab_id,
+            'type' => 'lab',
+            'score' => $item->final_score,
+            'date' => $item->created_at,
+            'icon' => '💻'
+        ]);
+
+        $mappedQuizzes = $quizAttempts->take(15)->map(fn ($item) => [
+            'id' => 'quiz-' . $item->id,
+            'name' => $item->chapter_id == 99 ? 'Final Evaluation' : 'Evaluasi Bab ' . $item->chapter_id,
+            'type' => 'quiz',
+            'score' => $item->score,
+            'date' => $item->created_at,
+            'icon' => '📝'
+        ]);
+
+        $historyCombined = $mappedLabs->merge($mappedQuizzes)->sortByDesc('date')->take(10)->values();
+
+        // 9. DAFTAR KELAS UNTUK MODAL EDIT
+        $availableClasses = \App\Models\ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
+
+        return view('admin.student_detail', compact(
+            'user', 'classGroup', // User & Token Class
+            'unlockedBadges', 'allBadges', 'leaderboard', // Gamifikasi
+            'completedLessonIds', 'passedLabIds', 'quizScoresMap', // Peta ID
+            'labHistories', 'quizAttempts', // Data Raw Table
+            'lessonsCompleted', 'totalLessons', 'labsCompleted', 'totalLabs', 'quizzesCompleted', 'quizAverage', 'chaptersPassed', // Basic Stats
+            'labStats', 'quizStats', 'globalProgress', // Advanced Stats
+            'chartData', 'chartLabels', 'chartScores', 'historyCombined', // Visual Stats
+            'availableClasses'
+        ));
+    }
     /**
      * INSIGHT: LAB ANALYTICS
      */

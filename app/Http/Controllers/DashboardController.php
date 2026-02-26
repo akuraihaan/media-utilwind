@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\User; // Pastikan Model User di-import
 use App\Models\UserLessonProgress;
 use App\Models\CourseLesson;
 use App\Models\Lab;
@@ -16,7 +17,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $userId = Auth::id();
+       $user = Auth::user();
+        $userId = $user->id;
 
         // 1. STATS: MATERI
         $totalLessons = CourseLesson::count();
@@ -52,23 +54,12 @@ class DashboardController extends Controller
         ];
 
         // 6. RIWAYAT AKTIVITAS (NO DUPLICATE LOGIC)
-        // Ambil data agak banyak dulu (misal 20 terakhir), nanti kita filter unik
-        $rawLabs = LabHistory::where('user_id', $userId)
-            ->with('lab')
-            ->latest()
-            ->limit(20) 
-            ->get();
+        $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(20)->get();
+        $rawQuizzes = QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->latest()->limit(20)->get();
 
-        $rawQuizzes = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at')
-            ->latest()
-            ->limit(20)
-            ->get();
-
-        // Mapping ke format standar
         $mappedLabs = $rawLabs->map(function ($item) {
             return [
-                'id' => 'lab-' . $item->lab_id, // Unique Key ID
+                'id' => 'lab-' . $item->lab_id,
                 'name' => $item->lab->title,
                 'type' => 'lab',
                 'score' => $item->final_score,
@@ -79,7 +70,7 @@ class DashboardController extends Controller
 
         $mappedQuizzes = $rawQuizzes->map(function ($item) {
             return [
-                'id' => 'quiz-' . $item->chapter_id, // Unique Key ID
+                'id' => 'quiz-' . $item->chapter_id,
                 'name' => 'Evaluasi Bab ' . $item->chapter_id,
                 'type' => 'quiz',
                 'score' => $item->score,
@@ -88,11 +79,10 @@ class DashboardController extends Controller
             ];
         });
 
-        // MERGE -> SORT -> UNIQUE -> TAKE
         $historyCombined = $mappedLabs->merge($mappedQuizzes)
             ->sortByDesc('date')
-            ->unique('name') // Hapus duplikat berdasarkan Nama Aktivitas
-            ->take(5)        // Ambil 5 teratas setelah unik
+            ->unique('name')
+            ->take(5)
             ->values();
 
         // 7. ACTIVE SESSION
@@ -102,14 +92,36 @@ class DashboardController extends Controller
             ->latest()
             ->first();
 
+        // =========================================================
+        // 8. GAMIFIKASI: BADGES
+        // =========================================================
+        // Ambil array ID badge yang sudah didapatkan user ini
+        $unlockedBadges = DB::table('user_badges')->where('user_id', $userId)->pluck('badge_id')->toArray();
+        // Ambil master data semua badge
+        $allBadges = DB::table('badges')->get();
+
+        // =========================================================
+        // 9. GAMIFIKASI: LEADERBOARD KELAS
+        // =========================================================
+        $leaderboard = [];
+        if (!empty($user->class_group)) {
+            $leaderboard = User::where('class_group', $user->class_group)
+                ->where('role', 'student')
+                ->orderByDesc('xp') // Urutkan berdasarkan XP tertinggi
+                ->take(5)
+                ->get();
+        }
+
         return view('dashboard', compact(
+            'user', // Passing object user agar method accessor di model bisa dipanggil
             'totalLessons', 'lessonsCompleted',
             'totalLabs', 'labsCompleted',
             'quizAverage', 'quizzesCompleted',
             'chaptersPassed',
             'chartData',
             'historyCombined',
-            'activeSession'
+            'activeSession',
+            'unlockedBadges', 'allBadges', 'leaderboard' // Variabel Gamifikasi
         ));
     }
 
