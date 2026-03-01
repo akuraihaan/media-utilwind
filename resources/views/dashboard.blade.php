@@ -149,9 +149,7 @@
                 </nav>
             </div>
             <div class="mt-auto p-6 shrink-0">
-                <div class="p-4 rounded-xl bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-white/5 text-center shadow-inner">
-                    <p class="text-[10px] text-white/50 italic">"Code is like humor. When you have to explain it, it’s bad."</p>
-                </div>
+            
             </div>
         </aside>
 
@@ -184,7 +182,7 @@
                         {{-- BREADCRUMB END --}}
 
                         <h1 class="text-4xl font-black text-white mb-2 tracking-tight">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Dashboard</span>
+                            Overview <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400">Dashboard</span>
                         </h1>
                         <p class="text-white/60 text-lg">Pantau pencapaian materi, XP, koleksi lencana, dan analitik Anda.</p>
                         
