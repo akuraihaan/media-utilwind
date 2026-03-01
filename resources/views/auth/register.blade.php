@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Daftar Akun · Flowwind Learn')
+@section('title', 'Register')
 
 @section('content')
 <div class="relative min-h-screen flex items-center justify-center bg-[#020617] text-slate-200 font-sans overflow-hidden selection:bg-cyan-500/30 selection:text-white p-6">
@@ -143,7 +143,7 @@
         </div>
         
         <p class="text-center text-white/20 text-xs mt-8">
-            &copy; {{ date('Y') }} Flowwind Learn. Join the Community.
+            &copy; {{ date('Y') }} Utilwind CSS
         </p>
     </div>
 

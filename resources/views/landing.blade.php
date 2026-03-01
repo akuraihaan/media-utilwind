@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Utilwind · Menguasai Tailwind CSS')
+@section('title', 'Utilwind')
 
 @section('content')
 <div id="landingRoot" class="relative min-h-screen bg-[#020617] text-slate-300 font-sans overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
@@ -43,13 +43,13 @@
                     Utility-First Mastery
                 </div>
 
-                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
-                    Berhenti Menulis <br class="hidden sm:block">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-indigo-400 animate-gradient-x pb-2">CSS Tradisional.</span>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[4.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
+                    Belajar Dasar Framework <br class="hidden sm:block">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-indigo-400 animate-gradient-x pb-2">Tailwind CSS</span>
                 </h1>
 
                 <p class="text-base sm:text-lg text-slate-400 leading-relaxed animate-fade-in-up max-w-2xl mx-auto lg:mx-0 mb-10 font-medium" style="animation-delay: 0.2s;">
-                    Pelajari framework Tailwind CSS melalui environment <strong class="text-cyan-400 font-bold">Live Sandbox</strong>, kurikulum terstruktur, dan rasakan kecepatan membangun UI tanpa perlu meninggalkan file HTML Anda.
+                    Pelajari framework Tailwind CSS melalui environment <strong class="text-cyan-400 font-bold">Live Sandbox</strong> dan pembelajaran tutorial terstruktur.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style="animation-delay: 0.3s;">

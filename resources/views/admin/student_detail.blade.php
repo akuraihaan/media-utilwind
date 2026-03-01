@@ -202,8 +202,12 @@
                     <button @click="sidebarOpen = true" class="md:hidden p-2 bg-white/5 rounded-lg text-white hover:bg-white/10 transition mt-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
                     <div class="flex items-center gap-4">
                         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 p-[1px] shadow-lg hidden sm:block">
-                            <div class="w-full h-full bg-[#0f141e] rounded-[11px] flex items-center justify-center font-black text-white text-base">{{ substr($user->name ?? 'S', 0, 2) }}</div>
-                        </div>
+    @if($user->avatar)
+        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-full h-full object-cover rounded-[10px]">
+    @else
+        <div class="w-full h-full bg-[#0f141e] rounded-[11px] flex items-center justify-center font-black text-white text-base">{{ substr($user->name ?? 'S', 0, 2) }}</div>
+    @endif
+</div>
                         <div>
                             <nav class="flex text-[10px] text-white/50 mb-1.5 font-bold hidden sm:flex">
                                 <ol class="inline-flex items-center space-x-1">
@@ -287,9 +291,13 @@
                                 <div class="relative w-24 h-24 mb-5 mt-2">
                                     <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full animate-spin-slow blur-md opacity-70 group-hover:opacity-100 transition"></div>
                                     <div class="absolute inset-1 bg-[#020617] rounded-full z-10"></div>
-                                    <div class="absolute inset-2 bg-indigo-900 rounded-full flex items-center justify-center text-3xl font-black text-white z-20 shadow-inner">
-                                        {{ substr($user->name, 0, 1) }}
-                                    </div>
+                                    <div class="absolute inset-2 bg-indigo-900 rounded-full flex items-center justify-center text-3xl font-black text-white z-20 shadow-inner overflow-hidden">
+    @if($user->avatar)
+        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+    @else
+        {{ substr($user->name, 0, 1) }}
+    @endif
+</div>
                                     <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-30 bg-indigo-500 text-[#020617] text-[10px] font-black uppercase px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">
                                         {{ $user->developer_title ?? 'Intern Coder' }}
                                     </div>

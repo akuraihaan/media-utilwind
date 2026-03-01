@@ -384,13 +384,24 @@ class AdminDashboardController extends Controller
         }
 
         // 3. Handle Avatar Upload
-        if ($request->hasFile('avatar')) {
+        // if ($request->hasFile('avatar')) {
      
 
-            $file = $request->file('avatar');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/avatars'), $filename);
-            $validated['avatar'] = $filename;
+        //     $file = $request->file('avatar');
+        //     $filename = time() . '_' . $file->getClientOriginalName();
+        //     $file->move(public_path('uploads/avatars'), $filename);
+        //     $validated['avatar'] = $filename;
+        // }
+        // 3. Handle Avatar Upload
+        if ($request->hasFile('avatar')) {
+            // (Opsional) Hapus foto lama agar hosting tidak penuh
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::exists('public/' . $user->avatar)) {
+                \Illuminate\Support\Facades\Storage::delete('public/' . $user->avatar);
+            }
+
+            // Simpan foto baru menggunakan Storage (SAMA seperti di ProfileController)
+            $path = $request->file('avatar')->store('profile-photos', 'public');
+            $validated['avatar'] = $path;
         }
 
         // 4. Update Database

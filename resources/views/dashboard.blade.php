@@ -3,6 +3,95 @@
 @section('title', 'Dashboard Siswa ')
 
 @section('content')
+
+{{-- ==============================================================================
+     LOGIKA QUERY 
+     ============================================================================== --}}
+@php
+    $userId = Auth::id();
+    
+    // 1. DATA TABEL RIWAYAT (SEMUA KUIS & LAB DARI AWAL TERMASUK REMEDIAL)
+    $allQuizzes = \App\Models\QuizAttempt::where('user_id', $userId)
+        ->whereNotNull('completed_at')
+        ->latest('completed_at')
+        ->get()
+        ->map(function($q) {
+            return [
+                'id' => 'quiz-'.$q->id,
+                'name' => 'Evaluasi Bab ' . $q->chapter_id,
+                'type' => 'kuis',
+                'score' => $q->score,
+                'date' => $q->completed_at,
+                'status' => $q->score >= 70 ? 'Lulus' : 'Remedial',
+                'exp' => $q->score,
+                'icon' => '📝'
+            ];
+        });
+
+    $allLabs = \App\Models\LabHistory::where('user_id', $userId)
+        ->whereIn('status', ['passed', 'failed', 'completed'])
+        ->with('lab')
+        ->latest('updated_at')
+        ->get()
+        ->map(function($l) {
+            return [
+                'id' => 'lab-'.$l->id,
+                'name' => $l->lab->title ?? 'Praktik Lab',
+                'type' => 'lab',
+                'score' => $l->final_score,
+                'date' => $l->updated_at,
+                'status' => $l->final_score >= 70 ? 'Lulus' : 'Remedial',
+                'exp' => $l->final_score >= 70 ? 50 : 0,
+                'icon' => '💻'
+            ];
+        });
+
+    $tableHistory = collect($allQuizzes)->merge($allLabs)->sortByDesc('date')->values();
+
+    // 2. DATA LIVE LOG GAMIFIKASI (KESELURUHAN YANG MENGHASILKAN EXP)
+    $allLessons = \App\Models\UserLessonProgress::where('user_id', $userId)
+        ->where('completed', true)
+        ->latest('updated_at')
+        ->get()
+        ->map(function($m) {
+            return [
+                'name' => 'Membaca Materi Modul',
+                'type' => 'materi',
+                'date' => $m->updated_at,
+                'status' => 'Selesai',
+                'exp' => 10,
+                'icon' => '📖'
+            ];
+        });
+
+    $allBadgesLog = \Illuminate\Support\Facades\DB::table('user_badges')
+        ->join('badges', 'user_badges.badge_id', '=', 'badges.id')
+        ->where('user_badges.user_id', $userId)
+        ->select('badges.name', 'user_badges.created_at')
+        ->latest('user_badges.created_at')
+        ->get()
+        ->map(function($b) {
+            return [
+                'name' => 'Lencana: ' . $b->name,
+                'type' => 'badge',
+                'date' => $b->created_at,
+                'status' => 'Didapatkan',
+                'exp' => 0, // Ditandai sebagai REWARD di UI
+                'icon' => '🎖️'
+            ];
+        });
+
+    // Gabungkan Semua untuk Live Log, filter KHUSUS YANG BERHASIL MENDAPAT EXP / REWARD
+    $liveLogData = collect($allLessons)
+        ->merge($tableHistory)
+        ->merge($allBadgesLog)
+        ->filter(function($item) {
+            return $item['exp'] > 0 || $item['type'] === 'badge';
+        })
+        ->sortByDesc('date')
+        ->values();
+@endphp
+
 <div id="appRoot" class="relative h-screen bg-[#020617] text-white font-sans overflow-hidden flex flex-col selection:bg-fuchsia-500/30 pt-20">
 
     {{-- Background Effects --}}
@@ -15,18 +104,12 @@
 
     @include('layouts.partials.navbar')
     
-    {{-- WRAPPER UTAMA: x-data ditaruh di sini agar Sidebar & Main bisa saling komunikasi --}}
+    {{-- WRAPPER UTAMA DENGAN ALPINEJS --}}
     <div class="flex flex-1 overflow-hidden relative" 
          x-data="{ 
-            sidebarOpen: false,
-            showJoinModal: false,
-            showLessonModal: false,
-            showLabModal: false,
-            showQuizModal: false,
-            showChapterModal: false,
-            showTitleModal: false,
-            showBadgeModal: false,
-            activeBadge: null
+            sidebarOpen: false, showJoinModal: false, showLessonModal: false,
+            showLabModal: false, showQuizModal: false, showChapterModal: false,
+            showTitleModal: false, showBadgeModal: false, activeBadge: null
          }"
          @keydown.escape.window="sidebarOpen = false; showJoinModal = false; showLessonModal = false; showLabModal = false; showQuizModal = false; showChapterModal = false; showTitleModal = false; showBadgeModal = false;">
 
@@ -43,14 +126,11 @@
                         Overview
                     </a>
                     
-                    {{-- Logic Kelas: Materi Belajar --}}
-                    @php
-                        $isUnlocked = Auth::user() && (Auth::user()->role === 'admin' || !empty(Auth::user()->class_group));
-                    @endphp
+                    {{-- Navigasi Materi Kembali ke Asal --}}
+                    @php $isUnlocked = Auth::user() && (Auth::user()->role === 'admin' || !empty(Auth::user()->class_group)); @endphp
                     @if($isUnlocked)
-                        <a href="{{ route('courses.curriculum') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
-                            <span class="grayscale group-hover:grayscale-0 transition text-lg">📚</span>
-                            Materi Belajar
+                        <a href="{{ route('courses.htmldancss') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
+                            <span class="grayscale group-hover:grayscale-0 transition text-lg">📚</span> Materi Belajar
                         </a>
                     @else
                         <button class="w-full text-left group flex items-center justify-between px-4 py-3 rounded-xl bg-red-500/5 text-red-400/80 cursor-not-allowed border border-transparent">
@@ -60,17 +140,14 @@
                     @endif
 
                     <a href="{{ route('profile.edit') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
-                        <span class="grayscale group-hover:grayscale-0 transition text-lg">⚙️</span>
-                        Pengaturan
+                        <span class="grayscale group-hover:grayscale-0 transition text-lg">⚙️</span> Pengaturan
                     </a>
                     
                     <a href="{{ route('developer.info') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition border border-transparent hover:border-white/5">
-                        <span class="grayscale group-hover:grayscale-0 transition text-lg">👨‍💻</span>
-                        Informasi
+                        <span class="grayscale group-hover:grayscale-0 transition text-lg">👨‍💻</span> Informasi
                     </a>
                 </nav>
             </div>
-            
             <div class="mt-auto p-6 shrink-0">
                 <div class="p-4 rounded-xl bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-white/5 text-center shadow-inner">
                     <p class="text-[10px] text-white/50 italic">"Code is like humor. When you have to explain it, it’s bad."</p>
@@ -80,7 +157,6 @@
 
         {{-- MAIN CONTENT --}}
         <main class="flex-1 h-full overflow-y-auto scroll-smooth relative custom-scrollbar p-6 lg:p-10">
-            
             <div class="max-w-7xl mx-auto space-y-8 pb-20">
                 
                 {{-- TOMBOL HAMBURGER MOBILE --}}
@@ -91,7 +167,7 @@
                     <span class="text-sm font-bold text-white uppercase tracking-widest opacity-50">Menu Dasbor</span>
                 </div>
 
-                {{-- =========================================================
+                 {{-- =========================================================
                      HEADER PAGE & STATUS KELAS
                      ========================================================= --}}
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -168,48 +244,30 @@
                      GAMIFIKASI ZONE
                      ========================================================= --}}
                 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8 reveal">
-                    
                     {{-- 1. LEVEL & XP CARD --}}
                     <div @click="showTitleModal = true" class="xl:col-span-3 glass-card rounded-[2rem] p-6 md:p-10 border-t-2 border-t-indigo-500/50 relative overflow-hidden flex flex-col md:flex-row items-center gap-8 shadow-2xl cursor-pointer hover:border-indigo-500/80 transition duration-300 group">
                         <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-indigo-500/20 transition"></div>
-                        
-                        {{-- Developer Title (Level Badge) --}}
                         <div class="relative shrink-0 text-center">
                             <div class="w-28 h-28 rounded-full bg-[#020617] border-[4px] border-indigo-500 flex items-center justify-center flex-col shadow-[0_0_40px_rgba(99,102,241,0.3)] relative z-10 overflow-hidden">
                                 <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 animate-spin-slow group-hover:opacity-100 transition"></div>
                                 <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mt-2 relative z-10">Total XP</span>
                                 <span class="text-2xl font-black text-white leading-none relative z-10">{{ number_format($user->xp ?? 0) }}</span>
                             </div>
-                            <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-[#020617] text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full z-20 whitespace-nowrap shadow-lg">
-                                {{ $user->developer_title ?? 'Intern Coder' }}
-                            </div>
+                            <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-[#020617] text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full z-20 whitespace-nowrap shadow-lg">{{ $user->developer_title ?? 'Intern Coder' }}</div>
                         </div>
-
-                        {{-- XP Bar --}}
                         <div class="flex-1 w-full relative z-10 mt-4 md:mt-0">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-3 gap-2">
                                 <div>
-                                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                                        Jejak Karir Developer 
-                                        <div class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 text-[9px]">?</div>
-                                    </h3>
+                                    <h3 class="text-xl font-bold text-white flex items-center gap-2">Jejak Karir Developer <div class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 text-[9px]">?</div></h3>
                                     <p class="text-xs text-slate-400 mt-1">Kumpulkan XP untuk mencapai title Tailwind Architect.</p>
                                 </div>
                                 <div class="text-left sm:text-right">
-                                    <span class="inline-block px-3 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-xs font-bold text-indigo-400">
-                                        Next Target: {{ number_format($user->next_level_xp ?? 500) }} XP
-                                    </span>
+                                    <span class="inline-block px-3 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-xs font-bold text-indigo-400">Next Target: {{ number_format($user->next_level_xp ?? 500) }} XP</span>
                                 </div>
                             </div>
-                            
                             <div class="w-full h-3.5 bg-[#020617] rounded-full overflow-hidden border border-white/10 shadow-inner relative">
                                 <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
                                 <div class="h-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 shadow-[0_0_15px_#818cf8] transition-all duration-[2s] ease-out rounded-full" style="width: {{ $user->xp_progress ?? 0 }}%;"></div>
-                            </div>
-                            <div class="flex justify-between mt-3 text-[10px] font-mono text-slate-500">
-                                <span>Baca Modul: +10 XP</span>
-                                <span>Praktik Lab: +50 XP</span>
-                                <span>Nilai Kuis: 1 XP / Point</span>
                             </div>
                         </div>
                     </div>
@@ -218,16 +276,10 @@
                     <div class="xl:col-span-2 glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
                         <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                             <h3 class="text-xl font-bold text-white flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-                                </div> 
-                                Digital Badges
+                                <div class="w-8 h-8 rounded-lg bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg></div> Digital Badges
                             </h3>
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-slate-300 font-mono">
-                                {{ count($unlockedBadges ?? []) }} / {{ count($allBadges ?? []) }} Terbuka
-                            </span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-slate-300 font-mono">{{ count($unlockedBadges ?? []) }} / {{ count($allBadges ?? []) }} Terbuka</span>
                         </div>
-                        
                         <div class="grid grid-cols-3 sm:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar pr-1 max-h-[300px]">
                             @forelse($allBadges ?? [] as $badge)
                                 @php
@@ -241,54 +293,35 @@
                                     <p class="text-[8px] md:text-[10px] font-black uppercase tracking-widest {{ $isUnlocked ? 'text-'.$c.'-400' : 'text-white/50' }} relative z-10">{{ $badge->name }}</p>
                                 </div>
                             @empty
-                                <div class="col-span-full py-8 text-center border-2 border-dashed border-white/10 rounded-2xl bg-white/[0.02]">
-                                    <p class="text-xs text-slate-400 italic">Sistem lencana sedang dipersiapkan.</p>
-                                </div>
+                                <div class="col-span-full py-8 text-center border-2 border-dashed border-white/10 rounded-2xl bg-white/[0.02]"><p class="text-xs text-slate-400 italic">No badges found.</p></div>
                             @endforelse
                         </div>
                     </div>
 
                     {{-- 3. LEADERBOARD KELAS --}}
-                    <div class="xl:col-span-1 glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden border-t-2 border-t-yellow-500/50 flex flex-col">
+                    <div class="xl:col-span-1 glass-card rounded-[2rem] p-6 md:p-8 border-t-2 border-t-yellow-500/50 flex flex-col relative overflow-hidden">
                         <div class="absolute right-0 top-0 w-40 h-40 bg-yellow-500/10 rounded-full blur-[60px] pointer-events-none"></div>
-                        <div class="flex items-center gap-3 mb-2">
+                        <div class="flex items-center gap-3 mb-2 relative z-10">
                             <div class="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30 text-lg shadow-[0_0_15px_rgba(234,179,8,0.2)]">🏆</div>
                             <h3 class="text-xl font-bold text-white">Leaderboard</h3>
                         </div>
-                        <p class="text-[10px] text-slate-400 mb-6 border-b border-white/5 pb-4">Top 5 Coder di kelas {{ $user->class_group ?? 'Anda' }}</p>
+                        <p class="text-[10px] text-slate-400 mb-6 border-b border-white/5 pb-4 relative z-10">Top 5 Coder di kelas {{ $user->class_group ?? 'Anda' }}</p>
                         
                         <div class="space-y-3 relative z-10 flex-1 overflow-y-auto custom-scrollbar pr-1">
                             @forelse($leaderboard ?? [] as $index => $boardUser)
                                 @php
                                     $isMe = $boardUser->id === Auth::id();
-                                    $bg = 'bg-white/[0.02] border-white/5';
-                                    $numColor = 'bg-[#0f141e] border border-white/10 text-white/50';
-                                    $textColor = 'text-white';
-                                    $xpColor = 'text-slate-400';
-                                    
-                                    if($index == 0) { $bg = 'bg-gradient-to-r from-yellow-500/10 to-transparent border-yellow-500/30'; $numColor = 'bg-yellow-500 text-[#020617] shadow-[0_0_10px_#eab308] border-none'; $textColor = 'text-yellow-400'; $xpColor = 'text-yellow-500'; }
-                                    elseif($index == 1) { $bg = 'bg-gradient-to-r from-slate-300/10 to-transparent border-slate-300/20'; $numColor = 'bg-slate-300 text-[#020617] border-none'; }
-                                    elseif($index == 2) { $bg = 'bg-gradient-to-r from-amber-700/10 to-transparent border-amber-700/20'; $numColor = 'bg-amber-600 text-white border-none'; }
-                                    
-                                    if($isMe) {
-                                        $bg = 'bg-indigo-500/20 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.2)]';
-                                        $textColor = 'text-indigo-300';
-                                        $numColor = 'bg-indigo-500 text-white border-none';
-                                        $xpColor = 'text-indigo-400';
-                                    }
+                                    $bg = $isMe ? 'bg-indigo-500/20 border-indigo-500/40 shadow-lg' : 'bg-white/[0.02] border-white/5';
+                                    $rankColor = match($index) { 0 => 'bg-yellow-500 text-black', 1 => 'bg-slate-300 text-black', 2 => 'bg-amber-700 text-white', default => 'bg-[#0f141e] text-white/50 border border-white/10' };
+                                    $textColor = $isMe ? 'text-indigo-300' : ($index == 0 ? 'text-yellow-400' : 'text-white');
                                 @endphp
-                                
                                 <div class="flex items-center gap-3 p-3.5 rounded-xl border {{ $bg }} transition hover:scale-[1.02]">
-                                    <span class="w-7 h-7 rounded-full {{ $numColor }} flex items-center justify-center text-xs font-black shrink-0">{{ $index + 1 }}</span>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-bold {{ $textColor }} truncate">{{ $isMe ? 'Anda ('.$boardUser->name.')' : $boardUser->name }}</p>
-                                    </div>
-                                    <span class="text-xs font-black {{ $xpColor }} font-mono">{{ number_format($boardUser->xp) }} XP</span>
+                                    <span class="w-7 h-7 rounded-full {{ $rankColor }} flex items-center justify-center text-xs font-black shrink-0">{{ $index + 1 }}</span>
+                                    <div class="flex-1 min-w-0"><p class="text-sm font-bold {{ $textColor }} truncate">{{ $isMe ? 'Anda ('.$boardUser->name.')' : $boardUser->name }}</p></div>
+                                    <span class="text-xs font-black font-mono text-white/50 {{ $isMe ? 'text-indigo-400' : '' }} {{ $index == 0 && !$isMe ? 'text-yellow-500' : '' }}">{{ number_format($boardUser->xp) }} XP</span>
                                 </div>
                             @empty
-                                <div class="text-center py-8 bg-white/[0.02] rounded-xl border border-dashed border-white/5 flex flex-col items-center justify-center h-full">
-                                    <p class="text-xs text-slate-400 italic">Leaderboard terkunci.<br>Gabung kelas untuk bersaing.</p>
-                                </div>
+                                <div class="text-center py-8 text-white/30 text-xs italic">Leaderboard belum tersedia.</div>
                             @endforelse
                         </div>
                     </div>
@@ -302,29 +335,22 @@
                 </div>
 
                 {{-- =========================================================
-                     GRID STATISTIK AKADEMIK (ORIGINAL)
+                     GRID STATISTIK AKADEMIK (INSIGHT HERO MODAL ASLI)
                      ========================================================= --}}
+                @php 
+                    $pctLesson = ($totalLessons > 0) ? round(($lessonsCompleted / $totalLessons) * 100) : 0; 
+                    $pctLab = ($totalLabs > 0) ? round(($labsCompleted / $totalLabs) * 100) : 0;
+                @endphp
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 reveal" style="animation-delay: 0.2s;">
-                    
                     {{-- CARD 1: MATERI --}}
                     <div class="relative overflow-visible rounded-2xl md:rounded-3xl border border-white/10 bg-[#0f141e] p-5 md:p-6 group hover:-translate-y-1 hover:border-fuchsia-500/40 transition duration-300 cursor-pointer shadow-lg" @click="showLessonModal = true">
                         <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-3xl pointer-events-none"></div>
                         <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-fuchsia-400 transition">Materi Bacaan</p>
-                                <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left hidden md:inline-flex">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-fuchsia-400">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-fuchsia-400 mb-1 border-b border-white/10 pb-1">Materi Diselesaikan</span>
-                                        Jumlah materi teori yang telah Anda baca. Klik untuk detail.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-fuchsia-400 transition drop-shadow-[0_0_8px_rgba(217,70,239,0.3)]">{{ $lessonsCompleted ?? 0 }}</span>
+                            <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-fuchsia-400 transition">Materi Bacaan</p>
+                            <div class="flex items-baseline gap-1 mt-2">
+                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-fuchsia-400 transition">{{ $lessonsCompleted ?? 0 }}</span>
                                 <span class="text-white/40 font-bold text-sm md:text-lg">/ {{ $totalLessons ?? 0 }}</span>
                             </div>
-                            @php $pctLesson = ($totalLessons > 0) ? ($lessonsCompleted / $totalLessons) * 100 : 0; @endphp
                             <div class="w-full h-1.5 bg-white/5 rounded-full mt-3 md:mt-4 overflow-hidden border border-white/5">
                                 <div class="h-full bg-fuchsia-500 shadow-[0_0_10px_#d946ef] transition-all duration-1000" style="width: {{ $pctLesson }}%"></div>
                             </div>
@@ -333,23 +359,12 @@
 
                     {{-- CARD 2: HANDS-ON LABS --}}
                     <div class="relative overflow-visible rounded-2xl md:rounded-3xl border border-white/10 bg-[#0f141e] p-5 md:p-6 group hover:-translate-y-1 hover:border-blue-500/40 transition duration-300 cursor-pointer shadow-lg" @click="showLabModal = true">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-3xl pointer-events-none"></div>
                         <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-blue-400 transition">Hands-on Labs</p>
-                                <div class="tooltip-container tooltip-blue tooltip-down tooltip-left hidden md:inline-flex">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-blue-400">?</div>
-                                    <div class="tooltip-content border-blue-glow" style="border-color: rgba(59, 130, 246, 0.5);">
-                                        <span class="block font-bold text-blue-400 mb-1 border-b border-white/10 pb-1">Lab Lulus</span>
-                                        Jumlah modul coding yang berhasil diselesaikan dengan KKM 70.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-blue-400 transition drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">{{ $labsCompleted ?? 0 }}</span>
+                            <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-blue-400 transition">Hands-on Labs</p>
+                            <div class="flex items-baseline gap-1 mt-2">
+                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-blue-400 transition">{{ $labsCompleted ?? 0 }}</span>
                                 <span class="text-white/40 font-bold text-sm md:text-lg">/ {{ $totalLabs ?? 0 }}</span>
                             </div>
-                            @php $pctLab = ($totalLabs > 0) ? ($labsCompleted / $totalLabs) * 100 : 0; @endphp
                             <div class="w-full h-1.5 bg-white/5 rounded-full mt-3 md:mt-4 overflow-hidden border border-white/5">
                                 <div class="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6] transition-all duration-1000" style="width: {{ $pctLab }}%"></div>
                             </div>
@@ -358,136 +373,146 @@
 
                     {{-- CARD 3: RATA-RATA KUIS --}}
                     <div class="relative overflow-visible rounded-2xl md:rounded-3xl border border-white/10 bg-[#0f141e] p-5 md:p-6 group hover:-translate-y-1 hover:border-cyan-500/40 transition duration-300 cursor-pointer shadow-lg" @click="showQuizModal = true">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-3xl pointer-events-none"></div>
                         <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Rata-rata Kuis</p>
-                                <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left hidden md:inline-flex">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-cyan-400">?</div>
-                                    <div class="tooltip-content border-cyan-glow">
-                                        <span class="block font-bold text-cyan-400 mb-1 border-b border-white/10 pb-1">Skor Keseluruhan</span>
-                                        Nilai rata-rata dari seluruh evaluasi teori.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-cyan-400 transition drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]">{{ round($quizAverage ?? 0, 1) }}</span>
+                            <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-cyan-400 transition">Rata-rata Kuis</p>
+                            <div class="flex items-baseline gap-1 mt-2">
+                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-cyan-400 transition">{{ round($quizAverage ?? 0, 1) }}</span>
                                 <span class="text-white/40 font-bold text-sm md:text-lg">pts</span>
                             </div>
-                            <p class="text-[9px] md:text-[10px] text-white/30 mt-3 md:mt-4 font-mono">Dari {{ $quizzesCompleted ?? 0 }} evaluasi selesai.</p>
+                            <p class="text-[9px] md:text-[10px] text-white/30 mt-3 md:mt-4 font-mono">Dari {{ $quizzesCompleted ?? 0 }} x percobaan evaluasi.</p>
                         </div>
                     </div>
 
                     {{-- CARD 4: BAB LULUS --}}
                     <div class="relative overflow-visible rounded-2xl md:rounded-3xl border border-white/10 bg-[#0f141e] p-5 md:p-6 group hover:-translate-y-1 hover:border-emerald-500/40 transition duration-300 cursor-pointer shadow-lg" @click="showChapterModal = true">
-                        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-3xl pointer-events-none"></div>
                         <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Bab Lulus</p>
-                                <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left hidden md:inline-flex">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-white/30 group-hover:text-emerald-400">?</div>
-                                    <div class="tooltip-content border-emerald-glow">
-                                        <span class="block font-bold text-emerald-400 mb-1 border-b border-white/10 pb-1">Kelulusan Bab</span>
-                                        Jumlah Bab Teori yang diselesaikan dengan nilai memuaskan.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-emerald-400 transition drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">{{ $chaptersPassed ?? 0 }}</span>
+                            <p class="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-emerald-400 transition">Bab Lulus</p>
+                            <div class="flex items-baseline gap-1 mt-2">
+                                <span class="text-3xl md:text-4xl font-black text-white group-hover:text-emerald-400 transition">{{ $chaptersPassed ?? 0 }}</span>
                                 <span class="text-white/40 font-bold text-sm md:text-lg">Bab</span>
                             </div>
                             <p class="text-[9px] md:text-[10px] text-emerald-400/50 mt-3 md:mt-4 font-bold uppercase tracking-wider">Keep Going!</p>
                         </div>
                     </div>
-
                 </div>
 
                 {{-- =========================================================
-                     BAGIAN BAWAH: CHART & LOG (ORIGINAL)
+                     CHART & LOGS DENGAN FILTER & EXP GAMIFIKASI ULTIMATE
                      ========================================================= --}}
                 <div class="grid lg:grid-cols-3 gap-6 md:gap-8 reveal" style="animation-delay: 0.3s;">
-                    
-                    {{-- GRAFIK --}}
                     <div class="lg:col-span-2 space-y-6 md:space-y-8">
+                        
+                        {{-- GRAFIK KUIS --}}
                         <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl shadow-lg relative overflow-hidden">
-                            <div class="flex items-center justify-between mb-4 md:mb-6 relative z-10">
-                                <div>
-                                    <h3 class="text-base md:text-lg font-bold text-white">Grafik Perkembangan Nilai</h3>
-                                    <p class="text-[10px] md:text-xs text-white/40 mt-0.5">Visualisasi hasil evaluasi kuis terbaik Anda per bab.</p>
-                                </div>
-                            </div>
+                            <h3 class="text-base md:text-lg font-bold text-white">Grafik Perkembangan Nilai</h3>
+                            <p class="text-[10px] md:text-xs text-white/40 mt-0.5 mb-6">Visualisasi hasil evaluasi kuis terbaik Anda per bab.</p>
                             <div class="relative h-[200px] md:h-[250px] w-full z-10">
                                 @if(isset($chartData['scores']) && count($chartData['scores']) > 0)
                                     <canvas id="quizChart"></canvas>
                                 @else
                                     <div class="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.01]">
                                         <p class="text-xs font-semibold text-slate-400">Belum Ada Data Kuis</p>
-                                        <p class="text-[10px] text-slate-500 mt-1">Selesaikan kuis untuk melihat perkembangan nilai Anda.</p>
                                     </div>
                                 @endif
                             </div>
-                            <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0f141e] to-transparent pointer-events-none"></div>
                         </div>
 
-                        {{-- TABEL HISTORY --}}
-                        <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl">
-                            <div class="flex items-center justify-between mb-4 md:mb-6">
+                        {{-- TABEL HISTORY (FILTER ONLY LAB & KUIS WITH EXP - BISA SCROLL SEMUA) --}}
+                        <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl flex flex-col h-[450px]" x-data="{ filterTable: 'all' }">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 md:mb-6 shrink-0 border-b border-white/5 pb-4">
                                 <h3 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
-                                    <span class="text-xl">🕒</span> Riwayat Terakhir
+                                    <span class="text-xl">🕒</span> Riwayat Pengerjaan
                                 </h3>
+                                
+                                {{-- Filter Interaktif AlpineJS --}}
+                                <div class="flex items-center bg-[#020617] p-1 rounded-lg border border-white/5 shadow-inner">
+                                    <button @click="filterTable = 'all'" :class="filterTable === 'all' ? 'bg-indigo-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[10px] font-bold transition">Semua</button>
+                                    <button @click="filterTable = 'kuis'" :class="filterTable === 'kuis' ? 'bg-fuchsia-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[10px] font-bold transition">Kuis</button>
+                                    <button @click="filterTable = 'lab'" :class="filterTable === 'lab' ? 'bg-blue-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[10px] font-bold transition">Lab</button>
+                                </div>
                             </div>
-                            <div class="overflow-x-auto -mx-6 md:mx-0 px-6 md:px-0">
-                                <table class="w-full text-left border-collapse min-w-[400px]">
-                                    <thead>
-                                        <tr class="text-[10px] md:text-xs text-white/30 uppercase tracking-widest border-b border-white/5">
-                                            <th class="pb-3 pl-2">Aktivitas</th>
-                                            <th class="pb-3 hidden sm:table-cell">Waktu</th>
-                                            <th class="pb-3 text-right pr-2">Skor/Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-xs md:text-sm text-white/70">
-                                        @forelse($historyCombined as $item)
-                                            <tr class="group hover:bg-white/5 transition border-b border-white/5 last:border-0">
-                                                <td class="py-3 md:py-4 pl-2 font-medium text-white flex items-center gap-3">
-                                                    <div class="w-6 h-6 md:w-8 md:h-8 rounded flex items-center justify-center text-[10px] md:text-xs font-bold text-white shadow-lg shrink-0
-                                                        {{ $item['type'] == 'lab' ? 'bg-blue-600 shadow-blue-900/20' : 
-                                                          ($item['type'] == 'quiz' ? 'bg-fuchsia-600 shadow-fuchsia-900/20' : 'bg-gray-600') }}">
-                                                        {{ $item['icon'] }}
-                                                    </div>
-                                                    <div class="flex flex-col min-w-0">
-                                                        <span class="truncate">{{ $item['name'] }}</span>
-                                                        <span class="text-[9px] md:text-[10px] text-white/30 uppercase mt-0.5 sm:hidden">{{ ucfirst($item['type']) }} • {{ \Carbon\Carbon::parse($item['date'])->diffForHumans() }}</span>
-                                                        <span class="text-[9px] md:text-[10px] text-white/30 uppercase mt-0.5 hidden sm:inline-block">{{ ucfirst($item['type']) }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 md:py-4 text-[10px] md:text-xs font-mono text-white/50 hidden sm:table-cell">
-                                                    {{ \Carbon\Carbon::parse($item['date'])->diffForHumans() }}
-                                                </td>
-                                                <td class="py-3 md:py-4 text-right pr-2 shrink-0">
-                                                    @if(isset($item['score']))
-                                                        <span class="px-2 md:px-3 py-1 rounded-full text-[9px] md:text-xs font-bold border 
-                                                            {{ $item['score'] >= 70 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20' }}">
-                                                            {{ $item['score'] }} pts
-                                                        </span>
-                                                    @endif
-                                                </td>
+                            
+                            <div class="overflow-x-auto custom-scrollbar -mx-6 md:mx-0 px-6 md:px-0 flex-1 relative">
+                                <div class="absolute top-0 bottom-0 right-0 w-4 bg-gradient-to-l from-[#0f141e] to-transparent pointer-events-none md:hidden z-30"></div>
+                                <div class="max-h-[300px] overflow-y-auto custom-scrollbar pr-2 h-full pb-10">
+                                    <table class="w-full text-left border-collapse min-w-[400px] relative">
+                                        <thead class="sticky top-0 z-20 bg-[#0f141e] shadow-md after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-white/10">
+                                            <tr class="text-[10px] md:text-xs text-white/30 uppercase tracking-widest">
+                                                <th class="py-3 pl-2">Aktivitas</th>
+                                                <th class="py-3 hidden sm:table-cell">Waktu</th>
+                                                <th class="py-3 text-right pr-2">Skor & EXP</th>
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="3" class="py-6 text-center text-white/30 italic text-xs">Belum ada data aktivitas. Mulai belajar sekarang!</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody class="text-xs md:text-sm text-white/70">
+                                            @forelse($tableHistory as $item)
+                                                @php
+                                                    $typeLower = isset($item['type']) ? strtolower($item['type']) : '';
+                                                    $typeLabel = 'Aktivitas';
+                                                    $typeColor = 'text-slate-400';
+                                                    $gainedXp = isset($item['exp']) ? $item['exp'] : 0;
+                                                    $iconBg = 'bg-white/5 text-white/50 border-white/10';
+                                                    $icon = '✓';
+
+                                                    if ($typeLower == 'kuis' || $typeLower == 'quiz') {
+                                                        $typeLabel = 'Evaluasi Kuis';
+                                                        $typeColor = 'text-fuchsia-400';
+                                                        $iconBg = 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20';
+                                                        $icon = '📝';
+                                                        if(!$gainedXp) $gainedXp = isset($item['score']) ? $item['score'] : 0;
+                                                    } elseif ($typeLower == 'lab') {
+                                                        $typeLabel = 'Praktik Lab';
+                                                        $typeColor = 'text-blue-400';
+                                                        $iconBg = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+                                                        $icon = '💻';
+                                                        if(!$gainedXp) $gainedXp = (isset($item['score']) && $item['score'] >= 70) ? 50 : 0;
+                                                    }
+                                                @endphp
+                                                <tr x-show="filterTable === 'all' || filterTable === '{{ $typeLower }}'" class="group hover:bg-white/5 transition border-b border-white/5 last:border-0" x-transition>
+                                                    <td class="py-3 md:py-4 pl-2 font-medium text-white flex items-center gap-3">
+                                                        <div class="w-6 h-6 md:w-8 md:h-8 rounded flex items-center justify-center text-[10px] md:text-xs font-bold shadow-lg shrink-0 border {{ $iconBg }}">
+                                                            {{ $icon }}
+                                                        </div>
+                                                        <div class="flex flex-col min-w-0">
+                                                            <span class="truncate text-xs font-bold text-white group-hover:text-indigo-300 transition" title="{{ $item['name'] }}">{{ $item['name'] }}</span>
+                                                            <div class="flex items-center gap-1.5 mt-0.5">
+                                                                <span class="text-[9px] md:text-[10px] uppercase font-bold tracking-wider {{ $typeColor }}">{{ $typeLabel }}</span>
+                                                                <span class="w-1 h-1 rounded-full bg-white/20 sm:hidden"></span>
+                                                                <span class="text-[9px] md:text-[10px] text-white/40 font-mono sm:hidden">{{ \Carbon\Carbon::parse($item['date'])->diffForHumans() }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 md:py-4 text-[10px] md:text-xs font-mono text-white/50 hidden sm:table-cell">
+                                                        {{ \Carbon\Carbon::parse($item['date'])->diffForHumans() }}
+                                                    </td>
+                                                    <td class="py-3 md:py-4 text-right pr-2 shrink-0">
+                                                        <div class="flex flex-col items-end gap-1.5">
+                                                            @if(isset($item['score']))
+                                                                <span class="px-2 md:px-3 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold border {{ $item['score'] >= 70 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20' }}">{{ $item['score'] }} pts</span>
+                                                            @endif
+                                                            
+                                                            @if($gainedXp > 0)
+                                                                <span class="text-[8px] md:text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 shadow-sm" title="Mendapatkan {{ $gainedXp }} XP dari {{ $typeLabel }}">+{{ $gainedXp }} XP</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr><td colspan="3" class="py-6 text-center text-white/30 italic text-xs">Belum ada riwayat pengerjaan kuis atau lab.</td></tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- SIDEBAR KANAN --}}
                     <div class="lg:col-span-1 space-y-6 md:space-y-8">
                         {{-- Heatmap --}}
                         <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl">
-                            <h3 class="text-xs md:text-sm font-bold text-white/70 uppercase tracking-wider mb-4">Konsistensi Belajar</h3>
+                            <div class="flex items-center gap-2 mb-4">
+                                <h3 class="text-xs md:text-sm font-bold text-white/70 uppercase tracking-wider">Konsistensi Belajar</h3>
+                                <span class="text-lg">🔥</span>
+                            </div>
                             <div id="heatmap" class="flex flex-wrap gap-1 md:gap-1.5 content-start min-h-[100px] md:min-h-[150px]"></div>
                             <div class="mt-4 flex gap-3 md:gap-4 text-[9px] md:text-[10px] text-white/30 uppercase tracking-wider font-bold">
                                 <span class="flex items-center gap-1.5"><div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-[2px] bg-white/5"></div> 0</span>
@@ -496,23 +521,104 @@
                             </div>
                         </div>
 
-                        {{-- Log Real-time --}}
-                        <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl h-[300px] md:h-[400px] flex flex-col relative overflow-hidden">
-                            <h3 class="text-xs md:text-sm font-bold text-white/70 uppercase tracking-wider mb-4 relative z-10">Live Log</h3>
-                            <ul id="activityLogList" class="space-y-2 md:space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1 relative z-10">
-                                <li class="text-center text-white/20 text-xs italic py-10">Memuat log aktivitas...</li>
+                        {{-- Log Real-time (SELURUH AKTIVITAS GAMIFIKASI MENGGUNAKAN ALPINEJS UNTUK FILTER) --}}
+                        <div class="rounded-3xl bg-[#0f141e] border border-white/10 p-6 md:p-8 backdrop-blur-xl h-[450px] flex flex-col relative overflow-hidden" x-data="{ logFilter: 'all' }">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 relative z-10 border-b border-white/5 pb-4 shrink-0 gap-4">
+                                <div>
+                                    <h3 class="text-xs md:text-sm font-bold text-white/70 uppercase tracking-wider mb-2">Live Log EXP</h3>
+                                    <div class="flex items-center bg-[#020617] p-1 rounded-lg border border-white/5 shadow-inner w-max">
+                                        <button @click="logFilter = 'all'" :class="logFilter === 'all' ? 'bg-indigo-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[9px] font-bold transition">Semua</button>
+                                        <button @click="logFilter = 'materi'" :class="logFilter === 'materi' ? 'bg-cyan-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[9px] font-bold transition">Materi</button>
+                                        <button @click="logFilter = 'kuis'" :class="logFilter === 'kuis' ? 'bg-fuchsia-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[9px] font-bold transition">Kuis</button>
+                                        <button @click="logFilter = 'lab'" :class="logFilter === 'lab' ? 'bg-blue-500 text-white shadow-md' : 'text-white/40 hover:text-white'" class="px-3 py-1.5 rounded-md text-[9px] font-bold transition">Lab</button>
+                                    </div>
+                                </div>
+                                <div class="text-left sm:text-right">
+                                    <p class="text-[8px] uppercase tracking-widest text-indigo-400/80 font-bold mb-0.5">Total Keseluruhan</p>
+                                    <p class="text-xs font-black text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]">{{ number_format($user->xp ?? 0) }} XP</p>
+                                </div>
+                            </div>
+
+                            <ul class="space-y-2 md:space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1 relative z-10 pb-10">
+                                @forelse($liveLogData as $index => $item)
+                                    @php
+                                        $typeLower = isset($item['type']) ? strtolower($item['type']) : '';
+                                        $activityName = $item['activity'] ?? $item['name'] ?? '';
+                                        
+                                        $icon = '📖'; 
+                                        $iconBg = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+                                        $typeLabel = 'Membaca Materi';
+                                        $typeColor = 'text-cyan-400';
+                                        $expGained = 10; 
+                                        $criteria = 'Selesai Membaca';
+
+                                        if ($typeLower === 'kuis' || $typeLower === 'quiz') { 
+                                            $icon = '📝'; 
+                                            $iconBg = 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20'; 
+                                            $typeLabel = 'Evaluasi Kuis';
+                                            $typeColor = 'text-fuchsia-400';
+                                            $expGained = $item['score'] ?? $item['exp'] ?? 0;
+                                            $criteria = '1 Pts = 1 XP';
+                                        } elseif ($typeLower === 'lab')  { 
+                                            $icon = '💻'; 
+                                            $iconBg = 'bg-blue-500/10 text-blue-400 border-blue-500/20'; 
+                                            $typeLabel = 'Praktik Lab';
+                                            $typeColor = 'text-blue-400';
+                                            $expGained = 50;
+                                            $criteria = 'Lulus KKM (>=70)';
+                                        } elseif ($typeLower === 'badge' || $typeLower === 'lencana') {
+                                            $icon = '🎖️'; 
+                                            $iconBg = 'bg-amber-500/10 text-amber-400 border-amber-500/20'; 
+                                            $typeLabel = 'Lencana Didapat';
+                                            $typeColor = 'text-amber-400';
+                                            $expGained = 0; 
+                                            $criteria = 'Reward Milestone';
+                                        }
+
+                                        if (isset($item['exp'])) $expGained = $item['exp'];
+                                        
+                                        $statusDisplay = in_array(strtolower($item['status'] ?? ''), ['lulus', 'passed', 'didapatkan']) ? 'bg-emerald-500/10 text-emerald-400' : 'bg-cyan-500/10 text-cyan-400';
+                                    @endphp
+
+                                    <li x-show="logFilter === 'all' || logFilter === '{{ $typeLower }}'" x-transition class="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition border border-white/5">
+                                        <div class="w-8 h-8 rounded-lg {{ $iconBg }} border flex items-center justify-center shrink-0 font-bold text-[10px] md:text-xs shadow-inner">{{ $icon }}</div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-start mb-0.5">
+                                                <h4 class="text-[10px] md:text-xs font-bold text-white truncate w-32 md:w-40" title="{{ $activityName }}">{{ $activityName }}</h4>
+                                                @if(isset($item['status']))
+                                                    <span class="text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded {{ $statusDisplay }}">{{ $item['status'] }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex justify-between items-end mt-1">
+                                                <div class="flex items-center gap-1.5 text-[9px] md:text-[10px] font-mono">
+                                                    <span class="uppercase tracking-wider font-bold {{ $typeColor }}">{{ $typeLabel }}</span>
+                                                    <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                                                    <span class="text-white/40">{{ \Carbon\Carbon::parse($item['date'] ?? $item['raw_date'])->diffForHumans() }}</span>
+                                                </div>
+                                                
+                                                <div class="flex flex-col items-end">
+                                                    @if($expGained > 0)
+                                                        <span class="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 shadow-[0_0_8px_rgba(99,102,241,0.3)]">+{{ $expGained }} XP</span>
+                                                    @else
+                                                        <span class="text-[9px] font-black text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 shadow-[0_0_8px_rgba(251,191,36,0.3)]">REWARD</span>
+                                                    @endif
+                                                    <span class="text-[7px] text-indigo-400/50 mt-1 font-mono uppercase tracking-widest leading-none">{{ $criteria }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @empty
+                                    <li class="text-center text-white/30 text-xs italic py-10">Belum ada aktivitas yang menghasilkan EXP.</li>
+                                @endforelse
                             </ul>
-                            <div class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#0f141e] to-transparent pointer-events-none z-20"></div>
+                            <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0f141e] to-transparent pointer-events-none z-20"></div>
                         </div>
                     </div>
-
                 </div>
 
-                {{-- Footer Dashboard --}}
                 <div class="border-t border-white/5 pt-6 md:pt-8 mt-8 md:mt-10 text-center">
                     <p class="text-white/20 text-[10px] md:text-xs">&copy; {{ date('Y') }} Utilwind CSS E-Learning</p>
                 </div>
-
             </div>
 
             {{-- =========================================================================
@@ -798,19 +904,23 @@
             gradient.addColorStop(0, 'rgba(232, 121, 249, 0.5)'); gradient.addColorStop(1, 'rgba(232, 121, 249, 0)');
             new Chart(ctx, { type: 'line', data: { labels: {!! json_encode($chartData['labels'] ?? []) !!}, datasets: [{ label: 'Nilai Evaluasi Terakhir', data: {!! json_encode($chartData['scores'] ?? []) !!}, borderColor: '#e879f9', backgroundColor: gradient, borderWidth: 3, pointBackgroundColor: '#020617', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 6, pointHoverRadius: 8, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15, 20, 30, 0.9)', titleFont: { family: 'Inter', size: 13, weight: 'bold' }, bodyFont: { family: 'Inter', size: 12 }, padding: 12, borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, displayColors: false } }, scales: { x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { family: 'monospace' } } }, y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.4)' } } } } });
         }
-        fetchDashboardData();
+        
+        // Render Live Log langsung dari PHP agar sempurna tanpa delay fetch API
+        const liveLogs = @json($liveLogData);
+        renderActivityLog(liveLogs);
+        
+        // Fetch heatmap secara asynchronous agar tidak membebani render
+        fetchHeatmapData();
     });
 
-    async function fetchDashboardData() {
+    async function fetchHeatmapData() {
         try {
             const response = await fetch("{{ route('api.dashboard.progress') }}", { headers: { 'Accept': 'application/json' } });
             if (!response.ok) throw new Error('API Error');
             const data = await response.json();
             renderHeatmap(data.activity_timeline || []);
-            renderActivityLog(data.activity_log || []);
         } catch (error) { 
             console.error("Sync Error:", error);
-            document.getElementById('activityLogList').innerHTML = `<li class="text-center text-red-400/50 text-xs italic py-4">Gagal sinkronisasi data log harian.</li>`;
         }
     }
 
@@ -826,14 +936,125 @@
 
     function renderActivityLog(logs) {
         const list = document.getElementById('activityLogList'); if(!list) return; list.innerHTML = '';
-        if (logs.length === 0) { list.innerHTML = `<li class="text-white/30 text-center text-xs italic py-10">Belum ada aktivitas hari ini. Mulai belajar sekarang!</li>`; return; }
+        const insightContainer = document.getElementById('liveLogInsight');
+        const globalUserXp = {{ $user->xp ?? 0 }};
+        
+        if (logs.length === 0) { 
+            list.innerHTML = `<li class="text-white/30 text-center text-xs italic py-10">Belum ada aktivitas gamifikasi.</li>`; 
+            if(insightContainer) insightContainer.innerHTML = '';
+            return; 
+        }
+        
+        let totalExpFromLogs = 0;
+
         logs.forEach((item, index) => {
-            let icon = '✓'; let iconBg = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
-            if (item.type === 'Kuis') { icon = '📝'; iconBg = 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20'; }
-            if (item.type === 'Lab')  { icon = '💻'; iconBg = 'bg-blue-500/10 text-blue-400 border-blue-500/20'; }
-            const delay = index * 100;
-            list.insertAdjacentHTML('beforeend', `<li class="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition border border-white/5 animate-fade-in-up" style="animation-delay: ${delay}ms"><div class="w-6 h-6 md:w-8 md:h-8 rounded-lg ${iconBg} border flex items-center justify-center shrink-0 font-bold text-[10px] md:text-xs shadow-inner">${icon}</div><div class="flex-1 min-w-0"><div class="flex justify-between items-center mb-0.5"><h4 class="text-[10px] md:text-xs font-bold text-white truncate w-20 md:w-24" title="${item.activity}">${item.activity}</h4><span class="text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded ${item.status === 'Lulus' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${item.status}</span></div><div class="flex justify-between items-center"><span class="text-[9px] md:text-[10px] text-white/30 font-mono">${item.time}</span></div></div></li>`);
+            let typeLower = item.type ? item.type.toLowerCase() : '';
+            let activityName = item.activity || item.name || '';
+            
+            // Konfigurasi Default (Materi)
+            let icon = '📖'; 
+            let iconBg = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+            let typeLabel = 'Membaca Materi';
+            let typeColor = 'text-cyan-400';
+            let expGained = 10; 
+            let criteria = 'Selesai Membaca';
+
+            // Logika Jenis Aktivitas Gamifikasi
+            if (typeLower === 'kuis' || typeLower === 'quiz' || activityName.toLowerCase().includes('evaluasi')) { 
+                icon = '📝'; 
+                iconBg = 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20'; 
+                typeLabel = 'Evaluasi Kuis';
+                typeColor = 'text-fuchsia-400';
+                expGained = item.score || item.exp || 0;
+                criteria = '1 Pts = 1 XP';
+            } else if (typeLower === 'lab' || activityName.toLowerCase().includes('lab'))  { 
+                icon = '💻'; 
+                iconBg = 'bg-blue-500/10 text-blue-400 border-blue-500/20'; 
+                typeLabel = 'Praktik Lab';
+                typeColor = 'text-blue-400';
+                expGained = (item.status === 'Lulus' || item.status === 'Passed' || (item.score && item.score >= 70)) ? 50 : 0;
+                criteria = 'Lulus KKM (>=70)';
+            } else if (typeLower === 'badge' || typeLower === 'lencana' || activityName.toLowerCase().includes('lencana')) {
+                icon = '🎖️'; 
+                iconBg = 'bg-amber-500/10 text-amber-400 border-amber-500/20'; 
+                typeLabel = 'Lencana Didapat';
+                typeColor = 'text-amber-400';
+                expGained = 0; 
+                criteria = 'Reward Milestone';
+            }
+
+            // Fallback jika API membawa nilai eksp eksplisit
+            if (item.exp !== undefined) expGained = item.exp; 
+            
+            // Akumulasi total XP untuk Insight Card
+            totalExpFromLogs += parseInt(expGained);
+
+            // Bangun Lencana EXP Interaktif
+            let expBadge = '';
+            if (expGained > 0) {
+                expBadge = `
+                    <div class="flex flex-col items-end">
+                        <span class="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 shadow-[0_0_8px_rgba(99,102,241,0.3)]">+${expGained} XP</span>
+                        <span class="text-[7px] text-indigo-400/50 mt-1 font-mono uppercase tracking-widest leading-none">${criteria}</span>
+                    </div>
+                `;
+            } else if (typeLower === 'badge' || typeLower === 'lencana' || activityName.toLowerCase().includes('lencana')) {
+                expBadge = `
+                    <div class="flex flex-col items-end">
+                        <span class="text-[9px] font-black text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 shadow-[0_0_8px_rgba(251,191,36,0.3)]">REWARD</span>
+                        <span class="text-[7px] text-amber-400/50 mt-1 font-mono uppercase tracking-widest leading-none">${criteria}</span>
+                    </div>
+                `;
+            } else {
+                expBadge = `
+                    <div class="flex flex-col items-end">
+                        <span class="text-[9px] font-black text-slate-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">+0 XP</span>
+                        <span class="text-[7px] text-slate-500/50 mt-1 font-mono uppercase tracking-widest leading-none">Remedial</span>
+                    </div>
+                `;
+            }
+
+            // Batasi delay agar performa tetap cepat
+            const delay = (index > 15 ? 0 : index) * 100;
+            const statusDisplay = item.status === 'Lulus' || item.status === 'Passed' || item.status === 'Didapatkan' ? 'bg-emerald-500/10 text-emerald-400' : (item.status === 'Selesai' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-red-500/10 text-red-400');
+
+            list.insertAdjacentHTML('beforeend', `
+                <li x-show="logFilter === 'all' || logFilter === '${typeLower}'" x-transition class="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition border border-white/5 animate-fade-in-up" style="animation-delay: ${delay}ms">
+                    <div class="w-8 h-8 rounded-lg ${iconBg} border flex items-center justify-center shrink-0 font-bold text-[10px] md:text-xs shadow-inner">${icon}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-start mb-0.5">
+                            <h4 class="text-[10px] md:text-xs font-bold text-white truncate w-32 md:w-40" title="${activityName}">${activityName}</h4>
+                            ${item.status ? `<span class="text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded ${statusDisplay}">${item.status}</span>` : ''}
+                        </div>
+                        <div class="flex justify-between items-end mt-1">
+                            <div class="flex items-center gap-1.5 text-[9px] md:text-[10px] font-mono">
+                                <span class="uppercase tracking-wider font-bold ${typeColor}">${typeLabel}</span>
+                                <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                                <span class="text-white/40">${item.time || item.date || ''}</span>
+                            </div>
+                            ${expBadge}
+                        </div>
+                    </div>
+                </li>
+            `);
         });
+
+        // Tampilkan insight total XP dari histori aktivitas terkini
+        if(insightContainer) {
+            insightContainer.innerHTML = `
+                <div class="flex items-center gap-3 justify-end">
+                    <div class="text-right">
+                        <p class="text-[8px] uppercase tracking-widest text-slate-500 font-bold mb-0.5">XP Log Terakhir</p>
+                        <p class="text-xs font-bold text-emerald-400">+${totalExpFromLogs}</p>
+                    </div>
+                    <div class="w-px h-6 bg-white/10"></div>
+                    <div class="text-right">
+                        <p class="text-[8px] uppercase tracking-widest text-indigo-400/80 font-bold mb-0.5">Total Keseluruhan</p>
+                        <p class="text-xs font-black text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]">${new Intl.NumberFormat('id-ID').format(globalUserXp)} XP</p>
+                    </div>
+                </div>
+            `;
+        }
     }
 </script>
 @endsection

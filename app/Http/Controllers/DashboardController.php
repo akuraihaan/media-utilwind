@@ -5,43 +5,44 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\User; // Pastikan Model User di-import
+use App\Models\User;
 use App\Models\UserLessonProgress;
 use App\Models\CourseLesson;
 use App\Models\Lab;
 use App\Models\LabHistory;
 use App\Models\QuizAttempt;
-use App\Models\ClassGroup; // TAMBAHKAN IMPORT INI
+use App\Models\ClassGroup;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-       $user = Auth::user();
+        $user = Auth::user();
         $userId = $user->id;
 
-        // 1. STATS: MATERI
+        // =========================================================
+        // 1-4. STATS: MATERI, LABS, KUIS, BAB LULUS (HERO MODAL)
+        // =========================================================
         $totalLessons = CourseLesson::count();
         $lessonsCompleted = UserLessonProgress::where('user_id', $userId)
             ->where('completed', true)
             ->count();
 
-        // 2. STATS: LABS (Hanya Lulus)
         $totalLabs = Lab::count();
         $labsCompleted = LabHistory::where('user_id', $userId)
             ->where('final_score', '>=', 70)
             ->distinct('lab_id')
             ->count('lab_id');
 
-        // 3. STATS: KUIS
         $quizAttempts = QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->get();
         $quizzesCompleted = $quizAttempts->count();
         $quizAverage = $quizzesCompleted > 0 ? $quizAttempts->avg('score') : 0;
 
-        // 4. STATS: BAB LULUS
         $chaptersPassed = $quizAttempts->where('score', '>=', 70)->unique('chapter_id')->count();
 
+        // =========================================================
         // 5. CHART DATA (Nilai Terbaik per Bab)
+        // =========================================================
         $bestQuizScores = QuizAttempt::where('user_id', $userId)
             ->select('chapter_id', DB::raw('MAX(score) as max_score'))
             ->groupBy('chapter_id')
@@ -53,39 +54,85 @@ class DashboardController extends Controller
             'scores' => $bestQuizScores->pluck('max_score')->toArray(),
         ];
 
-        // 6. RIWAYAT AKTIVITAS (NO DUPLICATE LOGIC)
-        $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(20)->get();
-        $rawQuizzes = QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->latest()->limit(20)->get();
-
+        // =========================================================
+        // 6. RIWAYAT AKTIVITAS + EXP LOGIC (NO DUPLICATE)
+        // =========================================================
+        // Ambil data Lab
+        $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(15)->get();
         $mappedLabs = $rawLabs->map(function ($item) {
             return [
                 'id' => 'lab-' . $item->lab_id,
-                'name' => $item->lab->title,
+                'name' => $item->lab->title ?? 'Praktik Lab',
                 'type' => 'lab',
                 'score' => $item->final_score,
+                'exp' => ($item->final_score >= 70) ? 50 : 0, // Kriteria: Lulus = 50 XP
                 'date' => $item->updated_at,
                 'icon' => '💻'
             ];
         });
 
+        // Ambil data Quiz
+        $rawQuizzes = QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->latest()->limit(15)->get();
         $mappedQuizzes = $rawQuizzes->map(function ($item) {
             return [
                 'id' => 'quiz-' . $item->chapter_id,
                 'name' => 'Evaluasi Bab ' . $item->chapter_id,
                 'type' => 'quiz',
                 'score' => $item->score,
+                'exp' => $item->score, // Kriteria: 1 Point Skor = 1 XP
                 'date' => $item->completed_at,
                 'icon' => '📝'
             ];
         });
 
-        $historyCombined = $mappedLabs->merge($mappedQuizzes)
+        // Ambil data Materi (Baru: Untuk memperkaya log riwayat)
+        $rawLessons = UserLessonProgress::where('user_id', $userId)->where('completed', true)->latest('updated_at')->limit(10)->get();
+        $mappedLessons = $rawLessons->map(function ($item) {
+            return [
+                'id' => 'materi-' . $item->lesson_id,
+                'name' => 'Membaca Materi Modul',
+                'type' => 'materi',
+                'score' => null,
+                'exp' => 10, // Kriteria: Membaca Selesai = 10 XP
+                'date' => $item->updated_at,
+                'icon' => '📖'
+            ];
+        });
+
+        // Ambil data Lencana/Badge (Baru: Memperkaya log)
+        $rawBadges = DB::table('user_badges')
+                        ->join('badges', 'user_badges.badge_id', '=', 'badges.id')
+                        ->where('user_badges.user_id', $userId)
+                        ->select('badges.name', 'user_badges.created_at')
+                        ->latest('user_badges.created_at')
+                        ->limit(5)->get();
+        
+        $mappedBadges = $rawBadges->map(function ($item) {
+            return [
+                'id' => 'badge-' . uniqid(),
+                'name' => 'Lencana: ' . $item->name,
+                'type' => 'badge',
+                'score' => null,
+                'exp' => 0, // Lencana adalah reward estetis, bukan penambah EXP
+                'date' => $item->created_at,
+                'icon' => '🎖️'
+            ];
+        });
+
+        // Gabungkan, urutkan, dan pastikan tidak duplikat di tampilan
+        $historyCombined = collect()
+            ->merge($mappedLabs)
+            ->merge($mappedQuizzes)
+            ->merge($mappedLessons)
+            ->merge($mappedBadges)
             ->sortByDesc('date')
-            ->unique('name')
-            ->take(5)
+            ->unique('name') // Hindari spam nama aktivitas yang sama berulang kali
+            ->take(6)
             ->values();
 
-        // 7. ACTIVE SESSION
+        // =========================================================
+        // 7. ACTIVE SESSION (LAB RESUME)
+        // =========================================================
         $activeSession = LabHistory::where('user_id', $userId)
             ->where('status', 'in_progress')
             ->with('lab')
@@ -95,9 +142,7 @@ class DashboardController extends Controller
         // =========================================================
         // 8. GAMIFIKASI: BADGES
         // =========================================================
-        // Ambil array ID badge yang sudah didapatkan user ini
         $unlockedBadges = DB::table('user_badges')->where('user_id', $userId)->pluck('badge_id')->toArray();
-        // Ambil master data semua badge
         $allBadges = DB::table('badges')->get();
 
         // =========================================================
@@ -107,13 +152,13 @@ class DashboardController extends Controller
         if (!empty($user->class_group)) {
             $leaderboard = User::where('class_group', $user->class_group)
                 ->where('role', 'student')
-                ->orderByDesc('xp') // Urutkan berdasarkan XP tertinggi
+                ->orderByDesc('xp') 
                 ->take(5)
                 ->get();
         }
 
         return view('dashboard', compact(
-            'user', // Passing object user agar method accessor di model bisa dipanggil
+            'user', 
             'totalLessons', 'lessonsCompleted',
             'totalLabs', 'labsCompleted',
             'quizAverage', 'quizzesCompleted',
@@ -121,12 +166,12 @@ class DashboardController extends Controller
             'chartData',
             'historyCombined',
             'activeSession',
-            'unlockedBadges', 'allBadges', 'leaderboard' // Variabel Gamifikasi
+            'unlockedBadges', 'allBadges', 'leaderboard'
         ));
     }
 
     /**
-     * API Progress (Heatmap & Sidebar Log)
+     * API Progress (Heatmap & Sidebar Log Realtime)
      */
     public function progress()
     {
@@ -140,32 +185,46 @@ class DashboardController extends Controller
             ->get()
             ->map(fn($i) => ['date' => $i->date, 'count' => $i->count]);
 
-        // 2. ACTIVITY LOG (NO DUPLICATE - SIDEBAR)
-        // Sama seperti index, kita ambil pool data lalu filter unik
+        // 2. ACTIVITY LOG (Membawa Data EXP untuk JS)
         $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(15)->get();
         $rawQuizzes = QuizAttempt::where('user_id', $userId)->latest()->limit(15)->get();
+        $rawLessons = UserLessonProgress::where('user_id', $userId)->where('completed', true)->latest('updated_at')->limit(10)->get();
 
         $mappedLabs = $rawLabs->map(fn($i) => [
-            'activity' => $i->lab->title,
+            'activity' => $i->lab->title ?? 'Praktik Lab',
             'type' => 'Lab',
             'raw_date' => $i->updated_at,
             'time' => $i->updated_at->diffForHumans(),
-            'status' => $i->final_score >= 70 ? 'Lulus' : 'Remedial'
+            'status' => $i->final_score >= 70 ? 'Lulus' : 'Remedial',
+            'exp' => $i->final_score >= 70 ? 50 : 0
         ]);
 
         $mappedQuizzes = $rawQuizzes->map(fn($i) => [
             'activity' => 'Evaluasi Bab ' . $i->chapter_id,
             'type' => 'Kuis',
-            'raw_date' => $i->completed_at,
-            'time' => $i->completed_at->diffForHumans(),
-            'status' => $i->score >= 70 ? 'Lulus' : 'Remedial'
+            'raw_date' => $i->completed_at ?? $i->updated_at,
+            'time' => ($i->completed_at ?? $i->updated_at)->diffForHumans(),
+            'status' => $i->score >= 70 ? 'Lulus' : 'Remedial',
+            'exp' => $i->score
+        ]);
+
+        $mappedLessons = $rawLessons->map(fn($i) => [
+            'activity' => 'Membaca Materi Modul',
+            'type' => 'Materi',
+            'raw_date' => $i->updated_at,
+            'time' => $i->updated_at->diffForHumans(),
+            'status' => 'Selesai',
+            'exp' => 10
         ]);
 
         // LOGIKA FILTERING DUPLIKAT SIDEBAR
-        $activityLog = $mappedLabs->merge($mappedQuizzes)
+        $activityLog = collect()
+            ->merge($mappedLabs)
+            ->merge($mappedQuizzes)
+            ->merge($mappedLessons)
             ->sortByDesc('raw_date')
-            ->unique('activity') // Pastikan nama aktivitas unik
-            ->take(4)            // Ambil 4 item unik terakhir
+            ->unique('activity') // Pastikan nama aktivitas unik agar rapi
+            ->take(5)            // Tampilkan 5 terakhir di JS
             ->values();
 
         return response()->json([
