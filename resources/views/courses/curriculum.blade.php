@@ -5,7 +5,7 @@
 
 {{-- 
     ============================================================================
-    KONFIGURASI DATA BAB, MATERI, DAN LAB
+    KONFIGURASI DATA BAB, MATERI, DAN LAB (100% UTUH)
     ============================================================================
 --}}
 @php
@@ -94,34 +94,48 @@
     $previousItemComplete = true; 
 @endphp
 
-{{-- CSS Custom --}}
+{{-- CSS Custom Dinamis untuk Glass Card --}}
 <style>
     .glass-card {
-        background: rgba(15, 23, 42, 0.65);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    }
+    .dark .glass-card {
+        background: rgba(15, 23, 42, 0.65);
         border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
+
     .glass-card-locked {
-        background: rgba(10, 10, 15, 0.6);
+        background: rgba(240, 240, 240, 0.6);
         backdrop-filter: blur(4px);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    .dark .glass-card-locked {
+        background: rgba(10, 10, 15, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.03);
     }
+
     .reveal-up { opacity: 0; transform: translateY(30px); animation: reveal 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
     .delay-100 { animation-delay: 100ms; }
     .delay-200 { animation-delay: 200ms; }
     .delay-300 { animation-delay: 300ms; }
     @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+    /* Fix untuk rotasi text vertikal di Referensi */
+    .writing-vertical-rl { writing-mode: vertical-rl; }
 </style>
 
-<div class="relative min-h-screen bg-[#020617] text-white font-sans overflow-x-hidden pt-28 pb-32">
+<div class="relative min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-white font-sans overflow-x-hidden pt-28 pb-32 transition-colors duration-500">
 
     {{-- DYNAMIC BACKGROUND --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-indigo-900/20 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-cyan-900/10 rounded-full blur-[100px]"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-indigo-300/30 dark:bg-indigo-900/20 rounded-full blur-[120px] animate-pulse transition-colors duration-500"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-cyan-300/30 dark:bg-cyan-900/10 rounded-full blur-[100px] transition-colors duration-500"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.03] transition-opacity duration-500"></div>
     </div>
 
     @include('layouts.partials.navbar')
@@ -133,46 +147,44 @@
             <div class="space-y-4 max-w-3xl w-full">
                 
                 {{-- BREADCRUMB START --}}
-                <nav class="flex items-center gap-2 mb-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40" aria-label="Breadcrumb">
-                    <a href="/" class="hover:text-white transition-colors flex items-center gap-1.5">
+                <nav class="flex items-center gap-2 mb-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-white/40 transition-colors" aria-label="Breadcrumb">
+                    <a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
                         <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         Home
                     </a>
-                    <span class="text-white/20">/</span>
-                    <a href="{{ route('dashboard') }}" class="hover:text-white transition-colors">Dashboard</a>
-                    <span class="text-white/20">/</span>
-                    <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">Materi</span>
+                    <span class="text-slate-300 dark:text-white/20 transition-colors">/</span>
+                    <a href="{{ route('dashboard') }}" class="hover:text-slate-900 dark:hover:text-white transition-colors">Dashboard</a>
+                    <span class="text-slate-300 dark:text-white/20 transition-colors">/</span>
+                    <span class="text-cyan-600 dark:text-cyan-400 drop-shadow-none dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-colors">Materi</span>
                 </nav>
                 {{-- BREADCRUMB END --}}
 
-               
-                
-                <h1 class="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight">
-                    Kurikulum <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-400">
+                <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tight transition-colors">
+                    Silabus <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-indigo-600 to-fuchsia-600 dark:from-cyan-400 dark:via-indigo-400 dark:to-fuchsia-400">
                         Utilwind
                     </span>
                 </h1>
-                <p class="text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed mt-4">
+                <p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed mt-4 transition-colors">
                     Selesaikan Materi, kerjakan Hands-on Lab, lalu taklukkan Kuis untuk membuka level berikutnya.
                 </p>
             </div>
 
             {{-- Progress Stats --}}
-            <div class="w-full lg:w-96 glass-card rounded-3xl p-8 relative overflow-hidden group hover:border-cyan-500/30 transition duration-500 shrink-0">
-                <div class="absolute -right-12 -top-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition duration-500"></div>
+            <div class="w-full lg:w-96 glass-card rounded-3xl p-8 relative overflow-hidden group hover:border-cyan-400 dark:hover:border-cyan-500/30 transition duration-500 shrink-0 shadow-lg dark:shadow-none">
+                <div class="absolute -right-12 -top-12 w-40 h-40 bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/30 dark:group-hover:bg-cyan-500/20 transition duration-500"></div>
                 <div class="flex justify-between items-end mb-6">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Progress</p>
-                        <h3 class="text-5xl font-black text-white tracking-tight">{{ $progressPercent ?? 0 }}<span class="text-2xl text-slate-500">%</span></h3>
+                        <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 transition-colors">Total Progress</p>
+                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">{{ $progressPercent ?? 0 }}<span class="text-2xl text-slate-400 dark:text-slate-500 transition-colors">%</span></h3>
                     </div>
                     <div class="text-right">
                         <svg class="w-10 h-10 text-cyan-500 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     </div>
                 </div>
-                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-white/5">
-                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 relative overflow-hidden transition-all duration-1000 ease-out" style="width: {{ $progressPercent ?? 0 }}%">
-                        <div class="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
+                <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
+                    <div class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 relative overflow-hidden transition-all duration-1000 ease-out" style="width: {{ $progressPercent ?? 0 }}%">
+                        <div class="absolute inset-0 bg-white/30 dark:bg-white/20 animate-[shimmer_2s_infinite]"></div>
                     </div>
                 </div>
             </div>
@@ -198,23 +210,23 @@
                     }
 
                     // Styles
-                    $cardStyle = $isChapterUnlocked ? 'glass-card hover:-translate-y-2' : 'glass-card-locked opacity-70 grayscale';
-                    $borderColor = $isChapterUnlocked ? "group-hover:border-{$chapter['color']}-500/50" : 'border-white/5';
-                    $textColor = "text-{$chapter['color']}-400";
-                    $bgBadge = "bg-{$chapter['color']}-500/10 border-{$chapter['color']}-500/20";
+                    $cardStyle = $isChapterUnlocked ? 'glass-card hover:-translate-y-2 shadow-md dark:shadow-none' : 'glass-card-locked opacity-70 grayscale shadow-sm dark:shadow-none';
+                    $borderColor = $isChapterUnlocked ? "group-hover:border-{$chapter['color']}-400 dark:group-hover:border-{$chapter['color']}-500/50" : 'border-slate-200 dark:border-white/5';
+                    $textColor = "text-{$chapter['color']}-600 dark:text-{$chapter['color']}-400";
+                    $bgBadge = "bg-{$chapter['color']}-50 dark:bg-{$chapter['color']}-500/10 border-{$chapter['color']}-200 dark:border-{$chapter['color']}-500/20";
                 @endphp
 
                 <div class="group relative rounded-[2rem] flex flex-col transition-all duration-500 {{ $cardStyle }} {{ $borderColor }}">
                     
                     {{-- Lock Overlay (Jika Bab Terkunci) --}}
                     @if(!$isChapterUnlocked)
-                        <div class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#020617]/60 backdrop-blur-[2px] rounded-[2rem]">
-                            <div class="w-14 h-14 rounded-full bg-black/60 border border-white/10 flex items-center justify-center mb-4 shadow-xl">
-                                <svg class="w-6 h-6 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <div class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-100/60 dark:bg-[#020617]/60 backdrop-blur-[2px] rounded-[2rem] transition-colors">
+                            <div class="w-14 h-14 rounded-full bg-slate-200/80 dark:bg-black/60 border border-slate-300 dark:border-white/10 flex items-center justify-center mb-4 shadow-md dark:shadow-xl transition-colors">
+                                <svg class="w-6 h-6 text-slate-500 dark:text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
-                            <div class="bg-black/80 px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+                            <div class="bg-slate-200/90 dark:bg-black/80 px-4 py-2 rounded-full border border-slate-300 dark:border-white/10 flex items-center gap-2 transition-colors">
                                 <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                                <span class="text-xs font-bold text-white/60">Selesaikan Bab Sebelumnya</span>
+                                <span class="text-xs font-bold text-slate-600 dark:text-white/60">Selesaikan Bab Sebelumnya</span>
                             </div>
                         </div>
                     @endif
@@ -222,20 +234,21 @@
                     {{-- Card Header --}}
                     <div class="p-8 pb-0">
                         <div class="flex justify-between items-start mb-6">
-                            <span class="text-[10px] font-black tracking-widest px-3 py-1.5 rounded-lg border {{ $isChapterUnlocked ? $bgBadge : 'bg-white/5 border-white/5 text-white/30' }} {{ $isChapterUnlocked ? $textColor : '' }}">
+                            <span class="text-[10px] font-black tracking-widest px-3 py-1.5 rounded-lg border transition-colors {{ $isChapterUnlocked ? $bgBadge : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400 dark:text-white/30' }} {{ $isChapterUnlocked ? $textColor : '' }}">
                                 BAB {{ $chapter['number'] }}
                             </span>
-                            <span class="text-5xl font-black text-white/5 absolute top-6 right-8 group-hover:text-white/10 transition">{{ $chapter['number'] }}</span>
+                            <span class="text-5xl font-black text-slate-200/50 dark:text-white/5 absolute top-6 right-8 group-hover:text-slate-200 dark:group-hover:text-white/10 transition-colors">{{ $chapter['number'] }}</span>
                         </div>
-                        <h2 class="text-2xl font-black text-white mb-2 leading-tight">{{ $chapter['title'] }}</h2>
-                        <p class="text-sm font-medium {{ $textColor }} mb-3 opacity-80">{{ $chapter['subtitle'] }}</p>
-                        <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">{{ $chapter['desc'] }}</p>
+                        <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2 leading-tight transition-colors">{{ $chapter['title'] }}</h2>
+                        <p class="text-sm font-medium {{ $textColor }} mb-3 opacity-90 dark:opacity-80 transition-colors">{{ $chapter['subtitle'] }}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 transition-colors">{{ $chapter['desc'] }}</p>
                     </div>
 
                     {{-- Lesson Timeline --}}
                     <div class="p-8 flex-1">
                         <div class="space-y-0 relative">
-                            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-white/10 via-white/5 to-transparent"></div>
+                            {{-- Vertical Line --}}
+                            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-slate-300 dark:from-white/10 via-slate-200 dark:via-white/5 to-transparent transition-colors"></div>
 
                             @foreach($chapter['topics'] as $topic)
                                 @php
@@ -246,36 +259,36 @@
 
                                 <div class="relative pl-6 py-2.5 group/lesson">
                                     {{-- Dot --}}
-                                    <div class="absolute left-[3px] top-[18px] w-2 h-2 rounded-full border-2 border-[#0f172a] z-10 transition-all duration-300
-                                        {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 shadow-[0_0_10px_#10b981]' : ($isAccessible ? "bg-{$chapter['color']}-500 border-{$chapter['color']}-500 animate-pulse" : 'bg-slate-700 border-slate-700') }}">
+                                    <div class="absolute left-[3px] top-[18px] w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a] z-10 transition-all duration-300
+                                        {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 shadow-sm dark:shadow-[0_0_10px_#10b981]' : ($isAccessible ? "bg-{$chapter['color']}-500 border-{$chapter['color']}-500 animate-pulse" : 'bg-slate-300 dark:bg-slate-700 border-slate-300 dark:border-slate-700') }}">
                                     </div>
 
                                     @if($isAccessible)
                                         <a href="{{ route($topic['route']) }}" class="flex items-center justify-between group-hover/lesson:translate-x-1 transition-transform duration-300">
                                             <div>
-                                                <div class="text-sm font-bold {{ $isCompleted ? 'text-emerald-400' : 'text-slate-200 group-hover/lesson:text-white' }}">
-                                                    <span class="font-mono text-[10px] opacity-40 mr-2">{{ $topic['code'] }}</span>
+                                                <div class="text-sm font-bold transition-colors {{ $isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-200 group-hover/lesson:text-slate-900 dark:group-hover/lesson:text-white' }}">
+                                                    <span class="font-mono text-[10px] opacity-60 dark:opacity-40 mr-2">{{ $topic['code'] }}</span>
                                                     {{ $topic['name'] }}
                                                 </div>
-                                                <div class="text-[10px] text-slate-500 mt-0.5 ml-8">{{ $topic['time'] }}</div>
+                                                <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 ml-8 transition-colors">{{ $topic['time'] }}</div>
                                             </div>
                                             @if($isCompleted)
-                                                <div class="bg-emerald-500/10 p-1 rounded-full border border-emerald-500/20">
-                                                    <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                <div class="bg-emerald-50 dark:bg-emerald-500/10 p-1 rounded-full border border-emerald-200 dark:border-emerald-500/20 transition-colors">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                                 </div>
                                             @else
-                                                <svg class="w-4 h-4 text-white/20 group-hover/lesson:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-4 h-4 text-slate-300 dark:text-white/20 group-hover/lesson:text-slate-500 dark:group-hover/lesson:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                             @endif
                                         </a>
                                     @else
-                                        <div class="flex items-center justify-between opacity-40 cursor-not-allowed">
+                                        <div class="flex items-center justify-between opacity-50 dark:opacity-40 cursor-not-allowed">
                                             <div>
-                                                <div class="text-sm font-medium text-slate-400">
-                                                    <span class="font-mono text-[10px] opacity-30 mr-2">{{ $topic['code'] }}</span>
+                                                <div class="text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors">
+                                                    <span class="font-mono text-[10px] opacity-50 dark:opacity-30 mr-2">{{ $topic['code'] }}</span>
                                                     {{ $topic['name'] }}
                                                 </div>
                                             </div>
-                                            <svg class="w-3 h-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                            <svg class="w-3 h-3 text-slate-400 dark:text-slate-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                         </div>
                                     @endif
                                 </div>
@@ -298,18 +311,18 @@
                         $labLink = $canAccessLab ? route('lab.start', ['id' => $chapter['lab_id']]) : '#';
                         $labStatusText = $isLabPassed ? 'LAB SELESAI' : ($canAccessLab ? 'MULAI LAB' : 'SELESAIKAN MATERI');
                         
-                        // Styling Lab
+                        // Styling Lab adaptif untuk light/dark mode
                         if ($isLabPassed) {
-                            $labBorder = "border-emerald-500/30 bg-emerald-500/5";
+                            $labBorder = "border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5";
                             $labIconBg = "bg-emerald-500 text-white shadow-emerald-500/20";
                             $labIcon = '✔';
                         } elseif ($canAccessLab) {
-                            $labBorder = "border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 cursor-pointer";
+                            $labBorder = "border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/5 hover:bg-amber-100 dark:hover:bg-amber-500/10 cursor-pointer";
                             $labIconBg = "bg-amber-500 text-white shadow-amber-500/20 animate-pulse";
                             $labIcon = '⚡';
                         } else {
-                            $labBorder = "border-white/5 bg-white/[0.02] opacity-50 cursor-not-allowed";
-                            $labIconBg = "bg-white/10 text-white/20";
+                            $labBorder = "border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] opacity-60 dark:opacity-50 cursor-not-allowed";
+                            $labIconBg = "bg-slate-200 dark:bg-white/10 text-slate-400 dark:text-white/20";
                             $labIcon = '🔒';
                         }
                     @endphp
@@ -318,17 +331,17 @@
                         <button onclick="{{ $canAccessLab ? "location.href='$labLink'" : "return false;" }}"
                             class="w-full flex items-center gap-4 p-3 rounded-xl border transition-all duration-300 group/lab {{ $labBorder }}">
                             
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shadow-lg transition-transform group-hover/lab:scale-105 {{ $labIconBg }}">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shadow-md transition-transform group-hover/lab:scale-105 {{ $labIconBg }}">
                                 {{ $labIcon }}
                             </div>
                             
                             <div class="flex-1 text-left">
-                                <div class="text-[10px] font-bold tracking-wider opacity-60 mb-0.5 {{ $canAccessLab ? 'text-amber-400' : 'text-slate-500' }}">HANDS-ON LAB</div>
-                                <div class="text-xs font-bold text-white truncate w-40">{{ $chapter['lab_title'] ?? 'Practical Exercise' }}</div>
+                                <div class="text-[10px] font-bold tracking-wider opacity-80 dark:opacity-60 mb-0.5 transition-colors {{ $canAccessLab ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500' }}">HANDS-ON LAB</div>
+                                <div class="text-xs font-bold text-slate-800 dark:text-white truncate w-40 transition-colors">{{ $chapter['lab_title'] ?? 'Practical Exercise' }}</div>
                             </div>
 
                             @if($canAccessLab)
-                                <svg class="w-4 h-4 text-amber-400 group-hover/lab:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 group-hover/lab:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             @endif
                         </button>
                     </div>
@@ -343,19 +356,19 @@
                         $isQuizPassed = !empty($completedLessonsMap[$chapter['quiz_key_db']]);
                     @endphp
 
-                    <div class="p-6 pt-2 border-t border-white/5 bg-white/[0.02] mt-2 rounded-b-[2rem]">
+                    <div class="p-6 pt-2 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] mt-2 rounded-b-[2rem] transition-colors">
                         @if($isQuizPassed)
-                            <div class="w-full py-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2">
+                            <div class="w-full py-3.5 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2 transition-colors">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 <span>Bab Terselesaikan</span>
                             </div>
                         @elseif($canTakeQuiz)
-                            <a href="{{ route('quiz.intro', ['chapterId' => $chapter['quiz_id']]) }}" class="group/btn w-full py-3.5 rounded-xl bg-gradient-to-r from-{{ $chapter['color'] }}-600 to-indigo-600 hover:scale-[1.02] active:scale-[0.98] text-white text-xs font-bold uppercase tracking-widest shadow-lg shadow-{{ $chapter['color'] }}-500/20 transition-all flex justify-center items-center gap-2">
+                            <a href="{{ route('quiz.intro', ['chapterId' => $chapter['quiz_id']]) }}" class="group/btn w-full py-3.5 rounded-xl bg-gradient-to-r from-{{ $chapter['color'] }}-500 to-indigo-500 dark:from-{{ $chapter['color'] }}-600 dark:to-indigo-600 hover:scale-[1.02] active:scale-[0.98] text-white text-xs font-bold uppercase tracking-widest shadow-md dark:shadow-lg shadow-{{ $chapter['color'] }}-500/30 dark:shadow-{{ $chapter['color'] }}-500/20 transition-all flex justify-center items-center gap-2">
                                 <span>Mulai Kuis Akhir</span> 
                                 <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             </a>
                         @else
-                            <button disabled class="w-full py-3.5 rounded-xl border border-white/5 bg-white/5 text-slate-500 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2 cursor-not-allowed">
+                            <button disabled class="w-full py-3.5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2 cursor-not-allowed transition-colors">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                 <span>{{ $canAccessLab ? 'Selesaikan Lab Dulu' : 'Materi Belum Selesai' }}</span>
                             </button>
@@ -368,48 +381,48 @@
         </div>
 
         {{-- 3. REFERENCES SECTION --}}
-        <div class="mt-32 pt-20 border-t border-white/5 reveal-up delay-500">
+        <div class="mt-32 pt-20 border-t border-slate-200 dark:border-white/5 reveal-up delay-500 transition-colors">
             <div class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-slate-800 border border-white/10 text-slate-400 text-[10px] font-bold tracking-widest uppercase">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-widest uppercase transition-colors">
                         Sumber Belajar
                     </div>
-                    <h2 class="text-3xl font-black text-white">Referensi Kurikulum</h2>
-                    <p class="text-slate-400 text-sm mt-2 max-w-2xl">
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white transition-colors">Referensi Kurikulum</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-2xl transition-colors">
                         Materi pada platform ini disusun berdasarkan best-practice dari literatur Tailwind CSS terkemuka di industri.
                     </p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-white/5 transition-all duration-300">
-                    <div class="w-16 h-20 bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg shadow-xl shrink-0 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform">
-                        <span class="text-[10px] font-bold text-white/20 writing-vertical-rl rotate-180">BOOK</span>
+                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300">
+                    <div class="w-16 h-20 bg-gradient-to-br from-slate-200 to-slate-400 dark:from-slate-700 dark:to-slate-900 rounded-lg shadow-md dark:shadow-xl shrink-0 flex items-center justify-center border border-slate-300 dark:border-white/10 group-hover:scale-105 transition-transform">
+                        <span class="text-[10px] font-bold text-slate-600 dark:text-white/20 writing-vertical-rl rotate-180">BOOK</span>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold text-sm leading-tight group-hover:text-cyan-400 transition-colors">Modern CSS with Tailwind</h4>
+                        <h4 class="text-slate-900 dark:text-white font-bold text-sm leading-tight group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Modern CSS with Tailwind</h4>
                         <p class="text-[11px] text-slate-500 mt-1 font-mono">Noel Rappin</p>
-                        <p class="text-[11px] text-slate-400 mt-3 leading-relaxed line-clamp-2">Flexible Styling Without the Fuss.</p>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Flexible Styling Without the Fuss.</p>
                     </div>
                 </a>
-                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-white/5 transition-all duration-300">
-                    <div class="w-16 h-20 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-lg shadow-xl shrink-0 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform">
-                        <span class="text-[10px] font-bold text-white/20 writing-vertical-rl rotate-180">BOOK</span>
+                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300">
+                    <div class="w-16 h-20 bg-gradient-to-br from-indigo-200 to-slate-300 dark:from-indigo-900 dark:to-slate-900 rounded-lg shadow-md dark:shadow-xl shrink-0 flex items-center justify-center border border-slate-300 dark:border-white/10 group-hover:scale-105 transition-transform">
+                        <span class="text-[10px] font-bold text-indigo-700 dark:text-white/20 writing-vertical-rl rotate-180">BOOK</span>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold text-sm leading-tight group-hover:text-indigo-400 transition-colors">Tailwind CSS (SitePoint)</h4>
+                        <h4 class="text-slate-900 dark:text-white font-bold text-sm leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Tailwind CSS (SitePoint)</h4>
                         <p class="text-[11px] text-slate-500 mt-1 font-mono">Ivaylo Gerchev</p>
-                        <p class="text-[11px] text-slate-400 mt-3 leading-relaxed line-clamp-2">Craft Beautiful, Flexible, and Responsive Designs.</p>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Craft Beautiful, Flexible, and Responsive Designs.</p>
                     </div>
                 </a>
-                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-white/5 transition-all duration-300">
-                    <div class="w-16 h-20 bg-gradient-to-br from-fuchsia-900 to-slate-900 rounded-lg shadow-xl shrink-0 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform">
-                        <span class="text-[10px] font-bold text-white/20 writing-vertical-rl rotate-180">BOOK</span>
+                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300">
+                    <div class="w-16 h-20 bg-gradient-to-br from-fuchsia-200 to-slate-300 dark:from-fuchsia-900 dark:to-slate-900 rounded-lg shadow-md dark:shadow-xl shrink-0 flex items-center justify-center border border-slate-300 dark:border-white/10 group-hover:scale-105 transition-transform">
+                        <span class="text-[10px] font-bold text-fuchsia-700 dark:text-white/20 writing-vertical-rl rotate-180">BOOK</span>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold text-sm leading-tight group-hover:text-fuchsia-400 transition-colors">Ultimate Handbook</h4>
+                        <h4 class="text-slate-900 dark:text-white font-bold text-sm leading-tight group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">Ultimate Handbook</h4>
                         <p class="text-[11px] text-slate-500 mt-1 font-mono">Kartik Bhat</p>
-                        <p class="text-[11px] text-slate-400 mt-3 leading-relaxed line-clamp-2">Build sleek and modern websites with immersive UIs.</p>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Build sleek and modern websites with immersive UIs.</p>
                     </div>
                 </a>
             </div>

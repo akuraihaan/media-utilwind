@@ -367,7 +367,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs font-bold text-white truncate">{{ $act->name }}</p>
-                                        <p class="text-[9px] text-white/40 mt-0.5">Skor: {{ $act->score }} • {{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</p>
+                                        <p class="text-[9px] text-white/40 mt-0.5">Nilai: {{ $act->score }} • {{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</p>
                                     </div>
                                 </div>
                                 @empty
@@ -819,7 +819,7 @@
                         <svg class="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Log Kuis Lulus
                     </h3>
-                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">15 Pengumpulan Valid Terbaru (Skor >= 70)</p>
+                    <p class="text-[10px] text-cyan-400 mt-1 font-mono">15 Pengumpulan Valid Terbaru (KKM >= 70)</p>
                 </div>
                 <button @click="showQuizModal = false" class="text-white/40 hover:text-white transition bg-white/5 hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -832,7 +832,7 @@
                         <p class="text-[11px] text-white/50 mt-0.5">Kuis Bab <span class="font-bold text-white">{{ $act->chapter_id ?? 'Eval' }}</span></p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-emerald-400">{{ $act->score }} Pts</span>
+                        <span class="block text-sm font-black text-emerald-400">Nilai{{ $act->score }}</span>
                         <span class="text-[9px] text-white/30 hidden sm:inline-block font-mono mt-1">{{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</span>
                     </div>
                 </div>

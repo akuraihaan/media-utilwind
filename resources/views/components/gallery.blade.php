@@ -4,7 +4,7 @@
 
 @php
     // =======================================================================
-    // ULTIMATE COMPONENT DATABASE (50 KOMPONEN)
+    // ULTIMATE COMPONENT DATABASE (50 KOMPONEN) - SAMA PERSIS 100%
     // =======================================================================
     $gallery = [
         'buttons' => [
@@ -683,14 +683,14 @@
     ];
 @endphp
 
-{{-- MAIN WRAPPER --}}
-<div class="min-h-screen bg-[#020617] text-white font-sans selection:bg-fuchsia-500/30 pt-20">
+{{-- MAIN WRAPPER DENGAN TRANSITION-COLORS --}}
+<div class="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-white font-sans selection:bg-cyan-500/30 selection:text-cyan-900 dark:selection:text-white pt-20 transition-colors duration-500">
 
     {{-- Background Decoration --}}
     <div class="fixed inset-0 -z-50 pointer-events-none overflow-hidden">
-        <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-fuchsia-900/10 rounded-full blur-[120px]"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay"></div>
+        <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-300/30 dark:bg-indigo-900/10 rounded-full blur-[120px] animate-pulse transition-colors duration-500"></div>
+        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-fuchsia-300/30 dark:bg-fuchsia-900/10 rounded-full blur-[120px] transition-colors duration-500"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.03] mix-blend-overlay transition-opacity duration-500"></div>
     </div>
 
     @include('layouts.partials.navbar')
@@ -698,20 +698,20 @@
     <div class="flex max-w-[1600px] mx-auto min-h-[calc(100vh-80px)]">
 
         {{-- SIDEBAR TOC (Desktop Only) --}}
-        <aside class="w-64 hidden lg:block shrink-0 h-[calc(100vh-80px)] sticky top-20 overflow-y-auto custom-scrollbar border-r border-white/5 py-8 pl-6 pr-4 bg-[#020617]/50 backdrop-blur-sm">
+        <aside class="w-64 hidden lg:block shrink-0 h-[calc(100vh-80px)] sticky top-20 overflow-y-auto custom-scrollbar border-r border-slate-200 dark:border-white/5 py-8 pl-6 pr-4 bg-white/50 dark:bg-[#020617]/50 backdrop-blur-sm transition-colors duration-500 z-10">
             <div class="mb-6 px-2">
-                <h3 class="text-xs font-bold text-white/40 uppercase tracking-widest mb-1">Explore Library</h3>
-                <p class="text-[10px] text-white/30">Total {{ collect($gallery)->sum(fn($c) => count($c['items'])) }} Komponen UI</p>
+                <h3 class="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1 transition-colors">Explore Library</h3>
+                <p class="text-[10px] text-slate-400 dark:text-white/30 transition-colors">Total {{ collect($gallery)->sum(fn($c) => count($c['items'])) }} Komponen UI</p>
             </div>
             
             <ul class="space-y-3" id="toc-list">
                 @foreach($gallery as $key => $cat)
                     <li>
-                        <a href="#{{ $key }}" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm text-white/60 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5">
+                        <a href="#{{ $key }}" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent hover:border-slate-200 dark:hover:border-white/5">
                             <span class="text-xl opacity-70 group-hover:scale-110 transition duration-300">{{ $cat['icon'] }}</span>
                             <div class="flex flex-col">
                                 <span class="font-bold">{{ $cat['title'] }}</span>
-                                <span class="text-[10px] text-white/30 group-hover:text-white/50">{{ count($cat['items']) }} variants</span>
+                                <span class="text-[10px] text-slate-400 dark:text-white/30 group-hover:text-slate-600 dark:group-hover:text-white/50 transition-colors">{{ count($cat['items']) }} variants</span>
                             </div>
                         </a>
                     </li>
@@ -726,35 +726,35 @@
             <div class="max-w-6xl mx-auto mb-16">
                 
                 {{-- BREADCRUMB START --}}
-                <nav class="flex items-center gap-2 mb-6 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40 justify-start" aria-label="Breadcrumb">
-                    <a href="/" class="hover:text-white transition-colors flex items-center gap-1.5">
+                <nav class="flex items-center gap-2 mb-6 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-white/40 justify-start transition-colors" aria-label="Breadcrumb">
+                    <a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
                         <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         Home
                     </a>
-                    <span class="text-white/20">/</span>
-                    <a href="{{ route('dashboard') }}" class="hover:text-white transition-colors">Dashboard</a>
-                    <span class="text-white/20">/</span>
-                    <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">Kamus Komponen</span>
+                    <span class="text-slate-300 dark:text-white/20 transition-colors">/</span>
+                    <a href="{{ route('dashboard') }}" class="hover:text-slate-900 dark:hover:text-white transition-colors">Dashboard</a>
+                    <span class="text-slate-300 dark:text-white/20 transition-colors">/</span>
+                    <span class="text-cyan-600 dark:text-cyan-400 drop-shadow-none dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-colors">Kamus Komponen</span>
                 </nav>
                 {{-- BREADCRUMB END --}}
 
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 mb-8">
                     <div>
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight">
-                            Kamus <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500">Komponen</span>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4 tracking-tight transition-colors">
+                            Kamus <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-fuchsia-600 dark:from-cyan-400 dark:to-fuchsia-500">Komponen</span>
                         </h1>
-                        <p class="text-white/50 text-base md:text-lg max-w-2xl leading-relaxed">
+                        <p class="text-slate-500 dark:text-white/50 text-base md:text-lg max-w-2xl leading-relaxed transition-colors">
                             Kumpulan 50+ komponen antarmuka modern yang dibangun sepenuhnya dengan utilitas Tailwind CSS. Salin kodenya atau bedah langsung di Sandbox interaktif.
                         </p>
                     </div>
                     
                     {{-- Search Box --}}
                     <div class="relative group w-full xl:w-80 z-20 shrink-0">
-                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-600 to-fuchsia-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                        <div class="relative bg-[#0f141e] border border-white/10 rounded-xl flex items-center px-4 h-14 shadow-xl">
-                            <svg class="w-5 h-5 text-white/30 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            <input type="text" id="compSearch" placeholder="Cari tombol, card, form..." class="w-full bg-transparent border-none text-white placeholder-white/30 text-sm focus:ring-0 focus:outline-none font-medium">
-                            <span class="hidden md:block text-[10px] text-white/20 border border-white/10 px-2 py-1 rounded bg-white/5 font-mono">CTRL+K</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-fuchsia-400 dark:from-cyan-600 dark:to-fuchsia-600 rounded-xl blur opacity-30 dark:opacity-20 group-hover:opacity-50 dark:group-hover:opacity-40 transition duration-500"></div>
+                        <div class="relative bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-xl flex items-center px-4 h-14 shadow-md dark:shadow-xl transition-colors duration-500">
+                            <svg class="w-5 h-5 text-slate-400 dark:text-white/30 mr-3 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            <input type="text" id="compSearch" placeholder="Cari tombol, card, form..." class="w-full bg-transparent border-none text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/30 text-sm focus:ring-0 focus:outline-none font-medium transition-colors">
+                            <span class="hidden md:block text-[10px] text-slate-400 dark:text-white/20 border border-slate-200 dark:border-white/10 px-2 py-1 rounded bg-slate-50 dark:bg-white/5 font-mono transition-colors">CTRL+K</span>
                         </div>
                     </div>
                 </div>
@@ -764,47 +764,47 @@
                     @foreach($gallery as $key => $cat)
                         <section id="{{ $key }}" class="section-group scroll-mt-32">
                             
-                            <div class="mb-8 border-b border-white/10 pb-6 flex items-start gap-5">
-                                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 flex items-center justify-center text-2xl md:text-3xl shadow-lg shrink-0">
+                            <div class="mb-8 border-b border-slate-200 dark:border-white/10 pb-6 flex items-start gap-5 transition-colors">
+                                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white dark:bg-gradient-to-br dark:from-white/5 dark:to-white/10 border border-slate-200 dark:border-white/10 flex items-center justify-center text-2xl md:text-3xl shadow-sm dark:shadow-lg shrink-0 transition-colors">
                                     {{ $cat['icon'] }}
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl md:text-3xl font-bold text-white tracking-tight">{{ $cat['title'] }}</h2>
-                                    <p class="text-white/40 text-xs md:text-sm mt-1 max-w-xl">{{ $cat['desc'] }}</p>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight transition-colors">{{ $cat['title'] }}</h2>
+                                    <p class="text-slate-500 dark:text-white/40 text-xs md:text-sm mt-1 max-w-xl transition-colors">{{ $cat['desc'] }}</p>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                                 @foreach($cat['items'] as $item)
-                                    <div class="comp-card group bg-[#0f141e] border border-white/10 rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-900/10 flex flex-col h-full ring-1 ring-white/0 hover:ring-white/10">
+                                    <div class="comp-card group bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden hover:border-cyan-400 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-cyan-900/10 flex flex-col h-full ring-1 ring-transparent hover:ring-slate-100 dark:hover:ring-white/10">
                                         
                                         {{-- Header: Actions --}}
-                                        <div class="px-6 py-4 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
-                                            <h3 class="text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-2 truncate pr-4">
+                                        <div class="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] flex justify-between items-center transition-colors">
+                                            <h3 class="text-sm font-bold text-slate-700 dark:text-white/80 group-hover:text-slate-900 dark:group-hover:text-white transition-colors flex items-center gap-2 truncate pr-4">
                                                 {{ $item['name'] }}
                                             </h3>
                                             
                                             <div class="flex gap-2 shrink-0">
                                                 {{-- Toggle Code --}}
-                                                <button onclick="toggleCode('{{ $item['id'] }}')" class="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition" title="Lihat HTML">
+                                                <button onclick="toggleCode('{{ $item['id'] }}')" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white transition-colors" title="Lihat HTML">
                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                                                 </button>
                                                 {{-- Copy --}}
-                                                <button onclick="copyCode('{{ $item['id'] }}')" class="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition" title="Salin Kode">
+                                                <button onclick="copyCode('{{ $item['id'] }}')" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white transition-colors" title="Salin Kode">
                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                                                 </button>
                                                 {{-- Try in Sandbox --}}
-                                                <button onclick="sendToSandbox('{{ $item['id'] }}')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500 hover:text-white transition text-[10px] md:text-xs font-bold shadow-lg shadow-cyan-500/10" title="Edit di Sandbox">
+                                                <button onclick="sendToSandbox('{{ $item['id'] }}')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white transition-colors text-[10px] md:text-xs font-bold shadow-sm dark:shadow-lg dark:shadow-cyan-500/10" title="Edit di Sandbox">
                                                     <span>Try</span>
                                                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                 </button>
                                             </div>
                                         </div>
 
-                                        {{-- Visual Preview --}}
-                                        <div class="p-6 md:p-10 bg-[#020617] flex items-center justify-center min-h-[200px] md:min-h-[250px] relative overflow-hidden flex-1 group-hover:bg-[#050912] transition">
+                                        {{-- Visual Preview (Sama dengan halaman Kamus Utility, kanvas responsif terhadap tema terang/gelap) --}}
+                                        <div class="p-6 md:p-10 bg-slate-50 dark:bg-[#020617] flex items-center justify-center min-h-[200px] md:min-h-[250px] relative overflow-hidden flex-1 group-hover:bg-white dark:group-hover:bg-[#050912] transition-colors">
                                             {{-- Checkerboard Pattern (Transparency Grid) --}}
-                                            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#4b5563 1px, transparent 1px); background-size: 16px 16px;"></div>
+                                            <div class="absolute inset-0 opacity-10 dark:opacity-10" style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 16px 16px;"></div>
                                             
                                             {{-- Render Component --}}
                                             <div class="relative z-10 w-full flex justify-center items-center">
@@ -813,10 +813,10 @@
                                         </div>
 
                                         {{-- Source Code Area (Default Hidden) --}}
-                                        <div id="code-{{ $item['id'] }}" class="hidden bg-[#0b0f19] border-t border-white/10 p-0 relative group/code transition-all animate-fade-in-down">
+                                        <div id="code-{{ $item['id'] }}" class="hidden bg-[#0b0f19] border-t border-slate-200 dark:border-white/10 p-0 relative group/code transition-all animate-fade-in-down">
                                             <textarea id="raw-{{ $item['id'] }}" class="hidden">{{ $item['code'] }}</textarea>
                                             <div class="relative">
-                                                <pre class="text-[10px] md:text-[11px] leading-relaxed text-gray-400 font-mono p-4 md:p-5 overflow-x-auto custom-scrollbar select-all max-h-64">{{ $item['code'] }}</pre>
+                                                <pre class="text-[10px] md:text-[11px] leading-relaxed text-gray-300 font-mono p-4 md:p-5 overflow-x-auto custom-scrollbar select-all max-h-64">{{ $item['code'] }}</pre>
                                                 <div class="absolute top-3 right-3 opacity-0 group-hover/code:opacity-100 transition">
                                                     <span class="text-[9px] bg-white/10 px-2 py-1 rounded text-white/50 uppercase tracking-widest font-bold border border-white/5">HTML</span>
                                                 </div>
@@ -831,9 +831,9 @@
                 </div>
 
                 {{-- Footer Text --}}
-                <div class="border-t border-white/5 pt-10 text-center pb-20">
-                    <p class="text-white/20 text-xs">Utilwind Component Library v2.0 &copy; {{ date('Y') }}</p>
-                    <p class="text-white/10 text-[10px] mt-1">Total 50 Modular Components.</p>
+                <div class="border-t border-slate-200 dark:border-white/5 pt-10 text-center pb-20 transition-colors">
+                    <p class="text-slate-500 dark:text-white/20 text-xs transition-colors">Utilwind Component Library v2.0 &copy; {{ date('Y') }}</p>
+                    <p class="text-slate-400 dark:text-white/10 text-[10px] mt-1 transition-colors">Total {{ collect($gallery)->sum(fn($c) => count($c['items'])) }} Modular Components.</p>
                 </div>
 
             </div>
@@ -841,8 +841,8 @@
     </div>
 
     {{-- TOAST NOTIFICATION (Visual Feedback) --}}
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-[#0f141e] border border-cyan-500/50 text-white px-6 py-3 rounded-full shadow-2xl shadow-cyan-900/50 transform translate-y-24 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 backdrop-blur-xl">
-        <div class="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center text-[#020617]">
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/50 text-slate-800 dark:text-white px-6 py-3 rounded-full shadow-xl dark:shadow-2xl dark:shadow-cyan-900/50 transform translate-y-24 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 backdrop-blur-xl">
+        <div class="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center text-white dark:text-[#020617]">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
         </div>
         <span class="font-bold text-sm tracking-wide">Code Copied!</span>
@@ -867,17 +867,22 @@
     // 3. SEND TO SANDBOX
     function sendToSandbox(id) {
         const rawHtml = document.getElementById('raw-' + id).value;
+        const isDark = document.documentElement.classList.contains('dark');
+        const bgClass = isDark ? 'bg-slate-900' : 'bg-slate-50';
         
-        // Membungkus code dengan template background slate gelap persis seperti di preview Kamus
+        // Membungkus code dengan template background menyesuaikan tema saat ini
         const template = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="${isDark ? 'dark' : ''}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sandbox Component</title>
+    <title>Sandbox Component Preview</title>
     <script src="https://cdn.tailwindcss.com"><\/script>
+    <script>
+      tailwind.config = { darkMode: 'class' }
+    <\/script>
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center p-8 antialiased">
+<body class="${bgClass} min-h-screen flex items-center justify-center p-8 antialiased transition-colors duration-300">
     
     ${rawHtml}
 
@@ -929,11 +934,14 @@
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
                 navLinks.forEach(link => {
-                    link.classList.remove('bg-white/5', 'text-white', 'border-white/10');
-                    link.classList.add('text-white/60', 'border-transparent');
+                    // Reset kelas navigasi sidebar
+                    link.classList.remove('bg-slate-100', 'dark:bg-white/5', 'text-slate-900', 'dark:text-white', 'border-slate-200', 'dark:border-white/10');
+                    link.classList.add('text-slate-600', 'dark:text-white/60', 'border-transparent');
+                    
+                    // Set active kelas
                     if (link.getAttribute('href') === '#' + id) {
-                        link.classList.add('bg-white/5', 'text-white', 'border-white/10');
-                        link.classList.remove('text-white/60', 'border-transparent');
+                        link.classList.add('bg-slate-100', 'dark:bg-white/5', 'text-slate-900', 'dark:text-white', 'border-slate-200', 'dark:border-white/10');
+                        link.classList.remove('text-slate-600', 'dark:text-white/60', 'border-transparent');
                     }
                 });
             }
@@ -948,17 +956,25 @@
     /* UTILITIES */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(150,150,150,0.5); }
+    
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
     .animate-fade-in-down { animation: fadeInDown 0.3s ease-out forwards; }
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* BACKGROUNDS */
+    /* BACKGROUNDS DINAMIS */
     #animated-bg {
-        background: radial-gradient(600px circle at 80% 20%, rgba(34,211,238,.1), transparent 40%),
-                    radial-gradient(600px circle at 20% 80%, rgba(217,70,239,.1), transparent 40%);
+        background: radial-gradient(600px circle at 80% 20%, rgba(34,211,238,.05), transparent 40%),
+                    radial-gradient(600px circle at 20% 80%, rgba(217,70,239,.05), transparent 40%);
         animation: bgPulse 10s ease-in-out infinite alternate;
     }
+    .dark #animated-bg {
+        background: radial-gradient(600px circle at 80% 20%, rgba(34,211,238,.1), transparent 40%),
+                    radial-gradient(600px circle at 20% 80%, rgba(217,70,239,.1), transparent 40%);
+    }
+    
     @keyframes bgPulse { 0% { opacity: 0.3; } 100% { opacity: 0.6; } }
 </style>
