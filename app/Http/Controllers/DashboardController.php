@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $userId = $user->id;
 
         // =========================================================
-        // 1-4. STATS: MATERI, LABS, KUIS, BAB LULUS (HERO MODAL)
+        // 1. STATS: MATERI, LABS, KUIS, BAB LULUS (HERO MODAL)
         // =========================================================
         $totalLessons = CourseLesson::count();
         $lessonsCompleted = UserLessonProgress::where('user_id', $userId)
@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $chaptersPassed = $quizAttempts->where('score', '>=', 70)->unique('chapter_id')->count();
 
         // =========================================================
-        // 5. CHART DATA (Nilai Terbaik per Bab)
+        // 2. CHART DATA (Nilai Terbaik per Bab)
         // =========================================================
         $bestQuizScores = QuizAttempt::where('user_id', $userId)
             ->select('chapter_id', DB::raw('MAX(score) as max_score'))
@@ -55,7 +55,7 @@ class DashboardController extends Controller
         ];
 
         // =========================================================
-        // 6. RIWAYAT AKTIVITAS + EXP LOGIC (NO DUPLICATE)
+        // 3. RIWAYAT AKTIVITAS (NO DUPLICATE)
         // =========================================================
         // Ambil data Lab
         $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(15)->get();
@@ -65,7 +65,6 @@ class DashboardController extends Controller
                 'name' => $item->lab->title ?? 'Praktik Lab',
                 'type' => 'lab',
                 'score' => $item->final_score,
-                'exp' => ($item->final_score >= 70) ? 50 : 0, // Kriteria: Lulus = 50 XP
                 'date' => $item->updated_at,
                 'icon' => '💻'
             ];
@@ -79,13 +78,12 @@ class DashboardController extends Controller
                 'name' => 'Evaluasi Bab ' . $item->chapter_id,
                 'type' => 'quiz',
                 'score' => $item->score,
-                'exp' => $item->score, // Kriteria: 1 Point Skor = 1 XP
                 'date' => $item->completed_at,
                 'icon' => '📝'
             ];
         });
 
-        // Ambil data Materi (Baru: Untuk memperkaya log riwayat)
+        // Ambil data Materi (Untuk memperkaya log riwayat)
         $rawLessons = UserLessonProgress::where('user_id', $userId)->where('completed', true)->latest('updated_at')->limit(10)->get();
         $mappedLessons = $rawLessons->map(function ($item) {
             return [
@@ -93,29 +91,8 @@ class DashboardController extends Controller
                 'name' => 'Membaca Materi Modul',
                 'type' => 'materi',
                 'score' => null,
-                'exp' => 10, // Kriteria: Membaca Selesai = 10 XP
                 'date' => $item->updated_at,
                 'icon' => '📖'
-            ];
-        });
-
-        // Ambil data Lencana/Badge (Baru: Memperkaya log)
-        $rawBadges = DB::table('user_badges')
-                        ->join('badges', 'user_badges.badge_id', '=', 'badges.id')
-                        ->where('user_badges.user_id', $userId)
-                        ->select('badges.name', 'user_badges.created_at')
-                        ->latest('user_badges.created_at')
-                        ->limit(5)->get();
-        
-        $mappedBadges = $rawBadges->map(function ($item) {
-            return [
-                'id' => 'badge-' . uniqid(),
-                'name' => 'Lencana: ' . $item->name,
-                'type' => 'badge',
-                'score' => null,
-                'exp' => 0, // Lencana adalah reward estetis, bukan penambah EXP
-                'date' => $item->created_at,
-                'icon' => '🎖️'
             ];
         });
 
@@ -124,14 +101,13 @@ class DashboardController extends Controller
             ->merge($mappedLabs)
             ->merge($mappedQuizzes)
             ->merge($mappedLessons)
-            ->merge($mappedBadges)
             ->sortByDesc('date')
             ->unique('name') // Hindari spam nama aktivitas yang sama berulang kali
             ->take(6)
             ->values();
 
         // =========================================================
-        // 7. ACTIVE SESSION (LAB RESUME)
+        // 4. ACTIVE SESSION (LAB RESUME)
         // =========================================================
         $activeSession = LabHistory::where('user_id', $userId)
             ->where('status', 'in_progress')
@@ -139,24 +115,7 @@ class DashboardController extends Controller
             ->latest()
             ->first();
 
-        // =========================================================
-        // 8. GAMIFIKASI: BADGES
-        // =========================================================
-        $unlockedBadges = DB::table('user_badges')->where('user_id', $userId)->pluck('badge_id')->toArray();
-        $allBadges = DB::table('badges')->get();
-
-        // =========================================================
-        // 9. GAMIFIKASI: LEADERBOARD KELAS
-        // =========================================================
-        $leaderboard = [];
-        if (!empty($user->class_group)) {
-            $leaderboard = User::where('class_group', $user->class_group)
-                ->where('role', 'student')
-                ->orderByDesc('xp') 
-                ->take(5)
-                ->get();
-        }
-
+        // Variabel Gamifikasi telah dihapus dari array compact()
         return view('dashboard', compact(
             'user', 
             'totalLessons', 'lessonsCompleted',
@@ -165,8 +124,7 @@ class DashboardController extends Controller
             'chaptersPassed',
             'chartData',
             'historyCombined',
-            'activeSession',
-            'unlockedBadges', 'allBadges', 'leaderboard'
+            'activeSession'
         ));
     }
 
@@ -185,7 +143,7 @@ class DashboardController extends Controller
             ->get()
             ->map(fn($i) => ['date' => $i->date, 'count' => $i->count]);
 
-        // 2. ACTIVITY LOG (Membawa Data EXP untuk JS)
+        // 2. ACTIVITY LOG (Tanpa Data EXP)
         $rawLabs = LabHistory::where('user_id', $userId)->with('lab')->latest()->limit(15)->get();
         $rawQuizzes = QuizAttempt::where('user_id', $userId)->latest()->limit(15)->get();
         $rawLessons = UserLessonProgress::where('user_id', $userId)->where('completed', true)->latest('updated_at')->limit(10)->get();
@@ -196,7 +154,6 @@ class DashboardController extends Controller
             'raw_date' => $i->updated_at,
             'time' => $i->updated_at->diffForHumans(),
             'status' => $i->final_score >= 70 ? 'Lulus' : 'Remedial',
-            'exp' => $i->final_score >= 70 ? 50 : 0
         ]);
 
         $mappedQuizzes = $rawQuizzes->map(fn($i) => [
@@ -205,7 +162,6 @@ class DashboardController extends Controller
             'raw_date' => $i->completed_at ?? $i->updated_at,
             'time' => ($i->completed_at ?? $i->updated_at)->diffForHumans(),
             'status' => $i->score >= 70 ? 'Lulus' : 'Remedial',
-            'exp' => $i->score
         ]);
 
         $mappedLessons = $rawLessons->map(fn($i) => [
@@ -214,7 +170,6 @@ class DashboardController extends Controller
             'raw_date' => $i->updated_at,
             'time' => $i->updated_at->diffForHumans(),
             'status' => 'Selesai',
-            'exp' => 10
         ]);
 
         // LOGIKA FILTERING DUPLIKAT SIDEBAR
