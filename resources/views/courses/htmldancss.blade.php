@@ -96,7 +96,6 @@
         <div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-500/5 dark:bg-purple-900/10 rounded-full blur-[100px] transition-colors"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500"></canvas>
         <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.02] dark:opacity-[0.04]"></div>
-        <div id="cursor-glow"></div>
     </div>
 
     @include('layouts.partials.navbar')
@@ -155,7 +154,7 @@
                             <div class="w-10 h-10 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 font-bold transition-colors">5</div>
                             <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">The Box Model</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Konsep fundamental layout: Margin, Border, Padding.</p></div>
                         </div>
-                        <div class="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 border border-indigo-200 dark:border-indigo-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition group h-full">
+                        <div class="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 border border-indigo-200 dark:border-indigo-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition group h-full cursor-default">
                             <div class="w-10 h-10 rounded-lg bg-white/50 dark:bg-white/10 text-indigo-600 dark:text-white flex items-center justify-center shrink-0 font-bold shadow-sm dark:shadow-none">🏁</div>
                             <div><h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-1 transition-colors">Final Project</h4><p class="text-[11px] text-indigo-700 dark:text-white/70 leading-relaxed transition-colors">Membangun komponen Kartu Produk yang lengkap.</p></div>
                         </div>
@@ -165,6 +164,7 @@
                 <article class="space-y-40">
                     
                     {{-- LESSON 1 --}}
+                    {{-- PASTIKAN data-lesson-id SESUAI DENGAN ID DI DATABASE COURSE_LESSONS ANDA --}}
                     <section id="section-1" class="lesson-section scroll-mt-32" data-lesson-id="1">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
@@ -191,6 +191,7 @@
                                 </div>
                             </div>
 
+                            {{-- SIMULATOR DOM --}}
                             <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col lg:flex-row h-[500px] transition-colors">
                                 <div class="w-full lg:w-1/2 code-adaptive border-r flex flex-col transition-colors">
                                     <div class="bg-black/5 dark:bg-[#252525] px-4 py-2 border-b border-adaptive flex justify-between transition-colors"><span class="text-xs font-mono text-slate-500 dark:text-gray-400">index.html</span></div>
@@ -207,7 +208,7 @@
                                 </div>
                                 <div class="w-full lg:w-1/2 bg-white flex flex-col relative">
                                     <div class="bg-slate-100 border-b border-slate-200 p-2 text-center"><span class="bg-white px-4 py-0.5 rounded text-[10px] text-slate-500 shadow-sm border border-slate-200">Browser Preview</span></div>
-                                    <div id="dom-preview-area" class="flex-1 p-8 bg-slate-50 overflow-auto"><div class="text-center mt-20 text-slate-300 italic text-sm">Halaman Kosong</div></div>
+                                    <div id="dom-preview-area" class="flex-1 p-8 bg-slate-50 overflow-auto"><div class="text-center mt-20 text-slate-400 italic text-sm">Halaman Kosong</div></div>
                                 </div>
                             </div>
                         </div>
@@ -240,6 +241,7 @@
                                 </div>
                             </div>
 
+                            {{-- SIMULATOR ATRIBUT --}}
                             <div class="card-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row h-[450px] transition-colors border-adaptive">
                                 <div class="w-full md:w-1/2 p-6 flex flex-col gap-6 bg-slate-50 dark:bg-[#18181b] transition-colors border-r border-adaptive">
                                     <div>
@@ -269,9 +271,9 @@
                                         <span class="text-blue-600 dark:text-blue-400">/&gt;</span>
                                     </div>
                                 </div>
-                                <div class="w-full md:w-1/2 bg-slate-200 dark:bg-[#111] flex items-center justify-center relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] transition-colors">
-                                    <div class="absolute top-2 right-2 text-[10px] text-slate-500 dark:text-white/30 uppercase tracking-widest transition-colors font-bold bg-white/50 dark:bg-black/50 px-2 py-1 rounded backdrop-blur-sm">Live Output</div>
-                                    <img id="view-attr" src="" class="w-48 h-48 object-cover border-4 border-white shadow-xl transition-all duration-500">
+                                <div class="w-full md:w-1/2 bg-slate-200 dark:bg-[#111] flex items-center justify-center relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] transition-colors overflow-hidden">
+                                    <div class="absolute top-2 right-2 text-[10px] text-slate-500 dark:text-white/30 uppercase tracking-widest transition-colors font-bold bg-white/50 dark:bg-black/50 px-2 py-1 rounded backdrop-blur-sm z-10">Live Output</div>
+                                    <img id="view-attr" src="" class="w-48 h-48 object-cover border-4 border-white shadow-xl transition-all duration-500 relative z-0">
                                 </div>
                             </div>
                         </div>
@@ -304,6 +306,7 @@
                                 </div>
                             </div>
 
+                            {{-- SIMULATOR CSS --}}
                             <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-0 md:p-8 relative shadow-xl dark:shadow-2xl overflow-hidden flex flex-col lg:flex-row gap-0 md:gap-8 transition-colors">
                                 <div class="w-full lg:w-1/2 code-adaptive rounded-t-xl md:rounded-xl flex flex-col transition-colors border-b md:border-b-0 border-adaptive">
                                     <div class="bg-black/5 dark:bg-[#252525] px-4 py-2 border-b border-adaptive text-xs text-slate-500 dark:text-gray-400 transition-colors">style.css</div>
@@ -363,6 +366,7 @@
                                 </div>
                             </div>
 
+                            {{-- SIMULATOR BRAND --}}
                             <div class="code-adaptive p-1 rounded-2xl border shadow-xl dark:shadow-2xl transition-colors">
                                 <div class="flex flex-col md:flex-row h-full">
                                     <div class="w-full md:w-1/3 p-6 border-b md:border-b-0 md:border-r border-adaptive space-y-6 transition-colors">
@@ -424,6 +428,7 @@
                                 </div>
                             </div>
 
+                            {{-- SIMULATOR BOX MODEL --}}
                             <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-4 md:p-8 relative shadow-xl dark:shadow-2xl overflow-hidden flex flex-col items-center transition-colors">
                                 
                                 <div class="w-full max-w-2xl bg-slate-50 dark:bg-black/80 backdrop-blur p-4 rounded-xl border border-adaptive font-mono text-xs z-20 shadow-sm dark:shadow-lg mb-8 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -498,14 +503,14 @@
                                                 </div>
                                             </div>
                                             <div class="space-y-3 mt-6">
-                                                <label class="text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors">2. Internal Spacing</label>
+                                                <label class="text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors">2. Internal Spacing (Box Model)</label>
                                                 <div class="grid grid-cols-2 gap-3">
                                                     <button type="button" onclick="setAct('pad', '0px', this)" class="opt-btn-pad px-4 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/5 text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all">padding: 0</button>
                                                     <button type="button" onclick="setAct('pad', '24px', this)" class="opt-btn-pad px-4 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/5 text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all">padding: 24px</button>
                                                 </div>
                                             </div>
                                             <div class="space-y-3 mt-6">
-                                                <label class="text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors">3. Visual Style</label>
+                                                <label class="text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors">3. Visual Style (Styling)</label>
                                                 <div class="grid grid-cols-2 gap-3">
                                                     <button type="button" onclick="setAct('style', 'plain', this)" class="opt-btn-style px-4 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/5 text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all">Plain Text</button>
                                                     <button type="button" onclick="setAct('style', 'card', this)" class="opt-btn-style px-4 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/5 text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all">Styled Card</button>
@@ -532,13 +537,12 @@
                                         
                                         <div id="final-card" class="w-72 bg-transparent text-left transition-all duration-500">
                                             <div class="h-40 bg-indigo-100 dark:bg-indigo-900/30 rounded-t-xl relative overflow-hidden mb-4 hidden transition-colors" id="final-img">
-                                                <div class="absolute inset-0 bg-indigo-600/10"></div>
-                                                <div class="absolute inset-0 flex items-center justify-center text-indigo-400 font-bold opacity-30">PRODUCT IMG</div>
+                                                <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=500" class="w-full h-full object-cover mix-blend-overlay opacity-80" alt="Keyboard">
                                             </div>
                                             <div id="final-content" class="text-slate-900 dark:text-white transition-colors">
                                                 <h3 class="font-black text-xl mb-1">Mechanical Keyboard</h3>
-                                                <p class="text-sm opacity-70 mb-5 font-medium">High performance clicky switches.</p>
-                                                <button class="w-full py-2.5 rounded-lg bg-indigo-600 text-white font-bold text-sm shadow-md hover:bg-indigo-700 transition-colors">BUY NOW</button>
+                                                <p class="text-sm opacity-70 mb-5 font-medium">High performance clicky switches for developers.</p>
+                                                <button class="w-full py-2.5 rounded-lg bg-indigo-600 text-white font-bold text-sm shadow-md hover:bg-indigo-700 transition-colors">Add to Cart - $99</button>
                                             </div>
                                         </div>
                                     </div>
@@ -578,8 +582,8 @@
 </div>
 
 <script>
-    /* --- CONFIGURATION --- */
-    // Array ID untuk lesson Bab 1.1 ini. SESUAIKAN DENGAN DATABASE (Misal id 1 sampai 6)
+    /* --- CONFIGURATION AJAX & PROGRESS --- */
+    // PASTIKAN window.LESSON_IDS SAMA DENGAN ID DI DATABASE `course_lessons` ANDA
     window.LESSON_IDS = [1, 2, 3, 4, 5, 6]; 
     window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedSet = new Set(window.COMPLETED_IDS);
@@ -601,7 +605,7 @@
             unlockNextChapter();
         }
 
-        // Inisialisasi observer & simulator
+        // Inisialisasi observer scroll
         initLessonObserver();
         
         // Tandai sidebar jika sudah komplit
@@ -614,7 +618,7 @@
     });
 
     // ==========================================
-    // LOGIKA UPDATE PROGRESS BAR DINAMIS (AJAX)
+    // LOGIKA UPDATE PROGRESS BAR DINAMIS
     // ==========================================
     function updateProgressUI(animate = true) {
         const total = window.LESSON_IDS.length; 
@@ -642,36 +646,47 @@
         }
     }
 
-    // FUNGSI INI YANG MELAKUKAN AJAX POST KE DATABASE (MENGGUNAKAN FORM DATA)
+    // ==========================================
+    // AJAX POST KE DATABASE MENGGUNAKAN FORM DATA
+    // ==========================================
     async function saveLessonToDB(lessonId) { 
         if(completedSet.has(lessonId)) return; // Cegah dobel request
 
         try {
-            // Gunakan FormData untuk mengirim data agar kompatibel dengan validasi request Laravel
+            console.log("Mencoba save progress untuk ID:", lessonId);
+            
             const formData = new FormData();
             formData.append('lesson_id', lessonId);
 
-            // Tembak URL controller yang sudah disiapkan di routes
-            const response = await fetch('{{ route("lesson.complete") }}', { 
+            // Memastikan URL route benar, atau fallback ke path absolut
+            const routeUrl = '{{ route("lesson.complete") }}' || '/lesson/complete';
+
+            const response = await fetch(routeUrl, { 
                 method: 'POST', 
                 headers: { 
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json' // Meminta respons JSON
                 }, 
                 body: formData 
             });
 
             if (response.ok) {
+                console.log("✅ Berhasil menyimpan progress ID:", lessonId);
                 completedSet.add(lessonId);
                 updateProgressUI(true);
                 markSidebarDone(lessonId);
             } else {
-                console.error("Gagal menyimpan progress, status HTTP:", response.status);
+                const errData = await response.json();
+                console.error("❌ Gagal menyimpan progress:", response.status, errData);
             }
         } catch(e) {
-            console.error('Network Error saat menyimpan progress:', e);
+            console.error('❌ Network Error saat menyimpan progress:', e);
         }
     }
 
+    // ==========================================
+    // OBSERVER SCROLL (DENGAN THRESHOLD 0.1)
+    // ==========================================
     function initLessonObserver() {
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -683,13 +698,17 @@
                     }
                 }
             });
-        }, { threshold: 0.6, root: document.getElementById('mainScroll') });
+        }, { 
+            threshold: 0.1, // Jauh lebih sensitif agar berhasil dideteksi
+            rootMargin: "0px 0px -100px 0px", // Margin bawah diabaikan sedikit agar tidak perlu scroll mentok
+            root: document.getElementById('mainScroll') 
+        });
         
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
 
 
-    /* --- ACTIVITY LOGIC --- */
+    /* --- ACTIVITY LOGIC (FINAL PROJECT) --- */
     let actConfig = { tag: '', pad: '', style: '' };
 
     function setAct(cat, val, btn) {
@@ -734,7 +753,7 @@
             status.innerText = "BENAR! VALIDASI BERHASIL."; 
             status.className = "text-[11px] text-emerald-600 dark:text-green-400 font-mono font-bold tracking-wider";
             
-            // Simpan Data Progress Activity ini ke DB via AJAX yang sama!
+            // Simpan Data Progress Activity ini ke DB via AJAX yang sama
             await saveLessonToDB(ACTIVITY_LESSON_ID); 
             
             activityCompleted = true;
@@ -773,11 +792,37 @@
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
             icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/50', 'text-indigo-600', 'dark:text-indigo-400', 'shadow-lg');
             
-            btn.onclick = () => window.location.href = "{{ route('courses.tailwindcss') }}"; 
+            btn.onclick = () => window.location.href = "{{ route('courses.tailwindcss') ?? '#' }}"; 
         }
     }
 
     /* --- SIMULATORS LOGIC --- */
+    function toggleDom(el) {
+        // ... (Fungsi toggle DOM tidak berubah, mempertahankan simulasi interaktif)
+        let domState = window.domState || { nav: false, h1: false, p: false };
+        window.domState = domState;
+        domState[el] = !domState[el];
+        const code = document.getElementById('dom-code-area');
+        const view = document.getElementById('dom-preview-area');
+        let hC = '', hV = '';
+        
+        if(domState.nav) { 
+            hC += `<div class="text-indigo-600 dark:text-indigo-400 font-bold">&lt;nav&gt;<span class="text-slate-400">...</span>&lt;/nav&gt;</div>`; 
+            hV += `<div class="w-full h-10 bg-indigo-500 rounded-md mb-4 shadow-md flex items-center px-4"><div class="w-4 h-4 rounded-full bg-white/50"></div></div>`; 
+        }
+        if(domState.h1) { 
+            hC += `<div class="text-purple-600 dark:text-purple-400 font-bold">&lt;h1&gt;<span class="text-slate-400">Judul Utama</span>&lt;/h1&gt;</div>`; 
+            hV += `<h1 class="text-2xl font-black text-slate-800 mb-2 tracking-tight">Judul Website</h1>`; 
+        }
+        if(domState.p) { 
+            hC += `<div class="text-pink-600 dark:text-pink-400 font-bold">&lt;p&gt;<span class="text-slate-400">Sebuah paragraf.</span>&lt;/p&gt;</div>`; 
+            hV += `<div class="space-y-2"><div class="h-2 bg-slate-300 rounded w-full"></div><div class="h-2 bg-slate-300 rounded w-5/6"></div><div class="h-2 bg-slate-300 rounded w-4/6"></div></div>`; 
+        }
+        
+        code.innerHTML = hC || '<span class="text-slate-400 dark:text-gray-600 italic">// Klik tombol untuk inject elemen</span>';
+        view.innerHTML = hV || '<div class="text-center mt-16 text-slate-300 font-bold text-sm">Document Kosong</div>';
+    }
+
     function updateAttrSim() {
         const src = document.getElementById('inp-src').value;
         const cls = document.getElementById('inp-class').value;

@@ -62,27 +62,61 @@
             'items' => [
                 [
                     'id' => '1.1', 'title' => 'Konsep Dasar HTML & CSS', 'route' => 'courses.htmldancss', 
-                    'anchors' => [['id' => 'section-1', 'label' => 'Pengantar Web'], ['id' => 'section-2', 'label' => 'Semantik dan Atribut HTML'], ['id' => 'section-3', 'label' => 'Pengenalan CSS'], ['id' => 'section-4', 'label' => 'Warna dan Dasar Font'], ['id' => 'section-5', 'label' => 'Box Model']]
+                    'anchors' => [
+                        ['id' => 'section-1', 'label' => 'Pengantar Web'], 
+                        ['id' => 'section-2', 'label' => 'Semantik dan Atribut HTML'], 
+                        ['id' => 'section-3', 'label' => 'Pengenalan CSS'], 
+                        ['id' => 'section-4', 'label' => 'Warna dan Dasar Font'], 
+                        ['id' => 'section-5', 'label' => 'Box Model'],
+                        ['id' => 'section-6', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '1.2', 'title' => 'Konsep Dasar Tailwind', 'route' => 'courses.tailwindcss', 
-                    'anchors' => [['id' => 'section-7', 'label' => 'Filosofi Utility First'], ['id' => 'section-8', 'label' => 'Warna & Tipografi Dasar'], ['id' => 'section-9', 'label' => 'Spacing & Sizing'], ['id' => 'section-10', 'label' => 'Borders & Effects']]
+                    'anchors' => [
+                        ['id' => 'section-7', 'label' => 'Filosofi Utility First'], 
+                        ['id' => 'section-8', 'label' => 'Warna & Tipografi Dasar'], 
+                        ['id' => 'section-9', 'label' => 'Spacing & Sizing'], 
+                        ['id' => 'section-10', 'label' => 'Borders & Effects'],
+                        ['id' => 'section-11', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '1.3', 'title' => 'Latar Belakang', 'route' => 'courses.latarbelakang', 
-                    'anchors' => [['id' => 'section-12', 'label' => 'Latar Belakang & Efisiensi'], ['id' => 'section-13', 'label' => 'Struktur Dasar (3 Layers)'], ['id' => 'section-14', 'label' => 'Mesin JIT']]
+                    'anchors' => [
+                        ['id' => 'section-12', 'label' => 'Latar Belakang & Efisiensi'], 
+                        ['id' => 'section-13', 'label' => 'Struktur Dasar (3 Layers)'], 
+                        ['id' => 'section-14', 'label' => 'Mesin JIT'],
+                        ['id' => 'section-15', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '1.4', 'title' => 'Penerapan Utility', 'route' => 'courses.implementation', 
-                    'anchors' => [['id' => 'section-16', 'label' => 'Filosofi Utilitas & Sistem Desain'], ['id' => 'section-17', 'label' => 'Komposisi & Interaktivitas'], ['id' => 'section-18', 'label' => 'Arsitektur Kode & Duplikasi']]
+                    'anchors' => [
+                        ['id' => 'section-16', 'label' => 'Filosofi Utilitas & Sistem Desain'], 
+                        ['id' => 'section-17', 'label' => 'Komposisi & Interaktivitas'], 
+                        ['id' => 'section-18', 'label' => 'Arsitektur Kode & Duplikasi'],
+                        ['id' => 'section-19', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '1.5', 'title' => 'Keunggulan', 'route' => 'courses.advantages', 
-                    'anchors' => [['id' => 'section-20', 'label' => 'Efisiensi & Kurva Belajar'], ['id' => 'section-21', 'label' => 'Responsif & Performa'], ['id' => 'section-22', 'label' => 'Prinsip DRY & Konsistensi']]
+                    'anchors' => [
+                        ['id' => 'section-20', 'label' => 'Efisiensi & Kurva Belajar'], 
+                        ['id' => 'section-21', 'label' => 'Responsif & Performa'], 
+                        ['id' => 'section-22', 'label' => 'Prinsip DRY & Konsistensi'],
+                        ['id' => 'section-23', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '1.6', 'title' => 'Instalasi & Konfigurasi', 'route' => 'courses.installation', 
-                    'anchors' => [['id' => 'section-24', 'label' => 'Prasyarat Sistem (Node.js)'], ['id' => 'section-25', 'label' => 'Simulasi Instalasi CLI'], ['id' => 'section-26', 'label' => 'Integrasi & Kompilasi'], ['id' => 'section-27', 'label' => 'Konfigurasi Tema']]
+                    'anchors' => [
+                        ['id' => 'section-24', 'label' => 'Prasyarat Sistem (Node.js)'], 
+                        ['id' => 'section-25', 'label' => 'Simulasi Instalasi CLI'], 
+                        ['id' => 'section-26', 'label' => 'Integrasi & Kompilasi'], 
+                        ['id' => 'section-27', 'label' => 'Konfigurasi Tema'],
+                        ['id' => 'section-28', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
             ]
         ],
@@ -91,15 +125,35 @@
             'items' => [
                 [
                     'id' => '2.1', 'title' => 'Layout dengan Flexbox', 'route' => 'courses.flexbox', 
-                    'anchors' => [['id' => 'section-29', 'label' => 'Ukuran & Arah Flexbox'], ['id' => 'section-30', 'label' => 'Flex Wrap & Perilaku'], ['id' => 'section-31', 'label' => 'Justify & Align'], ['id' => 'section-32', 'label' => 'Sizing & Flexibility']]
+                    'anchors' => [
+                        ['id' => 'section-29', 'label' => 'Ukuran & Arah Flexbox'], 
+                        ['id' => 'section-30', 'label' => 'Flex Wrap & Perilaku'], 
+                        ['id' => 'section-31', 'label' => 'Justify & Align'], 
+                        ['id' => 'section-32', 'label' => 'Sizing & Flexibility'],
+                        ['id' => 'section-33', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '2.2', 'title' => 'Layout dengan Grid', 'route' => 'courses.grid', 
-                    'anchors' => [['id' => 'section-34', 'label' => 'Konsep Grid Layout'], ['id' => 'section-35', 'label' => 'Penjajaran Grid (Alignment)'], ['id' => 'section-36', 'label' => 'Span & Start/End'], ['id' => 'section-37', 'label' => 'Grid Template Rows'], ['id' => 'section-38', 'label' => 'Arbitrary Columns'], ['id' => 'section-39', 'label' => 'Grid Auto Flow']]
+                    'anchors' => [
+                        ['id' => 'section-34', 'label' => 'Konsep Grid Layout'], 
+                        ['id' => 'section-35', 'label' => 'Penjajaran Grid (Alignment)'], 
+                        ['id' => 'section-36', 'label' => 'Span & Start/End'], 
+                        ['id' => 'section-37', 'label' => 'Grid Template Rows'], 
+                        ['id' => 'section-38', 'label' => 'Arbitrary Columns'], 
+                        ['id' => 'section-39', 'label' => 'Grid Auto Flow'],
+                        ['id' => 'section-40', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '2.3', 'title' => 'Mengelola Layout', 'route' => 'courses.layout-mgmt', 
-                    'anchors' => [['id' => 'section-41', 'label' => 'Container & Viewport'], ['id' => 'section-42', 'label' => 'Float & Clear'], ['id' => 'section-43', 'label' => 'Position & Z-Index'], ['id' => 'section-44', 'label' => 'Table Layout']]
+                    'anchors' => [
+                        ['id' => 'section-41', 'label' => 'Container & Viewport'], 
+                        ['id' => 'section-42', 'label' => 'Float & Clear'], 
+                        ['id' => 'section-43', 'label' => 'Position & Z-Index'], 
+                        ['id' => 'section-44', 'label' => 'Table Layout'],
+                        ['id' => 'section-45', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
             ]
         ],
@@ -108,19 +162,43 @@
             'items' => [
                 [
                     'id' => '3.1', 'title' => 'Tipografi', 'route' => 'courses.typography', 
-                    'anchors' => [['id' => 'section-46', 'label' => 'Font Family, Size & Smoothing'], ['id' => 'section-47', 'label' => 'Font Style & Weight'], ['id' => 'section-48', 'label' => 'Letter Spacing & Alignment'], ['id' => 'section-49', 'label' => 'Text Color & Decoration'], ['id' => 'section-50', 'label' => 'Transform & Overflow']]
+                    'anchors' => [
+                        ['id' => 'section-46', 'label' => 'Font Family, Size & Smoothing'], 
+                        ['id' => 'section-47', 'label' => 'Font Style & Weight'], 
+                        ['id' => 'section-48', 'label' => 'Letter Spacing & Alignment'], 
+                        ['id' => 'section-49', 'label' => 'Text Color & Decoration'], 
+                        ['id' => 'section-50', 'label' => 'Transform & Overflow'],
+                        ['id' => 'section-51', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '3.2', 'title' => 'Backgrounds', 'route' => 'courses.backgrounds', 
-                    'anchors' => [['id' => 'section-52', 'label' => 'Attachment, Clip & Origin'], ['id' => 'section-53', 'label' => 'Color, Position & Repeat'], ['id' => 'section-54', 'label' => 'Size, Image & Gradient']]
+                    'anchors' => [
+                        ['id' => 'section-52', 'label' => 'Attachment, Clip & Origin'], 
+                        ['id' => 'section-53', 'label' => 'Color, Position & Repeat'], 
+                        ['id' => 'section-54', 'label' => 'Size, Image & Gradient'],
+                        ['id' => 'section-55', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '3.3', 'title' => 'Borders & Effects', 'route' => 'courses.borders', 
-                    'anchors' => [['id' => 'section-56', 'label' => 'Radius & Width'], ['id' => 'section-57', 'label' => 'Style, Color & Divide'], ['id' => 'section-58', 'label' => 'Outline & Ring']]
+                    'anchors' => [
+                        ['id' => 'section-56', 'label' => 'Radius & Width'], 
+                        ['id' => 'section-57', 'label' => 'Style, Color & Divide'], 
+                        ['id' => 'section-58', 'label' => 'Outline & Ring'],
+                        ['id' => 'section-59', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
                 [
                     'id' => '3.4', 'title' => 'Efek Visual', 'route' => 'courses.effects', 
-                    'anchors' => [['id' => 'section-60', 'label' => 'Box Shadow & Color'], ['id' => 'section-61', 'label' => 'Opacity'], ['id' => 'section-62', 'label' => 'Filter'], ['id' => 'section-63', 'label' => 'Transisi dan Animasi'], ['id' => 'section-64', 'label' => 'Transform']]
+                    'anchors' => [
+                        ['id' => 'section-60', 'label' => 'Box Shadow & Color'], 
+                        ['id' => 'section-61', 'label' => 'Opacity'], 
+                        ['id' => 'section-62', 'label' => 'Filter'], 
+                        ['id' => 'section-63', 'label' => 'Transisi dan Animasi'], 
+                        ['id' => 'section-64', 'label' => 'Transform'],
+                        ['id' => 'section-65', 'label' => 'Aktivitas Latihan']
+                    ]
                 ],
             ]
         ]
@@ -240,13 +318,27 @@
                                     <div class="pb-2 pl-[3.25rem] pr-2 space-y-1 relative pt-1">
                                         <div class="absolute left-[1.9rem] top-0 bottom-4 w-px border-l border-dashed border-slate-300 dark:border-white/10 transition-colors"></div>
                                         @foreach($item['anchors'] as $anchor)
+                                            @php
+                                                // Mendeteksi apakah anchor ini adalah "Aktivitas"
+                                                $isActivity = str_contains(strtolower($anchor['label']), 'aktivitas');
+                                                $dataType = $isActivity ? 'activity' : 'normal';
+                                            @endphp
                                             {{-- ANCHOR ITEM WITH SCROLL SPY --}}
                                             <button 
                                                 data-target="{{ $anchor['id'] }}"
+                                                data-type="{{ $dataType }}"
                                                 onclick="scrollToSection('{{ $anchor['id'] }}')" 
                                                 class="sidebar-anchor flex items-center w-full gap-3 px-3 py-1.5 rounded-md text-left group/sub transition-all relative border-l-2 border-transparent">
-                                                <span class="anchor-dot w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 transition-all duration-300 group-hover/sub:bg-fuchsia-500 dark:group-hover/sub:bg-fuchsia-400"></span>
-                                                <span class="anchor-text text-[11px] text-slate-500 dark:text-slate-500 transition-all duration-300 group-hover/sub:text-slate-800 dark:group-hover/sub:text-slate-300 truncate w-40">
+                                                
+                                                @if($isActivity)
+                                                    {{-- DOT KHUSUS AKTIVITAS (Diamond / Belah Ketupat Kuning) --}}
+                                                    <span class="anchor-dot w-2 h-2 rotate-45 rounded-sm bg-slate-400 dark:bg-slate-600 transition-all duration-300 group-hover/sub:bg-amber-500 dark:group-hover/sub:bg-amber-400"></span>
+                                                @else
+                                                    {{-- DOT NORMAL (Bulat biasa) --}}
+                                                    <span class="anchor-dot w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 transition-all duration-300 group-hover/sub:bg-fuchsia-500 dark:group-hover/sub:bg-fuchsia-400"></span>
+                                                @endif
+                                                
+                                                <span class="anchor-text text-[11px] text-slate-500 dark:text-slate-500 transition-all duration-300 group-hover/sub:text-slate-800 dark:group-hover/sub:text-slate-300 truncate w-40 {{ $isActivity ? 'font-medium' : '' }}">
                                                     {{ $anchor['label'] }}
                                                 </span>
                                             </button>
@@ -463,17 +555,69 @@
         }
     }
     
-    // 2. Smooth Scroll to Section
+    // FUNGSI BARU: HIGHLIGHT AKTIF SECARA INSTAN BERDASARKAN ID
+    function highlightAnchor(id) {
+        const isDark = document.documentElement.classList.contains('dark');
+        const anchors = document.querySelectorAll('.sidebar-anchor');
+
+        anchors.forEach(a => {
+            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-fuchsia-500', 'border-amber-500');
+            a.classList.add('border-transparent');
+            
+            const dot = a.querySelector('.anchor-dot');
+            const isActivity = a.dataset.type === 'activity';
+
+            // Reset dots
+            dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#e879f9]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-fuchsia-500', 'dark:bg-fuchsia-400');
+            
+            if (isActivity) {
+                dot.classList.remove('bg-amber-500', 'dark:bg-amber-400');
+                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+            } else {
+                dot.classList.remove('bg-fuchsia-500', 'dark:bg-fuchsia-400');
+                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+            }
+
+            const text = a.querySelector('.anchor-text');
+            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
+            text.classList.add('text-slate-500');
+        });
+
+        const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
+        if (activeAnchor) {
+            const isActivity = activeAnchor.dataset.type === 'activity';
+            
+            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100');
+            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-fuchsia-500');
+            activeAnchor.classList.remove('border-transparent');
+            
+            const dot = activeAnchor.querySelector('.anchor-dot');
+            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
+            
+            if (isActivity) {
+                dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
+            } else {
+                dot.classList.add(isDark ? 'dark:bg-fuchsia-400' : 'bg-fuchsia-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#e879f9]' : 'shadow-sm');
+            }
+            
+            const text = activeAnchor.querySelector('.anchor-text');
+            text.classList.remove('text-slate-500');
+            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
+        }
+    }
+
+    // 2. Smooth Scroll to Section (DIPERBARUI KE block: 'start' & Panggil Highlight)
     function scrollToSection(id) {
         const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        highlightAnchor(id); // Berikan efek klik instan sebelum scroll selesai
     }
 
     document.addEventListener("DOMContentLoaded", function() {
         
         // 3. AUTO SCROLL SIDEBAR TO ACTIVE ITEM
         setTimeout(() => {
-            // Deteksi warna border yang aktif menyesuaikan variabel CSS baru
+            // Deteksi warna border yang aktif (termasuk amber untuk activity) menyesuaikan variabel CSS baru
             const activeSidebarItem = document.querySelector('.accordion-item .border-fuchsia-500\\/30') || 
                                       document.querySelector('.accordion-item [style*="rgba(217, 70, 239, 0.3)"]');
             if (activeSidebarItem) {
@@ -481,9 +625,8 @@
             }
         }, 300);
 
-        // 4. SCROLL SPY (NAV HIGHLIGHT)
+        // 4. SCROLL SPY (NAV HIGHLIGHT MENGGUNAKAN FUNGSI BARU)
         const mainScroll = document.getElementById('mainScroll');
-        const anchors = document.querySelectorAll('.sidebar-anchor');
         const sections = document.querySelectorAll('.lesson-section');
 
         if (mainScroll && sections.length > 0) {
@@ -493,38 +636,12 @@
             };
 
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const isDark = document.documentElement.classList.contains('dark');
-                        
-                        // Reset semua anchor
-                        anchors.forEach(a => {
-                            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-fuchsia-500');
-                            a.classList.add('border-transparent');
-                            const dot = a.querySelector('.anchor-dot');
-                            dot.classList.remove('bg-fuchsia-500', 'dark:bg-fuchsia-400', 'scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#e879f9]');
-                            dot.classList.add('bg-slate-400', 'dark:bg-slate-600');
-                            const text = a.querySelector('.anchor-text');
-                            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
-                            text.classList.add('text-slate-500');
-                        });
-
-                        // Highlight anchor yang sesuai
-                        const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${entry.target.id}"]`);
-                        if (activeAnchor) {
-                            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100', 'border-fuchsia-500');
-                            activeAnchor.classList.remove('border-transparent');
-                            
-                            const dot = activeAnchor.querySelector('.anchor-dot');
-                            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-                            dot.classList.add(isDark ? 'dark:bg-fuchsia-400' : 'bg-fuchsia-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#e879f9]' : 'shadow-sm');
-                            
-                            const text = activeAnchor.querySelector('.anchor-text');
-                            text.classList.remove('text-slate-500');
-                            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
-                        }
-                    }
-                });
+                // Cari entri yang bersinggungan di layar
+                let intersectingEntries = entries.filter(e => e.isIntersecting);
+                if(intersectingEntries.length > 0) {
+                    // Beri highlight pada ID yang sesuai
+                    highlightAnchor(intersectingEntries[0].target.id);
+                }
             }, observerOptions);
 
             sections.forEach(section => observer.observe(section));
@@ -564,12 +681,11 @@
             }
             syncCsbIcons(willBeDark);
             
-            // Trigger event untuk merefresh komponen lain (seperti scrollspy colors/charts) jika ada
             window.dispatchEvent(new Event('theme-toggled'));
             
-            // Trigger scroll event sedikit untuk memaksa scrollspy me-render ulang warna
-            const mainScroll = document.getElementById('mainScroll');
-            if(mainScroll) mainScroll.dispatchEvent(new Event('scroll'));
+            // Me-render ulang Active Status agar shadow mengikuti tema
+            const activeAnchor = document.querySelector('.sidebar-anchor.bg-slate-100') || document.querySelector('.sidebar-anchor.dark\\:bg-white\\/5');
+            if(activeAnchor) highlightAnchor(activeAnchor.dataset.target);
         });
     });
 </script>
