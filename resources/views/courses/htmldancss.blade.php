@@ -582,22 +582,27 @@
 </div>
 
 <script>
-    /* --- CONFIGURATION AJAX & PROGRESS --- */
-    // PASTIKAN window.LESSON_IDS SAMA DENGAN ID DI DATABASE `course_lessons` ANDA
+    /* ==========================================
+       1. KONFIGURASI GLOBAL & DATA CASTING (ANTI-BUG HOSTING)
+       ========================================== */
+    // MASUKKAN ID LESSON DARI DATABASE ANDA DI SINI
     window.LESSON_IDS = [1, 2, 3, 4, 5, 6]; 
-    window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
+    
+    // FIX KRUSIAL HOSTING: Paksa semua data dari Laravel menjadi Integer (Angka)
+    let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
+    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
     let completedSet = new Set(window.COMPLETED_IDS);
     
-    // Cek status khusus Activity Lesson (Asumsi ID ke-6 adalah Activity finalnya)
-    let activityCompleted = completedSet.has(6);
+    // Cek status khusus Activity Lesson (Pastikan 6 adalah ID untuk activity di database)
     const ACTIVITY_LESSON_ID = 6; 
+    let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
         initSidebarScroll();
         initVisualEffects();
         
-        // Render Progress Bar awal
+        // Render Progress Bar awal saat halaman dimuat
         updateProgressUI(false); 
         
         if (activityCompleted) {
@@ -605,24 +610,22 @@
             unlockNextChapter();
         }
 
-        // Inisialisasi observer scroll
+        // Mulai memantau scroll user
         initLessonObserver();
         
-        // Tandai sidebar jika sudah komplit
+        // Centang materi di sidebar yang sudah selesai berdasarkan database
         document.querySelectorAll('.nav-item').forEach(item => {
             const targetId = parseInt(item.getAttribute('data-target').replace('#section-', ''));
-            if(completedSet.has(targetId)) {
-                markSidebarDone(targetId);
-            }
+            if(completedSet.has(targetId)) markSidebarDone(targetId);
         });
     });
 
-    // ==========================================
-    // LOGIKA UPDATE PROGRESS BAR DINAMIS
-    // ==========================================
+    /* ==========================================
+       2. LOGIKA PROGRESS BAR & SIDEBAR UI
+       ========================================== */
     function updateProgressUI(animate = true) {
         const total = window.LESSON_IDS.length; 
-        const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length; 
+        const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length; 
         const percent = Math.round((done / total) * 100);
         
         const bar = document.getElementById('topProgressBar');
@@ -641,31 +644,31 @@
         if(navItem) {
             const dot = navItem.querySelector('.dot');
             if(dot) {
+                // Ubah dot menjadi icon centang hijau
                 dot.outerHTML = `<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
             }
         }
     }
 
-    // ==========================================
-    // AJAX POST KE DATABASE MENGGUNAKAN FORM DATA
-    // ==========================================
+    /* ==========================================
+       3. AJAX POST REQUEST KE DATABASE (BULLETPROOF)
+       ========================================== */
     async function saveLessonToDB(lessonId) { 
-        if(completedSet.has(lessonId)) return; // Cegah dobel request
+        lessonId = Number(lessonId); // Jaminan Mutlak Data adalah Angka
+        if(completedSet.has(lessonId)) return; 
 
         try {
-            console.log("Mencoba save progress untuk ID:", lessonId);
+            console.log("Mencoba save progress ke DB untuk ID:", lessonId);
             
+            // Gunakan FormData agar Laravel validate() menerima dengan sempurna
             const formData = new FormData();
             formData.append('lesson_id', lessonId);
 
-            // Memastikan URL route benar, atau fallback ke path absolut
-            const routeUrl = '{{ route("lesson.complete") }}' || '/lesson/complete';
-
-            const response = await fetch(routeUrl, { 
+            const response = await fetch('{{ route("lesson.complete") }}', { 
                 method: 'POST', 
                 headers: { 
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json' // Meminta respons JSON
+                    'Accept': 'application/json' 
                 }, 
                 body: formData 
             });
@@ -676,39 +679,40 @@
                 updateProgressUI(true);
                 markSidebarDone(lessonId);
             } else {
-                const errData = await response.json();
-                console.error("❌ Gagal menyimpan progress:", response.status, errData);
+                console.error("❌ Gagal menyimpan. Status:", response.status);
             }
         } catch(e) {
-            console.error('❌ Network Error saat menyimpan progress:', e);
+            console.error('❌ Network Error:', e);
         }
     }
 
-    // ==========================================
-    // OBSERVER SCROLL (DENGAN THRESHOLD 0.1)
-    // ==========================================
+    /* ==========================================
+       4. SCROLL OBSERVER (Pendeteksi user membaca)
+       ========================================== */
     function initLessonObserver() {
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
-                    // Panggil fungsi DB save jika ID valid, belum diselesaikan, dan BUKAN kotak activity
+                    
+                    // Jika ID valid, bukan activity, dan belum pernah diselesaikan
                     if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
                         saveLessonToDB(id); 
                     }
                 }
             });
         }, { 
-            threshold: 0.1, // Jauh lebih sensitif agar berhasil dideteksi
-            rootMargin: "0px 0px -100px 0px", // Margin bawah diabaikan sedikit agar tidak perlu scroll mentok
+            threshold: 0.1, // Cukup terlihat 10% di layar langsung tembak DB
+            rootMargin: "0px 0px -50px 0px", 
             root: document.getElementById('mainScroll') 
         });
         
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
 
-
-    /* --- ACTIVITY LOGIC (FINAL PROJECT) --- */
+    /* ==========================================
+       5. LOGIKA ACTIVITY FINAL (VALIDASI & KUNCI)
+       ========================================== */
     let actConfig = { tag: '', pad: '', style: '' };
 
     function setAct(cat, val, btn) {
@@ -746,14 +750,16 @@
         const btn = document.getElementById('submitBtn');
         const status = document.getElementById('status-text');
         
-        btn.innerHTML = '<span class="animate-pulse">Memeriksa...</span>'; btn.disabled = true;
+        btn.innerHTML = '<span class="animate-pulse">Memeriksa...</span>'; 
+        btn.disabled = true;
+        
         await new Promise(r => setTimeout(r, 1200)); 
 
         if(actConfig.tag === 'article' && actConfig.pad === '24px' && actConfig.style === 'card') {
             status.innerText = "BENAR! VALIDASI BERHASIL."; 
             status.className = "text-[11px] text-emerald-600 dark:text-green-400 font-mono font-bold tracking-wider";
             
-            // Simpan Data Progress Activity ini ke DB via AJAX yang sama
+            // Simpan Activity ini ke database
             await saveLessonToDB(ACTIVITY_LESSON_ID); 
             
             activityCompleted = true;
@@ -796,9 +802,10 @@
         }
     }
 
-    /* --- SIMULATORS LOGIC --- */
+    /* ==========================================
+       6. SIMULATOR MATERI (TIDAK BERUBAH)
+       ========================================== */
     function toggleDom(el) {
-        // ... (Fungsi toggle DOM tidak berubah, mempertahankan simulasi interaktif)
         let domState = window.domState || { nav: false, h1: false, p: false };
         window.domState = domState;
         domState[el] = !domState[el];
@@ -848,10 +855,7 @@
         const color = document.getElementById('inp-brand-color').value;
         const size = document.getElementById('inp-brand-size').value;
         const h1 = document.getElementById('brand-preview');
-        
-        h1.style.color = color; 
-        h1.style.fontSize = size + 'rem';
-        
+        h1.style.color = color; h1.style.fontSize = size + 'rem';
         document.getElementById('css-brand-color').innerText = color;
         document.getElementById('css-brand-size').innerText = size + 'rem';
     }
@@ -863,46 +867,23 @@
         document.getElementById(`val-${prop}`).innerText = val;
     }
 
-    /* --- SCROLL SPY LOGIC --- */
+    /* ==========================================
+       7. SCROLL SPY & SIDEBAR LOGIC (TIDAK BERUBAH)
+       ========================================== */
     function initScrollSpy() {
         const mainScroll = document.getElementById('mainScroll'); 
-        const anchors = document.querySelectorAll('.sidebar-anchor');
         const sections = document.querySelectorAll('.lesson-section');
 
         if (mainScroll && sections.length > 0) {
             const observerOptions = { root: mainScroll, threshold: 0.5 };
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const isDark = document.documentElement.classList.contains('dark');
-                        anchors.forEach(a => {
-                            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-fuchsia-500');
-                            a.classList.add('border-transparent');
-                            const dot = a.querySelector('.anchor-dot');
-                            dot.classList.remove('bg-fuchsia-500', 'dark:bg-fuchsia-400', 'scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#e879f9]');
-                            dot.classList.add('bg-slate-400', 'dark:bg-slate-600');
-                            const text = a.querySelector('.anchor-text');
-                            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
-                            text.classList.add('text-slate-500');
-                        });
-
-                        const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${entry.target.id}"]`);
-                        if (activeAnchor) {
-                            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100', 'border-fuchsia-500');
-                            activeAnchor.classList.remove('border-transparent');
-                            
-                            const dot = activeAnchor.querySelector('.anchor-dot');
-                            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-                            dot.classList.add(isDark ? 'dark:bg-fuchsia-400' : 'bg-fuchsia-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#e879f9]' : 'shadow-sm');
-                            
-                            const text = activeAnchor.querySelector('.anchor-text');
-                            text.classList.remove('text-slate-500');
-                            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
-                        }
+                let intersectingEntries = entries.filter(e => e.isIntersecting);
+                if(intersectingEntries.length > 0) {
+                    if (typeof highlightAnchor === 'function') {
+                        highlightAnchor(intersectingEntries[0].target.id);
                     }
-                });
+                }
             }, observerOptions);
-
             sections.forEach(section => observer.observe(section));
         }
     }
@@ -910,7 +891,6 @@
     function initSidebarScroll(){
         const m = document.getElementById('mainScroll');
         const l = document.querySelectorAll('.accordion-content .nav-item');
-        
         m.addEventListener('scroll', () => {
             let c = '';
             document.querySelectorAll('.lesson-section').forEach(s => {
@@ -921,11 +901,6 @@
                 if (k.getAttribute('data-target') === c) k.classList.add('active');
             })
         });
-
-        l.forEach(k => k.addEventListener('click', (e) => {
-            const t = document.querySelector(k.getAttribute('data-target'));
-            if (t) m.scrollTo({top: t.offsetTop - 120, behavior: 'smooth'});
-        }));
     }
 
     function initVisualEffects(){

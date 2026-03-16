@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use App\Models\CourseLesson;
@@ -167,33 +168,35 @@ class CourseController extends Controller
     public function effects() { return $this->loadView('courses.effects', '3.4', [60, 65], 13, '3.3'); }
     
     /**
-     * Menyimpan progress bacaan materi / lesson (Dipanggil via AJAX)
+     * Menyimpan progress bacaan materi / lesson
      */
     public function completeLesson(Request $request) 
     {
-        // Validasi input dari AJAX Frontend
+        // 1. Validasi input dari AJAX Frontend
         $data = $request->validate([
             'lesson_id' => 'required|integer'
         ]);
 
         $userId = Auth::id();
 
-        // Simpan atau update status completed ke database
-        // Menggunakan updateOrCreate untuk mencegah duplikasi data
-        UserLessonProgress::updateOrCreate(
+        // 2. Simpan LANGSUNG ke TABEL 'user_lesson_progress' menggunakan DB facade
+        // updateOrInsert akan mengecek: jika user_id & course_lesson_id sudah ada, maka update 'completed'
+        // Jika belum ada, maka buat baris baru.
+        DB::table('user_lesson_progress')->updateOrInsert(
             [
                 'user_id' => $userId, 
                 'course_lesson_id' => $data['lesson_id']
             ], 
             [
-                'completed' => 1
+                'completed' => 1, // Pastikan menggunakan angka 1, bukan true (karena hosting Linux/MySQL kadang rewel)
+                'updated_at' => now() // Karena pakai DB facade, kita harus manual set waktu update
             ]
         );
 
-        // Kembalikan response sukses ke Frontend
+        // 3. Kembalikan response sukses
         return response()->json([
             'status' => 'ok', 
-            'message' => 'Progress saved successfully'
+            'message' => 'Progress saved directly to table'
         ]);
     }
 
