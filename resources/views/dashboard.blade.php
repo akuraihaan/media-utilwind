@@ -347,7 +347,7 @@
                                 </div>
                                 <div class="flex items-baseline gap-1 mt-4">
                                     <span class="text-4xl font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors counter-value">{{ round($quizAverage ?? 0, 1) }}</span>
-                                    <span class="text-slate-400 dark:text-white/40 font-bold text-sm transition-colors">pts</span>
+                                    <span class="text-slate-400 dark:text-white/40 font-bold text-sm transition-colors"></span>
                                 </div>
                             </div>
                             <p class="text-[10px] text-slate-400 dark:text-white/40 mt-4 font-mono transition-colors border-t border-slate-100 dark:border-white/5 pt-3">Dari <span class="counter-value">{{ $quizzesCompleted ?? 0 }}</span> evaluasi.</p>
@@ -624,7 +624,7 @@
                         <button @click="showQuizModal = false" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition p-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-500/20"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                     </div>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 transition-colors">Rincian Rata-rata Kuis</h3>
-                    <p class="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-4 md:mb-6 transition-colors">Ini adalah akumulasi total nilai dibagi dengan frekuensi pengerjaan Anda. Anda telah melakukan submit evaluasi sebanyak <b>{{ $quizzesCompleted ?? 0 }} kali</b>.</p>
+                    <p class="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-4 md:mb-6 transition-colors">Ini adalah akumulasi total nilai dibagi dengan frekuensi pengerjaan Anda. Anda telah melakukan submit evaluasi sebanyak <b>{{ $quizzesCompleted ?? 0 }} kali percobaan</b>.</p>
                     
                     <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-xl md:rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-white/5 shadow-inner text-center transition-colors">
                         <span class="text-4xl md:text-5xl font-black text-cyan-600 dark:text-cyan-400 transition-colors counter-modal">{{ round($quizAverage ?? 0, 1) }}</span>

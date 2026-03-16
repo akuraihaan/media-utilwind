@@ -166,40 +166,35 @@ class CourseController extends Controller
     public function borders() { return $this->loadView('courses.borders', '3.3', [56, 59], 12, '3.2'); }
     public function effects() { return $this->loadView('courses.effects', '3.4', [60, 65], 13, '3.3'); }
     
-    public function completeLesson(Request $request) {
-       $data = $request->validate(['lesson_id' => 'required|integer|exists:course_lessons,id']);
-        $user = Auth::user();
+    /**
+     * Menyimpan progress bacaan materi / lesson (Dipanggil via AJAX)
+     */
+    public function completeLesson(Request $request) 
+    {
+        // Validasi input dari AJAX Frontend
+        $data = $request->validate([
+            'lesson_id' => 'required|integer'
+        ]);
 
-        // 1. Cek apakah slide ini sudah pernah diselesaikan sebelumnya
-        $alreadyCompleted = UserLessonProgress::where('user_id', $user->id)
-                                              ->where('course_lesson_id', $data['lesson_id'])
-                                              ->where('completed', true)
-                                              ->exists();
+        $userId = Auth::id();
 
-        // 2. Tandai slide sebagai selesai di database
+        // Simpan atau update status completed ke database
+        // Menggunakan updateOrCreate untuk mencegah duplikasi data
         UserLessonProgress::updateOrCreate(
-            ['user_id' => $user->id, 'course_lesson_id' => $data['lesson_id']], 
-            ['completed' => 1]
+            [
+                'user_id' => $userId, 
+                'course_lesson_id' => $data['lesson_id']
+            ], 
+            [
+                'completed' => 1
+            ]
         );
 
-        // 3. LOGIKA GAMIFIKASI: Berikan XP hanya jika slide INI BARU PERTAMA KALI diselesaikan
-        if (!$alreadyCompleted) {
-            // Berikan 10 XP setiap kali membaca 1 halaman materi baru
-            $user->increment('xp', 10);
-            
-            // Opsional: Anda bisa menambahkan logika pengecekan Badge disini jika ada badge spesifik
-            // $this->checkBadges($user);
-            
-            // Kembalikan response JSON bahwa user dapat XP
-            return response()->json([
-                'status' => 'ok', 
-                'gained_xp' => 10, 
-                'total_xp' => $user->xp 
-            ]);
-        }
-
-        // Jika sudah pernah baca (mengulang bacaan), tidak dapat XP lagi
-        return response()->json(['status' => 'ok', 'gained_xp' => 0]);
+        // Kembalikan response sukses ke Frontend
+        return response()->json([
+            'status' => 'ok', 
+            'message' => 'Progress saved successfully'
+        ]);
     }
 
     // Di dalam class CourseController extends Controller
