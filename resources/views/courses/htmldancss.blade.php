@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title','Bab 1.1 · HTML & CSS Foundations')
+@section('title','Konsep Dasar HTML dan CSS')
 
 @section('content')
 

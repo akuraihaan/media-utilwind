@@ -33,9 +33,46 @@
     #sidebar-scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.4); }
     .dark #sidebar-scroll-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
     .dark #sidebar-scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+    /* MOBILE SIDEBAR BEHAVIOR */
+    @media (max-width: 1023px) {
+        #courseSidebar {
+            position: fixed;
+            top: 64px; /* Sesuaikan tinggi navbar */
+            left: -100%;
+            height: calc(100vh - 64px);
+            transition: left 0.3s ease-in-out;
+        }
+        #courseSidebar.mobile-open {
+            left: 0;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+        #mobileOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            top: 64px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+            z-index: 30;
+        }
+        #mobileOverlay.show {
+            display: block;
+        }
+    }
 </style>
 
-<aside id="courseSidebar" class="w-full lg:w-[340px] h-full flex flex-col shrink-0 z-40 hidden lg:flex font-sans transition-colors duration-300 backdrop-blur-xl" style="background-color: var(--sb-bg); border-right: 1px solid var(--sb-border);">
+{{-- TOMBOL TOGGLE MOBILE (MUNYUL DI LAYAR KECIL) --}}
+<button id="mobileSidebarToggle" class="lg:hidden fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none transition-transform hover:scale-110">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+    </svg>
+</button>
+
+{{-- OVERLAY GELAP UNTUK MOBILE --}}
+<div id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
+
+<aside id="courseSidebar" class="w-[85%] sm:w-[340px] lg:w-[340px] h-full flex flex-col shrink-0 z-40 font-sans transition-colors duration-300 backdrop-blur-xl lg:left-0" style="background-color: var(--sb-bg); border-right: 1px solid var(--sb-border);">
     
     @php
     // ==========================================
@@ -82,9 +119,9 @@
                     ]
                 ],
                 [
-                    'id' => '1.3', 'title' => 'Latar Belakang', 'route' => 'courses.latarbelakang', 
+                    'id' => '1.3', 'title' => 'Latar Belakang Tailwind CSS', 'route' => 'courses.latarbelakang', 
                     'anchors' => [
-                        ['id' => 'section-12', 'label' => 'Latar Belakang & Efisiensi'], 
+                        ['id' => 'section-12', 'label' => 'Latar Belakang'], 
                         ['id' => 'section-13', 'label' => 'Struktur Dasar (3 Layers)'], 
                         ['id' => 'section-14', 'label' => 'Mesin JIT'],
                         ['id' => 'section-15', 'label' => 'Aktivitas Latihan']
@@ -327,7 +364,7 @@
                                             <button 
                                                 data-target="{{ $anchor['id'] }}"
                                                 data-type="{{ $dataType }}"
-                                                onclick="scrollToSection('{{ $anchor['id'] }}')" 
+                                                onclick="scrollToSection('{{ $anchor['id'] }}'); toggleMobileSidebar();" 
                                                 class="sidebar-anchor flex items-center w-full gap-3 px-3 py-1.5 rounded-md text-left group/sub transition-all relative border-l-2 border-transparent">
                                                 
                                                 @if($isActivity)
@@ -538,7 +575,7 @@
     </div>
 </aside>
 
-{{-- JAVASCRIPT UNTUK ACCORDION, SCROLL & THEME SWITCHER --}}
+{{-- JAVASCRIPT UNTUK ACCORDION, SCROLL, THEME SWITCHER & MOBILE --}}
 <script>
     // 1. Accordion Toggle
     function toggleAccordion(id) {
@@ -606,15 +643,37 @@
         }
     }
 
-    // 2. Smooth Scroll to Section (DIPERBARUI KE block: 'start' & Panggil Highlight)
+    // 2. Smooth Scroll to Section & Panggil Highlight
     function scrollToSection(id) {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         highlightAnchor(id); // Berikan efek klik instan sebelum scroll selesai
     }
 
+    // --- FUNGSI TOGGLE MOBILE SIDEBAR ---
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('courseSidebar');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        if (sidebar.classList.contains('mobile-open')) {
+            // Tutup Sidebar
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('show');
+        } else {
+            // Buka Sidebar
+            sidebar.classList.add('mobile-open');
+            overlay.classList.add('show');
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         
+        // Listener untuk tombol menu mobile
+        const mobileToggleBtn = document.getElementById('mobileSidebarToggle');
+        if (mobileToggleBtn) {
+            mobileToggleBtn.addEventListener('click', toggleMobileSidebar);
+        }
+
         // 3. AUTO SCROLL SIDEBAR TO ACTIVE ITEM
         setTimeout(() => {
             // Deteksi warna border yang aktif (termasuk amber untuk activity) menyesuaikan variabel CSS baru

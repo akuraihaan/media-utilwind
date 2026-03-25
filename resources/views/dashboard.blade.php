@@ -42,16 +42,29 @@
             'status' => $l->final_score >= 70 ? 'Lulus' : 'Remedial'
         ]);
     
-    // 3. DATA MATERI (Menarik Judul Materi Asli)
-    $allLessons = \App\Models\UserLessonProgress::where('user_id', $userId)->where('completed', true)->with('lesson')->latest('updated_at')->get()
-        ->map(fn($m) => [
-            'name' => 'Materi Bacaan: ' . ($m->lesson->title ?? 'Modul ' . $m->lesson_id), 
-            'type' => 'materi', 
-            'date' => $m->updated_at, 
-            'full_date' => \Carbon\Carbon::parse($m->updated_at)->format('d M Y, H:i'),
-            'time' => \Carbon\Carbon::parse($m->updated_at)->diffForHumans(),
-            'status' => 'Tuntas'
-        ]);
+    // 3. DATA MATERI (Diurutkan berdasarkan urutan asli kurikulum / lesson_id)
+   // 3. DATA MATERI (Diurutkan berdasarkan kolom 'order' asli dari database)
+    $allLessons = \App\Models\UserLessonProgress::where('user_id', $userId)
+        ->where('completed', true)
+        ->with('lesson')
+        ->get()
+        ->sortBy(fn($m) => $m->lesson->order ?? $m->lesson_id) // Sortir berdasarkan kolom order
+        ->values() 
+        ->map(function($m) {
+            // Tarik nilai urutan asli
+            $urutan = $m->lesson->order ?? $m->lesson_id;
+            
+            return [
+                'name' => 'Materi Bacaan: ' . ($m->lesson->title ?? 'Modul ' . $urutan), 
+                'type' => 'materi', 
+                'date' => $m->updated_at, 
+                'full_date' => \Carbon\Carbon::parse($m->updated_at)->format('d M Y, H:i'),
+                'time' => \Carbon\Carbon::parse($m->updated_at)->diffForHumans(),
+                'status' => 'Tuntas',
+                'badge_number' => str_pad($urutan, 2, '0', STR_PAD_LEFT), // Format jadi 01, 09, 38, 40
+                'raw_order' => $urutan
+            ];
+        });
 
     // Data Gabungan
     $historyCombined = collect($allQuizzes)->merge($allLabs)->sortByDesc('date')->values();
@@ -376,7 +389,7 @@
                                     <span class="text-slate-400 dark:text-white/40 font-bold text-sm transition-colors">Bab</span>
                                 </div>
                             </div>
-                            <p class="text-[10px] text-emerald-600/80 dark:text-emerald-400/70 mt-4 font-bold uppercase tracking-wider transition-colors border-t border-slate-100 dark:border-white/5 pt-3 group-hover:tracking-widest duration-300">Keep Going! 🚀</p>
+                            <p class="text-[10px] text-emerald-600/80 dark:text-emerald-400/70 mt-4 font-bold uppercase tracking-wider transition-colors border-t border-slate-100 dark:border-white/5 pt-3 group-hover:tracking-widest duration-300">Lanjutkan!</p>
                         </div>
                     </div>
                 </div>
@@ -574,21 +587,84 @@
             {{-- 1. Modal Insight Materi --}}
             <div x-show="showLessonModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
                 <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-sm transition-colors" @click="showLessonModal = false"></div>
-                <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/40 rounded-3xl p-6 md:p-8 shadow-xl dark:shadow-[0_20px_70px_rgba(217,70,239,0.15)] transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-                    <div class="flex justify-between items-start mb-4 md:mb-6">
+                <div class="relative w-full max-w-sm md:max-w-md lg:max-w-lg bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/40 rounded-3xl p-6 md:p-8 shadow-xl dark:shadow-[0_20px_70px_rgba(217,70,239,0.15)] transition-colors flex flex-col max-h-[85vh]" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                    
+                    {{-- Header Modal --}}
+                    <div class="flex justify-between items-start mb-4 md:mb-6 shrink-0">
                         <div class="p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-fuchsia-50 dark:bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-500/30 transition-colors">
                             <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                         </div>
                         <button @click="showLessonModal = false" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition p-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-500/20"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 transition-colors">Detail Materi Bacaan</h3>
-                    <p class="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-4 md:mb-6 transition-colors">Statistik ini menghitung jumlah modul / halaman teori yang telah Anda selesaikan dari keseluruhan materi kurikulum.</p>
                     
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-xl md:rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-white/5 shadow-inner text-center transition-colors">
-                        <span class="text-4xl md:text-5xl font-black text-fuchsia-600 dark:text-fuchsia-400 transition-colors counter-modal">{{ $lessonsCompleted ?? 0 }}</span>
-                        <span class="text-lg md:text-xl text-slate-400 dark:text-white/30 font-bold transition-colors">/ {{ $totalLessons ?? 0 }}</span>
-                        <p class="text-[9px] md:text-[10px] text-fuchsia-600/70 dark:text-fuchsia-400/50 uppercase tracking-widest font-bold mt-2 transition-colors">Tingkat Penyelesaian ({{ $pctLesson ?? 0 }}%)</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 transition-colors shrink-0">Detail Materi Bacaan</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-4 transition-colors shrink-0">Statistik ini menghitung jumlah modul / halaman teori yang telah Anda selesaikan dari keseluruhan materi kurikulum.</p>
+                    
+                    {{-- Summary Box --}}
+                    <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-xl md:rounded-2xl p-4 md:p-5 border border-slate-200 dark:border-white/5 shadow-inner text-center transition-colors mb-6 shrink-0 flex items-center justify-center gap-4">
+                        <div class="text-right border-r border-slate-200 dark:border-white/10 pr-4">
+                            <span class="text-3xl md:text-4xl font-black text-fuchsia-600 dark:text-fuchsia-400 transition-colors counter-modal">{{ $lessonsCompleted ?? 0 }}</span>
+                            <span class="text-base md:text-lg text-slate-400 dark:text-white/30 font-bold transition-colors">/ {{ $totalLessons ?? 0 }}</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-[9px] md:text-[10px] text-fuchsia-600/70 dark:text-fuchsia-400/50 uppercase tracking-widest font-bold mb-1 transition-colors">Penyelesaian</p>
+                            <p class="text-lg font-black text-slate-800 dark:text-white transition-colors">{{ $pctLesson ?? 0 }}%</p>
+                        </div>
                     </div>
+
+                   {{-- Scrollable List Area (Numbered & Clean) --}}
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
+                        <div class="sticky top-0 bg-white dark:bg-[#0f141e] z-20 pb-3 border-b border-slate-100 dark:border-white/5 mb-3 transition-colors pt-2">
+                            <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                                Jejak Penyelesaian
+                            </h4>
+                        </div>
+                        
+                        <ul class="space-y-2 pb-4">
+                            @forelse($allLessons as $lessonLog)
+                                <li class="group flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-colors border border-slate-200 dark:border-white/5 relative overflow-hidden">
+                                    
+                                    {{-- Aksen Garis Kiri saat Hover --}}
+                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-fuchsia-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+
+                                    {{-- Number Badge (Menampilkan urutan mutlak dari kolom 'order') --}}
+                                    <div class="w-10 h-8 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 font-black text-xs flex items-center justify-center shrink-0 border border-fuchsia-200 dark:border-fuchsia-500/20 shadow-sm dark:shadow-inner transition-colors font-mono relative group/badge cursor-default">
+                                        {{ $lessonLog['badge_number'] }}
+                                        
+                                        {{-- Tooltip Kecil Penjelas Urutan --}}
+                                        <div class="absolute -top-8 bg-slate-800 dark:bg-white text-white dark:text-slate-900 text-[9px] px-2 py-1 rounded opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg font-sans tracking-wide">
+                                            Urutan Ke-{{ $lessonLog['raw_order'] }}
+                                        </div>
+                                    </div>
+                                    
+                                    {{-- Content --}}
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-[10px] md:text-xs font-bold text-slate-800 dark:text-white truncate transition-colors pr-2 leading-snug group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400" title="{{ $lessonLog['name'] }}">
+                                            {{ str_replace('Materi Bacaan: ', '', $lessonLog['name']) }}
+                                        </h4>
+                                        <div class="flex items-center gap-1.5 mt-1 text-[9px] md:text-[10px] font-mono">
+                                            <span class="text-slate-500 dark:text-white/40 transition-colors" title="{{ $lessonLog['full_date'] }}">{{ $lessonLog['time'] }}</span>
+                                            <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20 transition-colors"></span>
+                                            <span class="text-emerald-600 dark:text-emerald-400 font-bold transition-colors">{{ $lessonLog['status'] }}</span>
+                                        </div>
+                                    </div>
+
+                                    {{-- Icon Checkmark --}}
+                                    <div class="text-emerald-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300 pr-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                    </div>
+                                </li>
+                            @empty
+                                <div class="flex flex-col items-center justify-center py-10">
+                                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                                        <svg class="w-6 h-6 text-slate-300 dark:text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                    </div>
+                                    <p class="text-slate-400 dark:text-white/30 text-xs font-medium transition-colors">Belum ada materi yang diselesaikan.</p>
+                                </div>
+                            @endforelse
+                        </ul>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -648,7 +724,7 @@
                     
                     <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-xl md:rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-white/5 shadow-inner text-center transition-colors">
                         <span class="text-4xl md:text-5xl font-black text-emerald-600 dark:text-emerald-400 transition-colors counter-modal">{{ $chaptersPassed ?? 0 }}</span>
-                        <p class="text-[9px] md:text-[10px] text-emerald-600/70 dark:text-emerald-400/50 uppercase tracking-widest font-bold mt-3 transition-colors">Bab Berhasil Ditaklukkan</p>
+                        <p class="text-[9px] md:text-[10px] text-emerald-600/70 dark:text-emerald-400/50 uppercase tracking-widest font-bold mt-3 transition-colors">Bab Diselesaikan</p>
                     </div>
                 </div>
             </div>
