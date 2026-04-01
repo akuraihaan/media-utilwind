@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title','Bab 1.4 · Implementasi Utility Classes')
+@section('title','Implementasi Utility Classes')
 
 @section('content')
 
@@ -144,32 +144,32 @@
                         <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
                             <div class="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 font-bold text-sm border border-cyan-200 dark:border-cyan-500/10 transition-colors">1</div>
                             <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors">Filosofi & Sistematika</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Pola penamaan prediktif dan kepatuhan pada sistem skala desain untuk meredam kekacauan visual.</p>
+                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors">Filosofi Utility-First</h4>
+                                <p class="text-xs text-muted leading-relaxed transition-colors">Memahami pola penamaan utilitas dan sistem grid matematis untuk memastikan konsistensi tata letak visual.</p>
                             </div>
                         </div>
 
                         <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
                             <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 font-bold text-sm border border-indigo-200 dark:border-indigo-500/10 transition-colors">2</div>
                             <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">Komposisi & Interaksi</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Membangun antarmuka interaktif yang bereaksi terhadap sentuhan pengguna secara langsung di dalam HTML.</p>
+                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">Komposisi Kode</h4>
+                                <p class="text-xs text-muted leading-relaxed transition-colors">Membangun elemen antarmuka yang reaktif terhadap interaksi kursor langsung dari HTML.</p>
                             </div>
                         </div>
 
                         <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-fuchsia-500/30 transition group h-full">
                             <div class="w-10 h-10 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/20 text-fuchsia-600 dark:text-fuchsia-400 flex items-center justify-center shrink-0 font-bold text-sm border border-fuchsia-200 dark:border-fuchsia-500/10 transition-colors">3</div>
                             <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-fuchsia-500 dark:group-hover:text-fuchsia-400 transition-colors">Arsitektur Kode DRY</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Teknik jitu membasmi duplikasi kode yang kotor melalui strategi ekstraksi komponen modern.</p>
+                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-fuchsia-500 dark:group-hover:text-fuchsia-400 transition-colors">Ekstraksi Komponen</h4>
+                                <p class="text-xs text-muted leading-relaxed transition-colors">Menghindari repetisi dan duplikasi kode HTML dengan memanfaatkan strategi arsitektur komponen modular.</p>
                             </div>
                         </div>
 
                         <div class="bg-gradient-to-br from-cyan-100 to-indigo-100 dark:from-cyan-900/10 dark:to-indigo-900/10 border border-cyan-300 dark:border-cyan-500/20 p-6 rounded-xl flex items-start gap-4 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition group h-full col-span-1 md:col-span-3 cursor-default">
                             <div class="w-10 h-10 rounded-lg bg-white/50 dark:bg-white/10 text-cyan-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-lg border border-white/10 shadow-sm dark:shadow-none transition-colors">🏁</div>
                             <div>
-                                <h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-2 transition-colors">Final Mission: Code Reviewer</h4>
-                                <p class="text-xs text-cyan-800 dark:text-white/60 leading-relaxed max-w-2xl transition-colors">Uji pemahaman Anda dengan bertindak sebagai Senior Architect yang memvalidasi kualitas kode implementasi utilitas.</p>
+                                <h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-2 transition-colors">Final Mission: Code Refactoring</h4>
+                                <p class="text-xs text-cyan-800 dark:text-white/60 leading-relaxed max-w-2xl transition-colors">Lakukan refaktor pada komponen statis agar memenuhi standar utility-first dan lolos verifikasi sistem.</p>
                             </div>
                         </div>
                     </div>
@@ -189,37 +189,47 @@
                             </div>
                             
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Bahan Mentah vs Makanan Jadi</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Pergeseran Paradigma</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Dalam perancangan antarmuka modern, ada sebuah analogi yang sangat akurat. Framework gaya lama ibarat sebuah Restoran Cepat Saji. Anda datang dan memesan paket tombol dengan memanggil class <code>.btn</code>. Sistem akan memberikannya kepada Anda dalam bentuk yang sudah matang sesuai resep bawaan. Memang cepat disajikan, tetapi jika Anda ingin mengubah kelengkungannya sedikit saja, Anda harus menulis CSS kustom yang merepotkan untuk menimpa gaya tersebut secara paksa.</p>
-                                    <p>Tailwind CSS bertindak sangat berbeda. Ia adalah sebuah Dapur Modern yang dipenuhi Bahan Mentah Premium. Tailwind tidak menyuguhkan tombol yang sudah jadi. Ia memecah elemen menjadi bahan-bahan terpisah: instruksi warna (<strong class="text-cyan-600 dark:text-cyan-400">bg-white</strong>), instruksi kelengkungan (<strong class="text-cyan-600 dark:text-cyan-400">rounded-lg</strong>), dan instruksi kedalaman (<strong class="text-cyan-600 dark:text-cyan-400">shadow-md</strong>). Pendekatan murni inilah yang mendasari lahirnya konsep yang kita kenal sebagai <strong>Utility-First</strong>.</p>
-                                    <p>Anda meracik bahan-bahan kecil ini langsung di dalam tag HTML. Pola pikir desain Anda akan bergeser drastis dari memikirkan nama kelas semantik yang cocok menjadi memikirkan gaya visual spesifik yang diinginkan. Kebebasan luar biasa ini memberikan Anda kendali penuh hingga ke tingkat piksel terdalam tanpa perlu berpindah-pindah dokumen CSS.</p>
+                                    <p>CSS konvensional sering berpusat pada komponen statis. Framework lawas menyediakan kelas siap pakai seperti <code>.card</code> atau <code>.btn</code>. Cara ini memang mempercepat proses awal, tetapi menjadi kaku ketika ada kebutuhan modifikasi kecil. Pengembang biasanya harus menulis kode CSS tambahan untuk menimpa gaya bawaan, yang berujung pada penumpukan kode dan konflik tata letak.</p>
+                                    <p>Tailwind mengubah paradigma ini melalui konsep Utility-First. Daripada memberikan komponen utuh, Tailwind menyediakan kelas utilitas spesifik seperti <strong class="text-cyan-600 dark:text-cyan-400">bg-blue-500</strong> untuk warna, <strong class="text-cyan-600 dark:text-cyan-400">px-4 py-2</strong> untuk ruang padding, dan <strong class="text-cyan-600 dark:text-cyan-400">rounded-md</strong> untuk membulatkan sudut. Anda merakit elemen langsung di HTML secara bebas tanpa harus menulis atau mengelola file CSS kustom terpisah.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Prediktabilitas Pola Nama & Skala</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Konsistensi Sistem Penamaan</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Ketakutan terbesar para pemula biasanya berkisar pada keharusan menghafal ribuan class. Kenyataannya, Tailwind dirancang dengan pola bahasa yang sangat logis dan bisa ditebak seketika. Sintaks dasarnya hampir selalu mengikuti pola <strong>Properti-Nilai</strong>.</p>
-                                    <p>Misalnya, jika Anda sudah tahu properti CSS murni untuk menengahkan teks adalah <code>text-align: center</code>, Anda bisa langsung menebak dengan yakin bahwa class Tailwind-nya adalah <strong>text-center</strong>. Jika CSS-nya <code>display: flex</code>, di Tailwind cukup tulis <strong>flex</strong>. Begitu Anda menguasai ritme ini, Anda akan mampu mendirikan struktur desain antarmuka secepat Anda berkedip.</p>
-                                    <p>Lebih jauh lagi, Tailwind melindungi Anda dari dosa besar penciptaan angka ajaib (<strong>Magic Numbers</strong>) dengan menerapkan <strong>Constraint-Based Design</strong> (Desain Berbasis Batasan). Alih-alih membiarkan Anda memakai jarak margin 13px atau 17px secara acak yang membuat sakit mata, Tailwind memaksa Anda memilih dari skala spasi yang sangat presisi berbasis kelipatan <strong>4px (0.25rem)</strong>. Kepatuhan mutlak pada batasan inilah yang menjamin desain web Anda terlihat konsisten, proporsional, dan elegan secara matematis.</p>
+                                    <p>Banyak pengembang ragu menggunakan Tailwind karena merasa harus menghafal banyak nama kelas. Pada kenyataannya, Tailwind menggunakan pola penamaan yang dapat diprediksi. Pola ini konsisten mengadopsi format Properti-Nilai. Contohnya, properti <code>text-align: center</code> ditulis sebagai <strong class="text-cyan-600 dark:text-cyan-400">text-center</strong>, dan ukuran <code>font-size: 1.125rem</code> ditulis sebagai <strong class="text-cyan-600 dark:text-cyan-400">text-lg</strong>. Pola ini membuat proses pengembangan antarmuka menjadi sangat cepat.</p>
+                                    <p>Tailwind juga menggunakan pendekatan desain berbasis batasan (Constraint-Based Design). Sistem ini mencegah penggunaan angka acak seperti margin 13px atau padding 17px. Sebagai gantinya, ukuran mengacu pada skala kelipatan 4px atau 0.25rem. Disiplin ukuran ini memastikan antarmuka selalu proporsional dan rapi.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: The Scale Slider (4px Grid)</h4>
-                                <div class="flex flex-col md:flex-row items-center gap-10">
+                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
+                                <h4 class="text-xs font-bold text-muted uppercase mb-4 text-center transition-colors">Simulator: Skala 4px System</h4>
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 1 --}}
+                                <div class="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-500/30 rounded-lg p-4 mb-8 text-sm text-cyan-800 dark:text-cyan-300 relative z-10 transition-colors">
+                                    <p class="font-bold flex items-center gap-2 mb-2">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Panduan Simulasi
+                                    </p>
+                                    <ol class="list-decimal pl-5 space-y-1">
+                                        <li>Ubah posisi Slider untuk mengatur nilai kelas padding <code>p-N</code>.</li>
+                                        <li>Perhatikan bagaimana angka N otomatis dikalikan 4px untuk menghasilkan ukuran ruang visual yang sesungguhnya.</li>
+                                    </ol>
+                                </div>
+
+                                <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
                                     <div class="w-full md:w-1/2 space-y-6">
-                                        <p class="text-xs text-slate-500 dark:text-white/40 transition-colors">Geser slider di bawah untuk melihat bagaimana angka sakti Tailwind diterjemahkan secara otomatis menjadi hitungan piksel sesungguhnya.</p>
                                         <div class="space-y-2">
                                             <div class="flex justify-between text-xs font-bold font-mono transition-colors">
-                                                <span class="text-cyan-600 dark:text-cyan-400">CLASS: PADDING (P-N)</span>
+                                                <span class="text-cyan-600 dark:text-cyan-400">CLASS: PADDING</span>
                                                 <span id="scale-p-val" class="text-slate-800 dark:text-white">p-6</span>
                                             </div>
                                             <input type="range" min="0" max="16" step="1" value="6" class="w-full accent-cyan-500 cursor-pointer" oninput="updateScale('p', this.value)">
                                         </div>
                                         <div class="p-4 bg-slate-50 dark:bg-white/5 rounded-lg border border-adaptive shadow-inner dark:shadow-none transition-colors">
-                                            <p class="text-xs font-mono text-slate-500 dark:text-white/60">Formula Pembuktian:<br><br><span id="scale-formula" class="text-slate-800 dark:text-white font-bold text-sm block">6 x 4px = <span class="text-cyan-600 dark:text-cyan-400">24px</span> (1.5rem)</span></p>
+                                            <p class="text-xs font-mono text-slate-500 dark:text-white/60">Perhitungan Piksel:<br><br><span id="scale-formula" class="text-slate-800 dark:text-white font-bold text-sm block">6 x 4px = <span class="text-cyan-600 dark:text-cyan-400">24px</span> (1.5rem)</span></p>
                                         </div>
                                     </div>
                                     <div class="w-full md:w-1/2 flex items-center justify-center h-48 bg-slate-100 dark:bg-[#0b0f19] rounded-xl border border-adaptive relative overflow-hidden transition-colors shadow-inner">
@@ -228,6 +238,17 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- KESIMPULAN SIMULASI 1 --}}
+                                <div class="mt-8 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-5 rounded-r-xl relative z-10 transition-colors">
+                                    <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                        Kesimpulan
+                                    </h5>
+                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                        Penggunaan sistem desain berbasis batasan ini memastikan keseragaman jarak antar elemen. Konsistensi skala matematis mencegah desainer atau pengembang membuat tata letak yang tidak proporsional.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -235,35 +256,46 @@
                     {{-- LESSON 17 --}}
                     <section id="section-17" class="lesson-section scroll-mt-32" data-lesson-id="17">
                         <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.2</span>
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.2</span>
                                 <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Komposisi & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-600 dark:from-cyan-400 dark:to-indigo-500">Interaktivitas</span>
+                                    Komposisi & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500">Interaktivitas</span>
                                 </h2>
                             </div>  
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Seni Komposisi (Layering)</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">A</span> Harmoni Layering Komponen</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Keindahan murni dari Tailwind akan bermekaran saat Anda mulai menggabungkan puluhan class utilitas kecil menjadi satu komponen UI yang utuh. Bayangkan alur kerja ini layaknya menyusun blok-blok Lego; satu blok <code>p-4</code> mungkin terlihat rapuh dan tidak berarti, namun saat Anda mengawinkan blok tata letak, palet warna, dan dimensi, mereka akan bersatu membentuk struktur antarmuka yang amat megah.</p>
-                                    <p>Mari kita bedah secara langsung anatomi dari sebuah tombol interaktif modern. Pertama, kita cor fondasinya dengan <strong class="text-cyan-600 dark:text-cyan-400">flex items-center justify-center</strong>. Selanjutnya, kita suplai oksigen keruangan internalnya dengan <strong class="text-cyan-600 dark:text-cyan-400">px-6 py-3</strong>. Kita bungkus kerangka tersebut menggunakan <strong class="text-cyan-600 dark:text-cyan-400">bg-slate-800 text-white</strong>. Sebagai pamungkas, berikan polesan kosmetik mahal dengan <strong class="text-cyan-600 dark:text-cyan-400">rounded-xl shadow-lg</strong>. Luar biasanya, seluruh instruksi presisi ini ditulis sejajar tanpa Anda harus menyentuh satu baris pun file CSS terpisah!</p>
+                                    <p>Kelas utilitas tunggal terlihat sederhana, namun penggabungannya mampu membentuk komponen antarmuka yang lengkap dan fungsional. Proses ini mirip dengan menyusun fondasi bangunan secara berlapis.</p>
+                                    <p>Misalnya, pembuatan sebuah tombol panggilan aksi (CTA). Pertama, kita gunakan <strong class="text-indigo-600 dark:text-indigo-400">flex items-center justify-center</strong> untuk menempatkan teks di tengah. Selanjutnya, ruang di dalam tombol diatur melalui <strong class="text-indigo-600 dark:text-indigo-400">px-6 py-3</strong>. Latar dan warna teks dibentuk menggunakan <strong class="text-indigo-600 dark:text-indigo-400">bg-slate-800 text-white</strong>. Tahap akhir melibatkan pembulatan sudut dengan <strong class="text-indigo-600 dark:text-indigo-400">rounded-xl</strong> serta efek bayangan elevasi melalui <strong class="text-indigo-600 dark:text-indigo-400">shadow-lg</strong>. Seluruh proses perakitan komponen kompleks ini berhasil direalisasikan di dalam atribut kelas HTML.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Locality of Behavior (States)</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white">B</span> Locality of Behavior (LoB)</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Terdapat sebuah prinsip fundamental di ranah Rekayasa Perangkat Lunak yang dinamakan <strong>Locality of Behavior</strong> (LoB). Intisari dari prinsip ini berbunyi: Perilaku sebuah elemen harus bisa dipahami seketika hanya dengan menatap baris kode elemen tersebut. Di era CSS konvensional, saat Anda penasaran warna apa yang menyala jika tombol dilewati kursor, Anda dipaksa membuka file stylesheet, mencari deklarasi <code>hover</code> yang tersembunyi jauh di dasar lautan kode.</p>
-                                    <p>Tailwind menarik paksa logika status tersebut langsung ke hadapan mata Anda menggunakan <strong>Modifier Prefixes</strong>. Cukup tempelkan awalan spesifik sebelum kelas utilitas. Contoh: <strong class="text-indigo-600 dark:text-indigo-400">hover:bg-blue-600</strong> (warna memudar saat kursor mampir), <strong class="text-indigo-600 dark:text-indigo-400">focus:ring-2</strong> (garis pendar muncul saat ditekan untuk aksesibilitas), atau <strong class="text-indigo-600 dark:text-indigo-400">active:scale-95</strong> (elemen mengerut saat diklik, memicu efek pegas). Terobosan sintaksis ini memastikan baris kode HTML Anda jujur bercerita tentang jati dirinya sendiri tanpa ada hal yang dirahasiakan di file lain.</p>
+                                    <p>Prinsip <strong>Locality of Behavior (LoB)</strong> menekankan bahwa perilaku suatu elemen harus bisa dipahami sepenuhnya hanya dengan memeriksa kode elemen tersebut. Pada pendekatan CSS tradisional, perilaku seperti status kursor melayang (hover) harus diatur dalam file terpisah, yang memperpanjang waktu pelacakan bug.</p>
+                                    <p>Tailwind menarik logika reaktif ini langsung ke HTML melalui penggunaan modifikator status (State Modifiers). Cukup tambahkan prefiks kondisi di depan utilitas utama, seperti <strong class="text-indigo-600 dark:text-indigo-400">hover:bg-blue-600</strong> untuk mengubah warna dasar saat dilewati kursor, atau <strong class="text-indigo-600 dark:text-indigo-400">active:scale-95</strong> untuk mengecilkan elemen ketika ditekan. Pendekatan deklaratif ini menjaga kode tetap transparan tanpa ketergantungan pada file eksternal.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: Interaction Holodeck</h4>
-                                <div class="flex flex-col md:flex-row items-center gap-10">
+                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
+                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: Interaktivitas DOM States</h4>
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 2 --}}
+                                <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4 mb-8 text-sm text-indigo-800 dark:text-indigo-300 relative z-10 transition-colors">
+                                    <p class="font-bold flex items-center gap-2 mb-2">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Panduan Simulasi
+                                    </p>
+                                    <ol class="list-decimal pl-5 space-y-1">
+                                        <li>Pilih kotak centang di panel kiri untuk menerapkan modifikator seperti <code class="bg-indigo-100 dark:bg-indigo-800/50 px-1 rounded">hover:</code> atau <code class="bg-indigo-100 dark:bg-indigo-800/50 px-1 rounded">active:</code> pada komponen.</li>
+                                        <li>Lakukan interaksi langsung dengan komponen tombol di sebelah kanan.</li>
+                                    </ol>
+                                </div>
+
+                                <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
                                     <div class="w-full md:w-1/2 space-y-3">
-                                        <p class="text-xs text-slate-500 dark:text-white/40 mb-3 transition-colors">Suntikkan logika interaksi ke tombol target di sebelah kanan:</p>
-                                        
                                         <label class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-white/5 border border-adaptive cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group shadow-sm dark:shadow-none">
                                             <span class="text-xs font-mono text-cyan-600 dark:text-cyan-300 font-bold transition-colors">hover:scale-110</span>
                                             <input type="checkbox" onchange="toggleStateClass('hover')" class="accent-cyan-500 w-4 h-4 cursor-pointer">
@@ -282,9 +314,20 @@
                                     <div class="w-full md:w-1/2 flex items-center justify-center h-56 bg-slate-100 dark:bg-[#0b0f19] rounded-xl border border-adaptive relative group transition-colors shadow-inner">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 dark:opacity-20"></div>
                                         <button id="state-target" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 outline-none shadow-xl relative z-10 border border-indigo-400 dark:border-transparent">
-                                            Interact With Me
+                                            Interact Component
                                         </button>
                                     </div>
+                                </div>
+
+                                {{-- KESIMPULAN SIMULASI 2 --}}
+                                <div class="mt-8 bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent border-l-4 border-indigo-500 p-5 rounded-r-xl relative z-10 transition-colors">
+                                    <h5 class="text-sm font-bold text-indigo-700 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                        Kesimpulan
+                                    </h5>
+                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                        Prinsip Locality of Behavior (LoB) mempercepat waktu pelacakan bug. Dengan menyematkan perilaku interaktif secara berdekatan pada tag HTML aslinya, Anda tidak perlu lagi berpindah file untuk memodifikasi reaksi kursor pada komponen web.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -293,33 +336,46 @@
                     {{-- LESSON 18 --}}
                     <section id="section-18" class="lesson-section scroll-mt-32" data-lesson-id="18">
                         <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.3</span>
+                            <div class="space-y-4 border-l-4 border-fuchsia-500 pl-6">
+                                <span class="text-fuchsia-600 dark:text-fuchsia-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.3</span>
                                 <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Arsitektur Kode & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-600 dark:from-cyan-400 dark:to-indigo-500">Mitos Duplikasi</span>
+                                    Arsitektur Kode & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-rose-600 dark:from-fuchsia-400 dark:to-rose-500">Mitos Duplikasi</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Menghadapi Mitos HTML Kotor</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-fuchsia-500 dark:bg-fuchsia-600 flex items-center justify-center text-[10px] text-white">A</span> Mitos HTML yang Panjang</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Kritik yang paling lantang disuarakan terhadap Tailwind di forum-forum developer adalah keluhan bahwa HTML akan terlihat sangat kotor dan kepanjangan. Memang tidak dapat dipungkiri, melihat sebuah tag pembuka yang disesaki oleh belasan class utilitas tampak sedikit mengerikan pada awalnya. Namun, engineer profesional memaklumi ini sebagai sebuah <strong>trade-off (pertukaran) yang sangat sepadan</strong> demi pengembangan antarmuka yang cepat.</p>
-                                    <p>Penyakit sebenarnya dalam memelihara aplikasi web berskala besar bukanlah deretan class yang panjang di HTML, melainkan <strong>Duplikasi Logika</strong>. Jika Anda menyalin-tempel kumpulan class panjang tersebut ke 20 tombol yang tersebar di penjuru aplikasi, maka Anda sedang menggali kuburan Anda sendiri. Jika suatu hari klien meminta desain diubah, Anda terpaksa berburu dan mengedit 20 file secara manual. Anda telah melanggar prinsip paling keramat di dunia pemrograman: <strong>DRY (Don't Repeat Yourself)</strong>.</p>
+                                    <p>Salah satu kritik utama terhadap Tailwind adalah atribut HTML yang menjadi sangat panjang dan terkesan kotor. Secara visual, blok seperti <code>&lt;button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700..."&gt;</code> mungkin terlihat kurang rapi jika dibandingkan dengan penamaan singkat seperti <code>class="btn-primary"</code>.</p>
+                                    <p>Namun, dalam pengelolaan aplikasi perangkat lunak yang kompleks, masalah utamanya bukanlah panjang karakter HTML, melainkan <strong>Duplikasi Kode</strong>. Apabila Anda secara manual menyalin atribut panjang tersebut pada 50 tombol di file yang berbeda, perubahan desain ke depannya akan sangat menyulitkan. Ini jelas merupakan pelanggaran terhadap prinsip pengkodean DRY (Don't Repeat Yourself).</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Solusi Emas: Ekstraksi Komponen</h3>
+                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-rose-500 dark:bg-rose-600 flex items-center justify-center text-[10px] text-white">B</span> Ekstraksi Komponen Modular</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Agar sistem tetap steril dari duplikasi kotor, dokumentasi inti Tailwind secara radikal melarang Anda terburu-buru lari kembali ke file CSS murni untuk membungkus class tersebut menggunakan <code>@apply</code>. Sebagai jalan keluar emasnya, manfaatkanlah fitur <strong>Ekstraksi Komponen Frontend</strong> yang ditawarkan oleh ekosistem framework modern (seperti Blade Components di ekosistem Laravel, JSX di lanskap React, atau blok komponen di Vue).</p>
-                                    <p>Implementasinya sangat elegan: Anda cukup membuat satu file komponen khusus bernama <code>&lt;x-button&gt;</code>. Hanya di dalam file terisolasi inilah Anda mengizinkan diri Anda meracik rantai utilitas Tailwind yang amat panjang tersebut untuk pertama dan terakhir kalinya. Komponen ini bertindak kokoh sebagai <strong>Single Source of Truth</strong>. Apabila tren desain tahun depan berubah, Anda hanya butuh waktu sekejap untuk merevisi file komponen pusat tersebut, dan seluruh wajah aplikasi Anda akan beradaptasi saat itu juga tanpa satupun penulisan kode yang berulang.</p>
+                                    <p>Untuk mengatasi masalah duplikasi tersebut, Tailwind merekomendasikan teknik <strong>Ekstraksi Komponen (Component Extraction)</strong> melalui ekosistem bawaan framework web Anda, seperti komponen Blade di Laravel atau komponen React/Vue.</p>
+                                    <p>Mekanisme ini memastikan pemusatan pengaturan logika pada satu file (*Single Source of Truth*). Anda cukup membuat sebuah komponen utama, misalnya <code>&lt;x-button&gt;</code>, yang berisikan seluruh daftar kelas utilitas. Saat komponen ini dipakai berulang kali, setiap perubahan warna atau ukuran hanya perlu diedit sekali pada file komponen inti, yang secara otomatis akan diperbarui ke seluruh antarmuka aplikasi.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: The Architecture Morph (Refactor)</h4>
-                                <div class="grid md:grid-cols-2 gap-0 relative rounded-xl overflow-hidden border border-adaptive h-48 bg-slate-50 dark:bg-black/20 shadow-inner transition-colors">
-                                    
+                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
+                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: Component Morphology</h4>
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 3 --}}
+                                <div class="bg-fuchsia-50 dark:bg-fuchsia-900/20 border border-fuchsia-200 dark:border-fuchsia-500/30 rounded-lg p-4 mb-8 text-sm text-fuchsia-800 dark:text-fuchsia-300 relative z-10 transition-colors">
+                                    <p class="font-bold flex items-center gap-2 mb-2">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Panduan Simulasi
+                                    </p>
+                                    <ol class="list-decimal pl-5 space-y-1">
+                                        <li>Lihat barisan struktur atribut HTML yang menduplikasi susunan utilitas secara berulang pada panel kiri.</li>
+                                        <li>Pilih <strong>Ekstrak ke Modul Pusat</strong>.</li>
+                                        <li>Perhatikan perubahan di mana duplikasi teks disederhanakan melalui pemanggilan abstraksi komponen modular (contoh: <code>&lt;x-button&gt;</code>).</li>
+                                    </ol>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-0 relative rounded-xl overflow-hidden border border-adaptive h-48 bg-slate-50 dark:bg-black/20 shadow-inner transition-colors z-10">
                                     {{-- Messy HTML --}}
                                     <div class="p-6 flex flex-col items-center justify-center gap-2 border-r border-adaptive transition-all duration-700" id="morph-messy">
                                         <div class="text-[10px] text-rose-600 dark:text-red-400 font-mono font-bold bg-rose-100 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-red-500/20 w-full text-center opacity-100 transition-colors shadow-sm dark:shadow-none">&lt;button class="p-4 flex bg-blue-600 text-white..."&gt;</div>
@@ -336,116 +392,126 @@
                                         </div>
                                     </div>
 
-                                    <button onclick="triggerMorph()" class="absolute bottom-4 right-4 px-4 py-2 bg-indigo-600 text-white text-[10px] font-bold rounded-lg shadow-lg hover:bg-indigo-500 transition z-10">
-                                        ✨ Ekstrak ke Komponen Utama
+                                    <button onclick="triggerMorph()" class="absolute bottom-4 right-4 px-4 py-2 bg-fuchsia-600 text-white text-[10px] font-bold rounded-lg shadow-lg hover:bg-fuchsia-500 transition z-10">
+                                        Ekstrak ke Modul Pusat
                                     </button>
                                 </div>
+                                
+                                {{-- KESIMPULAN SIMULASI 3 --}}
+                                <div class="mt-8 bg-gradient-to-r from-fuchsia-50 to-transparent dark:from-fuchsia-900/20 dark:to-transparent border-l-4 border-fuchsia-500 p-5 rounded-r-xl relative z-10 transition-colors">
+                                    <h5 class="text-sm font-bold text-fuchsia-700 dark:text-fuchsia-400 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                        Kesimpulan
+                                    </h5>
+                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                        Mengekstrak kelas utilitas ke dalam satu file komponen utama meminimalisasi duplikasi dan menjaga kebersihan arsitektur kode antarmuka. Dengan memusatkan elemen, pengelolaan dan pembaruan aplikasi web ke depannya menjadi sangat terstruktur.
+                                    </p>
+                                </div>
                             </div>
-
                         </div>
                     </section>
 
-                  {{-- LESSON 19: ACTIVITY FINAL (CODE REFACTOR) --}}
-<section id="section-19" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="19" data-type="activity">
-    <div class="relative rounded-[2.5rem] sim-bg-adaptive border border-adaptive p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
-        
-        <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
+                    {{-- LESSON 19: ACTIVITY FINAL (CODE REFACTOR) --}}
+                    <section id="section-19" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="19" data-type="activity">
+                        <div class="relative rounded-[2.5rem] sim-bg-adaptive border border-adaptive p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
+                            
+                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
 
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 relative z-10">
-            <div class="p-4 bg-gradient-to-br from-cyan-600 to-indigo-800 rounded-2xl text-white shadow-lg shadow-cyan-500/20 shrink-0">
-                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-            </div>
-            <div>
-                <div class="flex items-center gap-3 mb-1">
-                    <h2 class="text-3xl font-black text-heading tracking-tight transition-colors">Mission: Code Refactoring</h2>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/30 uppercase tracking-wider transition-colors">Expert Mode</span>
-                </div>
-                <p class="text-slate-600 dark:text-cyan-200/60 text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">
-                    Seorang programmer junior menyerahkan kode tombol yang kaku. Ambil alih posisinya sebagai Senior Architect! Tambahkan class utilitas yang diminta ke dalam tag <code>&lt;button&gt;</code> di bawah agar memenuhi standar komponen modern.
-                </p>
-            </div>
-        </div>
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 relative z-10">
+                                <div class="p-4 bg-gradient-to-br from-cyan-600 to-indigo-800 rounded-2xl text-white shadow-lg shadow-cyan-500/20 shrink-0">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h2 class="text-3xl font-black text-heading tracking-tight transition-colors">Mission: Code Refactoring</h2>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/30 uppercase tracking-wider transition-colors">Expert Validation</span>
+                                    </div>
+                                    <p class="text-slate-600 dark:text-cyan-200/60 text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">
+                                        Selesaikan perbaikan pada kerangka komponen tombol statis di editor bawah. Tulis dan terapkan utilitas CSS Tailwind yang valid sesuai dengan syarat pada checklist untuk mengubahnya menjadi elemen interaktif modern.
+                                    </p>
+                                </div>
+                            </div>
 
-        <div class="grid lg:grid-cols-2 gap-0 border border-adaptive rounded-2xl overflow-hidden min-h-[550px] shadow-2xl transition-colors relative z-10">
-            
-            {{-- LEFT PANEL: MONACO EDITOR & CLUES --}}
-            <div class="bg-slate-50 dark:bg-[#151515] border-r border-adaptive overflow-hidden relative flex flex-col transition-colors min-h-[550px]">
-                
-                {{-- LOCK OVERLAY (Muncul saat sukses) --}}
-                <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-8 transition-colors">
-                    <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] animate-bounce transition-colors">
-                        <svg class="w-12 h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                    </div>
-                    <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">REFACTOR BERHASIL!</h3>
-                    <p class="text-sm font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Progress Anda telah disimpan ke database.</p>
-                </div>
+                            <div class="grid lg:grid-cols-2 gap-0 border border-adaptive rounded-2xl overflow-hidden min-h-[550px] shadow-2xl transition-colors relative z-10">
+                                
+                                {{-- LEFT PANEL: MONACO EDITOR & CLUES --}}
+                                <div class="bg-slate-50 dark:bg-[#151515] border-r border-adaptive overflow-hidden relative flex flex-col transition-colors min-h-[550px]">
+                                    
+                                    {{-- LOCK OVERLAY (Muncul saat sukses) --}}
+                                    <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-8 transition-colors">
+                                        <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] animate-bounce transition-colors">
+                                            <svg class="w-12 h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        </div>
+                                        <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">REFACTOR SUCCESS!</h3>
+                                        <p class="text-sm font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Struktur kode telah lolos kompilasi dan riwayat pengerjaan berhasil disimpan.</p>
+                                    </div>
 
-                <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
-                    <span class="text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Action-Button.html</span>
-                    <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset</button>
-                </div>
-                
-                {{-- Editor Container --}}
-                <div id="codeEditor" class="h-[200px] w-full border-b border-adaptive transition-colors"></div>
+                                    <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
+                                        <span class="text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Action-Button.html</span>
+                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset</button>
+                                    </div>
+                                    
+                                    {{-- Editor Container --}}
+                                    <div id="codeEditor" class="h-[200px] w-full border-b border-adaptive transition-colors"></div>
 
-                {{-- CLUES AREA DENGAN INSTRUKSI KONTEKSTUAL --}}
-                <div class="p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col flex-1">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-[10px] uppercase font-bold text-muted transition-colors">Architect's Checklist</span>
-                        <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors">0/4 Lolos</span>
-                    </div>
-                   <div class="space-y-3 text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
-    <div id="chk-pad" class="flex items-start gap-3 transition-colors">
-        <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-        <div>
-            <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Ruang Dalam (Padding)</strong>
-            <span class="opacity-80">Beri padding horizontal (sumbu x) 32px dan vertikal (sumbu y) 12px. Ingat rumus bagi 4 di Tailwind!</span>
-        </div>
-    </div>
-    <div id="chk-hover" class="flex items-start gap-3 transition-colors">
-        <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-        <div>
-            <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Efek Sentuhan (Hover)</strong>
-            <span class="opacity-80">Buat background (bg) berubah menjadi warna indigo-600 saat kursor mouse berada di atas tombol.</span>
-        </div>
-    </div>
-    <div id="chk-fx" class="flex items-start gap-3 transition-colors">
-        <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-        <div>
-            <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Bayangan (Shadow)</strong>
-            <span class="opacity-80">Tambahkan shadow ukuran medium (md) agar tombol terlihat sedikit melayang dari background.</span>
-        </div>
-    </div>
-    <div id="chk-rnd" class="flex items-start gap-3 transition-colors">
-        <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-        <div>
-            <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Sudut Melengkung (Rounded)</strong>
-            <span class="opacity-80">Ubah sudut tombol yang kotak menjadi melengkung penuh (full) seperti bentuk sebuah pil.</span>
-        </div>
-    </div>
-</div>
+                                    {{-- CLUES AREA DENGAN INSTRUKSI KONTEKSTUAL --}}
+                                    <div class="p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col flex-1">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="text-[10px] uppercase font-bold text-muted transition-colors">Requirements Checklist</span>
+                                            <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors">0/4 Terpenuhi</span>
+                                        </div>
+                                        <div class="space-y-3 text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
+                                            <div id="chk-pad" class="flex items-start gap-3 transition-colors">
+                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
+                                                <div>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Ruang Padding</strong>
+                                                    <span class="opacity-80">Berikan padding sumbu horizontal sebesar 32px  dan vertikal sejauh 12px .</span>
+                                                </div>
+                                            </div>
+                                            <div id="chk-hover" class="flex items-start gap-3 transition-colors">
+                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
+                                                <div>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Reaktivitas Hover State</strong>
+                                                    <span class="opacity-80">Gunakan transisi hover untuk merubah latar tombol menjadi <code class="text-cyan-600 dark:text-cyan-400 font-bold">bg-indigo-600</code>.</span>
+                                                </div>
+                                            </div>
+                                            <div id="chk-fx" class="flex items-start gap-3 transition-colors">
+                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
+                                                <div>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Elevasi Kedalaman (Shadow)</strong>
+                                                    <span class="opacity-80">Tambahkan dimensi bayangan medium (md) menggunakan atribut <code class="text-cyan-600 dark:text-cyan-400 font-bold">shadow</code>.</span>
+                                                </div>
+                                            </div>
+                                            <div id="chk-rnd" class="flex items-start gap-3 transition-colors">
+                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
+                                                <div>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Kelengkungan Sudut (Rounded)</strong>
+                                                    <span class="opacity-80">Buat sudut tombol membulat penuh (full) menggunakan kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold">rounded</code>.</span>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                    <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
-                        <span>Validasi Ke Server</span>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </button>
-                </div>
-            </div>
+                                        <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
+                                            <span>Validasi ke Server</span>
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-            {{-- RIGHT PANEL: VISUAL RENDER ZONE --}}
-            <div class="bg-white dark:bg-[#1e1e1e] border-l border-adaptive flex-1 flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
-                <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors">
-                    <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Browser Preview</span>
-                    <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Update</span>
-                </div>
-                <div class="flex-1 bg-slate-50 dark:bg-[#020617] p-8 flex items-center justify-center relative overflow-hidden transition-colors">
-                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-                    <iframe id="previewFrame" class="w-full h-full border-0 relative z-10"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+                                {{-- RIGHT PANEL: VISUAL RENDER ZONE --}}
+                                <div class="bg-white dark:bg-[#1e1e1e] border-l border-adaptive flex-1 flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors">
+                                        <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Browser Preview</span>
+                                        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Update</span>
+                                    </div>
+                                    <div class="flex-1 bg-slate-50 dark:bg-[#020617] p-8 flex items-center justify-center relative overflow-hidden transition-colors w-full h-full">
+                                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                                        <iframe id="previewFrame" class="w-full h-full border-0 relative z-10"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                 </article>
 
@@ -464,10 +530,10 @@
                     <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right hidden sm:block">
                             <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Terkunci</div>
-                            <div class="font-black text-sm">Keunggulan Praktis</div>
+                            <div class="font-black text-sm">Keunggulan Tailwind CSS</div>
                         </div>
                         <div id="nextIcon" class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
                 </div>
@@ -513,7 +579,6 @@
     // Buka kunci chapter selanjutnya jika aktivitas sudah selesai
     if (activityCompleted) {
         unlockNextChapter();
-        // lockActivityUI() kita pindahkan ke dalam initMonaco agar editor sudah siap saat dikunci
     }
 
     // Inisialisasi observer tunggal yang digabung
@@ -593,7 +658,7 @@
     }
 
     // ==========================================
-    // MASTER SCROLL OBSERVER (PENGGABUNGAN LOGIKA)
+    // MASTER SCROLL OBSERVER
     // ==========================================
     function initMasterObserver() {
         const mainScroll = document.getElementById('mainScroll'); 
@@ -602,7 +667,6 @@
         if (mainScroll && sections.length > 0) {
             const observerOptions = { 
                 root: mainScroll, 
-                // Trik Sakti: Abaikan 60% layar bawah, jadi section yang menyentuh 10% dari atas pasti langsung ke-detect!
                 rootMargin: "-10% 0px -60% 0px", 
                 threshold: 0 
             };
@@ -614,12 +678,10 @@
                         const lessonId = Number(entry.target.dataset.lessonId);
                         const isActivity = entry.target.dataset.type === 'activity';
 
-                        // 1. Jalankan fungsi nyalakan warna active state di sidebar
                         if (typeof highlightAnchor === 'function') {
                             highlightAnchor(targetId);
                         }
 
-                        // 2. Jalankan fungsi simpan progress ke database (jika bukan aktivitas)
                         if (lessonId && !isActivity && !completedSet.has(lessonId)) {
                             saveLessonToDB(lessonId); 
                         }
@@ -631,11 +693,10 @@
         }
     }
 
-
     /* --- 4. FINISH LOGIC (ACTIVITY MONACO REFACTOR) --- */
     let editor;
     const starterCode = `<button class="bg-indigo-500 text-white font-bold transition-all ">
-  Kirim Pesan
+  Kirim Komando
 </button>
 `;
 
@@ -659,7 +720,6 @@
         
         updatePreview(starterCode);
         
-        // PENTING: Kunci UI setelah editor berhasil dimuat jika statusnya sudah selesai
         if (activityCompleted) {
             lockActivityUI();
         }
@@ -689,7 +749,6 @@
     }
 
     function validateConfig(code) {
-    // Gunakan Positive Lookahead agar susunan penulisan class oleh user bisa acak
     const checks = [
         { id: 'chk-pad', regex: /(?=.*\bpx-8\b)(?=.*\bpy-3\b)/ }, 
         { id: 'chk-hover', regex: /(?=.*\bhover:bg-indigo-600\b)/ },
@@ -706,7 +765,6 @@
         const dot = el.querySelector('span'); 
         const textContainer = el.querySelector('div'); 
         
-        // Memastikan code memeriksa area di dalam attribute class=""
         const classMatch = code.match(/class=["'](.*?)["']/);
         const classString = classMatch ? classMatch[1] : '';
 
@@ -728,17 +786,17 @@
         }
     });
 
-    document.getElementById('progressText').innerText = `${passed}/4 Lolos`;
+    document.getElementById('progressText').innerText = `${passed}/4 Terpenuhi`;
     
     const btn = document.getElementById('submitExerciseBtn');
     if (passed === 4) {
         btn.disabled = false;
         btn.classList.remove('cursor-not-allowed', 'opacity-50');
-        btn.innerHTML = `<span>Validasi Ke Server</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+        btn.innerHTML = `<span>Validasi ke Server</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
     } else {
         btn.disabled = true;
         btn.classList.add('cursor-not-allowed', 'opacity-50');
-        btn.innerHTML = `<span>Validasi Ke Server</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+        btn.innerHTML = `<span>Menunggu Persyaratan</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
     }
 }
 
@@ -751,7 +809,7 @@
 
     async function submitExercise() {
         const btn = document.getElementById('submitExerciseBtn');
-        btn.innerHTML = '<span class="animate-pulse">Menyimpan ke Server...</span>'; 
+        btn.innerHTML = '<span class="animate-pulse">Menyimpan data...</span>'; 
         btn.disabled = true;
         
         try {
@@ -762,7 +820,7 @@
             unlockNextChapter(); 
         } catch(e) { 
             console.error(e); 
-            btn.innerHTML = "Gagal. Coba lagi.";
+            btn.innerHTML = "Koneksi gagal. Coba lagi.";
             btn.disabled = false;
         }
     }
@@ -777,9 +835,8 @@
         btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
         btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
         
-        // Auto fill if completed
         if(editor && activityCompleted) {
-            editor.setValue(`<button class="bg-indigo-500 text-white font-bold transition-all px-8 py-3 hover:bg-indigo-600 shadow-md rounded-full">\n  Kirim Pesan\n</button>`);
+            editor.setValue(`<button class="bg-indigo-500 text-white font-bold transition-all px-8 py-3 hover:bg-indigo-600 shadow-md rounded-full">\n  Kirim Komando\n</button>`);
             validateConfig(editor.getValue());
         }
     }
@@ -806,33 +863,33 @@
     /* --- 5. SIMULATOR LOGIC (LAINNYA) --- */
     function translateClass() {
         const isDark = document.documentElement.classList.contains('dark');
-        const input = document.getElementById('decoder-input').value.trim();
+        const input = document.getElementById('decoder-input')?.value?.trim();
         const res = document.getElementById('decoder-result');
         let css = '';
         
         if (!input) {
             css = `<span class="text-slate-400 dark:text-white/30 italic transition-colors">// Menunggu input...</span>`;
-            res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output Translate:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
+            if(res) res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
             return;
         }
 
         if (input.match(/^text-(center|left|right)$/)) css = `text-align: ${input.split('-')[1]};`;
         else if (input.match(/^(m|p)[trblxy]?-\d+$/)) css = `${input.startsWith('m')?'margin':'padding'}: ${input.split('-').pop() * 0.25}rem;`;
-        else if (input.match(/^bg-[a-z]+-\d{3}$/)) css = `background-color: [Color ${input.split('-')[1]}];`;
+        else if (input.match(/^bg-[a-z]+-\d{3}$/)) css = `background-color: [Varian Palet ${input.split('-')[1]}];`;
         else if (input === 'flex') css = 'display: flex;';
-        else if (input.startsWith('text-')) css = `font-size: [Scale ${input.split('-')[1]}];`;
-        else css = `/* Style rule for .${input} */`;
+        else if (input.startsWith('text-')) css = `font-size: [Skala Proporsi ${input.split('-')[1]}];`;
+        else css = `/* Deklarasi styling untuk .${input} */`;
         
-        res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output Translate:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
+        if(res) res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
     }
     
     function setTranslate(val) { 
-    const inputEl = document.getElementById('decoder-input');
-    if(!inputEl) return; // Mencegah script berhenti jika input tidak ada di halaman ini
-    
-    inputEl.value = val; 
-    translateClass(); 
-}
+        const inputEl = document.getElementById('decoder-input');
+        if(!inputEl) return; 
+        
+        inputEl.value = val; 
+        translateClass(); 
+    }
 
     function updateScale(type, val) {
         const formula = document.getElementById('scale-formula');
@@ -840,14 +897,15 @@
         const label = document.getElementById('scale-p-val');
         const px = val * 4; 
         const rem = val * 0.25;
-        formula.innerHTML = `${val} x 4px = <span class="text-cyan-600 dark:text-cyan-400 font-bold transition-colors">${px}px</span> (${rem}rem)`;
-        label.innerText = `p-${val}`;
-        target.style.padding = `${px}px`;
+        if(formula) formula.innerHTML = `${val} x 4px = <span class="text-cyan-600 dark:text-cyan-400 font-bold transition-colors">${px}px</span> (${rem}rem)`;
+        if(label) label.innerText = `p-${val}`;
+        if(target) target.style.padding = `${px}px`;
     }
 
     let activeStates = new Set();
     function toggleStateClass(state) {
         const btn = document.getElementById('state-target');
+        if(!btn) return;
         if(activeStates.has(state)) {
             activeStates.delete(state);
             if(state==='hover') { btn.onmouseenter = null; btn.onmouseleave = null; btn.classList.remove('scale-110'); }
@@ -864,8 +922,10 @@
     function triggerMorph() {
         const messy = document.getElementById('morph-messy');
         const clean = document.getElementById('morph-clean');
-        messy.style.opacity = '0'; messy.style.transform = 'translateY(-20px)';
-        setTimeout(() => { clean.classList.remove('opacity-0', 'scale-90'); }, 400);
+        if(messy && clean) {
+            messy.style.opacity = '0'; messy.style.transform = 'translateY(-20px)';
+            setTimeout(() => { clean.classList.remove('opacity-0', 'scale-90'); }, 400);
+        }
     }
 
     /* --- 7. SCROLL SPY & SIDEBAR LOGIC --- */
@@ -880,19 +940,16 @@
             const dot = a.querySelector('.anchor-dot');
             const isActivity = a.dataset.type === 'activity';
 
-            dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
+            if(dot) dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
             
             if (isActivity) {
-                dot.classList.remove('bg-amber-500', 'dark:bg-amber-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+                if(dot) { dot.classList.remove('bg-amber-500', 'dark:bg-amber-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
             } else {
-                dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+                if(dot) { dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
             }
 
             const text = a.querySelector('.anchor-text');
-            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
-            text.classList.add('text-slate-500');
+            if(text) { text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold'); text.classList.add('text-slate-500'); }
         });
 
         const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
@@ -904,25 +961,24 @@
             activeAnchor.classList.remove('border-transparent');
             
             const dot = activeAnchor.querySelector('.anchor-dot');
-            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-            
-            if (isActivity) {
-                dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
-            } else {
-                dot.classList.add(isDark ? 'dark:bg-cyan-400' : 'bg-cyan-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#06b6d4]' : 'shadow-sm');
+            if(dot) {
+                dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
+                if (isActivity) {
+                    dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
+                } else {
+                    dot.classList.add(isDark ? 'dark:bg-cyan-400' : 'bg-cyan-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#06b6d4]' : 'shadow-sm');
+                }
             }
             
             const text = activeAnchor.querySelector('.anchor-text');
-            text.classList.remove('text-slate-500');
-            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
+            if(text) { text.classList.remove('text-slate-500'); text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold'); }
         }
     }
-
-    
 
     function initSidebarScroll(){
         const m = document.getElementById('mainScroll');
         const l = document.querySelectorAll('.accordion-content .nav-item');
+        if(!m) return;
         m.addEventListener('scroll', () => {
             let c = '';
             document.querySelectorAll('.lesson-section').forEach(s => {

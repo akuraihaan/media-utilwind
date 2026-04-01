@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Utilwind | Belajar Tailwind CSS')
+@section('title', 'Utilwind')
 
 @section('content')
 
@@ -111,7 +111,7 @@
                         </a>
                     @else
                         <a href="{{ route('register') }}" class="liquid-glass w-full sm:w-auto px-8 py-3.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-all font-black text-sm md:text-base flex items-center justify-center shadow-lg dark:shadow-[0_0_30px_rgba(255,255,255,0.2)] cursor-pointer">
-                            Mulai Koding Gratis
+                            Mulai Belajar 
                         </a>
                     @endauth
                     

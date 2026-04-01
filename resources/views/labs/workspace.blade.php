@@ -327,7 +327,7 @@
 
                 // --- INIT SEQUENCE ---
                 init() {
-                    this.log('System', 'Initializing VS Code Workspace...', 'text-gray-500');
+                    this.log('System', 'Initializing Workspace...', 'text-gray-500');
                     
                     // 1. Tentukan Task Aktif (Task pertama yang belum selesai)
                     const firstUnfinished = this.stepsData.find(s => !this.completed.includes(s.id));

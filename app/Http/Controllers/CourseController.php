@@ -72,11 +72,16 @@ class CourseController extends Controller
      */
     private function loadView($view, $currentKey, $lessonRange, $activityId, $requiredKey = null)
     {
-        $userId = Auth::id();
+        $user = Auth::user();
+        $userId = $user->id;
+        $isAdmin = $user->role === 'admin'; // DETEKSI ADMIN
+        
         $course = Course::where('slug', 'tailwind-css')->firstOrFail(); 
         $statusMap = $this->getChapterStatus($userId);
 
-        if ($requiredKey && empty($statusMap[$requiredKey])) {
+        // PENGECEKAN BLOKIR (BYPASS UNTUK ADMIN)
+        // Admin akan langsung lolos dari blokir ini, siswa biasa akan dicek status materinya.
+        if (!$isAdmin && $requiredKey && empty($statusMap[$requiredKey])) {
             return redirect()->route('dashboard')->with('error', 'Selesaikan materi/kuis sebelumnya untuk mengakses halaman ini!');
         }
 
@@ -200,44 +205,43 @@ class CourseController extends Controller
         ]);
     }
 
-    // Di dalam class CourseController extends Controller
+    /**
+     * Menampilkan Halaman Kurikulum / Peta Konsep
+     */
+    public function showSyllabus()
+    {
+        $userId = Auth::id();
 
-// Di dalam CourseController.php
+        // 1. Status Materi & Kuis (Logika Lama)
+        $statusMap = $this->getChapterStatus($userId);
 
-public function showSyllabus()
-{
-    $userId = Auth::id();
+        // 2. Status Lab (BARU: Ambil Lab yang sudah LULUS)
+        // Mengambil daftar ID Lab yang statusnya 'passed' untuk user ini
+        $passedLabsMap = \App\Models\LabHistory::where('user_id', $userId)
+            ->where('status', 'passed')
+            ->pluck('lab_id') // Misal: [1, 2] artinya Lab ID 1 dan 2 sudah lulus
+            ->flip() // Ubah jadi key: [1 => true, 2 => true] agar mudah dicek di Blade
+            ->toArray();
 
-    // 1. Status Materi & Kuis (Logika Lama)
-    $statusMap = $this->getChapterStatus($userId);
+        // 3. Hitung Progress Global (Opsional, penyempurnaan)
+        $totalSteps = 19; // 13 Materi + 3 Lab + 3 Kuis
+        
+        // Hitung item materi selesai
+        $completedLessons = count(array_filter($statusMap, fn($val, $key) => $val === true && !str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
+        
+        // Hitung lab selesai
+        $completedLabs = count($passedLabsMap);
+        
+        // Hitung kuis selesai
+        $completedQuizzes = count(array_filter($statusMap, fn($val, $key) => $val === true && str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
 
-    // 2. Status Lab (BARU: Ambil Lab yang sudah LULUS)
-    // Mengambil daftar ID Lab yang statusnya 'passed' untuk user ini
-    $passedLabsMap = \App\Models\LabHistory::where('user_id', $userId)
-        ->where('status', 'passed')
-        ->pluck('lab_id') // Misal: [1, 2] artinya Lab ID 1 dan 2 sudah lulus
-        ->flip() // Ubah jadi key: [1 => true, 2 => true] agar mudah dicek di Blade
-        ->toArray();
+        $totalCompleted = $completedLessons + $completedLabs + $completedQuizzes;
+        $progressPercent = $totalSteps > 0 ? round(($totalCompleted / $totalSteps) * 100) : 0;
 
-    // 3. Hitung Progress Global (Opsional, penyempurnaan)
-    $totalSteps = 19; // 13 Materi + 3 Lab + 3 Kuis
-    
-    // Hitung item materi selesai
-    $completedLessons = count(array_filter($statusMap, fn($val, $key) => $val === true && !str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
-    
-    // Hitung lab selesai
-    $completedLabs = count($passedLabsMap);
-    
-    // Hitung kuis selesai
-    $completedQuizzes = count(array_filter($statusMap, fn($val, $key) => $val === true && str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
-
-    $totalCompleted = $completedLessons + $completedLabs + $completedQuizzes;
-    $progressPercent = $totalSteps > 0 ? round(($totalCompleted / $totalSteps) * 100) : 0;
-
-    return view('courses.curriculum', [
-        'completedLessonsMap' => $statusMap,
-        'passedLabsMap'       => $passedLabsMap, // Kirim data lab ke view
-        'progressPercent'     => $progressPercent
-    ]);
-}
+        return view('courses.curriculum', [
+            'completedLessonsMap' => $statusMap,
+            'passedLabsMap'       => $passedLabsMap, // Kirim data lab ke view
+            'progressPercent'     => $progressPercent
+        ]);
+    }
 }

@@ -27,12 +27,11 @@
         --text-heading: #0f172a;
         --code-bg: #f1f5f9;
         --simulator-bg: #ffffff;
-        --accent: #22d3ee;
-        --accent-glow: rgba(34, 211, 238, 0.3);
+        --accent: #06b6d4; /* Cyan 500 */
+        --accent-glow: rgba(6, 182, 212, 0.3);
     }
 
     .dark {
-        /* ORIGINAL DARK THEME VALUES */
         --bg-main: #020617;
         --text-main: #e2e8f0;
         --glass-bg: rgba(10, 14, 23, 0.85); 
@@ -45,7 +44,7 @@
         --text-heading: #ffffff;
         --code-bg: #252525;
         --simulator-bg: #0b0f19;
-        --accent-glow: rgba(34, 211, 238, 0.5);
+        --accent-glow: rgba(6, 182, 212, 0.5);
     }
 
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s, color 0.4s; }
@@ -62,6 +61,21 @@
     .sim-bg-adaptive { background-color: var(--simulator-bg); }
     .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); }
 
+    /* HIGHLIGHT TERM UTILITY */
+    .hl-term {
+        background-color: rgba(6, 182, 212, 0.15); /* Cyan tint */
+        color: #0891b2; /* Cyan 600 */
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-style: normal;
+        white-space: nowrap;
+    }
+    .dark .hl-term {
+        background-color: rgba(34, 211, 238, 0.2);
+        color: #67e8f9; /* Cyan 300 */
+    }
+
     /* SCROLLBAR */
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -69,7 +83,7 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
     
-    /* ANIMATIONS & EFFECTS (KHAS BAB 1.2: WARNA CYAN) */
+    /* ANIMATIONS & EFFECTS */
     #animated-bg { 
         background: radial-gradient(800px circle at 20% 20%, rgba(34,211,238,.10), transparent 40%), 
                     radial-gradient(800px circle at 80% 80%, rgba(14,165,233,.10), transparent 40%); 
@@ -86,10 +100,10 @@
     /* SCROLLSPY SIDEBAR ACTIVE */
     .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
     .nav-item:hover { color: var(--text-main); background: var(--card-hover); }
-    .nav-item.active { color: #22d3ee; background: rgba(34,211,238,0.05); font-weight: 600; }
+    .nav-item.active { color: #06b6d4; background: rgba(6, 182, 212, 0.05); font-weight: 600; }
     .dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; transition: all 0.3s; }
     .dark .dot { background: #334155; }
-    .nav-item.active .dot { background: #22d3ee; box-shadow: 0 0 8px #22d3ee; transform: scale(1.2); }
+    .nav-item.active .dot { background: #06b6d4; box-shadow: 0 0 8px #06b6d4; transform: scale(1.2); }
 </style>
 
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
@@ -113,365 +127,451 @@
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
             {{-- STICKY HEADER & PROGRESS BAR --}}
-            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
+            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-4 md:px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 transition-colors">1.2</div>
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 transition-colors shrink-0">1.2</div>
                     <div>
-                        <h1 class="text-sm font-bold text-heading transition-colors">Konsep Dasar Tailwind</h1>
-                        <p class="text-[10px] text-muted transition-colors">Core Utilities & Workflow</p>
+                        <h1 class="text-sm font-bold text-heading transition-colors line-clamp-1">Konsep Dasar Tailwind</h1>
+                        <p class="text-[10px] text-muted transition-colors line-clamp-1">Core Utilities & Workflow</p>
                     </div>
                 </div>
                 
                 {{-- DYNAMIC PROGRESS BAR UI --}}
-                <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
                     </div>
                     <span id="progressLabelTop" class="text-cyan-600 dark:text-cyan-400 font-bold text-xs transition-colors">0%</span>
                 </div>
             </div>
 
-            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+            <div class="p-4 sm:p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 
                 {{-- TUJUAN PEMBELAJARAN --}}
-                <div class="mb-24">
+                <div class="mb-16 md:mb-24">
                     <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2 transition-colors">
-                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Tujuan Pembelajaran
                     </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">1</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Filosofi Utility</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Mengapa class atomik lebih efektif dari CSS konvensional.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Filosofi Utility</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Mendekonstruksi pendekatan desain konvensional dan beralih ke arsitektur utility-first.</p></div>
                         </div>
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-sky-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">2</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Design Tokens</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Menguasai sistem warna dan tipografi bawaan.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Design Tokens</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Menguasai palet warna bawaan dan hierarki tipografi Tailwind.</p></div>
                         </div>
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-teal-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">3</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Box Model</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Padding, Margin, dan Sizing yang presisi dan konsisten.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Sistem Grid Terukur</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Memahami mekanika <span class="hl-term">4-Point Grid</span> untuk penetapan margin, padding, dan dimensi.</p></div>
                         </div>
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-blue-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">4</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Styling UI</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Border radius dan shadow untuk estetika modern.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Styling Visual UI</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Memoles antarmuka dengan kedalaman bayangan (shadow) dan sudut (border-radius).</p></div>
                         </div>
-                        <div class="bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/40 dark:to-blue-900/40 border border-cyan-200 dark:border-cyan-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition group h-full col-span-2 md:col-span-2 cursor-default">
+                        <div class="bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/40 dark:to-blue-900/40 border border-cyan-200 dark:border-cyan-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-2 cursor-default">
                             <div class="w-8 h-8 rounded bg-white/50 dark:bg-white/10 text-cyan-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-sm dark:shadow-none">🏁</div>
-                            <div><h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-1 transition-colors">Final Mission</h4><p class="text-[11px] text-cyan-800 dark:text-white/70 leading-relaxed transition-colors">Live Code: Membangun struktur kerangka Notification Card.</p></div>
+                            <div><h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-1 transition-colors">Final Mission</h4><p class="text-[11px] text-cyan-800 dark:text-white/70 leading-relaxed transition-colors">Menyusun arsitektur komponen Notification Card secara langsung untuk melatih penulisan kelas Tailwind.</p></div>
                         </div>
                     </div>
                 </div>
 
-                <article class="space-y-40">
+                <article class="space-y-32 md:space-y-40">
                     
                     {{-- LESSON 1 --}}
                     <section id="section-7" class="lesson-section scroll-mt-32" data-lesson-id="7">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
                                 <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.1</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
                                     Filosofi <br> 
                                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Utility-First</span>
                                 </h2>
                             </div>
                             
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Jangan Tinggalkan HTML Anda</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Dalam pengembangan web tradisional, kita diajarkan untuk memisahkan struktur dan gaya. Kita membuat file HTML, memberikan class seperti <code>.card-container</code> atau menggunakan metodologi BEM seperti <code>.card__title--active</code>, lalu beralih ke file CSS untuk menulis aturannya. Proses bolak-balik antara file HTML dan CSS ini disebut <strong>"Context Switching"</strong>, yang sering kali memperlambat alur kerja dan memecah fokus kita.</p>
-                                    <p><strong>Tailwind CSS merevolusi paradigma ini dengan pendekatan Utility-First.</strong> Alih-alih menulis CSS buatan sendiri, Tailwind menyediakan ribuan class kecil bermakna tunggal (seperti <code>flex</code> untuk flexbox, <code>pt-4</code> untuk padding top 1rem, atau <code>text-center</code>). Anda merakit desain visual secara langsung di dalam elemen HTML. Anda tidak perlu lagi memikirkan penamaan class yang membingungkan atau khawatir gaya Anda akan "bocor" dan merusak elemen lain di halaman yang berbeda.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Separation of Concerns vs Utility-First</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Dalam CSS konvensional, praktik standar adalah memisahkan file struktur (HTML) dan gaya (CSS) atau yang dikenal sebagai <span class="hl-term">Separation of Concerns</span>. Proses ini mengharuskan Anda membuat nama kelas abstrak (misal: <code>.card-profile</code>) di HTML, lalu berpindah ke file CSS untuk mendefinisikan gaya warna dan ukurannya. Pendekatan ini rentan memperlambat proses pengembangan karena mengharuskan Anda melakukan <em>context switching</em> (berpindah antar-file).</p>
+                                    <p><strong>Tailwind CSS menggunakan arsitektur Utility-First.</strong> Anda tidak lagi menulis CSS di file terpisah, melainkan menyusun kelas fungsional bermakna tunggal secara langsung di dalam elemen HTML. Contohnya: kelas <code>flex</code> akan mengaktifkan Flexbox; <code>pt-4</code> memberikan <em>padding-top</em>; dan <code>text-center</code> meratakan teks ke tengah. Pendekatan ini menghilangkan kebutuhan untuk mencari nama kelas yang tepat dan secara signifikan mempercepat proses pembuatan UI (<em>prototyping</em>).</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white">B</span> Kemenangan Skalabilitas</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Masalah klasik CSS adalah ia selalu bertambah besar. Setiap fitur baru berarti baris CSS baru. Lama kelamaan, file CSS menjadi raksasa yang sulit dipelihara, penuh dengan "kode mati" yang tidak ada yang berani menghapusnya karena takut akan merusak tampilan di bagian lain website.</p>
-                                    <p>Tailwind memecahkan masalah file CSS yang terus membengkak. Karena Tailwind mendaur ulang class utilitas yang sama di seluruh proyek, dan mesin JIT (Just-In-Time) compiler-nya hanya akan mengkompilasi class yang benar-benar Anda gunakan ke dalam hasil akhir, ukuran file CSS production Anda akan sangat kecil dan sangat optimal. Sebuah tombol di beranda dan halaman admin akan berbagi ruang class yang sama secara super efisien.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Efisiensi Skalabilitas & Kompilator JIT</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Salah satu masalah utama CSS konvensional adalah ukuran filenya yang terus membengkak. Setiap kali fitur baru ditambahkan, kode CSS baru ditulis. Hal ini sering menyisakan kode yang tidak lagi terpakai (<em>Dead Code</em>) karena tidak ada yang berani menghapusnya demi menghindari kerusakan tata letak di halaman lain.</p>
+                                    <p>Tailwind menyelesaikan masalah skalabilitas ini. Kelas utilitasnya bersifat global dan dapat digunakan berulang kali di seluruh proyek, sehingga ukuran CSS tidak tumbuh secara eksponensial. Ditambah dengan kompilator <strong>JIT (Just-In-Time) Engine</strong>, Tailwind hanya akan membundel kelas-kelas CSS yang benar-benar Anda tulis di file HTML, menjadikan ukuran file akhir (<em>production build</em>) sangat kecil dan efisien.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row h-[350px] transition-colors">
-                                <div class="w-full md:w-1/2 code-adaptive p-6 font-mono text-xs flex flex-col transition-colors">
-                                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-adaptive transition-colors">
-                                        <span class="text-muted font-bold uppercase text-[10px] transition-colors">Code Editor View</span>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row min-h-[420px] transition-colors mt-8 relative">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 1 --}}
+                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        PANDUAN SIMULASI 1
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Tekan tombol opsi untuk melihat perbandingan penulisan sintaks antara pendekatan <strong>CSS Biasa (Konvensional)</strong> dan metode <strong>Tailwind (Utility-First)</strong>.</p>
+                                </div>
+
+                                <div class="w-full md:w-1/2 code-adaptive p-4 sm:p-6 pt-24 sm:pt-20 font-mono text-xs flex flex-col transition-colors relative z-10 min-h-[250px]">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 pb-2 border-b border-adaptive transition-colors">
+                                        <span class="text-muted font-bold uppercase text-[10px] transition-colors">Code Editor</span>
                                         <div class="flex gap-2">
-                                            <button onclick="setSim1('css')" class="px-3 py-1 bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition text-[10px]">CSS Biasa</button>
-                                            <button onclick="setSim1('tw')" class="px-3 py-1 bg-cyan-100 dark:bg-cyan-600/20 border border-cyan-300 dark:border-cyan-500/50 text-cyan-700 dark:text-cyan-400 rounded transition text-[10px]">Tailwind</button>
+                                            <button onclick="setSim1('css')" class="flex-1 sm:flex-none px-3 py-1.5 bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white transition text-[10px] font-bold">CSS Biasa</button>
+                                            <button onclick="setSim1('tw')" class="flex-1 sm:flex-none px-3 py-1.5 bg-cyan-100 dark:bg-cyan-600/20 border border-cyan-300 dark:border-cyan-500/50 text-cyan-700 dark:text-cyan-400 rounded transition text-[10px] font-bold">Tailwind</button>
                                         </div>
                                     </div>
-                                    <div id="sim1-code" class="flex-1 overflow-auto text-blue-600 dark:text-blue-300 leading-relaxed whitespace-pre font-mono bg-white dark:bg-black/20 p-4 rounded border border-adaptive shadow-inner dark:shadow-none transition-colors"></div>
+                                    <div id="sim1-code" class="flex-1 overflow-x-auto text-blue-600 dark:text-blue-300 leading-relaxed whitespace-pre font-mono bg-white dark:bg-black/20 p-4 rounded border border-adaptive shadow-inner dark:shadow-none transition-colors text-[11px] sm:text-xs custom-scrollbar"></div>
                                 </div>
-                                <div class="w-full md:w-1/2 bg-slate-100 dark:bg-[#111] flex flex-col items-center justify-center border-l border-adaptive relative transition-colors">
+                                <div class="w-full md:w-1/2 bg-slate-100 dark:bg-[#111] flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-adaptive relative transition-colors z-10 min-h-[200px] p-6">
                                     <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-                                    <button class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:scale-105 transition transform z-10">
+                                    <button class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-transform transform z-10 text-sm">
                                         Beli Sekarang
                                     </button>
-                                    <p class="mt-6 text-xs text-slate-400 dark:text-white/30 font-mono text-center px-8 transition-colors z-10">Output visual sama persis.<br>Perbedaannya ada di efisiensi penulisan.</p>
                                 </div>
+                            </div>
+                            
+                            {{-- KESIMPULAN SIMULASI 1 --}}
+                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
+                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                    Kesimpulan Pendekatan
+                                </h5>
+                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                    Meskipun hasil akhirnya terlihat identik secara visual, metode penulisan Tailwind memungkinkan pengembang merancang antarmuka langsung di dalam file HTML. Hal ini menghemat waktu secara dramatis karena menghilangkan kebutuhan untuk menulis blok gaya (style block) yang terpisah-pisah.
+                                </p>
                             </div>
                         </div>
                     </section>
 
                     {{-- LESSON 2 --}}
                     <section id="section-8" class="lesson-section scroll-mt-32" data-lesson-id="8">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
                                 <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.2</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
                                     Warna & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Tipografi</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Sistem Warna 50-950</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Warna memegang peranan krusial dalam menciptakan suasana hati dan hierarki visual antarmuka. Tailwind menyediakan <strong>Sistem Desain Terkurasi</strong> dari palet warna profesional. Setiap warna memiliki spektrum ketebalan dari <code>50</code> (paling terang/pucat) hingga <code>950</code> (paling gelap/pekat). Pendekatan ini memudahkan pembuatan tema yang harmonis tanpa harus menebak kode warna Hexadecimal secara manual.</p>
-                                    <p>Salah satu fitur terkuat Tailwind adalah dukungan opasitas bawaan. Anda dapat menambahkan tingkat transparansi langsung pada class warna menggunakan <i>slash syntax</i>. Sebagai contoh, <code>bg-slate-900/50</code> akan memberikan background slate gelap dengan transparansi 50%, sangat cocok untuk efek <i>glassmorphism</i> atau lapisan <i>overlay</i> pelindung di atas gambar.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Design Tokens (Sistem Palet Warna)</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Tailwind menyediakan sistem warna terkurasi (Design Tokens) untuk menjaga konsistensi visual di seluruh aplikasi. Daripada menggunakan nilai heksadesimal acak, Anda dapat memanfaatkan palet bawaan yang telah disusun berdasarkan tingkat kecerahan, mulai dari <code>50</code> (paling terang) hingga <code>950</code> (paling gelap/pekat).</p>
+                                    <p>Contohnya, kelas <code>bg-slate-900</code> akan memberikan latar warna abu-abu gelap. Tailwind juga mendukung kontrol tingkat transparansi (opacity) secara langsung dengan menggunakan sintaks pecahan, seperti <code>bg-slate-900/50</code> untuk memberikan transparansi 50%, yang sangat berguna untuk membuat efek overlay atau glassmorphism.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white">B</span> Menguasai Teks</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Tipografi membangun hierarki visual. Di ranah tipografi, Tailwind tidak hanya memfasilitasi ukuran (seperti <code>text-sm</code>, <code>text-xl</code>), tetapi juga memberikan kontrol penuh atas <i>Line Height</i> (<code>leading-tight</code>, <code>leading-relaxed</code>) dan <i>Letter Spacing</i> (<code>tracking-wide</code>, <code>tracking-tight</code>).</p>
-                                    <p>Penggunaan kombinasi yang tepat dapat secara drastis meningkatkan <i>Readability</i> (keterbacaan) untuk paragraf yang panjang, atau memberikan kesan eksklusif dan premium pada judul utama (Hero Headline) di website Anda. Semua satuan ukur yang digunakan menggunakan <code>rem</code>, memastikan tipografi Anda sepenuhnya responsif terhadap konfigurasi aksesibilitas layar pengguna.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Sistem Ukuran Tipografi Relatif</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Kelas utilitas tipografi Tailwind dirancang untuk menjaga hierarki teks yang proporsional. Skala ukuran yang disediakan berkisar dari <code>text-xs</code> hingga ukuran raksasa <code>text-9xl</code>. Selain itu, utilitas pengaturan seperti <code>leading-tight</code> (untuk line-height/spasi baris) dan <code>tracking-wide</code> (untuk letter-spacing/jarak antar huruf) tersedia untuk mengoptimalkan kenyamanan membaca (<em>readability</em>).</p>
+                                    <p>Sistem tipografi ini menggunakan satuan relatif <code>rem</code> secara otomatis. Ini memastikan ukuran teks di situs web Anda akan beradaptasi secara fleksibel dengan pengaturan prasetel perbesaran layar (zoom) pada perangkat pengguna.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive rounded-xl border border-adaptive p-6 flex flex-col md:flex-row gap-8 shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors">
-                                <div class="w-full md:w-1/2 space-y-6 relative z-10">
-                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors">Styling Text Practice</h4>
+                            <div class="sim-bg-adaptive rounded-xl border border-adaptive p-4 sm:p-6 flex flex-col lg:flex-row gap-6 lg:gap-8 shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors mt-8">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 2 --}}
+                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        PANDUAN SIMULASI 2
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Tekan tombol opsi besaran teks (SIZE) dan palet (COLOR) untuk melihat bagaimana properti CSS dikendalikan menggunakan kelas utilitas Tailwind.</p>
+                                </div>
+
+                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
+                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors hidden sm:block">Tipografi & Warna</h4>
                                     <div>
-                                        <label class="text-[10px] text-cyan-600 dark:text-cyan-400 block mb-2 font-bold transition-colors">SIZE</label>
+                                        <label class="text-[10px] text-cyan-600 dark:text-cyan-400 block mb-2 font-bold transition-colors">SIZE (Ukuran Teks)</label>
                                         <div class="flex gap-2">
-                                            <button onclick="updateSim2('size', 'text-sm')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-sm</button>
-                                            <button onclick="updateSim2('size', 'text-2xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-2xl</button>
-                                            <button onclick="updateSim2('size', 'text-5xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-5xl</button>
+                                            <button onclick="updateSim2('size', 'text-sm')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-sm</button>
+                                            <button onclick="updateSim2('size', 'text-2xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-2xl</button>
+                                            <button onclick="updateSim2('size', 'text-5xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-5xl</button>
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="text-[10px] text-pink-600 dark:text-pink-400 block mb-2 font-bold transition-colors">COLOR</label>
+                                        <label class="text-[10px] text-pink-600 dark:text-pink-400 block mb-2 font-bold transition-colors">COLOR (Palet Terkurasi)</label>
                                         <div class="flex gap-2">
-                                            <button onclick="updateSim2('color', 'text-slate-500 dark:text-slate-300')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-slate-200 dark:hover:bg-slate-600/20 transition text-slate-600 dark:text-gray-300 font-medium">Slate</button>
-                                            <button onclick="updateSim2('color', 'text-cyan-600 dark:text-cyan-400')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-100 dark:hover:bg-cyan-600/20 transition text-cyan-600 dark:text-cyan-400 font-medium">Cyan</button>
-                                            <button onclick="updateSim2('color', 'text-rose-600 dark:text-rose-500')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-rose-100 dark:hover:bg-rose-600/20 transition text-rose-600 dark:text-rose-500 font-medium">Rose</button>
+                                            <button onclick="updateSim2('color', 'text-slate-500 dark:text-slate-300')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-slate-200 dark:hover:bg-slate-600/20 transition text-slate-600 dark:text-gray-300 font-medium">Slate</button>
+                                            <button onclick="updateSim2('color', 'text-cyan-600 dark:text-cyan-400')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-100 dark:hover:bg-cyan-600/20 transition text-cyan-600 dark:text-cyan-400 font-medium">Cyan</button>
+                                            <button onclick="updateSim2('color', 'text-rose-600 dark:text-rose-500')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-rose-100 dark:hover:bg-rose-600/20 transition text-rose-600 dark:text-rose-500 font-medium">Rose</button>
                                         </div>
                                     </div>
-                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors">
+                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors break-all">
                                         &lt;h1 class="<span id="sim2-code" class="text-cyan-600 dark:text-cyan-300">font-bold text-base text-white</span>"&gt;...&lt;/h1&gt;
                                     </div>
                                 </div>
-                                <div class="w-full md:w-1/2 bg-slate-800 dark:bg-black/40 rounded-xl flex items-center justify-center border border-slate-700 dark:border-white/5 min-h-[200px] relative z-10 transition-colors shadow-inner">
-                                    <h1 id="sim2-target" class="text-base text-white transition-all duration-300 font-bold">Hello Tailwind</h1>
+                                <div class="w-full lg:w-1/2 bg-slate-800 dark:bg-black/40 rounded-xl flex items-center justify-center border border-slate-700 dark:border-white/5 min-h-[200px] lg:min-h-[250px] relative z-10 transition-colors shadow-inner mt-4 lg:mt-0 p-4 overflow-hidden text-center">
+                                    <h1 id="sim2-target" class="text-base text-white transition-all duration-300 font-bold break-words w-full">Hello Tailwind</h1>
                                 </div>
                             </div>
+                            
+                            {{-- KESIMPULAN SIMULASI 2 --}}
+                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
+                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                    Kesimpulan Sistem Visual
+                                </h5>
+                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                    Dengan membatasi penggunaan warna dan ukuran menggunakan token bawaan, Tailwind memastikan desain Anda tetap seragam dan sesuai dengan pedoman estetika tanpa harus menebak kode heksadesimal secara acak.
+                                </p>
+                            </div>
+
                         </div>
                     </section>
 
                     {{-- LESSON 3 --}}
                     <section id="section-9" class="lesson-section scroll-mt-32" data-lesson-id="9">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
                                 <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.3</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
                                     Spacing & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Sizing</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> The 4-Point Grid System</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Konsistensi spasial adalah fondasi dari desain antarmuka yang terlihat profesional. Tailwind menggunakan <strong>The 4-Point Grid System</strong>, di mana 1 satuan bawaan bernilai <code>0.25rem</code> (atau setara dengan 4px pada ukuran font default browser). Artinya, <code>p-4</code> berarti padding sebesar 16px (4 x 4px), sedangkan <code>m-8</code> berarti margin sebesar 32px.</p>
-                                    <p>Sistem ukur ini secara tidak sadar memaksa Anda untuk tetap berada pada skala yang proporsional, mencegah desain yang berantakan karena penggunaan angka piksel yang acak (misal: menebak-nebak menggunakan margin 17px atau 21px). Jangan takut menggunakan <i>whitespace</i> atau ruang kosong. Padding yang luas (seperti <code>p-6</code> atau <code>p-8</code>) seringkali merupakan kunci rahasia membuat desain terlihat lega, modern, dan tidak sumpek.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Sistem Grid 4-Titik (4-Point Grid System)</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Proporsi jarak antar elemen (spacing) sangat memengaruhi kualitas tata letak antarmuka. Tailwind menggunakan kalkulasi matematis <strong>4-Point Grid System</strong>. Dalam sistem ini, 1 unit jarak Tailwind sama dengan <code>0.25rem</code> (sekitar 4px pada pengaturan browser standar). Oleh karena itu, perintah <code>p-4</code> akan menghasilkan padding sebesar 16px (4 unit * 4px), sedangkan <code>m-8</code> menghasilkan margin 32px.</p>
+                                    <p>Pendekatan ini mencegah Anda menggunakan jarak ganjil atau tidak beraturan (seperti 17px atau 21px) yang sering merusak ritme visual layar. Ruang kosong (Whitespace) sangat penting untuk menjaga elemen UI agar tidak terlihat menumpuk.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white">B</span> Sizing & Constraints</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Mengatur dimensi elemen secara fleksibel adalah inti dari layout yang responsif. Tailwind menyediakan utilitas lebar (width) dan tinggi (height) komprehensif. Anda dapat menggunakan ukuran pasti (<code>w-64</code> untuk 16rem), atau persentase fluida (<code>w-1/2</code> untuk 50%, <code>w-full</code> untuk 100%).</p>
-                                    <p>Pahami juga kekuatan ukuran viewport (<code>w-screen</code>, <code>h-screen</code>) untuk membuat elemen header yang memenuhi layar penuh perangkat pengguna secara dinamis. Untuk desain berbasis kontainer, manfaatkan utilitas constraint seperti <code>max-w-md</code> untuk menjaga elemen seperti form login atau kartu profil agar tidak merentang terlihat terlalu lebar ketika dibuka di layar monitor desktop yang besar, dibantu dengan <code>mx-auto</code> untuk memosisikannya tepat di tengah layar.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Sizing & Fluid Constraints</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Untuk mengendalikan proporsi elemen pada berbagai layar, Tailwind memiliki utilitas penetapan lebar (<code>width</code> / <code>w-</code>) dan tinggi (<code>height</code> / <code>h-</code>). Kelas ukuran tersedia dalam bentuk absolut (seperti <code>w-64</code> untuk 16rem) maupun persentase fraksional relatif (seperti <code>w-1/2</code> untuk 50% atau <code>w-full</code> untuk 100% lebar kontainer parent).</p>
+                                    <p>Gunakan kelas batas maksimum seperti <code>max-w-md</code> untuk menjaga elemen konten tidak meregang terlalu panjang pada resolusi monitor besar. Anda juga bisa mengombinasikannya dengan <code>mx-auto</code> (margin horizontal otomatis) untuk membuat elemen tersebut simetris dan selalu berada di tengah layar.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-8 relative shadow-xl dark:shadow-2xl overflow-hidden flex flex-col items-center transition-colors">
-                                <div class="w-full max-w-md space-y-6 mb-8 relative z-10">
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-4 sm:p-8 relative shadow-xl dark:shadow-2xl overflow-hidden flex flex-col lg:flex-row items-center transition-colors mt-8 gap-6 lg:gap-10">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 3 --}}
+                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        PANDUAN SIMULASI 3
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Geser tuas <span class="hl-term">Slider</span> pada pengaturan <span class="hl-term">Padding</span> dan <span class="hl-term">Width</span> untuk melihat bagaimana sistem skala jarak 4-Piksel bekerja dalam mendimensikan elemen.</p>
+                                </div>
+
+                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
                                     <div>
                                         <div class="flex justify-between mb-2">
-                                            <label class="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase transition-colors">Padding (p-)</label>
-                                            <span class="text-xs text-slate-500 dark:text-white/50 font-mono transition-colors" id="sim3-label-p">class="p-4"</span>
+                                            <label class="text-[10px] sm:text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase transition-colors">Padding (p-)</label>
+                                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-white/50 font-mono transition-colors bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded" id="sim3-label-p">class="p-4"</span>
                                         </div>
-                                        <input type="range" min="0" max="12" value="4" oninput="updateSim3('p', this.value)" class="w-full accent-cyan-500 h-1 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
+                                        <input type="range" min="0" max="12" value="4" oninput="updateSim3('p', this.value)" class="w-full accent-cyan-500 h-1.5 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
                                     </div>
                                     <div>
                                         <div class="flex justify-between mb-2">
-                                            <label class="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase transition-colors">Width (w-)</label>
-                                            <span class="text-xs text-slate-500 dark:text-white/50 font-mono transition-colors" id="sim3-label-w">class="w-32"</span>
+                                            <label class="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 font-bold uppercase transition-colors">Width (w-)</label>
+                                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-white/50 font-mono transition-colors bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded" id="sim3-label-w">class="w-32"</span>
                                         </div>
-                                        <input type="range" min="16" max="64" value="32" oninput="updateSim3('w', this.value)" class="w-full accent-blue-500 h-1 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
+                                        <input type="range" min="16" max="64" value="32" oninput="updateSim3('w', this.value)" class="w-full accent-blue-500 h-1.5 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
                                     </div>
                                 </div>
                                 
-                                <div class="code-adaptive p-10 rounded-xl border border-adaptive w-full flex justify-center h-64 items-center relative z-10 shadow-inner transition-colors">
-                                    <div id="sim3-target" class="bg-cyan-600 text-white font-bold text-center transition-all duration-300 shadow-xl overflow-hidden p-4 w-32 rounded-lg flex items-center justify-center border border-white/20">
+                                <div class="code-adaptive p-4 sm:p-10 rounded-xl border border-adaptive w-full lg:w-1/2 flex justify-center h-[200px] sm:h-64 items-center relative z-10 shadow-inner transition-colors">
+                                    <div id="sim3-target" class="bg-cyan-600 text-white font-bold text-center transition-all duration-300 shadow-xl overflow-hidden p-4 w-32 rounded-lg flex items-center justify-center border border-white/20 text-xs sm:text-base break-words">
                                         KONTEN
                                     </div>
                                 </div>
+                            </div>
+                            
+                            {{-- KESIMPULAN SIMULASI 3 --}}
+                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
+                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                    Kesimpulan Sistem Tata Letak Proporsional
+                                </h5>
+                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                    Penggunaan sistem grid yang dikalkulasi secara presisi (kelipatan 0.25rem) menghilangkan inkonsistensi pengukuran visual, menjamin bahwa ruang bernapas antar elemen selalu terdistribusi secara proporsional.
+                                </p>
                             </div>
                         </div>
                     </section>
 
                     {{-- LESSON 4 --}}
                     <section id="section-10" class="lesson-section scroll-mt-32" data-lesson-id="10">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
                                 <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.4</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
                                     Borders & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Effects</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Rounded Corners</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Desain antarmuka modern sangat menghindari sudut yang terlalu tajam karena dapat memberikan kesan kaku dan tidak ramah. Tailwind CSS memberikan utilitas <code>rounded</code> untuk mengontrol kelengkungan sudut elemen (Border Radius) secara instan dan konsisten di seluruh web.</p>
-                                    <p>Anda dapat menggunakan <code>rounded-md</code> untuk lengkungan halus yang elegan pada tombol interaktif, <code>rounded-2xl</code> untuk membungkus kartu produk berukuran besar, hingga <code>rounded-full</code> untuk menghasilkan bentuk lingkaran sempurna yang umumnya diterapkan pada badge notifikasi atau avatar profil pengguna.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Estetika Geometri Visual (Border Radius)</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Dalam standar desain web modern, elemen antarmuka yang memiliki sudut lancip 90 derajat sering kali dihindari karena dinilai kaku dan tidak organik. Tailwind menyelesaikan kebutuhan ini dengan utilitas pembulatan sudut menggunakan kelompok kelas <code>rounded</code>.</p>
+                                    <p>Anda dapat menerapkan <code>rounded-md</code> untuk melembutkan sudut kotak input atau tombol (Button). Tersedia pula skala yang lebih drastis seperti <code>rounded-2xl</code> untuk membingkai kontainer panel, hingga <code>rounded-full</code> yang secara sempurna membulatkan elemen, sangat cocok digunakan untuk mencetak tampilan bingkai foto profil atau notifikasi lencana.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white">B</span> Depth with Shadows</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Untuk menciptakan ilusi kedalaman (Depth) ruang 3D pada layar 2D dan menyusun hierarki visual, kita menggunakan efek bayangan (Shadow). Elemen yang memiliki <i>drop-shadow</i> akan terlihat seolah-olah "mengambang" di atas lapisan background, secara psikologis membantu pandangan mata pengguna fokus pada elemen tersebut karena terkesan lebih dekat.</p>
-                                    <p>Gunakan <code>shadow-md</code> untuk elevasi antarmuka yang rendah (seperti pada navbar), atau <code>shadow-xl</code> untuk elevasi dramatis (seperti pada modal popup). Praktik terbaik UI: Kombinasikan bayangan tebal tersebut dengan class interaktif seperti <code>hover:-translate-y-1 hover:shadow-2xl transition</code> untuk membuat kartu terlihat responsif dan "terangkat" secara mulus saat kursor pengguna diarahkan ke sana. Sebagai alternatif pengganti border standar yang bisa merusak ukuran layout, Tailwind juga memiliki utilitas shadow berupa <code>ring</code>, yang sangat esensial diaplikasikan pada status <code>focus</code> untuk standar aksesibilitas keyboard yang optimal.</p>
+                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Elevasi Antarmuka (Box Shadow)</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Bayangan (Drop Shadow) bukan sekadar dekorasi, melainkan instrumen esensial untuk mengomunikasikan kedalaman layar (Z-Index). Elemen yang terlihat memiliki bayangan lebih kuat akan dipersepsikan lebih dekat ke pengguna, memfokuskan perhatian pada komponen tersebut.</p>
+                                    <p>Gunakan kelas bayangan tipis seperti <code>shadow-md</code> untuk batang navigasi (Navbar), dan bayangan tebal seperti <code>shadow-xl</code> atau <code>shadow-2xl</code> untuk pop-up modal (Dialog Windows). Kelas-kelas bayangan ini dapat dengan mudah dikombinasikan dengan efek transisi (seperti <code>hover:-translate-y-1 hover:shadow-2xl transition</code>) untuk menciptakan sensasi traksi dan komponen yang terasa interaktif merespons kursor mouse.</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-8 flex flex-col md:flex-row gap-10 items-center shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors">
-                                <div class="w-full md:w-1/2 space-y-6 relative z-10">
-                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors">Visual Effects Practice</h4>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-4 sm:p-8 flex flex-col lg:flex-row gap-6 lg:gap-10 items-center shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors mt-8">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 4 --}}
+                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        PANDUAN SIMULASI 4
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Terapkan konfigurasi utilitas pada tingkat sudut (Border Radius) dan elevasi bayangan (Box Shadow) untuk menganalisa pembentukan ruang visual desain 3D.</p>
+                                </div>
+
+                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
+                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors hidden sm:block">Visual Effects UI</h4>
                                     
                                     <div class="space-y-2">
-                                        <p class="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold transition-colors">ROUNDED</p>
+                                        <p class="text-[10px] sm:text-xs text-cyan-600 dark:text-cyan-400 font-bold transition-colors">BORDER RADIUS (Sudut Lengkung)</p>
                                         <div class="flex gap-2">
-                                            <button onclick="updateSim4('rad', 'rounded-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">None</button>
-                                            <button onclick="updateSim4('rad', 'rounded-xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">XL</button>
-                                            <button onclick="updateSim4('rad', 'rounded-full')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Full</button>
+                                            <button onclick="updateSim4('rad', 'rounded-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Flat</button>
+                                            <button onclick="updateSim4('rad', 'rounded-xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">XL Curve</button>
+                                            <button onclick="updateSim4('rad', 'rounded-full')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Pill Full</button>
                                         </div>
                                     </div>
                                     
                                     <div class="space-y-2">
-                                        <p class="text-[10px] text-blue-600 dark:text-blue-400 font-bold transition-colors">SHADOW</p>
+                                        <p class="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 font-bold transition-colors">BOX SHADOW (Efek Bayangan)</p>
                                         <div class="flex gap-2">
-                                            <button onclick="updateSim4('shadow', 'shadow-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Flat</button>
-                                            <button onclick="updateSim4('shadow', 'shadow-lg')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Large</button>
-                                            <button onclick="updateSim4('shadow', 'shadow-cyan-500/50')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Glow</button>
+                                            <button onclick="updateSim4('shadow', 'shadow-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">No Drop</button>
+                                            <button onclick="updateSim4('shadow', 'shadow-lg')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Large Gap</button>
+                                            <button onclick="updateSim4('shadow', 'shadow-cyan-500/50')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Cyan Glow</button>
                                         </div>
                                     </div>
 
-                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors">
-                                        class="<span id="sim4-code" class="text-cyan-600 dark:text-cyan-300">rounded-none shadow-none</span>"
+                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors break-all">
+                                        class="<span id="sim4-code" class="text-cyan-600 dark:text-cyan-300 font-bold">rounded-none shadow-none</span>"
                                     </div>
                                 </div>
-                                <div class="w-full md:w-1/2 flex justify-center code-adaptive p-10 rounded-xl border border-adaptive relative z-10 shadow-inner transition-colors">
-                                    <div id="sim4-target" class="w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 transition-all duration-500 border border-white/20"></div>
+                                <div class="w-full lg:w-1/2 flex justify-center code-adaptive p-4 sm:p-10 rounded-xl border border-adaptive relative z-10 shadow-inner transition-colors min-h-[250px] items-center">
+                                    <div id="sim4-target" class="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 transition-all duration-500 border border-white/20"></div>
                                 </div>
+                            </div>
+                            
+                            {{-- KESIMPULAN SIMULASI 4 --}}
+                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
+                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                    Kesimpulan Modifikasi Estetika
+                                </h5>
+                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
+                                    Penggunaan utilitas kelengkungan sudut dan elevasi bayangan yang tepat merupakan protokol wajib dalam material design masa kini. Elemen yang memiliki bayangan tegas akan mengarahkan fokus interaktif pandangan pengguna terhadap antarmuka.
+                                </p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 5: ACTIVITY FINAL (DIREVISI DENGAN CLUE MATANG & KONTEKSTUAL) --}}
+                    {{-- LESSON 5: ACTIVITY FINAL --}}
                     <section id="section-11" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="11" data-type="activity">
-                        <div class="relative rounded-[2rem] sim-bg-adaptive border border-adaptive p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
+                        <div class="relative rounded-[1.5rem] md:rounded-[2rem] sim-bg-adaptive border border-adaptive p-4 sm:p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
                             
-                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
+                            <div class="absolute -top-24 -right-24 w-40 h-40 md:w-64 md:h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
 
-                            <div class="flex items-start md:items-center gap-4 mb-8 relative z-10 flex-col md:flex-row">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 relative z-10">
                                 <div class="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white shadow-lg shadow-cyan-500/30 shrink-0">
-                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-heading transition-colors">Coding Challenge: Notification Card</h2>
-                                    <p class="text-cyan-700 dark:text-cyan-300 text-sm font-medium transition-colors mt-1">Mari praktikkan apa yang baru saja kamu pelajari! Tantangannya sederhana: bangun sebuah kartu notifikasi pesan. Ingat kembali konsep Utility-First, sistem ukuran (4-point grid), dan pewarnaan. Ketik langsung class-nya di editor!</p>
+                                    <h2 class="text-xl md:text-2xl font-bold text-heading transition-colors">Coding Challenge: Notification Card</h2>
+                                    <p class="text-cyan-700 dark:text-cyan-300 text-xs md:text-sm font-medium transition-colors mt-1 leading-relaxed text-justify">Rangkai pemahaman Anda mengenai Tag Semantik, properti kelonggaran internal (Padding), dan modifikator gaya tata letak untuk membangun kerangka Notification Card menggunakan Utility-First CSS secara interaktif di panel editor bawah.</p>
                                 </div>
                             </div>
 
-                            <div class="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto h-[600px] relative z-10">
+                            <div class="flex flex-col lg:grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto relative z-10">
                                 
                                 {{-- LEFT: EDITOR --}}
-                                <div class="code-adaptive rounded-xl border border-adaptive flex flex-col overflow-hidden h-full relative shadow-inner transition-colors">
+                                <div class="code-adaptive rounded-xl border border-adaptive flex flex-col overflow-hidden relative shadow-inner transition-colors min-h-[500px] lg:min-h-0 lg:h-[650px]">
                                     
                                     {{-- LOCK OVERLAY --}}
                                     <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg transition-colors">
-                                        <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] dark:shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce transition-colors">
-                                            <svg class="w-12 h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <div class="w-16 h-16 md:w-24 md:h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 md:mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] dark:shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce transition-colors">
+                                            <svg class="w-8 h-8 md:w-12 md:h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                                         </div>
-                                        <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">MISSION COMPLETED!</h3>
-                                        <p class="text-base font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Subbab 1.2 Tuntas. Lanjut ke Latar Belakang Tailwind CSS</p>
-                                        <button disabled class="px-8 py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-500 dark:text-white/30 text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Review Mode</button>
+                                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">MISSION COMPLETED!</h3>
+                                        <p class="text-sm md:text-base font-bold text-slate-500 dark:text-white/60 mb-6 md:mb-8 max-w-xs transition-colors">Subbab Konsep Dasar berhasil dieksekusi. Data pencapaian telah tersimpan dalam rekam kemajuan.</p>
+                                        <button disabled class="px-6 py-2.5 md:px-8 md:py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-500 dark:text-white/30 text-[10px] md:text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Review Mode Only</button>
                                     </div>
 
                                     <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
-                                        <span class="text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Component.html</span>
-                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset</button>
+                                        <span class="text-[10px] md:text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Component.blade.php</span>
+                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset Kerangka</button>
                                     </div>
                                     
-                                    <div id="codeEditor" class="flex-1 w-full border-b border-adaptive transition-colors"></div>
+                                    <div id="codeEditor" class="h-[250px] lg:flex-1 w-full border-b border-adaptive transition-colors"></div>
 
                                     {{-- CLUES AREA DENGAN INSTRUKSI KONTEKSTUAL --}}
-                                    <div class="p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col h-[280px]">
+                                    <div class="p-4 md:p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col h-[350px] lg:h-[300px]">
                                         <div class="flex justify-between items-center mb-4">
                                             <span class="text-[10px] uppercase font-bold text-muted transition-colors">Requirements Checklist</span>
-                                            <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors">0/4 Terpenuhi</span>
+                                            <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors bg-cyan-100 dark:bg-cyan-900/30 px-2 py-0.5 rounded">0/4 Terpenuhi</span>
                                         </div>
                                         
-                                        <div class="space-y-3 text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
+                                        <div class="space-y-4 text-[10px] md:text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
                                             <div id="check-bg" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
                                                     <strong class="block text-slate-800 dark:text-white mb-0.5">Warna Latar Belakang</strong>
-                                                    <span class="opacity-80">Supaya cocok dengan tema gelap, berikan warna background pada kontainer luar menggunakan palet <code class="text-cyan-600 dark:text-cyan-400 font-bold">slate</code> dengan tingkat kegelapan <code class="text-cyan-600 dark:text-cyan-400 font-bold">800</code>.</span>
+                                                    <span class="opacity-80">Ubah gaya div terluar agar memiliki tema gelap menggunakan kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">bg-slate-800</code>.</span>
                                                 </div>
                                             </div>
                                             <div id="check-pad" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Jarak Dalam (Padding)</strong>
-                                                    <span class="opacity-80">Kartunya terlihat terlalu sesak. Beri bantalan di semua sisinya (padding) sebesar 24px. Ingat aturan 4-point grid Tailwind? 24 dibagi 4 adalah 6.</span>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Padding Interior</strong>
+                                                    <span class="opacity-80">Berikan kelonggaran ruang bernapas (padding) di sekeliling komponen sebesar 24px menggunakan utilitas 4-Point Grid, yaitu <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">p-6</code>.</span>
                                                 </div>
                                             </div>
                                             <div id="check-flex" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Tata Letak Elemen</strong>
-                                                    <span class="opacity-80">Ikon dan teksnya masih bertumpuk atas-bawah. Buat mereka sejajar menyamping dengan model <code class="text-cyan-600 dark:text-cyan-400 font-bold">flex</code>, lalu beri jarak antar keduanya sebesar 16px (hint: gap-...).</span>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Orientasi Flexbox Baris</strong>
+                                                    <span class="opacity-80">Cegah ikon dan tulisan menumpuk ke bawah dengan memposisikannya secara horizontal menggunakan <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">flex</code>, disertai penyekat celah antar elemen <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">gap-4</code>.</span>
                                                 </div>
                                             </div>
                                             <div id="check-round" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Sudut Melengkung</strong>
-                                                    <span class="opacity-80">UI modern benci sudut tajam. Buat sudut-sudut luar kartu ini melengkung dengan ukuran ekstra besar (<code class="text-cyan-600 dark:text-cyan-400 font-bold">xl</code>).</span>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Modifikasi Radius Sudut</strong>
+                                                    <span class="opacity-80">Lembutkan patahan sudut kotak yang tajam dengan menyisipkan lekukan sudut yang besar melalui kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">rounded-xl</code>.</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <button id="submitExerciseBtn" onclick="checkSolution()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
-                                            <span>Validasi & Kunci</span>
+                                        <button id="submitExerciseBtn" onclick="checkSolution()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-[11px] md:text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
+                                            <span>Validasi Kode Sistem</span>
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </button>
                                     </div>
                                 </div>
 
                                 {{-- RIGHT: BROWSER PREVIEW --}}
-                                <div class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-adaptive flex-1 flex flex-col relative overflow-hidden min-h-[500px] shadow-sm dark:shadow-none transition-colors">
-                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors">
-                                        <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Browser Preview</span>
-                                        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live</span>
+                                <div class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-adaptive flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors min-h-[350px] lg:min-h-0 lg:h-[650px]">
+                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors shrink-0">
+                                        <span class="text-[10px] md:text-xs text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Canvas Rendering (Preview)</span>
+                                        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Reloading</span>
                                     </div>
-                                    <iframe id="previewFrame" class="w-full h-full border-0 bg-slate-50 dark:bg-transparent transition-colors"></iframe>
+                                    <div class="flex-1 bg-slate-50 dark:bg-gray-900 p-2 sm:p-6 lg:p-8 flex items-center justify-center relative overflow-hidden transition-colors w-full h-full">
+                                        <iframe id="previewFrame" class="w-full h-full border-0 bg-transparent transition-colors"></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -480,24 +580,24 @@
                 </article>
 
                 {{-- FOOTER NAVIGATION --}}
-                <div class="mt-32 pt-8 border-t border-adaptive flex justify-between items-center transition-colors">
-                    <a href="{{ route('courses.htmldancss') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors">
-                        <div class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
+                    <a href="{{ route('courses.htmldancss') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
-                        <div class="text-left hidden sm:block">
-                            <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Sebelumnya</div>
-                            <div class="font-black text-sm">Konsep Dasar HTML & CSS</div>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Kembali ke Indeks</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Konsep Dasar HTML & CSS</div>
                         </div>
                     </a>
                     
-                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
-                        <div class="text-right hidden sm:block">
-                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Terkunci</div>
-                            <div class="font-black text-sm">Latar Belakang & Struktur</div>
+                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end">
+                        <div class="text-right">
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Akses Modul Terkunci</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Latar Belakang Tailwind CSS</div>
                         </div>
-                        <div id="nextIcon" class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
                 </div>
@@ -512,14 +612,12 @@
 
 <script>
     /* --- CONFIGURATION AJAX & PROGRESS --- */
-    // PASTIKAN window.LESSON_IDS SAMA DENGAN ID DI DATABASE `course_lessons` UNTUK BAB INI
     window.LESSON_IDS = [7, 8, 9, 10, 11]; 
     
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
     window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
     let completedSet = new Set(window.COMPLETED_IDS);
     
-    // Cek status khusus Activity Lesson (Pastikan 11 adalah ID untuk activity bab ini di DB)
     const ACTIVITY_LESSON_ID = 11; 
     let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
 
@@ -587,7 +685,7 @@
     }
 
     // ==========================================
-    // AJAX POST REQUEST KE DATABASE (BULLETPROOF)
+    // AJAX POST REQUEST KE DATABASE
     // ==========================================
     async function saveLessonToDB(lessonId) { 
         lessonId = Number(lessonId);
@@ -645,9 +743,9 @@
     function setSim1(mode) {
         const codeBox = document.getElementById('sim1-code');
         if (mode === 'css') {
-            codeBox.innerHTML = `.btn {\n  background-color: blue;\n  color: white;\n  padding: 10px 20px;\n  border-radius: 5px;\n}`;
+            codeBox.innerHTML = `.btn {\n  <span class="text-blue-400">background-color</span>: <span class="text-pink-400">blue</span>;\n  <span class="text-blue-400">color</span>: <span class="text-pink-400">white</span>;\n  <span class="text-blue-400">padding</span>: <span class="text-pink-400">10px 20px</span>;\n  <span class="text-blue-400">border-radius</span>: <span class="text-pink-400">5px</span>;\n}`;
         } else {
-            codeBox.innerHTML = `&lt;button class="bg-blue-600 text-white px-4 py-2 rounded"&gt;\n  Button\n&lt;/button&gt;`;
+            codeBox.innerHTML = `&lt;<span class="text-pink-500">button</span> <span class="text-emerald-400">class</span>="<span class="hl-term text-blue-500">bg-blue-600 text-white px-4 py-2 rounded</span>"&gt;\n  Beli Sekarang\n&lt;/<span class="text-pink-500">button</span>&gt;`;
         }
     }
 
@@ -701,8 +799,8 @@
   </div>
 
   <div>
-    <h4 class="font-bold text-lg text-white">Pesan Baru</h4>
-    <p class="text-slate-400 text-sm">Anda mendapat pesan pembaruan sistem dari tim DevStudio.</p>
+    <h4 class="font-bold text-lg text-white">Notifikasi Sistem Data</h4>
+    <p class="text-slate-400 text-sm mt-1">Sistem antarmuka web berhasil diperbarui ke versi stabil.</p>
   </div>
 
 </div>`;
@@ -717,12 +815,13 @@
                 value: starterCode, 
                 language: 'html', 
                 theme: isDark ? 'vs-dark' : 'vs', 
-                fontSize: 13,
+                fontSize: window.innerWidth < 768 ? 11 : 13,
                 minimap: { enabled: false }, 
                 automaticLayout: true, 
                 padding: { top: 16 }, 
                 lineNumbers: 'off',
-                scrollBeyondLastLine: false
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
             });
             updatePreview(starterCode);
             
@@ -745,11 +844,10 @@
         const isDark = document.documentElement.classList.contains('dark');
         const bgColor = isDark ? '#111827' : '#f8fafc'; 
         
-        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; transition: background-color 0.3s; }</style></head><body>${code}</body></html>`;
+        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 1rem; font-family: sans-serif; transition: background-color 0.3s; box-sizing: border-box; overflow: hidden; }</style></head><body>${code}</body></html>`;
         frame.srcdoc = content;
     }
 
-    // UPDATE: Validasi diubah untuk membaca struktur Clue yang baru
     function validateCode(code) {
         const checks = [
             { id: 'check-bg', regex: /bg-slate-800/, valid: false },
@@ -762,8 +860,9 @@
 
         checks.forEach(check => {
             const el = document.getElementById(check.id);
-            const dot = el.querySelector('span'); // Dot indicator
-            const textContainer = el.querySelector('div'); // Wrapper untuk text
+            if(!el) return;
+            const dot = el.querySelector('span'); 
+            const textContainer = el.querySelector('div'); 
 
             if (check.regex.test(code)) {
                 textContainer.classList.remove('opacity-80');
@@ -787,9 +886,10 @@
         const btn = document.getElementById('submitExerciseBtn');
         if (passedCount === 4) {
             btn.disabled = false; btn.classList.remove('cursor-not-allowed', 'opacity-50');
-            btn.innerHTML = `<span>Validasi & Kunci</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            btn.innerHTML = `<span>Validasi Kode Sistem</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
         } else {
             btn.disabled = true; btn.classList.add('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = `<span>Menunggu Persyaratan Terpenuhi</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
         }
     }
 
@@ -799,7 +899,7 @@
         if(activityCompleted) return;
         const btn = document.getElementById('submitExerciseBtn');
         
-        btn.innerHTML = '<span class="animate-pulse">Menyimpan...</span>'; 
+        btn.innerHTML = '<span class="animate-pulse">Memverifikasi kode...</span>'; 
         btn.disabled = true;
         
         try {
@@ -810,7 +910,7 @@
             unlockNextChapter(); 
         } catch(e) { 
             console.error(e); 
-            btn.innerHTML = "Gagal Menyimpan."; 
+            btn.innerHTML = "Gagal memvalidasi. Silakan coba kembali."; 
             btn.disabled = false; 
         }
     }
@@ -820,10 +920,15 @@
         if(editor) editor.updateOptions({ readOnly: true });
         
         const btn = document.getElementById('submitExerciseBtn'); 
-        btn.innerText = "Terkunci (Selesai)"; 
+        btn.innerText = "Panel Eksekusi Terkunci (Selesai)"; 
         btn.disabled = true;
         btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
         btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
+
+        if(editor && activityCompleted) {
+            editor.setValue(`<div class="bg-slate-800 p-6 flex gap-4 rounded-xl">\n  \n  <div class="p-3 bg-cyan-500/20 rounded-full shrink-0 h-fit">\n    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>\n  </div>\n\n  <div>\n    <h4 class="font-bold text-lg text-white">Notifikasi Sistem Data</h4>\n    <p class="text-slate-400 text-sm mt-1">Sistem antarmuka web berhasil diperbarui ke versi stabil.</p>\n  </div>\n\n</div>`);
+            validateCode(editor.getValue());
+        }
     }
 
     function unlockNextChapter() {
@@ -832,12 +937,12 @@
             btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
             btn.classList.add('text-cyan-600', 'dark:text-cyan-400', 'cursor-pointer');
             
-            document.getElementById('nextLabel').innerText = "Selanjutnya";
+            document.getElementById('nextLabel').innerText = "Akses Navigasi Terbuka";
             document.getElementById('nextLabel').classList.remove('opacity-60');
             document.getElementById('nextLabel').classList.add('text-cyan-600', 'dark:text-cyan-400', 'opacity-100');
             
             const icon = document.getElementById('nextIcon');
-            icon.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
+            icon.innerHTML = `<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
             icon.classList.add('bg-cyan-100', 'dark:bg-cyan-500/20', 'border-cyan-300', 'dark:border-cyan-500/50', 'text-cyan-600', 'dark:text-cyan-400', 'shadow-lg');
             

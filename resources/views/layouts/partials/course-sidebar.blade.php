@@ -80,6 +80,8 @@
     // ==========================================
     $currentRoute = Route::currentRouteName();
     $userId = auth()->id();
+    $isAdmin = auth()->user() && auth()->user()->role === 'admin'; // DETEKSI ADMIN
+    
     $kkmLab = 50; 
     $kkmQuiz = 70;
 
@@ -163,8 +165,8 @@
                 [
                     'id' => '2.1', 'title' => 'Layout dengan Flexbox', 'route' => 'courses.flexbox', 
                     'anchors' => [
-                        ['id' => 'section-29', 'label' => 'Ukuran & Arah Flexbox'], 
-                        ['id' => 'section-30', 'label' => 'Flex Wrap & Perilaku'], 
+                        ['id' => 'section-29', 'label' => 'Filosofi & Flex Container'], 
+                        ['id' => 'section-30', 'label' => 'Arah Sumbu & Wrapping'], 
                         ['id' => 'section-31', 'label' => 'Justify & Align'], 
                         ['id' => 'section-32', 'label' => 'Sizing & Flexibility'],
                         ['id' => 'section-33', 'label' => 'Aktivitas Latihan']
@@ -175,10 +177,10 @@
                     'anchors' => [
                         ['id' => 'section-34', 'label' => 'Konsep Grid Layout'], 
                         ['id' => 'section-35', 'label' => 'Penjajaran Grid (Alignment)'], 
-                        ['id' => 'section-36', 'label' => 'Span & Start/End'], 
-                        ['id' => 'section-37', 'label' => 'Grid Template Rows'], 
-                        ['id' => 'section-38', 'label' => 'Arbitrary Columns'], 
-                        ['id' => 'section-39', 'label' => 'Grid Auto Flow'],
+                        ['id' => 'section-36', 'label' => 'Teknik Span'], 
+                        ['id' => 'section-37', 'label' => 'Dimensi Eksplisit Rows'], 
+                        ['id' => 'section-38', 'label' => 'JIT Arbitrary Value'], 
+                        ['id' => 'section-39', 'label' => 'Grid Auto Flow & Dense'],
                         ['id' => 'section-40', 'label' => 'Aktivitas Latihan']
                     ]
                 ],
@@ -249,29 +251,64 @@
             @php
                 $chapterId = $chapter['id'];
                 $quizIdStr = (string)$chapter['quiz_id'];
-                $isChapterLocked = !$previousChapterPassed;
+                
+                // BYPASS ADMIN: Chapter tidak pernah terkunci untuk Admin
+                $isChapterLocked = $isAdmin ? false : !$previousChapterPassed;
 
-                // Logic Lab DB
+                // ==========================================
+                // LOGIKA DATABASE LAB
+                // ==========================================
                 $chapterLab = \App\Models\Lab::where('chapter_id', $chapterId)->first();
                 $hasLab = $chapterLab ? true : false;
                 
-                $labId = null; $labScore = 0; $isLabPassed = false; $isLabActive = false;
+                $labId = null; 
+                $labScore = 0; 
+                $lastScore = null;
+                $isLabPassed = false; 
+                $isLabActive = false; 
                 
                 if ($hasLab) {
                     $labId = $chapterLab->id;
-                    $labHistory = \App\Models\LabHistory::where('user_id', $userId)->where('lab_id', $labId)->where('status', 'passed')->orderBy('final_score', 'desc')->first();
+                    
+                    // 1. Cek apakah sudah PERNAH LULUS
+                    $labHistory = \App\Models\LabHistory::where('user_id', $userId)
+                                    ->where('lab_id', $labId)
+                                    ->where('status', 'passed')
+                                    ->orderBy('final_score', 'desc')
+                                    ->first();
+                                    
                     if ($labHistory) {
                         $isLabPassed = true;
                         $labScore = $labHistory->final_score;
                     }
-                    $activeSession = \App\Models\LabSession::where('user_id', $userId)->where('lab_id', $labId)->first();
-                    if ($activeSession) $isLabActive = true;
+
+                    // 2. Cek apakah ada Nilai Terakhir (Jika belum lulus)
+                    if (!$isLabPassed) {
+                        $lastAttempt = \App\Models\LabHistory::where('user_id', $userId)
+                                        ->where('lab_id', $labId)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+                        if ($lastAttempt) {
+                            $lastScore = $lastAttempt->final_score;
+                        }
+                    }
+
+                    // 3. Cek apakah ada Sesi Aktif yang belum disubmit
+                    $activeSession = \App\Models\LabSession::where('user_id', $userId)
+                                        ->where('lab_id', $labId)
+                                        ->first();
+                                        
+                    if ($activeSession && !$isLabPassed) {
+                        $isLabActive = true;
+                    }
                 }
 
                 // Logic Kuis
                 $quizScore = $scores[$quizIdStr] ?? null;
                 $isQuizPassed = ($quizScore !== null && $quizScore >= $kkmQuiz);
-                $currentChapterPassed = $isQuizPassed; 
+                
+                // Admin selalu dianggap "sudah pass" agar chapter selanjutnya tetap terbuka di UI
+                $currentChapterPassed = $isAdmin ? true : $isQuizPassed; 
 
                 // Logic Akses Kuis
                 $canAccessQuiz = false;
@@ -283,6 +320,11 @@
                      }
                      if ($quizScore !== null) $canAccessQuiz = true;
                 }
+                
+                // BYPASS ADMIN: Kuis selalu bisa diakses
+                if ($isAdmin) {
+                    $canAccessQuiz = true;
+                }
             @endphp
 
             <div class="relative transition-all duration-500 {{ $isChapterLocked ? 'opacity-50 grayscale' : 'opacity-100' }}">
@@ -293,7 +335,7 @@
                         <h4 class="text-[11px] font-extrabold uppercase tracking-widest transition-colors" style="color: var(--sb-muted);">{{ $chapter['title'] }}</h4>
                         @if($isChapterLocked)
                              <div class="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold tracking-wider text-slate-500 bg-slate-200 border-slate-300 dark:text-white/30 dark:bg-white/5 dark:border-white/5 border transition-colors">🔒 TERKUNCI</div>
-                        @elseif($isQuizPassed)
+                        @elseif($isQuizPassed || ($isAdmin && !$isChapterLocked))
                              <div class="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold tracking-wider text-emerald-600 bg-emerald-100 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20 border transition-colors">✔ SELESAI</div>
                         @endif
                     </div>
@@ -308,14 +350,14 @@
                         @php
                             $isCompleted = !empty($map[$item['id']]);
                             $isActive = ($currentRoute == $item['route']);
-                            $isItemLocked = $isChapterLocked || !$previousItemFinished;
+                            
+                            // BYPASS ADMIN: Item Materi tidak pernah terkunci
+                            $isItemLocked = $isAdmin ? false : ($isChapterLocked || !$previousItemFinished);
                             if ($isActive) $isItemLocked = false;
                             
-                            // FORCE OPEN ACCORDION IF ACTIVE
                             $showAccordion = $isActive && !empty($item['anchors']) && !$isChapterLocked;
                             $collapseId = 'collapse-' . str_replace('.', '-', $item['id']);
 
-                            // Dynamic Style Variables based on state
                             $activeBg = $isActive ? 'var(--sb-active-bg)' : 'transparent';
                             $activeBorder = $isActive ? 'var(--sb-active-border)' : 'transparent';
                             $hoverClass = $isActive ? '' : 'hover:bg-slate-100 dark:hover:bg-white/[0.02]';
@@ -356,22 +398,15 @@
                                         <div class="absolute left-[1.9rem] top-0 bottom-4 w-px border-l border-dashed border-slate-300 dark:border-white/10 transition-colors"></div>
                                         @foreach($item['anchors'] as $anchor)
                                             @php
-                                                // Mendeteksi apakah anchor ini adalah "Aktivitas"
                                                 $isActivity = str_contains(strtolower($anchor['label']), 'aktivitas');
                                                 $dataType = $isActivity ? 'activity' : 'normal';
                                             @endphp
-                                            {{-- ANCHOR ITEM WITH SCROLL SPY --}}
-                                            <button 
-                                                data-target="{{ $anchor['id'] }}"
-                                                data-type="{{ $dataType }}"
-                                                onclick="scrollToSection('{{ $anchor['id'] }}'); toggleMobileSidebar();" 
+                                            <button data-target="{{ $anchor['id'] }}" data-type="{{ $dataType }}" onclick="scrollToSection('{{ $anchor['id'] }}'); toggleMobileSidebar();" 
                                                 class="sidebar-anchor flex items-center w-full gap-3 px-3 py-1.5 rounded-md text-left group/sub transition-all relative border-l-2 border-transparent">
                                                 
                                                 @if($isActivity)
-                                                    {{-- DOT KHUSUS AKTIVITAS (Diamond / Belah Ketupat Kuning) --}}
                                                     <span class="anchor-dot w-2 h-2 rotate-45 rounded-sm bg-slate-400 dark:bg-slate-600 transition-all duration-300 group-hover/sub:bg-amber-500 dark:group-hover/sub:bg-amber-400"></span>
                                                 @else
-                                                    {{-- DOT NORMAL (Bulat biasa) --}}
                                                     <span class="anchor-dot w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 transition-all duration-300 group-hover/sub:bg-fuchsia-500 dark:group-hover/sub:bg-fuchsia-400"></span>
                                                 @endif
                                                 
@@ -394,36 +429,51 @@
                         @endphp
                     @endforeach
 
-                    {{-- 2. ITEM LAB --}}
+                    {{-- 2. ITEM LAB (UPDATE STATUS UI) --}}
                     @if($hasLab)
                         @php
-                            $labLink = '#'; $statusText = 'MULAI LAB'; 
-                            $statusColor = 'text-cyan-600 dark:text-cyan-300';
-                            $borderColor = 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1a1f2e] hover:border-cyan-500 hover:bg-slate-100 dark:hover:border-cyan-500/40 dark:hover:bg-white/5 cursor-pointer';
-                            $iconColor = 'bg-cyan-500 dark:bg-cyan-600 text-white shadow-md dark:shadow-cyan-600/30 group-hover:scale-110';
-                            $iconContent = '&gt;_';
+                            // BYPASS ADMIN: Lab tidak pernah terkunci
+                            $isLabLockedUI = $isAdmin ? false : ($isChapterLocked || !$previousItemFinished);
                             
-                            $isLabLockedUI = $isChapterLocked || !$previousItemFinished;
-                            if ($isLabPassed || $isLabActive) $isLabLockedUI = false;
+                            // SAFEGUARD: Jangan kunci jika sedang dikerjakan, pernah lulus, atau pernah mencoba (ada nilai)
+                            if ($isLabPassed || $isLabActive || $lastScore !== null) {
+                                $isLabLockedUI = false;
+                            }
 
                             if ($isLabPassed) {
-                                $statusText = "LULUS ({$labScore})"; 
+                                $statusText = "NILAI: {$labScore}"; 
                                 $statusColor = 'text-emerald-600 dark:text-emerald-400';
                                 $borderColor = 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/5 hover:bg-emerald-100 dark:hover:bg-emerald-500/10 cursor-pointer';
-                                $iconColor = 'bg-emerald-500 text-white shadow-md dark:shadow-emerald-500/30'; $iconContent = '✔';
+                                $iconColor = 'bg-emerald-500 text-white shadow-md dark:shadow-emerald-500/30'; 
+                                $iconContent = '✔';
                                 $labLink = route('lab.workspace', ['id' => $labId]); 
                             } elseif ($isLabActive) {
-                                $statusText = "LANJUTKAN"; 
+                                $statusText = "SEDANG DIKERJAKAN"; 
                                 $statusColor = 'text-indigo-600 dark:text-indigo-400';
                                 $borderColor = 'border-indigo-300 dark:border-indigo-500/40 bg-indigo-50 dark:bg-indigo-600/10 shadow-sm dark:shadow-indigo-500/10 cursor-pointer';
-                                $iconColor = 'bg-indigo-500 dark:bg-indigo-600 text-white shadow-md dark:shadow-indigo-600/30 animate-pulse'; $iconContent = '⚡';
+                                $iconColor = 'bg-indigo-500 dark:bg-indigo-600 text-white shadow-md dark:shadow-indigo-600/30 animate-pulse'; 
+                                $iconContent = '⚡';
                                 $labLink = route('lab.workspace', ['id' => $labId]); 
+                            } elseif ($lastScore !== null) {
+                                $statusText = "TERAKHIR: {$lastScore} - COBA LAGI"; 
+                                $statusColor = 'text-rose-600 dark:text-rose-400';
+                                $borderColor = 'border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/5 hover:bg-rose-100 dark:hover:bg-rose-500/10 cursor-pointer';
+                                $iconColor = 'bg-rose-500 text-white shadow-md dark:shadow-rose-500/30'; 
+                                $iconContent = '↻';
+                                $labLink = route('lab.start', ['id' => $labId]); 
                             } elseif ($isLabLockedUI) {
                                 $statusText = 'TERKUNCI'; 
                                 $statusColor = 'text-slate-400 dark:text-white/30';
                                 $borderColor = 'border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#151921] opacity-60 cursor-not-allowed';
-                                $iconColor = 'bg-slate-200 dark:bg-white/5 text-slate-400 dark:text-white/20'; $iconContent = '🔒';
+                                $iconColor = 'bg-slate-200 dark:bg-white/5 text-slate-400 dark:text-white/20'; 
+                                $iconContent = '🔒';
+                                $labLink = '#';
                             } else {
+                                $statusText = 'MULAI LAB'; 
+                                $statusColor = 'text-cyan-600 dark:text-cyan-300';
+                                $borderColor = 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1a1f2e] hover:border-cyan-500 hover:bg-slate-100 dark:hover:border-cyan-500/40 dark:hover:bg-white/5 cursor-pointer';
+                                $iconColor = 'bg-cyan-500 dark:bg-cyan-600 text-white shadow-md dark:shadow-cyan-600/30 group-hover:scale-110';
+                                $iconContent = '&gt;_';
                                 $labLink = route('lab.start', ['id' => $labId]);
                             }
                         @endphp
@@ -477,45 +527,77 @@
 
         {{-- BAGIAN SPESIAL: FINAL PROJECT & EVALUASI AKHIR --}}
         @php
-            $isFinalLocked = !$previousChapterPassed;
-            // Capstone Lab Data
-            $capstoneLabId = 4;
-            $capstoneLink = '#'; $capstoneStatusText = 'TERKUNCI'; 
-            $capstoneColor = 'text-slate-400 dark:text-white/30';
-            $capstoneBorder = 'border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#151921] opacity-60 cursor-not-allowed'; 
-            $capstoneIcon = '🔒';
+            // BYPASS ADMIN: Capstone dan Final Eval tidak pernah terkunci
+            $isFinalLocked = $isAdmin ? false : !$previousChapterPassed;
             
-            $capstoneHistory = \App\Models\LabHistory::where('user_id', $userId)->where('lab_id', $capstoneLabId)->where('status', 'passed')->orderBy('final_score', 'desc')->first();
+            // Logic DB Final Capstone Project
+            $capstoneLabId = 4;
             $capstoneActive = \App\Models\LabSession::where('user_id', $userId)->where('lab_id', $capstoneLabId)->first();
-            $isCapstonePassed = $capstoneHistory ? true : false;
-
-            if (!$isFinalLocked) {
-                if ($isCapstonePassed) {
-                    $capstoneLink = route('lab.workspace', ['id' => $capstoneLabId]);
-                    $capstoneStatusText = "SELESAI ({$capstoneHistory->final_score})";
-                    $capstoneColor = 'text-amber-600 dark:text-amber-400';
-                    $capstoneBorder = 'border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-500/20';
-                    $capstoneIcon = '🏆';
-                } elseif ($capstoneActive) {
-                    $capstoneLink = route('lab.workspace', ['id' => $capstoneLabId]);
-                    $capstoneStatusText = "LANJUTKAN";
-                    $capstoneColor = 'text-amber-600 dark:text-amber-400';
-                    $capstoneBorder = 'border-amber-300 dark:border-amber-500/40 bg-amber-100 dark:bg-amber-600/10 cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-600/20';
-                    $capstoneIcon = '⚡';
+            $latestCapstoneHistory = \App\Models\LabHistory::where('user_id', $userId)->where('lab_id', $capstoneLabId)->latest()->first();
+            
+            $isCapstonePassed = false;
+            $hasCapstoneFailed = false;
+            $capstoneScore = 0;
+            
+            if ($latestCapstoneHistory) {
+                $capstoneScore = $latestCapstoneHistory->final_score;
+                if ($latestCapstoneHistory->status === 'passed') {
+                    $isCapstonePassed = true;
                 } else {
-                    $capstoneLink = route('lab.start', ['id' => $capstoneLabId]);
-                    $capstoneStatusText = "MULAI PROJECT";
-                    $capstoneColor = 'text-amber-600 dark:text-amber-400';
-                    $capstoneBorder = 'border-slate-300 dark:border-amber-500/40 bg-white dark:bg-[#1a1f2e] cursor-pointer hover:border-amber-400';
-                    $capstoneIcon = '🚀';
+                    $hasCapstoneFailed = true;
                 }
             }
 
-            // Final Exam
+            // SAFEGUARD CAPSTONE: Jangan kunci jika aktif, lulus, atau ada histori
+            if ($isCapstonePassed || $capstoneActive || $hasCapstoneFailed) {
+                $isFinalLocked = false;
+            }
+
+            // UI Determination Capstone
+            if ($capstoneActive) {
+                $capstoneLink = route('lab.workspace', ['id' => $capstoneLabId]);
+                $capstoneStatusText = "PROYEK AKTIF - LANJUTKAN";
+                $capstoneColor = 'text-amber-600 dark:text-amber-400';
+                $capstoneBorder = 'border-amber-300 dark:border-amber-500/40 bg-amber-100 dark:bg-amber-600/10 cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-600/20';
+                $capstoneIcon = '⚡';
+                $capstoneIconClass = 'bg-amber-500 dark:bg-amber-600 text-white shadow-md animate-pulse';
+            } elseif ($isCapstonePassed) {
+                $capstoneLink = route('lab.workspace', ['id' => $capstoneLabId]);
+                $capstoneStatusText = "LULUS (NILAI: {$capstoneScore})";
+                $capstoneColor = 'text-emerald-600 dark:text-emerald-400';
+                $capstoneBorder = 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-500/20';
+                $capstoneIcon = '🏆';
+                $capstoneIconClass = 'bg-emerald-500 text-white shadow-md';
+            } elseif ($hasCapstoneFailed) {
+                $capstoneLink = route('lab.start', ['id' => $capstoneLabId]);
+                $capstoneStatusText = "GAGAL ({$capstoneScore}) - REVISI PROYEK";
+                $capstoneColor = 'text-rose-600 dark:text-rose-400';
+                $capstoneBorder = 'border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 cursor-pointer hover:bg-rose-100 dark:hover:bg-rose-500/20';
+                $capstoneIcon = '↻';
+                $capstoneIconClass = 'bg-rose-500 text-white shadow-md';
+            } elseif ($isFinalLocked) {
+                $capstoneLink = '#'; 
+                $capstoneStatusText = 'TERKUNCI'; 
+                $capstoneColor = 'text-slate-400 dark:text-white/30';
+                $capstoneBorder = 'border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#151921] opacity-60 cursor-not-allowed'; 
+                $capstoneIcon = '🔒';
+                $capstoneIconClass = 'bg-slate-200 dark:bg-white/10 text-slate-400 dark:text-white/20 shadow-inner';
+            } else {
+                $capstoneLink = route('lab.start', ['id' => $capstoneLabId]);
+                $capstoneStatusText = "MULAI CAPSTONE PROJECT";
+                $capstoneColor = 'text-amber-600 dark:text-amber-400';
+                $capstoneBorder = 'border-slate-300 dark:border-amber-500/40 bg-white dark:bg-[#1a1f2e] cursor-pointer hover:border-amber-400';
+                $capstoneIcon = '🚀';
+                $capstoneIconClass = 'bg-amber-500 dark:bg-amber-600 text-white shadow-md group-hover:scale-110';
+            }
+
+            // Final Exam Quiz
             $finalQuizId = 99;
             $finalQuizScore = $scores['99'] ?? null;
-            $finalQuizLink = ($isFinalLocked || !$isCapstonePassed) ? '#' : route('quiz.intro', ['chapterId' => 99]);
-            $isFinalQuizAccessible = (!$isFinalLocked && $isCapstonePassed) || ($finalQuizScore !== null);
+            
+            // BYPASS ADMIN: Kuis final selalu bisa diakses Admin
+            $isFinalQuizAccessible = $isAdmin ? true : ((!$isFinalLocked && $isCapstonePassed) || ($finalQuizScore !== null));
+            $finalQuizLink = $isFinalQuizAccessible ? route('quiz.intro', ['chapterId' => 99]) : '#';
         @endphp
 
         <div class="mt-8 border-t-2 border-slate-200 dark:border-white/10 pt-6 relative transition-all duration-500 {{ $isFinalLocked ? 'opacity-50 grayscale' : 'opacity-100' }}">
@@ -530,7 +612,7 @@
                 <button onclick="{{ ($isFinalLocked) ? 'return false;' : "location.href='$capstoneLink'" }}"
                     class="w-full flex items-center justify-between p-3.5 rounded-xl border transition-all duration-300 group relative overflow-hidden shadow-sm dark:shadow-lg {{ $capstoneBorder }}">
                     <div class="flex items-center gap-3 relative z-10 w-full">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs transition-all shrink-0 {{ $isFinalLocked ? 'bg-slate-200 dark:bg-white/10 text-slate-400 dark:text-white/20 shadow-inner' : 'bg-amber-500 dark:bg-amber-600 text-white shadow-md dark:shadow-amber-600/30 group-hover:scale-110' }}">
+                        <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs transition-all shrink-0 {{ $capstoneIconClass }}">
                             {{ $capstoneIcon }}
                         </div>
                         <div class="flex flex-col text-left overflow-hidden w-full">
@@ -555,7 +637,7 @@
                         <div class="flex flex-col text-left">
                             <span class="text-xs font-bold text-slate-900 dark:text-white transition-colors">Ujian Teori Akhir</span>
                             <span class="text-[9px] font-bold uppercase tracking-wider transition-colors {{ $isFinalQuizAccessible ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-white/30' }}">
-                                @if($isFinalLocked) LOCKED @elseif(!$isCapstonePassed) SELESAIKAN CAPSTONE @elseif($finalQuizScore !== null) NILAI: {{ $finalQuizScore }} @else MULAI UJIAN @endif
+                                @if($isFinalLocked && !$isAdmin) TERKUNCI @elseif(!$isCapstonePassed && !$isAdmin) SELESAIKAN CAPSTONE @elseif($finalQuizScore !== null) NILAI: {{ $finalQuizScore }} @else MULAI UJIAN @endif
                             </span>
                         </div>
                     </div>
@@ -577,7 +659,6 @@
 
 {{-- JAVASCRIPT UNTUK ACCORDION, SCROLL, THEME SWITCHER & MOBILE --}}
 <script>
-    // 1. Accordion Toggle
     function toggleAccordion(id) {
         const content = document.getElementById(id);
         const icon = document.getElementById('icon-' + id.replace('collapse-', ''));
@@ -592,7 +673,6 @@
         }
     }
     
-    // FUNGSI BARU: HIGHLIGHT AKTIF SECARA INSTAN BERDASARKAN ID
     function highlightAnchor(id) {
         const isDark = document.documentElement.classList.contains('dark');
         const anchors = document.querySelectorAll('.sidebar-anchor');
@@ -604,20 +684,16 @@
             const dot = a.querySelector('.anchor-dot');
             const isActivity = a.dataset.type === 'activity';
 
-            // Reset dots
-            dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#e879f9]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-fuchsia-500', 'dark:bg-fuchsia-400');
+            if(dot) dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
             
             if (isActivity) {
-                dot.classList.remove('bg-amber-500', 'dark:bg-amber-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+                if(dot) { dot.classList.remove('bg-amber-500', 'dark:bg-amber-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
             } else {
-                dot.classList.remove('bg-fuchsia-500', 'dark:bg-fuchsia-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
+                if(dot) { dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
             }
 
             const text = a.querySelector('.anchor-text');
-            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
-            text.classList.add('text-slate-500');
+            if(text) { text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold'); text.classList.add('text-slate-500'); }
         });
 
         const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
@@ -625,58 +701,50 @@
             const isActivity = activeAnchor.dataset.type === 'activity';
             
             activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100');
-            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-fuchsia-500');
+            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-cyan-500');
             activeAnchor.classList.remove('border-transparent');
             
             const dot = activeAnchor.querySelector('.anchor-dot');
-            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-            
-            if (isActivity) {
-                dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
-            } else {
-                dot.classList.add(isDark ? 'dark:bg-fuchsia-400' : 'bg-fuchsia-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#e879f9]' : 'shadow-sm');
+            if(dot) {
+                dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
+                if (isActivity) {
+                    dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
+                } else {
+                    dot.classList.add(isDark ? 'dark:bg-cyan-400' : 'bg-cyan-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#06b6d4]' : 'shadow-sm');
+                }
             }
             
             const text = activeAnchor.querySelector('.anchor-text');
-            text.classList.remove('text-slate-500');
-            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
+            if(text) { text.classList.remove('text-slate-500'); text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold'); }
         }
     }
 
-    // 2. Smooth Scroll to Section & Panggil Highlight
     function scrollToSection(id) {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        highlightAnchor(id); // Berikan efek klik instan sebelum scroll selesai
+        highlightAnchor(id); 
     }
 
-    // --- FUNGSI TOGGLE MOBILE SIDEBAR ---
     function toggleMobileSidebar() {
         const sidebar = document.getElementById('courseSidebar');
         const overlay = document.getElementById('mobileOverlay');
         
         if (sidebar.classList.contains('mobile-open')) {
-            // Tutup Sidebar
             sidebar.classList.remove('mobile-open');
             overlay.classList.remove('show');
         } else {
-            // Buka Sidebar
             sidebar.classList.add('mobile-open');
             overlay.classList.add('show');
         }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        
-        // Listener untuk tombol menu mobile
         const mobileToggleBtn = document.getElementById('mobileSidebarToggle');
         if (mobileToggleBtn) {
             mobileToggleBtn.addEventListener('click', toggleMobileSidebar);
         }
 
-        // 3. AUTO SCROLL SIDEBAR TO ACTIVE ITEM
         setTimeout(() => {
-            // Deteksi warna border yang aktif (termasuk amber untuk activity) menyesuaikan variabel CSS baru
             const activeSidebarItem = document.querySelector('.accordion-item .border-fuchsia-500\\/30') || 
                                       document.querySelector('.accordion-item [style*="rgba(217, 70, 239, 0.3)"]');
             if (activeSidebarItem) {
@@ -684,7 +752,6 @@
             }
         }, 300);
 
-        // 4. SCROLL SPY (NAV HIGHLIGHT MENGGUNAKAN FUNGSI BARU)
         const mainScroll = document.getElementById('mainScroll');
         const sections = document.querySelectorAll('.lesson-section');
 
@@ -695,10 +762,8 @@
             };
 
             const observer = new IntersectionObserver((entries) => {
-                // Cari entri yang bersinggungan di layar
                 let intersectingEntries = entries.filter(e => e.isIntersecting);
                 if(intersectingEntries.length > 0) {
-                    // Beri highlight pada ID yang sesuai
                     highlightAnchor(intersectingEntries[0].target.id);
                 }
             }, observerOptions);
@@ -706,9 +771,6 @@
             sections.forEach(section => observer.observe(section));
         }
 
-        // ==========================================
-        // 5. THEME SWITCHER LOGIC
-        // ==========================================
         const themeBtnCsb = document.getElementById('theme-toggle-course-sidebar');
         const darkIconCsb = document.getElementById('theme-toggle-dark-icon-csb');
         const lightIconCsb = document.getElementById('theme-toggle-light-icon-csb');
@@ -742,7 +804,6 @@
             
             window.dispatchEvent(new Event('theme-toggled'));
             
-            // Me-render ulang Active Status agar shadow mengikuti tema
             const activeAnchor = document.querySelector('.sidebar-anchor.bg-slate-100') || document.querySelector('.sidebar-anchor.dark\\:bg-white\\/5');
             if(activeAnchor) highlightAnchor(activeAnchor.dataset.target);
         });

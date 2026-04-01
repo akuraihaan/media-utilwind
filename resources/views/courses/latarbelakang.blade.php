@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title','Latar belakang Tailwind CSS')
+@section('title','Latar Belakang Tailwind CSS')
 
 @section('content')
 
@@ -27,7 +27,7 @@
         --text-heading: #0f172a;
         --code-bg: #f1f5f9;
         --simulator-bg: #ffffff;
-        --accent: #a855f7;
+        --accent: #a855f7; /* Purple 500 */
         --accent-glow: rgba(168, 85, 247, 0.3);
     }
 
@@ -62,6 +62,23 @@
     .sim-bg-adaptive { background-color: var(--simulator-bg); }
     .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); }
 
+    /* HIGHLIGHT TERM UTILITY */
+    .hl-term {
+        background-color: rgba(168, 85, 247, 0.15); /* Purple tint */
+        color: #7e22ce; /* Purple 700 */
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-style: normal;
+        white-space: nowrap;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .dark .hl-term {
+        background-color: rgba(168, 85, 247, 0.2);
+        color: #d8b4fe; /* Purple 300 */
+        border: 1px solid rgba(168, 85, 247, 0.4);
+    }
+
     /* SCROLLBAR */
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -69,7 +86,7 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
     
-    /* ANIMATIONS & EFFECTS (KHAS BAB 1.3: WARNA PURPLE) */
+    /* ANIMATIONS & EFFECTS */
     #animated-bg { 
         background: radial-gradient(800px circle at 20% 20%, rgba(168,85,247,.10), transparent 40%), 
                     radial-gradient(800px circle at 80% 80%, rgba(99,102,241,.10), transparent 40%); 
@@ -92,6 +109,7 @@
     .nav-item.active .dot { background: #c026d3; box-shadow: 0 0 8px #c026d3; transform: scale(1.2); }
 </style>
 
+{{-- H-SCREEN UNTUK MENGUNCI SIDEBAR AGAR TIDAK IKUT SCROLL --}}
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-purple-500/30 pt-20 transition-colors duration-500">
 
     {{-- BACKGROUND EFFECTS --}}
@@ -106,114 +124,137 @@
 
     @include('layouts.partials.navbar')
 
-    <div class="flex flex-1 overflow-hidden relative z-20">
+    {{-- WRAPPER FLEX-1 OVERFLOW-HIDDEN UNTUK SCROLLING INDEPENDEN --}}
+    <div class="flex flex-1 overflow-hidden relative z-20 h-full">
 
         @include('layouts.partials.course-sidebar')
 
+        {{-- MAIN CONTENT SCROLL AREA --}}
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
             {{-- STICKY HEADER & PROGRESS BAR --}}
-            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
+            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-4 md:px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 border border-purple-500/20 flex items-center justify-center font-bold text-xs text-purple-600 dark:text-purple-400 transition-colors">1.3</div>
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 border border-purple-500/20 flex items-center justify-center font-bold text-xs text-purple-600 dark:text-purple-400 transition-colors shrink-0">1.3</div>
                     <div>
-                        <h1 class="text-sm font-bold text-heading transition-colors">Struktur & Latar Belakang</h1>
-                        <p class="text-[10px] text-muted transition-colors">History, Layers & JIT Engine</p>
+                        <h1 class="text-sm font-bold text-heading transition-colors line-clamp-1">Struktur & Latar Belakang</h1>
+                        <p class="text-[10px] text-muted transition-colors line-clamp-1">History, Layers & JIT Engine</p>
                     </div>
                 </div>
                 
                 {{-- DYNAMIC PROGRESS BAR UI --}}
-                <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
                         <div id="topProgressBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
                     </div>
                     <span id="progressLabelTop" class="text-purple-600 dark:text-purple-400 font-bold text-xs transition-colors">0%</span>
                 </div>
             </div>
 
-            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+            <div class="p-4 sm:p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 
                 {{-- TUJUAN PEMBELAJARAN --}}
-                <div class="mb-24">
+                <div class="mb-16 md:mb-24">
                     <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2 transition-colors">
-                        <svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                        <svg class="w-5 h-5 text-purple-500 dark:text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                         Tujuan Pembelajaran
                     </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-purple-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">1</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Sejarah CSS</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Kenapa CSS tradisional bikin pusing dan bagaimana Tailwind menyelamatkannya.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Sejarah CSS</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Kenapa CSS tradisional rentan rusak dan bagaimana Tailwind menyelamatkannya.</p></div>
                         </div>
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-fuchsia-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">2</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Arsitektur Layer</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Mengenal Base, Components, dan Utilities agar class tidak gampang bentrok.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Arsitektur Layer</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Mengenal struktur Base, Components, dan Utilities agar class tidak gampang bentrok.</p></div>
                         </div>
                         <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
                             <div class="w-8 h-8 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">3</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">JIT Engine</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Rahasia mesin modern Tailwind yang bikin ukuran file CSS super kecil.</p></div>
+                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">JIT Engine</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Membongkar rahasia mesin modern Tailwind yang membuat ukuran file CSS super kecil.</p></div>
                         </div>
-                        <div class="bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 border border-purple-200 dark:border-purple-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition group h-full col-span-3 cursor-default">
+                        <div class="bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 border border-purple-200 dark:border-purple-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-3 cursor-default">
                             <div class="w-8 h-8 rounded bg-white/50 dark:bg-white/10 text-purple-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-sm dark:shadow-none">🏁</div>
-                            <div><h4 class="text-sm font-bold text-purple-900 dark:text-white mb-1 transition-colors">JIT Precision Challenge</h4><p class="text-[11px] text-purple-800 dark:text-white/70 leading-relaxed transition-colors">Ujian akhir menggunakan Arbitrary Values untuk desain presisi tinggi.</p></div>
+                            <div><h4 class="text-sm font-bold text-purple-900 dark:text-white mb-1 transition-colors">Final Mission: JIT Precision Challenge</h4><p class="text-[11px] text-purple-800 dark:text-white/70 leading-relaxed transition-colors">Ujian akhir menggunakan <span class="hl-term">Arbitrary Values</span> untuk menciptakan desain dengan presisi tinggi.</p></div>
                         </div>
                     </div>
                 </div>
 
-                <article class="space-y-40">
+                <article class="space-y-24 md:space-y-32">
                     
                     {{-- LESSON 12 --}}
                     <section id="section-12" class="lesson-section scroll-mt-32" data-lesson-id="12">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
                                 <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.3.1</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                <h2 class="text-2xl md:text-4xl font-black text-heading leading-[1.1] transition-colors">
                                     Krisis Skalabilitas <br> 
                                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500">CSS Tradisional</span>
                                 </h2>
                             </div>
                             
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white">A</span> Berawal dari Rasa Frustrasi</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Berawal dari Rasa Frustrasi</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
                                     <p>Pernahkah Anda menatap layar monitor selama bermenit-menit hanya untuk memikirkan nama sebuah class HTML? Apakah elemen ini pantas diberi nama <code>.profile-wrapper</code>? Atau mungkin <code>.user-card-container</code>? Menguras waktu, bukan? Itulah persisnya yang dirasakan oleh <strong>Adam Wathan</strong> sebelum ia menciptakan Tailwind CSS.</p>
-                                    <p>Dulu, standar industri menuntut kita untuk memisahkan struktur (HTML) dan gaya (CSS). Kita dipaksa membuat nama class yang panjang dan deskriptif, lalu berpindah ke file CSS terpisah untuk mewarnainya. Sayangnya, begitu proyek web kita membesar, cara "tradisional" ini pelan-pelan berubah menjadi bom waktu. Mencari di mana letak suatu gaya CSS tersembunyi rasanya seperti mencari jarum di tumpukan jerami.</p>
+                                    <p>Dulu, standar industri menuntut kita untuk memisahkan struktur HTML dan gaya CSS. Kita dipaksa membuat nama class yang panjang dan deskriptif, lalu berpindah ke file CSS terpisah untuk mewarnainya. Sayangnya, begitu proyek web kita membesar, cara tradisional ini pelan-pelan berubah menjadi bom waktu. Mencari di mana letak suatu gaya CSS tersembunyi rasanya seperti mencari jarum di tumpukan jerami.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Penyakit Bernama "Append-Only"</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Ada satu ketakutan terbesar bagi setiap *developer* CSS: <strong>Takut menghapus kode lama</strong>. Karena sifat CSS itu global (*cascading*), kita tidak pernah yakin 100% apakah baris kode yang kita hapus akan merusak desain di halaman lain yang luput dari pantauan kita.</p>
-                                    <p>Solusi pragmatis yang sering diambil? <i>Biarkan saja kode lama itu, kita tulis kode baru di baris paling bawah!</i> Kebiasaan buruk ini melahirkan masalah yang disebut <strong>The Append-Only Problem</strong>. File CSS perlahan membengkak hingga berukuran raksasa, penuh dengan "kode mati" yang membebani loading website. Tailwind membasmi penyakit ini dari akarnya. Karena class di Tailwind bentuknya kecil-kecil dan bisa dipakai ulang tanpa batas (misal: class <code>flex</code> bisa dipakai di ribuan elemen), ukuran file CSS Anda pada akhirnya akan berhenti membesar (*plateau*) betapapun kompleksnya fitur web Anda.</p>
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Penyakit Bernama Append-Only</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Ada satu ketakutan terbesar bagi setiap developer CSS: <strong>Takut menghapus kode lama</strong>. Karena sifat CSS itu global, kita tidak pernah yakin sepenuhnya apakah baris kode yang kita hapus akan merusak desain di halaman lain yang luput dari pantauan kita.</p>
+                                    <p>Solusi pragmatis yang sering diambil? <i>Biarkan saja kode lama itu, kita tulis kode baru di baris paling bawah!</i> Kebiasaan buruk ini melahirkan masalah yang disebut <span class="hl-term">The Append-Only Problem</span>. File CSS perlahan membengkak hingga berukuran raksasa, penuh dengan kode mati yang membebani kecepatan muat website. Karena class di Tailwind bisa dipakai ulang tanpa batas, ukuran file CSS Anda pada akhirnya akan berhenti membesar (masuk fase <span class="hl-term">plateau</span>) betapapun kompleksnya web Anda.</p>
                                 </div>
                             </div>
 
-                            <div class="card-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-8 text-center transition-colors">Simulasi Interaktif: Pertumbuhan File CSS</h4>
-                                <div class="flex flex-col gap-6">
+                            <div class="card-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col transition-colors mt-8 relative">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 1 --}}
+                                <div class="w-full bg-purple-600/95 dark:bg-purple-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0 border-b border-purple-400 dark:border-purple-700">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        PANDUAN SIMULASI 1
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight m-0">Tekan tombol penambahan fitur di bawah secara berulang. Bandingkan anomali grafik merah yang tumbuh tak terkendali dengan stabilitas grafik hijau.</p>
+                                </div>
+
+                                <div class="flex flex-col gap-6 relative z-10 p-4 sm:p-6 lg:p-8">
                                     <div>
                                         <div class="flex justify-between text-xs mb-2">
                                             <span class="text-rose-600 dark:text-red-400 font-bold transition-colors">CSS Tradisional (Terus Membengkak)</span>
                                             <span id="trad-size" class="text-heading font-mono transition-colors">10 KB</span>
                                         </div>
-                                        <div class="w-full h-4 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden relative transition-colors">
-                                            <div id="bar-trad" class="h-full bg-rose-500 dark:bg-red-600 w-[5%] transition-all duration-1000"></div>
+                                        <div class="w-full h-4 sm:h-5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden relative transition-colors border border-adaptive">
+                                            <div id="bar-trad" class="h-full bg-rose-500 dark:bg-red-600 w-[5%] transition-all duration-1000 shadow-[0_0_10px_#f43f5e] dark:shadow-[0_0_10px_#dc2626]"></div>
                                         </div>
                                     </div>
                                     <div>
                                         <div class="flex justify-between text-xs mb-2">
-                                            <span class="text-emerald-600 dark:text-emerald-400 font-bold transition-colors">Tailwind CSS (Aman Terkendali)</span>
+                                            <span class="text-emerald-600 dark:text-emerald-400 font-bold transition-colors">Tailwind CSS (Stabilitas Kurva <span class="hl-term">Plateau</span>)</span>
                                             <span id="tw-size" class="text-heading font-mono transition-colors">10 KB</span>
                                         </div>
-                                        <div class="w-full h-4 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden relative transition-colors">
-                                            <div id="bar-tw" class="h-full bg-emerald-500 dark:bg-emerald-600 w-[5%] transition-all duration-1000"></div>
+                                        <div class="w-full h-4 sm:h-5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden relative transition-colors border border-adaptive">
+                                            <div id="bar-tw" class="h-full bg-emerald-500 dark:bg-emerald-600 w-[5%] transition-all duration-1000 shadow-[0_0_10px_#10b981]"></div>
                                         </div>
                                     </div>
-                                    <div class="flex justify-center mt-6">
-                                        <button onclick="simulateGrowth()" id="growBtn" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-sm transition shadow-md hover:shadow-lg">
-                                            + Tambah 10 Fitur Baru di Web
+                                    <div class="flex justify-center mt-4 sm:mt-6">
+                                        <button onclick="simulateGrowth()" id="growBtn" class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[11px] sm:text-sm transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2 border border-purple-400">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            Tambah 10 Fitur Baru di Web
                                         </button>
                                     </div>
+                                </div>
+
+                                {{-- KESIMPULAN SIMULASI 1 --}}
+                                <div class="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-900/20 dark:to-transparent border-t border-purple-200 dark:border-purple-500/20 p-4 sm:p-5 relative z-10 transition-colors">
+                                    <h5 class="text-[11px] sm:text-xs font-bold text-purple-700 dark:text-purple-400 mb-1 flex items-center gap-2">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                        Kesimpulan Pertumbuhan File
+                                    </h5>
+                                    <p class="text-[10px] sm:text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed text-justify m-0">
+                                        Tailwind pada dasarnya memutus korelasi langsung antara kompleksitas web dengan bertambahnya ukuran CSS. Strategi daur ulang menjamin bahwa kurva pertumbuhan akan membeku di batas aman.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -221,43 +262,75 @@
 
                     {{-- LESSON 13 --}}
                     <section id="section-13" class="lesson-section scroll-mt-32" data-lesson-id="13">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
                                 <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.3.2</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Arsitektur <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500">Tiga Lapisan (Layers)</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                    Arsitektur <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500">Tiga Lapisan Sistem (Layers)</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white">A</span> Mengakhiri Perang Class CSS</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Pernahkah Anda memberi class CSS, mengatur warnanya jadi merah, tapi entah kenapa di layar warnanya tetap hitam? Situasi menyebalkan itu punya nama: <strong>Specificity War</strong> (Perang Spesifisitas). Browser kadang bingung menentukan mana gaya yang harus dimenangkan jika ada dua class yang tumpang tindih.</p>
-                                    <p>Untuk menertibkan kekacauan ini, Tailwind bekerja sangat terstruktur. Ia mengemas seluruh CSS-nya ke dalam tiga "ember" (layer) yang berbeda menggunakan perintah <code>@tailwind</code>. Bayangkan layer ini seperti piramida, di mana layer yang posisinya paling bawah memiliki kasta tertinggi untuk menimpa gaya di atasnya.</p>
-                                    <ul class="space-y-2 list-none pl-0 mt-4 text-sm font-mono bg-white dark:bg-black/20 p-4 rounded border border-adaptive shadow-inner transition-colors">
-                                        <li class="text-slate-600 dark:text-white/50">1. <span class="text-slate-400">@tailwind</span> <span class="text-rose-500 dark:text-red-400">base</span>; <span class="text-slate-400 dark:text-gray-500">// Layer paling bawah. Cuma buat reset margin bawaan browser.</span></li>
-                                        <li class="text-slate-600 dark:text-white/50">2. <span class="text-slate-400">@tailwind</span> <span class="text-amber-500 dark:text-yellow-400">components</span>; <span class="text-slate-400 dark:text-gray-500">// Tempat nyimpen class kompleks buatanmu (misal: .btn).</span></li>
-                                        <li class="text-slate-600 dark:text-white/50">3. <span class="text-slate-400">@tailwind</span> <span class="text-emerald-500 dark:text-emerald-400">utilities</span>; <span class="text-slate-400 dark:text-gray-500">// Kasta tertinggi! Class utilitas kayak p-4 ada di sini.</span></li>
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Mengakhiri Perang Class CSS</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Pernahkah Anda memberi class CSS, mengatur warnanya jadi merah, tapi entah kenapa di layar warnanya tetap hitam? Situasi menyebalkan itu punya nama: <span class="hl-term">Specificity War</span>. Browser kadang bingung menentukan mana gaya yang harus dimenangkan jika ada dua class yang bertabrakan.</p>
+                                    <p>Untuk menertibkan kekacauan ini, Tailwind mengemas seluruh CSS-nya ke dalam tiga lapisan yang berbeda menggunakan perintah <code>@tailwind</code>. Bayangkan layer ini seperti piramida, di mana layer yang posisinya paling bawah memiliki kasta tertinggi untuk menimpa gaya di atasnya.</p>
+                                    <ul class="space-y-3 list-none pl-0 mt-4 text-[10px] sm:text-xs font-mono bg-slate-50 dark:bg-black/40 p-4 sm:p-6 rounded-xl border border-adaptive shadow-inner transition-colors break-words">
+                                        <li class="text-slate-600 dark:text-white/70 flex flex-col sm:flex-row gap-1 sm:gap-4"><span class="font-bold text-rose-500 sm:min-w-[150px]">@tailwind base;</span> <span class="opacity-80">Lapisan dasar. Cuma buat reset margin bawaan browser.</span></li>
+                                        <li class="text-slate-600 dark:text-white/70 flex flex-col sm:flex-row gap-1 sm:gap-4"><span class="font-bold text-amber-500 sm:min-w-[150px]">@tailwind components;</span> <span class="opacity-80">Tempat menyimpan class buatanmu (misal: <code>.btn</code>).</span></li>
+                                        <li class="text-slate-600 dark:text-white/70 flex flex-col sm:flex-row gap-1 sm:gap-4"><span class="font-bold text-emerald-500 sm:min-w-[150px]">@tailwind utilities;</span> <span class="opacity-80">Kasta tertinggi! Class utilitas kayak <code>p-4</code> ada di sini.</span></li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Memahami Hierarki Kasta</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Kenapa sih <strong>Utilities</strong> harus ada di paling bawah? Mari pakai logika sederhana. Dalam dunia CSS, kode yang ditulis paling akhir-lah yang akan menang jika terjadi perdebatan.</p>
-                                    <p>Bayangkan Anda membuat desain tombol di layer Components dengan nama <code>.btn-biru</code> yang secara *default* punya padding `10px`. Suatu hari, bos Anda minta tombol khusus di satu halaman ukurannya sedikit dibesarkan. Anda cukup menulis <code>&lt;button class="btn-biru p-8"&gt;</code>. Karena <code>p-8</code> hidup di layer Utilities (yang posisinya di bawah Components), maka perintah <code>p-8</code> akan sah menimpa padding bawaan tombol tersebut. Anda tidak perlu lagi menulis <code>!important</code> secara norak di file CSS Anda!</p>
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Resolusi Spesifisitas Mutlak</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Kenapa sih <strong>Utilities</strong> harus ada di paling bawah? Dalam dunia CSS, kode yang ditulis paling akhir-lah yang akan menang jika terjadi perdebatan.</p>
+                                    <p>Bayangkan Anda membuat desain tombol di layer <span class="hl-term">Components</span> dengan nama <code>.btn-biru</code> yang secara default punya padding 10px. Suatu hari, bos Anda minta tombol khusus di satu halaman ukurannya dibesarkan. Anda cukup menulis <code>&lt;button class="btn-biru p-8"&gt;</code>. Karena <code>p-8</code> hidup di layer <span class="hl-term">Utilities</span> (di bawah Components), maka perintah <code>p-8</code> sah menimpa padding bawaan tombol. Anda tidak perlu lagi menulis <code>!important</code> secara paksa!</p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl p-8 relative overflow-hidden flex flex-col items-center transition-colors shadow-xl dark:shadow-2xl">
-                                <div class="relative w-full max-w-md h-64 flex flex-col justify-end items-center gap-2 perspective-1000">
-                                    <div id="layer-util" class="w-full bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-500/50 p-4 rounded-lg text-center text-emerald-700 dark:text-emerald-300 font-bold shadow-lg transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-30" onclick="highlightLayer('util')">UTILITIES (Kasta Tertinggi)</div>
-                                    <div id="layer-comp" class="w-[95%] bg-amber-100 dark:bg-yellow-900/40 border border-amber-300 dark:border-yellow-500/50 p-4 rounded-lg text-center text-amber-700 dark:text-yellow-300 font-bold shadow-lg transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-20" onclick="highlightLayer('comp')">COMPONENTS (Menengah)</div>
-                                    <div id="layer-base" class="w-[90%] bg-rose-100 dark:bg-red-900/40 border border-rose-300 dark:border-red-500/50 p-4 rounded-lg text-center text-rose-700 dark:text-red-300 font-bold shadow-lg transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-10" onclick="highlightLayer('base')">BASE (Kasta Terendah)</div>
+                            <div class="card-adaptive border border-adaptive rounded-xl flex flex-col relative overflow-hidden transition-colors shadow-xl dark:shadow-2xl mt-8 justify-center">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 2 --}}
+                                <div class="w-full bg-indigo-600/95 dark:bg-indigo-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0 border-b border-indigo-400 dark:border-indigo-700">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        PANDUAN SIMULASI 2
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight m-0">Tekan lempengan grafis piramida kaskade untuk melihat rincian deskripsi spesifikasi tingkat kekuatannya.</p>
                                 </div>
-                                <div id="layer-desc" class="mt-6 text-sm text-slate-600 dark:text-white/60 text-center min-h-[50px] bg-slate-50 dark:bg-white/5 p-4 rounded-lg w-full max-w-md border border-adaptive transition-colors">
-                                    Coba klik salah satu lapisan piramida di atas untuk melihat siapa yang berkuasa.
+
+                                <div class="relative w-full max-w-md h-[250px] sm:h-[280px] flex flex-col justify-end items-center gap-3 perspective-1000 z-10 mt-6 mb-4 px-4 mx-auto">
+                                    <div id="layer-util" class="w-full bg-gradient-to-r from-emerald-100 to-emerald-50 dark:from-emerald-900/60 dark:to-emerald-900/30 border border-emerald-400 dark:border-emerald-500 p-4 rounded-xl text-center text-emerald-800 dark:text-emerald-300 font-bold shadow-[0_10px_20px_-5px_rgba(16,185,129,0.3)] transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-30 flex flex-col justify-center h-[70px] sm:h-[80px]" onclick="highlightLayer('util')">
+                                        UTILITIES LAYER <span class="block text-[9px] sm:text-[10px] font-normal mt-1 text-emerald-600 dark:text-emerald-400 line-clamp-1">(Kasta Kuasa Tertinggi Mutlak)</span>
+                                    </div>
+                                    <div id="layer-comp" class="w-[90%] bg-gradient-to-r from-amber-100 to-amber-50 dark:from-yellow-900/60 dark:to-yellow-900/30 border border-amber-400 dark:border-yellow-500 p-4 rounded-xl text-center text-amber-800 dark:text-yellow-300 font-bold shadow-[0_10px_20px_-5px_rgba(245,158,11,0.3)] transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-20 flex flex-col justify-center h-[70px] sm:h-[80px]" onclick="highlightLayer('comp')">
+                                        COMPONENTS LAYER <span class="block text-[9px] sm:text-[10px] font-normal mt-1 text-amber-600 dark:text-yellow-400 line-clamp-1">(Kasta Titik Menengah)</span>
+                                    </div>
+                                    <div id="layer-base" class="w-[80%] bg-gradient-to-r from-rose-100 to-rose-50 dark:from-red-900/60 dark:to-red-900/30 border border-rose-400 dark:border-red-500 p-4 rounded-xl text-center text-rose-800 dark:text-red-300 font-bold shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)] transform transition-all translate-y-0 opacity-50 cursor-pointer hover:opacity-100 hover:-translate-y-2 z-10 flex flex-col justify-center h-[70px] sm:h-[80px]" onclick="highlightLayer('base')">
+                                        BASE LAYER <span class="block text-[9px] sm:text-[10px] font-normal mt-1 text-rose-600 dark:text-red-400 line-clamp-1">(Kasta Pondasi Terendah)</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="px-4 pb-6 w-full max-w-lg mx-auto">
+                                    <div id="layer-desc" class="text-xs sm:text-sm text-slate-700 dark:text-white/80 text-justify min-h-[90px] bg-slate-50 dark:bg-black/30 p-4 sm:p-5 rounded-xl border border-adaptive transition-colors shadow-inner leading-relaxed flex items-center justify-center">
+                                        <span class="italic opacity-60 text-center block w-full">Silakan ketuk bidang area grafis tumpukan piramida untuk menjalankan tinjauan inspeksi mendalam.</span>
+                                    </div>
+                                </div>
+
+                                {{-- KESIMPULAN SIMULASI 2 --}}
+                                <div class="w-full bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent border-t border-indigo-200 dark:border-indigo-500/20 p-4 sm:p-5 relative z-10 transition-colors">
+                                    <div class="max-w-xl mx-auto">
+                                        <h5 class="text-[11px] sm:text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-1 flex items-center gap-2">
+                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                                            Kesimpulan Analisis Arsitektur
+                                        </h5>
+                                        <p class="text-[10px] sm:text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed text-justify m-0">
+                                            Penempatan kelas utilitas mutlak murni di pelataran lapisan terbawah menyegel jaminan ketertiban resolusi <span class="hl-term">Specificity Conflict</span> yang beroperasi transparan. Ini meyakinkan para insinyur web bahwa injeksi nilai sebaris seperti <code>text-red-500</code> pasti menaklukkan ego rona elemen induk mana pun, membebaskan arsitektur dari tag <code>!important</code> beracun.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -265,46 +338,56 @@
 
                     {{-- LESSON 14 --}}
                     <section id="section-14" class="lesson-section scroll-mt-32" data-lesson-id="14">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-purple-500 pl-6">
+                        <div class="space-y-8 md:space-y-10">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
                                 <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.3.3</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Mesin <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 to-indigo-500">JIT (Just-In-Time)</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
+                                    Mesin Kompilasi <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 to-indigo-500">JIT (Just-In-Time)</span>
                                 </h2>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white">A</span> Asisten Cerdas di Belakang Layar</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Di masa lalu, satu-satunya kelemahan Tailwind adalah ukuran filenya saat kita sedang asyik ngoding. Bayangkan, mesin Tailwind versi lama harus menyiapkan semua kemungkinan warna dan ukuran padding sebelum kita memintanya. Hasilnya? File CSS mentah bisa seukuran game kecil (puluhan megabyte) yang bikin *browser* ngos-ngosan saat melakukan *Inspect Element*.</p>
-                                    <p>Tapi itu dulu. Sekarang, Tailwind dipersenjatai dengan mesin <strong>JIT (Just-In-Time)</strong> yang super cerdas. Alih-alih menyiapkan semua di awal, mesin JIT bertindak seperti *scanner* yang nongkrong memantau file HTML Anda secara *real-time*. Begitu Anda mengetik <code>text-red-500</code>, saat itu juga JIT menyuntikkan kode merah tersebut ke hasil akhir. Kalau kodenya Anda hapus, JIT juga ikut menghapusnya. Hasil akhirnya, ukuran file CSS yang dikirim ke server *production* seringkali hanya seukuran teks biasa, rata-rata di bawah 10 Kilobyte!</p>
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Asisten Cerdas di Belakang Layar</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Di masa lalu, mesin Tailwind versi lama harus menyiapkan semua kemungkinan warna dan ukuran padding sebelum kita memintanya. Hasilnya? File CSS mentah bisa seukuran game kecil yang bikin browser ngos-ngosan.</p>
+                                    <p>Sekarang, Tailwind dipersenjatai dengan mesin <strong>JIT (Just-In-Time)</strong> yang super cerdas. Mesin JIT bertindak seperti <span class="hl-term">scanner</span> yang memantau file HTML Anda secara aktual. Begitu Anda mengetik <code>text-red-500</code>, saat itu juga JIT menyuntikkan kode merah tersebut ke hasil akhir. Hasilnya, ukuran file CSS yang dikirim ke server production sangat minim dan bersih.</p>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Keajaiban Arbitrary Values</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Kecerdasan mesin JIT melahirkan sebuah fitur yang rasanya seperti sihir bagi para *developer*: <strong>Arbitrary Values</strong> atau manipulasi nilai presisi sebebas-bebasnya.</p>
-                                    <p>Skenario umum: Anda disodori desain *mockup* Figma oleh bos Anda. Ternyata lebar sebuah gambar harus pas <strong>327px</strong>, dan warnanya wajib menggunakan kode Hex unik <strong>#ff00ff</strong>. Jelas angka aneh ini tidak ada di buku manual standar Tailwind. Dulu, Anda pasti langsung menghela napas, membuka file CSS terpisah, dan membuat custom class.</p>
-                                    <p>Sekarang? Cukup ketik langsung di HTML menggunakan kurung siku: <code>w-[327px]</code> atau <code>bg-[#ff00ff]</code>. Selesai! Mesin JIT akan mendeteksi kurung siku tersebut dan meracik CSS-nya khusus untuk Anda secara kilat.</p>
+                                <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Keajaiban Arbitrary Values</h3>
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 text-justify transition-colors">
+                                    <p>Kecerdasan mesin JIT melahirkan sebuah fitur yang rasanya seperti sihir: <strong>Arbitrary Values</strong> atau manipulasi nilai presisi sebebas-bebasnya.</p>
+                                    <p>Skenario umum: Desain <span class="hl-term">mockup</span> menuntut lebar gambar harus pas <strong>327px</strong>, dan warnanya wajib Hex <strong>#ff00ff</strong>. Angka aneh ini tidak ada di buku standar Tailwind. Dulu, Anda pasti langsung membuat <span class="hl-term">custom class</span> di file terpisah.</p>
+                                    <p>Sekarang? Cukup ketik langsung di HTML menggunakan kurung siku: <code>w-[327px]</code> atau <code>bg-[#ff00ff]</code>. Mesin JIT akan mendeteksi kurung siku tersebut dan meracik CSS-nya khusus untuk Anda secara kilat.</p>
                                 </div>
                             </div>
 
-                            <div class="card-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row h-[350px] transition-colors">
-                                <div class="w-full md:w-1/2 p-6 flex flex-col gap-4 bg-slate-50 dark:bg-[#18181b] transition-colors border-r border-adaptive">
-                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors">Mesin JIT Scanner (HTML Anda)</h4>
-                                    <div class="flex-1 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-4 relative group shadow-inner transition-colors">
-                                        <textarea id="jit-input" oninput="runJit()" class="w-full h-full bg-transparent text-sm font-mono text-cyan-600 dark:text-cyan-300 outline-none resize-none placeholder-slate-400 dark:placeholder-white/20 z-10 relative leading-loose transition-colors" placeholder="Ketik class tailwind apa saja di sini...&#10;Contoh:&#10;p-10&#10;bg-[#ff00ff]&#10;w-[325px]"></textarea>
+                            <div class="card-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row h-auto md:min-h-[400px] transition-colors mt-8 relative">
+                                
+                                {{-- KOTAK INSTRUKSI SIMULATOR 3 --}}
+                                <div class="absolute top-0 left-0 w-full bg-purple-600/95 dark:bg-purple-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
+                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        PANDUAN SIMULASI 3
+                                    </div>
+                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Ketik berbagai class utilitas di panel kiri (termasuk gunakan <span class="hl-term">Arbitrary Values</span> dengan kurung siku <code>[]</code>). Perhatikan bagaimana mesin meracik CSS di panel kanan secara spontan!</p>
+                                </div>
+
+                                <div class="w-full md:w-1/2 p-4 sm:p-6 pt-28 sm:pt-20 lg:pt-16 flex flex-col gap-4 bg-slate-50 dark:bg-[#18181b] transition-colors border-b md:border-b-0 md:border-r border-adaptive relative z-10 min-h-[250px]">
+                                    <h4 class="text-[10px] sm:text-xs font-bold text-muted uppercase transition-colors hidden sm:block">Mesin JIT Scanner (HTML Anda)</h4>
+                                    <div class="flex-1 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-4 relative group shadow-inner transition-colors flex flex-col">
+                                        <textarea id="jit-input" oninput="runJit()" class="w-full flex-1 bg-transparent text-[11px] sm:text-sm font-mono text-cyan-700 dark:text-cyan-300 outline-none resize-none placeholder-slate-400 dark:placeholder-white/20 z-10 relative leading-loose transition-colors custom-scrollbar" placeholder="Ketik class tailwind apa saja di sini...&#10;&#10;Contoh Referensi:&#10;p-10&#10;text-center&#10;bg-[#ff00ff]&#10;w-[325px]"></textarea>
                                         <div id="scan-line" class="absolute top-0 left-0 w-full h-0.5 bg-purple-500 shadow-[0_0_10px_#a855f7] opacity-0 transition-opacity"></div>
                                     </div>
                                 </div>
-                                <div class="w-full md:w-1/2 bg-slate-100 dark:bg-[#111] p-6 flex flex-col gap-4 transition-colors">
-                                    <div class="flex justify-between items-center">
-                                        <h4 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase transition-colors">Hasil CSS Instan</h4>
+                                <div class="w-full md:w-1/2 bg-slate-100 dark:bg-[#111] p-4 sm:p-6 lg:pt-16 flex flex-col gap-4 transition-colors relative z-10 min-h-[250px]">
+                                    <div class="flex justify-between items-center hidden sm:flex">
+                                        <h4 class="text-[10px] sm:text-xs font-bold text-purple-600 dark:text-purple-400 uppercase transition-colors flex items-center gap-2"><svg class="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Hasil Output CSS Instan</h4>
                                         <div id="jit-badge" class="px-2 py-0.5 bg-slate-200 dark:bg-gray-800 text-[10px] rounded text-slate-500 dark:text-gray-500 font-mono transition-colors border border-adaptive">Idle</div>
                                     </div>
-                                    <div id="jit-output" class="flex-1 font-mono text-xs text-slate-600 dark:text-white/70 overflow-auto whitespace-pre leading-relaxed bg-white dark:bg-[#0a0a0a] p-4 rounded-lg border border-adaptive shadow-inner transition-colors">
-                                        /* Menunggu ketikan Anda... */
+                                    <div id="jit-output" class="flex-1 font-mono text-[10px] sm:text-xs text-slate-600 dark:text-white/70 overflow-auto whitespace-pre leading-relaxed bg-white dark:bg-[#0a0a0a] p-4 rounded-lg border border-adaptive shadow-inner transition-colors custom-scrollbar flex flex-col">
+                                        /* Sistem deteksi status siaga memantau aktivitas Anda... */
                                     </div>
                                 </div>
                             </div>
@@ -313,88 +396,88 @@
 
                     {{-- LESSON 15: ACTIVITY FINAL --}}
                     <section id="section-15" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="15" data-type="activity">
-                        <div class="relative rounded-[2rem] sim-bg-adaptive border border-adaptive p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
+                        <div class="relative rounded-[1.5rem] md:rounded-[2rem] sim-bg-adaptive border border-adaptive p-4 sm:p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-purple-500/30 transition-all duration-500">
                             
-                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/10 dark:bg-purple-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
+                            <div class="absolute -top-24 -right-24 w-40 h-40 md:w-64 md:h-64 bg-purple-600/10 dark:bg-purple-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
 
-                            <div class="flex items-start md:items-center gap-4 mb-8 relative z-10 flex-col md:flex-row">
+                            <div class="flex items-start md:items-center gap-4 mb-6 md:mb-8 relative z-10 flex-col md:flex-row">
                                 <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-purple-500/30 shrink-0">
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-heading transition-colors">Tantangan JIT Presisi</h2>
-                                    <p class="text-purple-700 dark:text-purple-300 text-sm font-medium mt-1 transition-colors">Bayangkan ada klien yang sangat *rewel* meminta desain "Pixel Perfect" dengan ukuran yang tidak masuk akal. Jangan panik! Gunakan sihir <strong>Arbitrary Values</strong> (kurung siku) pada editor di bawah untuk menaklukkan ego sang klien.</p>
+                                    <h2 class="text-xl md:text-2xl font-bold text-heading transition-colors">Tantangan JIT Presisi</h2>
+                                    <p class="text-purple-700 dark:text-purple-300 text-xs md:text-sm font-medium mt-1 transition-colors leading-relaxed text-justify">Skenario Lapangan: Desainer memberikan mockup dengan dimensi <span class="hl-term">Pixel Perfect</span> yang tidak ada di standar Tailwind. Jangan mundur untuk menulis CSS manual! Gunakan sihir <strong>Arbitrary Values</strong> (dengan kurung siku) langsung di editor Monaco bawah untuk menaklukkan spesifikasi tak lazim ini.</p>
                                 </div>
                             </div>
 
-                            <div class="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto h-[550px] relative z-10">
+                            <div class="flex flex-col lg:grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto relative z-10">
                                 
                                 {{-- LEFT: EDITOR --}}
-                                <div class="code-adaptive rounded-xl border border-adaptive flex flex-col overflow-hidden h-full relative shadow-inner transition-colors">
+                                <div class="code-adaptive rounded-xl border border-adaptive flex flex-col overflow-hidden relative shadow-inner transition-colors min-h-[450px] lg:min-h-0 lg:h-[550px]">
                                     
                                     {{-- LOCK OVERLAY --}}
                                     <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg transition-colors">
-                                        <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] dark:shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce transition-colors">
-                                            <svg class="w-12 h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <div class="w-16 h-16 md:w-24 md:h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 md:mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] dark:shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce transition-colors">
+                                            <svg class="w-8 h-8 md:w-12 md:h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                                         </div>
-                                        <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">PIXEL PERFECT!</h3>
-                                        <p class="text-base font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Anda telah menguasai fungsionalitas mutlak compiler JIT.</p>
-                                        <button disabled class="px-8 py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-500 dark:text-white/30 text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Review Mode</button>
+                                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">PIXEL PERFECT!</h3>
+                                        <p class="text-sm md:text-base font-bold text-slate-500 dark:text-white/60 mb-6 md:mb-8 max-w-xs transition-colors">Anda telah menguasai spesifikasi mutlak manipulasi compiler JIT.</p>
+                                        <button disabled class="px-6 py-2.5 md:px-8 md:py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-500 dark:text-white/30 text-[10px] md:text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Review Mode Only</button>
                                     </div>
 
                                     <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
-                                        <span class="text-xs text-slate-600 dark:text-white/50 font-mono font-bold flex items-center gap-2 transition-colors"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500"></div> JIT-Compiler.html</span>
-                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset</button>
+                                        <span class="text-[10px] md:text-xs text-slate-600 dark:text-white/50 font-mono font-bold flex items-center gap-2 transition-colors"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500"></div> JIT-Compiler.html</span>
+                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset Editor</button>
                                     </div>
                                     
-                                    <div id="codeEditor" class="flex-1 w-full border-b border-adaptive transition-colors"></div>
+                                    <div id="codeEditor" class="h-[200px] lg:flex-1 w-full border-b border-adaptive transition-colors"></div>
 
                                     {{-- CLUES AREA DENGAN INSTRUKSI JIT --}}
-                                    <div class="p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col h-[280px]">
+                                    <div class="p-4 md:p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col h-[250px] lg:h-[280px]">
                                         <div class="flex justify-between items-center mb-4">
-                                            <span class="text-[10px] uppercase font-bold text-muted transition-colors">Syarat dari Klien (Checklist)</span>
-                                            <span id="progressText" class="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold transition-colors">0/3 Terpenuhi</span>
+                                            <span class="text-[10px] uppercase font-bold text-muted transition-colors">Spesifikasi Klien</span>
+                                            <span id="progressText" class="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold transition-colors bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">0/3 Terpenuhi</span>
                                         </div>
                                         
-                                        <div class="space-y-3 text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1" id="validation-list">
+                                        <div class="space-y-4 text-[10px] md:text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1" id="validation-list">
                                             <div id="chk-w" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Dimensi Lebar Kaku</strong>
-                                                    <span class="opacity-80">Tolong buatkan lebarnya (*width*) persis di angka <code>327px</code>. Sisipkan angkanya di dalam kurung siku.</span>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Lebar Presisi</strong>
+                                                    <span class="opacity-80">Gunakan kurung siku untuk mengatur lebar tepat <code>327px</code>.</span>
                                                 </div>
                                             </div>
                                             <div id="chk-h" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
                                                     <strong class="block text-slate-800 dark:text-white mb-0.5">Tinggi Proporsional</strong>
-                                                    <span class="opacity-80">Agar tidak gepeng, klien memaksa tinggi (*height*) box-nya wajib berada di angka <code>200px</code>.</span>
+                                                    <span class="opacity-80">Atur tinggi kotak tersebut tepat di angka <code>200px</code>.</span>
                                                 </div>
                                             </div>
                                             <div id="chk-bg" class="flex items-start gap-3 transition-colors">
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
                                                 <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Warna Wajib Perusahaan</strong>
-                                                    <span class="opacity-80">Terakhir, isi latar belakang (*background*) dengan warna ungu yang kode Hex-nya adalah <code>#5b21b6</code>.</span>
+                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Warna Spesifik</strong>
+                                                    <span class="opacity-80">Berikan warna latar belakang dengan kode Hex <code>#5b21b6</code>.</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <button id="submitExerciseBtn" onclick="checkSolution()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
-                                            <span>Validasi Kode Ke Server</span>
+                                        <button id="submitExerciseBtn" onclick="checkSolution()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-[11px] md:text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
+                                            <span>Validasi Kode JIT</span>
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </button>
                                     </div>
                                 </div>
 
                                 {{-- RIGHT: BROWSER PREVIEW --}}
-                                <div class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-adaptive flex-1 flex flex-col relative overflow-hidden min-h-[400px] shadow-sm dark:shadow-none transition-colors">
-                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors">
-                                        <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Layar HP Klien (Preview)</span>
+                                <div class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-adaptive flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors min-h-[300px] lg:min-h-0 lg:h-[550px]">
+                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors shrink-0">
+                                        <span class="text-[10px] md:text-xs text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Layar Klien (Preview)</span>
                                         <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Compilation</span>
                                     </div>
-                                    <div class="flex-1 bg-slate-50 dark:bg-gray-900 p-8 flex items-center justify-center relative overflow-hidden transition-colors">
-                                        <iframe id="previewFrame" class="w-full h-full border-0"></iframe>
+                                    <div class="flex-1 bg-slate-50 dark:bg-gray-900 p-2 sm:p-6 flex items-center justify-center relative overflow-hidden transition-colors w-full h-full">
+                                        <iframe id="previewFrame" class="w-full h-full border-0 bg-transparent transition-colors"></iframe>
                                     </div>
                                 </div>
                             </div>
@@ -404,24 +487,24 @@
                 </article>
 
                 {{-- FOOTER NAVIGATION --}}
-                <div class="mt-32 pt-8 border-t border-adaptive flex justify-between items-center transition-colors">
-                    <a href="{{ route('courses.tailwindcss') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors">
-                        <div class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
+                    <a href="{{ route('courses.tailwindcss') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
-                        <div class="text-left hidden sm:block">
+                        <div class="text-left">
                             <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Sebelumnya</div>
-                            <div class="font-black text-sm">Konsep Dasar Tailwind</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Konsep Dasar Tailwind</div>
                         </div>
                     </a>
                     
-                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
-                        <div class="text-right hidden sm:block">
+                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end">
+                        <div class="text-right">
                             <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Terkunci</div>
-                            <div class="font-black text-sm">Penerapan Utility Class</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Penerapan Utility Class</div>
                         </div>
-                        <div id="nextIcon" class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
                 </div>
@@ -436,14 +519,12 @@
 
 <script>
     /* --- CONFIGURATION AJAX & PROGRESS --- */
-    // PASTIKAN window.LESSON_IDS SAMA DENGAN ID DI DATABASE `course_lessons` UNTUK BAB INI (misal: 12-15)
     window.LESSON_IDS = [12, 13, 14, 15]; 
     
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
     window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
     let completedSet = new Set(window.COMPLETED_IDS);
     
-    // Cek status khusus Activity Lesson (Pastikan 15 adalah ID untuk activity bab ini di DB)
     const ACTIVITY_LESSON_ID = 15; 
     let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
 
@@ -452,12 +533,10 @@
         initSidebarScroll();
         initVisualEffects();
         
-        // Render Progress Bar awal
         updateProgressUI(false); 
         
-        // Inisialisasi Monaco Editor & Simulators
         simulateGrowth();
-        highlightLayer('util'); // Set layer Utilities default on load
+        highlightLayer('util'); 
         initMonaco();
         
         if (activityCompleted) {
@@ -465,10 +544,8 @@
             unlockNextChapter();
         }
 
-        // Inisialisasi observer scroll
         initLessonObserver();
         
-        // Tandai sidebar jika sudah komplit
         document.querySelectorAll('.nav-item').forEach(item => {
             const targetId = parseInt(item.getAttribute('data-target').replace('#section-', ''));
             if(completedSet.has(targetId)) {
@@ -574,7 +651,7 @@
         const btn = document.getElementById('growBtn');
         
         btn.disabled = true;
-        btn.innerHTML = "Menambahkan Fitur...";
+        btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Menambahkan Fitur...`;
 
         let tradW = parseInt(barTrad.style.width) || 5;
         let twW = parseInt(barTw.style.width) || 5;
@@ -594,20 +671,20 @@
 
         setTimeout(() => {
             btn.disabled = false;
-            btn.innerHTML = "+ Tambah 10 Fitur Baru di Web";
+            btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Tambah 10 Fitur Baru di Web`;
             if(newTradW >= 100) {
-                btn.innerHTML = "Reset Simulasi";
+                btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Reset Simulasi Engine`;
                 btn.onclick = () => {
                     barTrad.style.width = '5%'; txtTrad.innerText = '10 KB';
                     barTw.style.width = '5%'; txtTw.innerText = '10 KB';
                     btn.onclick = simulateGrowth;
-                    btn.innerHTML = "+ Tambah 10 Fitur Baru di Web";
+                    btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Tambah 10 Fitur Baru di Web`;
                 };
             }
         }, 800);
     }
 
-    /* ==========================================
+  /* ==========================================
        SIMULATOR 2: LAYER STACK
        ========================================== */
     function highlightLayer(layer) {
@@ -623,11 +700,31 @@
         active.classList.add('opacity-100', 'scale-105', '-translate-y-2', 'ring-2', isDark ? 'dark:ring-white' : 'ring-slate-400');
 
         const desc = document.getElementById('layer-desc');
-        if(layer === 'base') desc.innerHTML = "<strong class='text-rose-600 dark:text-red-400'>BASE:</strong> Layer untuk menetralkan pengaturan bawaan browser (Preflight). Prioritas kasta terendah. Selalu gampang ditimpa kelas lain.";
-        if(layer === 'comp') desc.innerHTML = "<strong class='text-amber-600 dark:text-yellow-400'>COMPONENTS:</strong> Layer untuk kelas kustom desain Anda sendiri seperti <code>.card</code> atau <code>.btn</code>. Cukup kuat untuk menimpa Base.";
-        if(layer === 'util') desc.innerHTML = "<strong class='text-emerald-600 dark:text-emerald-400'>UTILITIES:</strong> Kelas atomik Tailwind asli (p-4, flex). Kasta Penguasa (Tertinggi). Memastikan class utilitas selalu menang jika ada bentrok gaya.";
+        
+        if(layer === 'base') {
+            desc.innerHTML = `
+                <div class='flex flex-col items-center justify-center w-full h-full'>
+                    <strong class='text-rose-600 dark:text-red-400 text-center mb-2'>BASE LAYER</strong>
+                    <p class='text-center m-0'>Lapisan paling rendah untuk mereset desain bawaan peramban (<span class='hl-term'>Preflight</span>).</p>
+                </div>`;
+        }
+        
+        if(layer === 'comp') {
+            desc.innerHTML = `
+                <div class='flex flex-col items-center justify-center w-full h-full'>
+                    <strong class='text-amber-600 dark:text-yellow-400 text-center mb-2'>COMPONENTS LAYER</strong>
+                    <p class='text-center m-0'>Lapisan penyimpanan utama bagi abstraksi kelas repetitif desain Anda sendiri seperti komponen <code>.card</code> atau <code>.btn</code>.</p>
+                </div>`;
+        }
+        
+        if(layer === 'util') {
+            desc.innerHTML = `
+                <div class='flex flex-col items-center justify-center w-full h-full'>
+                    <strong class='text-emerald-600 dark:text-emerald-400 text-center mb-2'>UTILITIES LAYER</strong>
+                    <p class='text-center m-0'>Singgasana tertinggi. Markas bagi kelas atomik Tailwind (seperti <code>flex</code>, <code>p-4</code>).</p>
+                </div>`;
+        }
     }
-
     /* ==========================================
        SIMULATOR 3: JIT COMPILER
        ========================================== */
@@ -638,7 +735,7 @@
         const badge = document.getElementById('jit-badge');
         const scanLine = document.getElementById('scan-line');
         
-        badge.innerText = "Compiling...";
+        badge.innerText = "Processing...";
         badge.className = `px-2 py-0.5 ${isDark ? 'bg-yellow-500/20 text-yellow-400' : 'bg-amber-100 text-amber-600'} text-[10px] rounded animate-pulse font-mono transition-colors border ${isDark ? 'border-transparent' : 'border-amber-300'}`;
         scanLine.style.opacity = 1;
         scanLine.style.top = Math.random() * 100 + '%';
@@ -646,7 +743,7 @@
         setTimeout(() => {
             let css = '';
             if(!input) {
-                css = `<div class="text-slate-400 dark:text-white/20 italic transition-colors">// Menunggu Anda mengetik...</div>`;
+                css = `<div class="text-slate-400 dark:text-white/20 italic transition-colors">/* Sistem memantau pengetikan Anda... */</div>`;
             } else {
                 const classes = input.split(/[\s\n]+/);
                 classes.forEach(cls => {
@@ -656,26 +753,30 @@
                         const textClass = isDark ? 'text-white' : 'text-slate-800';
                         if(clean.startsWith('bg-[')) {
                             const val = clean.match(/\[(.*?)\]/)[1];
-                            css += `<div>.<span class="${hlClass}">${clean.replace('[','\\[').replace(']','\\]')}</span> { <span class="text-blue-500 dark:text-blue-400">background-color</span>: <span class="${textClass}">${val}</span>; }</div>`;
+                            css += `<div>.<span class="${hlClass}">${clean.replace('[','\\[').replace(']','\\]')}</span> { \n  <span class="text-blue-500 dark:text-blue-400">background-color</span>: <span class="${textClass}">${val}</span>; \n}</div>\n`;
                         } else if(clean.startsWith('w-[')) {
                             const val = clean.match(/\[(.*?)\]/)[1];
-                            css += `<div>.<span class="${hlClass}">${clean.replace('[','\\[').replace(']','\\]')}</span> { <span class="text-blue-500 dark:text-blue-400">width</span>: <span class="${textClass}">${val}</span>; }</div>`;
+                            css += `<div>.<span class="${hlClass}">${clean.replace('[','\\[').replace(']','\\]')}</span> { \n  <span class="text-blue-500 dark:text-blue-400">width</span>: <span class="${textClass}">${val}</span>; \n}</div>\n`;
                         } else if(clean.startsWith('p-')) {
-                            const val = clean.split('-')[1] * 0.25;
-                            css += `<div>.<span class="${hlClass}">${clean}</span> { <span class="text-blue-500 dark:text-blue-400">padding</span>: <span class="${textClass}">${val}rem</span>; }</div>`;
+                            const num = clean.split('-')[1];
+                            if(!isNaN(num) && num !== "") {
+                                const val = num * 0.25;
+                                css += `<div>.<span class="${hlClass}">${clean}</span> { \n  <span class="text-blue-500 dark:text-blue-400">padding</span>: <span class="${textClass}">${val}rem</span>; \n}</div>\n`;
+                            } else {
+                                css += `<div>.<span class="${hlClass}">${clean}</span> { <span class="text-slate-400 dark:text-gray-500 italic">/* JIT Compiled */</span> }</div>\n`;
+                            }
                         } else {
-                            css += `<div>.<span class="${hlClass}">${clean}</span> { <span class="text-slate-400 dark:text-gray-500 italic">/* Generated By JIT */</span> }</div>`;
+                            css += `<div>.<span class="${hlClass}">${clean}</span> { <span class="text-slate-400 dark:text-gray-500 italic">/* JIT Compiled */</span> }</div>\n`;
                         }
                     }
                 });
             }
             output.innerHTML = css;
-            badge.innerText = "Done";
+            badge.innerText = "Compiled";
             badge.className = `px-2 py-0.5 ${isDark ? 'bg-green-500/20 text-green-400' : 'bg-emerald-100 text-emerald-700'} text-[10px] rounded font-mono transition-colors border ${isDark ? 'border-transparent' : 'border-emerald-300'}`;
             scanLine.style.opacity = 0;
         }, 400);
     }
-
 
     /* ==========================================
        REALTIME CODING & ACTIVITY LOGIC (Lesson 15)
@@ -695,12 +796,13 @@
                 value: starterCode, 
                 language: 'html', 
                 theme: isDark ? 'vs-dark' : 'vs', 
-                fontSize: 13,
+                fontSize: window.innerWidth < 768 ? 11 : 13,
                 minimap: { enabled: false }, 
                 automaticLayout: true, 
                 padding: { top: 16 }, 
                 lineNumbers: 'off',
-                scrollBeyondLastLine: false
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
             });
             updatePreview(starterCode);
             
@@ -708,7 +810,7 @@
                 if(activityCompleted) return;
                 const code = editor.getValue();
                 updatePreview(code);
-                validateConfig(code);
+                validateCode(code);
             });
             
             window.addEventListener('theme-toggled', () => {
@@ -721,37 +823,35 @@
     function updatePreview(code) {
         const frame = document.getElementById('previewFrame');
         const isDark = document.documentElement.classList.contains('dark');
-        const bgColor = isDark ? '#0f172a' : '#f8fafc'; 
+        const bgColor = isDark ? '#111827' : '#f8fafc'; 
         
-        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; transition: background-color 0.3s; }</style></head><body>${code}</body></html>`;
+        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 1rem; font-family: sans-serif; transition: background-color 0.3s; box-sizing: border-box; overflow: hidden; }</style></head><body>${code}</body></html>`;
         frame.srcdoc = content;
     }
 
-    function validateConfig(code) {
+    function validateCode(code) {
         const checks = [
-            { id: 'chk-w', regex: /w-\[327px\]/ },
-            { id: 'chk-h', regex: /h-\[200px\]/ },
-            { id: 'chk-bg', regex: /bg-\[#5b21b6\]/ }
+            { id: 'chk-w', regex: /w-\[327px\]/, valid: false },
+            { id: 'chk-h', regex: /h-\[200px\]/, valid: false },
+            { id: 'chk-bg', regex: /bg-\[#5b21b6\]/, valid: false }
         ];
-
-        let passed = 0;
+        let passedCount = 0;
         const isDark = document.documentElement.classList.contains('dark');
 
-        checks.forEach(c => {
-            const el = document.getElementById(c.id);
+        checks.forEach(check => {
+            const el = document.getElementById(check.id);
+            if(!el) return;
             const dot = el.querySelector('span'); 
             const textContainer = el.querySelector('div'); 
-            
-            if (!dot || !textContainer) return;
 
-            if(c.regex.test(code)) {
+            if (check.regex.test(code)) {
                 textContainer.classList.remove('opacity-80');
                 textContainer.classList.add(isDark ? 'text-green-400' : 'text-emerald-600');
                 
                 dot.innerHTML = '✓'; 
                 dot.classList.remove('border-slate-300', 'border-white/20');
                 dot.classList.add('bg-emerald-500', 'border-transparent', 'text-white');
-                passed++;
+                passedCount++;
             } else {
                 textContainer.classList.add('opacity-80');
                 textContainer.classList.remove('text-green-400', 'text-emerald-600');
@@ -761,27 +861,25 @@
                 dot.classList.add(isDark ? 'border-white/20' : 'border-slate-300');
             }
         });
-
-        document.getElementById('progressText').innerText = `${passed}/3 Terpenuhi`;
         
+        document.getElementById('progressText').innerText = `${passedCount}/3 Terpenuhi`;
         const btn = document.getElementById('submitExerciseBtn');
-        if (passed === 3) {
-            btn.disabled = false;
-            btn.classList.remove('cursor-not-allowed', 'opacity-50');
-            btn.innerHTML = `<span>Validasi Kode JIT</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+        if (passedCount === 3) {
+            btn.disabled = false; btn.classList.remove('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = `<span>Validasi Kode JIT Spesifikasi</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
         } else {
-            btn.disabled = true;
-            btn.classList.add('cursor-not-allowed', 'opacity-50');
+            btn.disabled = true; btn.classList.add('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = `<span>Validasi Kode JIT Spesifikasi</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
         }
     }
 
-    function resetEditor() { if(editor && !activityCompleted) { editor.setValue(starterCode); validateConfig(starterCode); } }
+    function resetEditor() { if(editor && !activityCompleted) { editor.setValue(starterCode); validateCode(starterCode); } }
 
     async function checkSolution() {
         if(activityCompleted) return;
         const btn = document.getElementById('submitExerciseBtn');
         
-        btn.innerHTML = '<span class="animate-pulse">Mengirim ke Server...</span>'; 
+        btn.innerHTML = '<span class="animate-pulse">Menyimpan ke Server...</span>'; 
         btn.disabled = true;
         
         try {
@@ -792,7 +890,7 @@
             unlockNextChapter(); 
         } catch(e) { 
             console.error(e); 
-            btn.innerHTML = "Koneksi Gagal."; 
+            btn.innerHTML = "Gagal Terhubung. Coba Ulangi."; 
             btn.disabled = false; 
         }
     }
@@ -802,12 +900,15 @@
         if(editor) editor.updateOptions({ readOnly: true });
         
         const btn = document.getElementById('submitExerciseBtn'); 
-        btn.innerText = "Terkunci (Selesai)"; 
+        btn.innerText = "Penyimpanan Arsitektur Terkunci (Sukses)"; 
         btn.disabled = true;
         btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
         btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
-        
-        if(editor) editor.setValue(`<div class="w-[327px] h-[200px] bg-[#5b21b6] rounded-[20px]"></div>`);
+
+        if(editor && activityCompleted) {
+            editor.setValue(`<div class="w-[327px] h-[200px] bg-[#5b21b6] rounded-[20px]"></div>`);
+            validateCode(editor.getValue());
+        }
     }
 
     function unlockNextChapter() {
@@ -821,7 +922,7 @@
             document.getElementById('nextLabel').classList.add('text-indigo-600', 'dark:text-indigo-400', 'opacity-100');
             
             const icon = document.getElementById('nextIcon');
-            icon.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
+            icon.innerHTML = `<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
             icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/50', 'text-indigo-600', 'dark:text-indigo-400', 'shadow-lg');
             
