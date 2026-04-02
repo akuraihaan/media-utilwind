@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title','Bab 2.1 · Layouting dengan Flexbox')
+@section('title','Layouting dengan Flexbox')
 
 @section('content')
 
@@ -660,8 +660,8 @@
                     
                     <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
                         <div class="text-right hidden sm:block">
-                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Tugas Belum Selesai</div>
-                            <div class="font-black text-sm">Sistem Penempatan Tingkat Lanjut</div>
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Berikutnya</div>
+                            <div class="font-black text-sm">Dasar Grid Layout</div>
                         </div>
                         <div id="nextIcon" class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shadow-sm dark:shadow-none">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>

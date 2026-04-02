@@ -90,6 +90,9 @@
         ]
     ];
 
+    // Cek Akses Admin (Sesuaikan atribut 'role' dengan nama kolom database Anda jika berbeda)
+    $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+
     // Logika Waterfall Awal
     $previousItemComplete = true; 
 @endphp
@@ -168,6 +171,11 @@
                 <p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed mt-4 transition-colors">
                     Selesaikan Materi, kerjakan Hands-on Lab, lalu taklukkan Kuis untuk membuka level berikutnya.
                 </p>
+                @if($isAdmin)
+                <div class="inline-block mt-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">
+                     Admin Override Active: All Unlocked
+                </div>
+                @endif
             </div>
 
             {{-- Progress Stats --}}
@@ -198,8 +206,8 @@
                     // --- 1. LOGIC KUNCI BAB (LEVEL) ---
                     $isChapterUnlocked = true;
                     if ($chapter['quiz_req_prev']) {
-                        // Cek apakah kuis bab SEBELUMNYA sudah lulus
-                        $isChapterUnlocked = !empty($completedLessonsMap[$chapter['quiz_req_prev']]);
+                        // Terbuka jika Admin ATAU kuis bab sebelumnya sudah lulus
+                        $isChapterUnlocked = $isAdmin || !empty($completedLessonsMap[$chapter['quiz_req_prev']]);
                     }
 
                     // Reset logic waterfall untuk materi
@@ -253,8 +261,11 @@
                             @foreach($chapter['topics'] as $topic)
                                 @php
                                     $isCompleted = !empty($completedLessonsMap[$topic['code']]);
-                                    $isAccessible = $isChapterUnlocked && $previousItemComplete;
-                                    $previousItemComplete = $isCompleted; 
+                                    
+                                    // Logic Akses Materi: Admin override ATAU (Bab terbuka DAN materi sebelumnya selesai)
+                                    $isAccessible = $isAdmin || ($isChapterUnlocked && $previousItemComplete);
+                                    
+                                    $previousItemComplete = $isCompleted; // Set untuk lesson selanjutnya
                                 @endphp
 
                                 <div class="relative pl-6 py-2.5 group/lesson">
@@ -299,19 +310,17 @@
                     {{-- SECTION BARU: HANDS-ON LAB --}}
                     @php
                         // --- 2. LOGIC KUNCI LAB ---
-                        // Lab terbuka jika semua materi (lesson) di bab ini sudah selesai
                         $areAllLessonsDone = !empty($completedLessonsMap[$chapter['last_lesson_code']]);
-                        
-                        // Cek apakah Lab sudah LULUS di database
                         $isLabPassed = isset($passedLabsMap[$chapter['lab_id']]);
                         
-                        $canAccessLab = $areAllLessonsDone;
+                        // Lab terbuka jika Admin ATAU seluruh materi di bab ini selesai
+                        $canAccessLab = $isAdmin || $areAllLessonsDone;
                         
                         // Link Lab
                         $labLink = $canAccessLab ? route('lab.start', ['id' => $chapter['lab_id']]) : '#';
                         $labStatusText = $isLabPassed ? 'LAB SELESAI' : ($canAccessLab ? 'MULAI LAB' : 'SELESAIKAN MATERI');
                         
-                        // Styling Lab adaptif untuk light/dark mode
+                        // Styling Lab adaptif
                         if ($isLabPassed) {
                             $labBorder = "border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5";
                             $labIconBg = "bg-emerald-500 text-white shadow-emerald-500/20";
@@ -349,10 +358,10 @@
                     {{-- SECTION: KUIS --}}
                     @php
                         // --- 3. LOGIC KUNCI KUIS ---
-                        // Kuis HANYA terbuka jika LAB sudah LULUS
-                        $canTakeQuiz = $isLabPassed; 
+                        // Kuis terbuka jika Admin ATAU Lab sudah lulus
+                        $canTakeQuiz = $isAdmin || $isLabPassed; 
                         
-                        // Cek apakah Kuis sudah LULUS
+                        // Status kuis
                         $isQuizPassed = !empty($completedLessonsMap[$chapter['quiz_key_db']]);
                     @endphp
 
