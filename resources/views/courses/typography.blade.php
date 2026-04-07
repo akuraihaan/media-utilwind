@@ -1,9 +1,9 @@
 @extends('layouts.landing')
-@section('title', 'Tipografi Masterclass')
+@section('title','Tipografi ')
 
 @section('content')
 
-{{-- KONFIGURASI TEMA AWAL --}}
+{{-- KONFIGURASI TEMA AWAL UNTUK MENCEGAH FOUC --}}
 <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -13,7 +13,7 @@
 </script>
 
 <style>
-    /* KONFIGURASI TEMA ADAPTIF */
+    /* --- THEME CONFIG (DYNAMIC GLASSMORPHISM) --- */
     :root { 
         --bg-main: #f8fafc;
         --text-main: #0f172a;
@@ -21,21 +21,14 @@
         --glass-border: rgba(0, 0, 0, 0.05);
         --glass-header: rgba(255, 255, 255, 0.85);
         --card-bg: #ffffff;
+        --card-hover: rgba(0, 0, 0, 0.02);
         --border-color: rgba(0, 0, 0, 0.1);
         --text-muted: #64748b;
         --text-heading: #0f172a;
         --code-bg: #f1f5f9;
         --simulator-bg: #ffffff;
-        --accent: #6366f1;
-        
-        --sb-bg: rgba(255, 255, 255, 0.95);
-        --sb-border: rgba(0, 0, 0, 0.05);
-        --sb-text: #0f172a;
-        --sb-muted: #64748b;
-        --sb-hover: rgba(0, 0, 0, 0.03);
-        --sb-active-bg: rgba(99, 102, 241, 0.1);
-        --sb-active-border: rgba(99, 102, 241, 0.3);
-        --sb-active-text: #6366f1;
+        --accent: #06b6d4; /* Cyan 500 */
+        --accent-glow: rgba(6, 182, 212, 0.3);
     }
 
     .dark {
@@ -45,63 +38,51 @@
         --glass-border: rgba(255, 255, 255, 0.05);
         --glass-header: rgba(2, 6, 23, 0.80);
         --card-bg: #1e1e1e;
+        --card-hover: rgba(255, 255, 255, 0.02);
         --border-color: rgba(255, 255, 255, 0.1);
         --text-muted: rgba(255, 255, 255, 0.5);
         --text-heading: #ffffff;
         --code-bg: #252525;
         --simulator-bg: #0b0f19;
-
-        --sb-bg: rgba(2, 6, 23, 0.95);
-        --sb-border: rgba(255, 255, 255, 0.1);
-        --sb-text: #ffffff;
-        --sb-muted: rgba(255, 255, 255, 0.5);
-        --sb-hover: rgba(255, 255, 255, 0.02);
-        --sb-active-bg: rgba(99, 102, 241, 0.15);
-        --sb-active-border: rgba(99, 102, 241, 0.4);
-        --sb-active-text: #818cf8;
+        --accent-glow: rgba(6, 182, 212, 0.5);
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s, color 0.4s; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s ease, color 0.4s ease; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-    .bg-adaptive { background-color: var(--bg-main); }
-    .text-adaptive { color: var(--text-main); }
-    .text-heading { color: var(--text-heading); }
-    .text-muted { color: var(--text-muted); }
-    .border-adaptive { border-color: var(--border-color); }
+    /* UTILITIES ADAPTIF */
+    .bg-adaptive { background-color: var(--bg-main); transition: background-color 0.4s ease; }
+    .text-adaptive { color: var(--text-main); transition: color 0.4s ease; }
+    .text-heading { color: var(--text-heading); transition: color 0.4s ease; }
+    .text-muted { color: var(--text-muted); transition: color 0.4s ease; }
+    .border-adaptive { border-color: var(--border-color); transition: border-color 0.4s ease; }
     .card-adaptive { background-color: var(--card-bg); border-color: var(--glass-border); transition: all 0.3s; }
-    .sim-bg-adaptive { background-color: var(--simulator-bg); }
-    .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); }
+    .card-adaptive:hover { border-color: var(--accent-glow); }
+    .sim-bg-adaptive { background-color: var(--simulator-bg); transition: background-color 0.4s ease; }
+    .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); transition: all 0.4s ease; }
 
-    .hl-term {
-        background-color: rgba(99, 102, 241, 0.15);
-        color: #4f46e5;
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.375rem;
-        font-weight: 600;
-    }
-    .dark .hl-term {
-        background-color: rgba(99, 102, 241, 0.2);
-        color: #818cf8;
-    }
-
+    /* SCROLLBAR */
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
     
+    /* ANIMATIONS & EFFECTS */
     #animated-bg { 
-        background: radial-gradient(800px circle at 20% 20%, rgba(99,102,241,.10), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(168,85,247,.10), transparent 40%); 
+        background: radial-gradient(800px circle at 20% 20%, rgba(6,182,212,.08), transparent 40%), 
+                    radial-gradient(800px circle at 80% 80%, rgba(59,130,246,.08), transparent 40%); 
         animation: bgMove 20s ease-in-out infinite alternate; 
     }
     .dark #animated-bg {
-        background: radial-gradient(800px circle at 20% 20%, rgba(99,102,241,.15), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(168,85,247,.15), transparent 40%); 
+        background: radial-gradient(800px circle at 20% 20%, rgba(6,182,212,.15), transparent 40%), 
+                    radial-gradient(800px circle at 80% 80%, rgba(59,130,246,.15), transparent 40%); 
     }
     @keyframes bgMove{to{transform:scale(1.15)}}
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     .shake { animation: shake 0.4s ease-in-out; }
     
+    /* MOBILE SIDEBAR NO-BLUR FIX */
     @media (max-width: 1023px) {
         #courseSidebar {
             position: fixed;
@@ -111,143 +92,178 @@
             transition: left 0.3s ease-in-out;
         }
         #courseSidebar.mobile-open { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-        #mobileOverlay { display: none; position: fixed; inset: 0; top: 64px; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 30; }
+        #mobileOverlay { display: none; position: fixed; inset: 0; top: 64px; background: rgba(0,0,0,0.6); z-index: 30; }
         #mobileOverlay.show { display: block; }
     }
     
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--sb-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: var(--sb-text); background: var(--sb-hover); }
-    .nav-item.active { color: var(--sb-active-text); background: var(--sb-active-bg); font-weight: 600; border: 1px solid var(--sb-active-border); }
+    /* SCROLLSPY SIDEBAR ACTIVE */
+    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
+    .nav-item:hover { color: var(--text-main); background: var(--card-hover); }
+    .nav-item.active { color: #06b6d4; background: rgba(6, 182, 212, 0.05); font-weight: 600; }
     .dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; transition: all 0.3s; }
     .dark .dot { background: #334155; }
-    .nav-item.active .dot { background: var(--sb-active-text); box-shadow: 0 0 8px var(--sb-active-text); transform: scale(1.2); }
+    .nav-item.active .dot { background: #06b6d4; box-shadow: 0 0 8px #06b6d4; transform: scale(1.2); }
+
+    .insight-box {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
 
-<div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
+<div id="courseRoot" class="relative h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-white font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
 
+    {{-- BACKGROUND COSMIC LAYER --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-50 transition-opacity"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-50 transition-opacity duration-500"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-300/30 dark:bg-cyan-900/10 rounded-full blur-[120px] animate-pulse transition-colors duration-500"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-300/30 dark:bg-blue-900/10 rounded-full blur-[100px] transition-colors duration-500"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500"></canvas>
+        <div id="cursor-glow"></div>
     </div>
 
     @include('layouts.partials.navbar')
 
-    <div class="flex flex-1 overflow-hidden relative z-20 h-full">
-
+    <div class="flex flex-1 overflow-hidden relative z-20">
         @include('layouts.partials.course-sidebar')
 
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
             
-            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-4 md:px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
+            {{-- STICKY HEADER --}}
+            <div id="stickyHeader" class="sticky top-0 z-30 w-full bg-white/80 dark:bg-[#020617]/80 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 px-4 md:px-8 py-4 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-600 dark:text-indigo-400">3.1</div>
+                    <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-transparent border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 shrink-0 transition-colors">3.1</div>
                     <div>
-                        <h1 class="text-sm font-bold text-heading line-clamp-1">Tipografi Masterclass</h1>
-                        <p class="text-[10px] text-muted line-clamp-1">Hierarki Visual Tingkat Lanjut</p>
+                        <h1 class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 transition-colors">Tipografi Masterclass</h1>
+                        <p class="text-[10px] text-slate-500 dark:text-white/50 line-clamp-1 transition-colors">Hierarki Visual Tingkat Lanjut</p>
                     </div>
                 </div>
-                
                 <div class="flex items-center gap-3 shrink-0">
-                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-0 transition-all duration-500"></div>
+                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_#0ea5e9]"></div>
                     </div>
-                    <span id="progressLabelTop" class="text-indigo-600 dark:text-indigo-400 font-bold text-xs">0%</span>
+                    <span id="progressLabelTop" class="text-cyan-600 dark:text-cyan-400 font-bold text-xs transition-colors">0%</span>
                 </div>
             </div>
 
-            <div class="p-4 sm:p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+            {{-- CONTENT WRAPPER --}}
+            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
                 
-                <div class="mb-16 md:mb-24">
-                    <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                {{-- LEARNING OBJECTIVES --}}
+                <div class="mb-24">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2 transition-colors">
+                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Tujuan Pembelajaran
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="card-adaptive p-5 rounded-xl border flex items-start gap-4">
-                            <div class="w-8 h-8 rounded bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex justify-center items-center font-bold text-xs shrink-0">1</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1">Klasifikasi Huruf</h4><p class="text-[11px] text-muted leading-relaxed">Pemanfaatan huruf bawaan sistem untuk performa antarmuka modern yang tanpa jeda muat.</p></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        
+                        <div class="bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-cyan-400 dark:hover:border-cyan-500/30 shadow-sm dark:shadow-none transition group h-full">
+                            <div class="w-8 h-8 rounded bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">1</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Klasifikasi Huruf</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors"><strong>Memahami</strong> karakteristik dan psikologi keluarga font bawaan sistem untuk efisiensi performa web.</p>
+                            </div>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl border flex items-start gap-4">
-                            <div class="w-8 h-8 rounded bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex justify-center items-center font-bold text-xs shrink-0">2</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1">Skala Proporsional</h4><p class="text-[11px] text-muted leading-relaxed">Penggunaan skala ukuran berbasis relatif yang presisi dan adaptif untuk semua layar.</p></div>
+
+                        <div class="bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-blue-400 dark:hover:border-blue-500/30 shadow-sm dark:shadow-none transition group h-full">
+                            <div class="w-8 h-8 rounded bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">2</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Skala Proporsional</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors"><strong>Mempelajari</strong> cara menyusun hierarki visual yang harmonis menggunakan sistem ukuran modular responsif.</p>
+                            </div>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl border flex items-start gap-4">
-                            <div class="w-8 h-8 rounded bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 flex justify-center items-center font-bold text-xs shrink-0">3</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1">Ketebalan Font</h4><p class="text-[11px] text-muted leading-relaxed">Menyusun hierarki prioritas konten melalui manipulasi bobot huruf secara semantik.</p></div>
+
+                        <div class="bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-sky-400 dark:hover:border-sky-500/30 shadow-sm dark:shadow-none transition group h-full">
+                            <div class="w-8 h-8 rounded bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">3</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Ketebalan Font</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors"><strong>Menguasai</strong> teknik manipulasi bobot (weight) huruf untuk mengarahkan fokus mata secara elegan.</p>
+                            </div>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl border flex items-start gap-4">
-                            <div class="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex justify-center items-center font-bold text-xs shrink-0">4</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1">Ruang dan Spasi</h4><p class="text-[11px] text-muted leading-relaxed">Meningkatkan kenyamanan membaca melalui manajemen jarak antar baris dan kerapatan karakter.</p></div>
+
+                        <div class="bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-white/5 p-5 rounded-xl flex items-start gap-4 hover:border-teal-400 dark:hover:border-teal-500/30 shadow-sm dark:shadow-none transition group h-full">
+                            <div class="w-8 h-8 rounded bg-teal-100 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">4</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Ruang & Spasi</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors"><strong>Memahami</strong> prinsip pengaturan jarak baris dan kerapatan karakter demi kenyamanan baca jangka panjang.</p>
+                            </div>
                         </div>
-                        <div class="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 border border-indigo-200 dark:border-indigo-500/30 p-5 rounded-xl flex items-center gap-4 shadow-sm col-span-1 lg:col-span-2 cursor-pointer transition hover:shadow-md" onclick="scrollToSection('section-51')">
-                            <div class="w-10 h-10 rounded-full bg-white/50 dark:bg-white/10 text-indigo-700 dark:text-white flex justify-center items-center font-bold text-lg shrink-0">🎯</div>
-                            <div><h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-1">Misi Akhir</h4><p class="text-[11px] text-indigo-800 dark:text-white/70 leading-relaxed">Terapkan seluruh teori untuk merekonstruksi desain artikel portal berita interaktif.</p></div>
+
+                        <div class="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/40 dark:to-blue-900/40 border border-cyan-200 dark:border-cyan-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-md dark:hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-4 cursor-default">
+                            <div class="w-8 h-8 rounded bg-cyan-100 dark:bg-white/10 text-cyan-600 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs transition-colors">🏁</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Final Mission</h4>
+                                <p class="text-[11px] text-slate-600 dark:text-white/70 leading-relaxed transition-colors"><strong>Mengimplementasikan</strong> seluruh teori tipografi ke dalam studi kasus nyata merancang tata letak portal berita (Expert Mode).</p>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
-                <article class="space-y-32 md:space-y-40">
+                <article class="space-y-40">
                     
                     {{-- LESSON 46: FONT FAMILY --}}
                     <section id="section-46" class="lesson-section scroll-mt-32" data-lesson-id="46">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Pelajaran 3.1.1</span>
-                                <h2 class="text-3xl md:text-4xl font-black text-heading leading-[1.1]">
-                                    Keluarga Huruf Bawaan Sistem
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.1.1</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                    Keluarga Huruf Sistem <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-400 dark:to-blue-500">(System Fonts)</span>
                                 </h2>
                             </div>
                             
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-indigo-500 flex justify-center items-center text-[10px] text-white shrink-0">A</span> Kecepatan dan Ketajaman Teks</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
+                            <div class="space-y-6">
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-white/70 text-base md:text-lg leading-relaxed transition-colors text-justify">
                                     <p>
-                                        Memanggil huruf kustom dari pihak ketiga dapat memperlambat proses muat halaman dan menyebabkan layar berkedip kosong sejenak. Tailwind mengatasi masalah ini dengan menggunakan koleksi huruf bawaan sistem pengguna secara otomatis. 
+                                        Menggunakan font khusus dari pihak ketiga (seperti Google Fonts) sering kali membebani kecepatan muat halaman dan memicu efek kedipan kosong (<em>Flash of Unstyled Text</em>). Tailwind CSS menyelesaikan masalah ini secara elegan dengan memanfaatkan koleksi huruf bawaan sistem (<em>system font stack</em>) secara otomatis.
                                     </p>
                                     <p>
-                                        Metode ini memastikan teks di dalam sistem MacOS akan dirender dengan huruf San Francisco yang tajam, sistem Windows menggunakan Segoe UI, dan Android memakai Roboto. Hal ini menjamin situs Anda memuat dalam waktu seketika dan terlihat menyatu secara alami dengan perangkat penonton.
+                                        Metode ini menjamin situs Anda menggunakan font San Francisco di macOS/iOS, Segoe UI di Windows, dan Roboto di Android. Hasilnya situs termuat dalam sekejap mata dan terlihat menyatu secara natural dengan perangkat penonton.
                                     </p>
-                                </div>
-                            </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-indigo-500 flex justify-center items-center text-[10px] text-white shrink-0">B</span> Tiga Kategori Desain Utama</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
-                                    <p>Terdapat tiga kelas utama yang mencakup kebutuhan rancangan antarmuka:</p>
-                                    <ul class="list-disc pl-5 space-y-2 mt-2">
-                                        <li><strong><code class="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-1 rounded">font-sans</code>:</strong> Huruf modern bersudut bersih tanpa lekukan. Keterbacaannya yang sangat tinggi menjadikannya pilihan utama untuk tombol, menu navigasi, dan komponen aplikasi web interaktif.</li>
-                                        <li><strong><code class="text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 px-1 rounded">font-serif</code>:</strong> Huruf dengan ornamen kaitan di ujung setiap garisnya. Memberikan nuansa elegan dan klasik. Pilihan sempurna untuk merancang tampilan artikel panjang atau judul majalah digital.</li>
-                                        <li><strong><code class="text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/30 px-1 rounded">font-mono</code>:</strong> Huruf bertipe mesin tik di mana setiap karakternya memakan ruang lebar yang sejajar dan presisi. Sangat esensial untuk menampilkan cuplikan kode pemrograman atau angka tabel statistik.</li>
+                                    <h4 class="text-slate-800 dark:text-white font-bold mb-4 mt-8 text-sm uppercase tracking-wide transition-colors">Tiga Kategori Desain Utama</h4>
+                                    <ul class="list-disc pl-5 space-y-3 text-sm md:text-base text-left mt-4 border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 p-6 rounded-xl transition-colors">
+                                        <li><strong><code class="text-cyan-600 dark:text-cyan-300 font-bold transition-colors">font-sans</code></strong>: Huruf modern bersudut bersih tanpa lekukan. Keterbacaannya yang tinggi menjadikannya pilihan standar untuk tombol, navigasi, dan antarmuka web.</li>
+                                        <li><strong><code class="text-cyan-600 dark:text-cyan-300 font-bold transition-colors">font-serif</code></strong>: Huruf dengan ornamen kaitan di ujung garisnya. Memberikan nuansa elegan dan klasik. Ideal untuk tubuh artikel panjang atau judul editorial.</li>
+                                        <li><strong><code class="text-cyan-600 dark:text-cyan-300 font-bold transition-colors">font-mono</code></strong>: Huruf bertipe mesin tik di mana tiap karakter memakan ruang sejajar. Esensial untuk menampilkan kode pemrograman atau data tabular.</li>
                                     </ul>
                                 </div>
                             </div>
 
                             {{-- SIMULATOR 1 --}}
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl flex flex-col shadow-xl transition-colors mt-8 overflow-hidden">
-                                <div class="w-full bg-indigo-600/95 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-indigo-400 dark:border-indigo-700">
-                                    <div class="flex items-center gap-2 text-sm font-bold">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        Simulator: Karakteristik Tema Huruf
-                                    </div>
-                                    <p class="text-xs opacity-90 mt-1 sm:mt-0">Klik tombol di bawah untuk melihat perbedaan visual.</p>
+                            <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl p-6 lg:p-8 shadow-xl dark:shadow-2xl relative group hover:border-cyan-400 dark:hover:border-cyan-500/30 transition-all">
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-muted uppercase mb-4 text-center transition-colors tracking-widest">Simulator: Karakteristik Tema Huruf</h4>
+                                
+                                <div class="bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/30 rounded-xl p-4 mb-8 text-sm text-cyan-700 dark:text-cyan-300 relative z-10 shadow-sm dark:shadow-inner transition-colors">
+                                    <p class="font-bold flex items-center gap-2 mb-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                                        Panduan Interaksi
+                                    </p>
+                                    <p class="m-0 opacity-90 leading-relaxed text-xs md:text-sm text-cyan-800/80 dark:text-cyan-100/80 transition-colors">
+                                        Klik tombol konfigurasi jenis huruf di bawah ini untuk melihat bagaimana nuansa komponen desain berubah secara instan pada pratinjau di sebelah kanan.
+                                    </p>
                                 </div>
-                                <div class="flex flex-col sm:flex-row w-full flex-1">
-                                    <div class="w-full sm:w-1/3 p-6 bg-slate-50 dark:bg-[#18181b] border-b sm:border-b-0 sm:border-r border-adaptive flex flex-col justify-center gap-3">
-                                        <button onclick="updateSimFont(this, 'font-sans')" class="btn-sim-1 px-4 py-3 bg-indigo-500 text-white rounded-lg text-sm font-bold shadow-md transition">Sans (Modern)</button>
-                                        <button onclick="updateSimFont(this, 'font-serif')" class="btn-sim-1 px-4 py-3 bg-white dark:bg-black/30 border border-adaptive rounded-lg text-sm font-bold text-slate-700 dark:text-gray-300 hover:border-indigo-500 transition">Serif (Klasik)</button>
-                                        <button onclick="updateSimFont(this, 'font-mono')" class="btn-sim-1 px-4 py-3 bg-white dark:bg-black/30 border border-adaptive rounded-lg text-sm font-bold text-slate-700 dark:text-gray-300 hover:border-indigo-500 transition">Mono (Kode)</button>
+
+                                <div class="flex flex-col lg:flex-row justify-between items-start mb-6 gap-4 lg:gap-6 relative z-10">
+                                    <div class="flex flex-col gap-2 w-full lg:w-1/3">
+                                        <button onclick="updateSimFont(this, 'font-sans')" class="btn-sim-1 px-4 py-3 text-xs font-bold rounded-lg bg-cyan-600 text-white shadow-lg border border-cyan-400 transition text-left">Sans (Modern)</button>
+                                        <button onclick="updateSimFont(this, 'font-serif')" class="btn-sim-1 px-4 py-3 text-xs font-bold rounded-lg bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-left">Serif (Klasik)</button>
+                                        <button onclick="updateSimFont(this, 'font-mono')" class="btn-sim-1 px-4 py-3 text-xs font-bold rounded-lg bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-left">Mono (Kode)</button>
                                     </div>
-                                    <div class="w-full sm:w-2/3 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-[#111] min-h-[250px] relative">
+                                    <div class="w-full lg:w-2/3 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-black/40 rounded-xl min-h-[300px] border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                        <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-sm border border-adaptive w-full max-w-sm relative z-10 transition-colors">
-                                            <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-4">
-                                                <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/5 w-full max-w-sm relative z-10 transition-colors mb-16">
+                                            <div class="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mb-4">
+                                                <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                             </div>
-                                            <h4 id="demo-font-title" class="text-xl font-bold text-heading font-sans transition-all duration-300 mb-2">Desain Cerdas</h4>
-                                            <p id="demo-font-body" class="text-sm text-muted font-sans transition-all duration-300">
-                                                Pemilihan jenis keluarga huruf sangat krusial dalam membentuk emosi dan tingkat profesionalisme sebuah produk digital.
+                                            <h4 id="demo-font-title" class="text-xl font-bold text-slate-900 dark:text-white font-sans transition-all duration-300 mb-2">Psikologi Desain</h4>
+                                            <p id="demo-font-body" class="text-sm text-slate-500 dark:text-white/60 font-sans transition-all duration-300 leading-relaxed">
+                                                Pemilihan jenis huruf sangat krusial dalam membentuk identitas visual, nada komunikasi, dan tingkat profesionalisme sebuah produk digital.
                                             </p>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 right-4 bg-cyan-50 dark:bg-cyan-900/40 border border-cyan-100 dark:border-cyan-800/50 p-3 rounded-lg text-xs text-cyan-800 dark:text-cyan-200 flex items-start gap-3 backdrop-blur-sm shadow-sm z-20 transition-colors">
+                                            <span class="text-base shrink-0">💡</span>
+                                            <p id="demo-font-insight" class="insight-box m-0 leading-relaxed">Gunakan <code class="font-bold">font-sans</code> sebagai fondasi utama antarmuka (UI) karena sifatnya yang netral dan sangat mudah dibaca pada berbagai ukuran layar.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -257,71 +273,68 @@
 
                     {{-- LESSON 47: SIZE & HIERARCHY --}}
                     <section id="section-47" class="lesson-section scroll-mt-32" data-lesson-id="47">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
-                                <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest">Pelajaran 3.1.2</span>
-                                <h2 class="text-3xl md:text-4xl font-black text-heading leading-[1.1]">
-                                    Skala Modular Tipografi
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-6">
+                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.1.2</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                    Skala Modular & Hierarki
                                 </h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-purple-500 flex justify-center items-center text-[10px] text-white shrink-0">A</span> Hitungan Estetika Tetap</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
+                            <div class="space-y-6">
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-white/70 text-base md:text-lg leading-relaxed transition-colors text-justify">
                                     <p>
-                                        Membuat teks dengan ukuran angka acak seringkali membuat halaman situs terlihat amatir. Karena itu Tailwind menerapkan sistem Skala Modular yang membatasi pilihan desainer hanya pada daftar ukuran yang sudah dihitung secara proporsional.
+                                        Menebak-nebak ukuran teks menggunakan angka piksel acak sering kali merusak ritme visual halaman. Tailwind menerapkan <strong>Sistem Skala Modular</strong>, yaitu deretan ukuran baku yang telah dihitung secara proporsional agar selalu terlihat harmonis.
                                     </p>
                                     <p>
-                                        Skala dimulai dari patokan tengah <code>text-base</code>. Dari sana, Anda dapat mendaki ke ukuran wajar seperti <code>text-lg</code> hingga ukuran tajuk yang amat mencolok mata seperti <code>text-5xl</code>.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-purple-500 flex justify-center items-center text-[10px] text-white shrink-0">B</span> Otomasi Jarak Baris</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
-                                    <p>
-                                        Setiap kali Anda menerapkan kelas ukuran pada elemen tulisan, mesin komputasi Tailwind secara pintar juga akan menyetel proporsi ruang di antara baris kalimat tersebut. 
-                                    </p>
-                                    <p>
-                                        Secara desain optikal, judul yang berukuran raksasa wajib memiliki renggang jarak baris yang amat rapat agar kalimatnya terihat solid. Sebaliknya, paragraf berukuran kecil membutuhkan ruang napas ekstra di antara barisnya agar nyaman dibaca berlama-lama. Tailwind menangani kerumitan perhitungan ini di balik layar secara instan.
+                                        Kehebatan utama utilitas tipografi Tailwind adalah integrasi otomatis antara ukuran huruf dan jarak antar baris (<em>line-height</em>). Setiap kali Anda memanggil kelas ukuran teks seperti <code class="text-blue-600 dark:text-blue-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">text-xl</code>, Tailwind secara presisi akan menyetel jarak barisnya agar selaras secara optikal.
                                     </p>
                                 </div>
                             </div>
 
                             {{-- SIMULATOR 2 --}}
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl flex flex-col shadow-xl transition-colors mt-8 overflow-hidden">
-                                <div class="w-full bg-purple-600/95 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-purple-400 dark:border-purple-700">
-                                    <div class="flex items-center gap-2 text-sm font-bold">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-                                        Simulator: Dimensi dan Relasi Baris
-                                    </div>
+                            <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl p-6 lg:p-8 shadow-xl dark:shadow-2xl relative group hover:border-blue-400 dark:hover:border-blue-500/30 transition-all">
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-muted uppercase mb-4 text-center transition-colors tracking-widest">Simulator: Dimensi & Relasi Baris</h4>
+
+                                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-xl p-4 mb-8 text-sm text-blue-700 dark:text-blue-300 relative z-10 shadow-sm dark:shadow-inner transition-colors">
+                                    <p class="font-bold flex items-center gap-2 mb-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                                        Panduan Eksplorasi
+                                    </p>
+                                    <p class="m-0 opacity-90 leading-relaxed text-xs md:text-sm text-blue-800/80 dark:text-blue-100/80 transition-colors">
+                                        Pilih skala modular di bawah untuk melihat efek otomatisasi ukuran dan kerapatan spasi baris oleh mesin penyetel Tailwind.
+                                    </p>
                                 </div>
-                                <div class="flex flex-col md:flex-row w-full flex-1">
-                                    <div class="w-full md:w-1/2 p-6 bg-slate-50 dark:bg-[#18181b] border-b md:border-b-0 md:border-r border-adaptive flex flex-col justify-center gap-4">
-                                        <div onclick="updateSimSize(this, 'text-sm')" class="btn-sim-2 group border-l-4 border-transparent hover:border-purple-400 pl-4 cursor-pointer transition">
-                                            <code class="text-xs text-purple-600 dark:text-purple-400 block mb-1">text-sm</code>
-                                            <p class="text-sm font-bold text-heading group-hover:text-purple-600 dark:group-hover:text-purple-400 transition">Ukuran Teks Pelengkap</p>
+                                
+                                <div class="flex flex-col md:flex-row w-full gap-4 lg:gap-6 relative z-10">
+                                    <div class="w-full md:w-1/2 flex flex-col gap-2">
+                                        <div onclick="updateSimSize(this, 'text-sm')" class="btn-sim-2 group border-l-4 border-transparent hover:border-blue-400 bg-slate-50 dark:bg-white/5 p-3 rounded-r cursor-pointer transition">
+                                            <code class="text-xs text-blue-600 dark:text-blue-400 block mb-1">text-sm</code>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">Ukuran Pelengkap (Keterangan)</p>
                                         </div>
-                                        <div onclick="updateSimSize(this, 'text-base')" class="btn-sim-2 group border-l-4 border-purple-500 pl-4 cursor-pointer transition">
-                                            <code class="text-xs text-purple-600 dark:text-purple-400 block mb-1">text-base</code>
-                                            <p class="text-base font-bold text-heading group-hover:text-purple-600 dark:group-hover:text-purple-400 transition">Standar Bacaan Nyaman</p>
+                                        <div onclick="updateSimSize(this, 'text-base')" class="btn-sim-2 group border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-r cursor-pointer transition">
+                                            <code class="text-xs text-blue-600 dark:text-blue-400 block mb-1">text-base</code>
+                                            <p class="text-base font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">Standar Bacaan Nyaman (Body)</p>
                                         </div>
-                                        <div onclick="updateSimSize(this, 'text-2xl')" class="btn-sim-2 group border-l-4 border-transparent hover:border-purple-400 pl-4 cursor-pointer transition">
-                                            <code class="text-xs text-purple-600 dark:text-purple-400 block mb-1">text-2xl</code>
-                                            <p class="text-2xl font-bold text-heading group-hover:text-purple-600 dark:group-hover:text-purple-400 transition">Tajuk Menengah</p>
+                                        <div onclick="updateSimSize(this, 'text-2xl')" class="btn-sim-2 group border-l-4 border-transparent hover:border-blue-400 bg-slate-50 dark:bg-white/5 p-3 rounded-r cursor-pointer transition">
+                                            <code class="text-xs text-blue-600 dark:text-blue-400 block mb-1">text-2xl</code>
+                                            <p class="text-2xl font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">Tajuk Menengah (Sub-Heading)</p>
                                         </div>
-                                        <div onclick="updateSimSize(this, 'text-4xl')" class="btn-sim-2 group border-l-4 border-transparent hover:border-purple-400 pl-4 cursor-pointer transition">
-                                            <code class="text-xs text-purple-600 dark:text-purple-400 block mb-1">text-4xl</code>
-                                            <p class="text-4xl font-bold text-heading group-hover:text-purple-600 dark:group-hover:text-purple-400 transition">Judul Raksasa</p>
+                                        <div onclick="updateSimSize(this, 'text-4xl')" class="btn-sim-2 group border-l-4 border-transparent hover:border-blue-400 bg-slate-50 dark:bg-white/5 p-3 rounded-r cursor-pointer transition">
+                                            <code class="text-xs text-blue-600 dark:text-blue-400 block mb-1">text-4xl</code>
+                                            <p class="text-4xl font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">Judul Raksasa (Hero)</p>
                                         </div>
                                     </div>
-                                    <div class="w-full md:w-1/2 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-[#111] min-h-[300px] relative">
+                                    <div class="w-full md:w-1/2 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-black/40 rounded-xl min-h-[350px] border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                        <div class="bg-white dark:bg-[#1e1e1e] border border-adaptive p-6 rounded-xl shadow-sm w-full max-w-sm relative z-10">
-                                            <p id="demo-size" class="text-base text-heading font-bold transition-all duration-300 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/50 p-2 rounded">
-                                                Kalimat contoh ini membuktikan bagaimana mesin penyetel mengatur kerapatan spasi baris secara otomatis.
+                                        <div class="bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-white/5 p-6 rounded-xl shadow-sm w-full max-w-sm relative z-10 mb-16">
+                                            <p id="demo-size" class="text-base text-slate-900 dark:text-white font-bold transition-all duration-300 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 p-3 rounded leading-normal">
+                                                Kalimat contoh ini membuktikan bagaimana mesin penyetel Tailwind mengatur kerapatan spasi baris secara otomatis sesuai dengan dimensi ukuran huruf.
                                             </p>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 right-4 bg-blue-50 dark:bg-blue-900/40 border border-blue-100 dark:border-blue-800/50 p-3 rounded-lg text-xs text-blue-800 dark:text-blue-200 flex items-start gap-3 backdrop-blur-sm shadow-sm z-20">
+                                            <span class="text-base shrink-0">💡</span>
+                                            <p id="demo-size-insight" class="insight-box m-0 leading-relaxed">Keseimbangan absolut. Tailwind menyetel rasio paling sempurna pada <code class="font-bold">text-base</code> untuk dijadikan ukuran patokan tulisan badan panjang.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -331,59 +344,46 @@
 
                     {{-- LESSON 48: WEIGHT & ANTIALIASING --}}
                     <section id="section-48" class="lesson-section scroll-mt-32" data-lesson-id="48">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-pink-500 pl-4 md:pl-6">
-                                <span class="text-pink-600 dark:text-pink-400 font-mono text-xs uppercase tracking-widest">Pelajaran 3.1.3</span>
-                                <h2 class="text-3xl md:text-4xl font-black text-heading leading-[1.1]">
-                                    Ketebalan Karakter dan Resolusi Piksel
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-sky-500 pl-6">
+                                <span class="text-sky-600 dark:text-sky-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.1.3</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                    Ketebalan Huruf & <br> Resolusi Piksel
                                 </h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-pink-500 flex justify-center items-center text-[10px] text-white shrink-0">A</span> Tingkat Bobot Visual</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
+                            <div class="space-y-6">
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-white/70 text-base md:text-lg leading-relaxed transition-colors text-justify">
                                     <p>
-                                        Daripada membesarkan ukuran huruf untuk menarik perhatian, desainer pro lebih gemar memisahkan tingkat prioritas informasi dengan cara menebalkan atau menipiskan wujud huruf tersebut. 
+                                        Memperbesar ukuran huruf bukanlah satu-satunya cara untuk menciptakan penekanan. Desainer profesional sering mempertahankan ukuran yang sama, namun memanipulasi <strong>bobot ketebalannya</strong> untuk menciptakan kontras visual.
                                     </p>
                                     <p>
-                                        Tailwind mengubah kode kuno bernilai angka menjadi nama deskriptif yang lugas: mulai dari yang paling tipis <code>font-light</code>, lalu moderat <code>font-normal</code>, agak menonjol <code>font-semibold</code>, tebal <code>font-bold</code>, hingga sangat dominan <code>font-black</code>.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-pink-500 flex justify-center items-center text-[10px] text-white shrink-0">B</span> Penghalusan Teks Layar Gelap</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
-                                    <p>
-                                        Ketika tulisan warna putih menyala menimpa layar dengan warna latar gelap pekat, mata manusia sering menangkap wujud huruf tersebut seolah membengkak gemuk akibat pendaran cahaya terang di sekeliling pinggiran abjad.
-                                    </p>
-                                    <p>
-                                        Untuk mencegah cacat pendaran optis ini, terapkan perisai utilitas <code>antialiased</code>. Kelas penting ini akan memaksa peramban merender ujung piksel teks dengan ketipisan presisi maksimal, membuat wujud kalimat lebih jernih dipandang mata.
+                                        Selain itu, pada kanvas digital mode gelap, teks putih sering terlihat membengkak akibat pendaran piksel layar. Atasi ilusi optik ini dengan utilitas perisai <code class="text-sky-600 dark:text-sky-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">antialiased</code> yang akan memaksa browser merender ujung piksel setajam mungkin.
                                     </p>
                                 </div>
                             </div>
 
                             {{-- SIMULATOR 3 --}}
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl flex flex-col shadow-xl transition-colors mt-8 overflow-hidden">
-                                <div class="w-full bg-pink-600/95 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-pink-400 dark:border-pink-700">
-                                    <div class="flex items-center gap-2 text-sm font-bold">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-                                        Simulator: Manipulasi Bobot
+                            <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl p-6 lg:p-8 shadow-xl dark:shadow-2xl relative group hover:border-sky-400 dark:hover:border-sky-500/30 transition-all">
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-muted uppercase mb-4 text-center transition-colors tracking-widest">Simulator: Dimensi Bobot Visual</h4>
+                                
+                                <div class="flex flex-col md:flex-row w-full gap-4 lg:gap-6 relative z-10 mt-8">
+                                    <div class="w-full md:w-1/3 flex flex-col gap-2 justify-center">
+                                        <button onclick="updateSimWeight(this, 'font-light')" class="btn-sim-3 w-full text-left px-4 py-3 rounded-lg bg-slate-200 dark:bg-white/5 border border-transparent text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 transition text-sm font-bold">font-light <span class="text-xs font-normal opacity-60 ml-2">(Tipis)</span></button>
+                                        <button onclick="updateSimWeight(this, 'font-normal')" class="btn-sim-3 w-full text-left px-4 py-3 rounded-lg bg-sky-600 text-white shadow-lg border border-sky-400 transition text-sm font-bold">font-normal <span class="text-xs font-normal opacity-80 ml-2">(Standar)</span></button>
+                                        <button onclick="updateSimWeight(this, 'font-bold')" class="btn-sim-3 w-full text-left px-4 py-3 rounded-lg bg-slate-200 dark:bg-white/5 border border-transparent text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 transition text-sm font-bold">font-bold <span class="text-xs font-normal opacity-60 ml-2">(Fokus)</span></button>
+                                        <button onclick="updateSimWeight(this, 'font-black')" class="btn-sim-3 w-full text-left px-4 py-3 rounded-lg bg-slate-200 dark:bg-white/5 border border-transparent text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 transition text-sm font-bold">font-black <span class="text-xs font-normal opacity-60 ml-2">(Agresif)</span></button>
                                     </div>
-                                </div>
-                                <div class="flex flex-col md:flex-row w-full flex-1">
-                                    <div class="w-full md:w-1/2 p-6 bg-slate-50 dark:bg-[#18181b] border-b md:border-b-0 md:border-r border-adaptive flex flex-wrap gap-3 content-center justify-center">
-                                        <button onclick="updateSimWeight(this, 'font-light')" class="btn-sim-3 px-4 py-2 border border-adaptive rounded text-sm font-bold text-slate-700 dark:text-gray-300 hover:border-pink-500 transition bg-white dark:bg-black/30">font-light</button>
-                                        <button onclick="updateSimWeight(this, 'font-normal')" class="btn-sim-3 px-4 py-2 border border-pink-400 rounded text-sm font-bold text-white transition bg-pink-500 shadow-md">font-normal</button>
-                                        <button onclick="updateSimWeight(this, 'font-bold')" class="btn-sim-3 px-4 py-2 border border-adaptive rounded text-sm font-bold text-slate-700 dark:text-gray-300 hover:border-pink-500 transition bg-white dark:bg-black/30">font-bold</button>
-                                        <button onclick="updateSimWeight(this, 'font-black')" class="btn-sim-3 px-4 py-2 border border-adaptive rounded text-sm font-bold text-slate-700 dark:text-gray-300 hover:border-pink-500 transition bg-white dark:bg-black/30">font-black</button>
-                                    </div>
-                                    <div class="w-full md:w-1/2 p-6 flex items-center justify-center bg-slate-100 dark:bg-[#111] min-h-[250px] relative">
+                                    <div class="w-full md:w-2/3 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-black/40 rounded-xl min-h-[300px] border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                        <div class="bg-[#1e1e1e] p-8 rounded-xl shadow-lg border border-white/10 w-full max-w-sm text-center relative z-10 flex flex-col justify-center">
+                                        <div class="bg-[#1e1e1e] p-10 rounded-xl shadow-lg border border-white/10 w-full max-w-sm text-center relative z-10 flex flex-col justify-center mb-16">
                                             <p id="demo-weight" class="text-4xl text-white font-normal transition-all duration-300 antialiased">
                                                 Kontras Visual
                                             </p>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 right-4 bg-sky-50 dark:bg-sky-900/40 border border-sky-100 dark:border-sky-800/50 p-3 rounded-lg text-xs text-sky-800 dark:text-sky-200 flex items-start gap-3 backdrop-blur-sm shadow-sm z-20">
+                                            <span class="text-base shrink-0">💡</span>
+                                            <p id="demo-weight-insight" class="insight-box m-0 leading-relaxed">Sebagian besar teks tubuh harus menetap pada kelas pelindung <code class="font-bold">font-normal</code> agar pembaca tidak merasa diteriaki dan mata tak cepat lelah.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -393,71 +393,61 @@
 
                     {{-- LESSON 49: MICRO TYPOGRAPHY --}}
                     <section id="section-49" class="lesson-section scroll-mt-32" data-lesson-id="49">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-emerald-500 pl-4 md:pl-6">
-                                <span class="text-emerald-600 dark:text-emerald-400 font-mono text-xs uppercase tracking-widest">Pelajaran 3.1.4</span>
-                                <h2 class="text-3xl md:text-4xl font-black text-heading leading-[1.1]">
-                                    Modifikasi Spasi dan Penambat
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-teal-500 pl-6">
+                                <span class="text-teal-600 dark:text-teal-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.1.4</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                    Manajemen Spasi & Penambat
                                 </h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-500 flex justify-center items-center text-[10px] text-white shrink-0">A</span> Jarak Udara Antar Karakter</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
+                            <div class="space-y-6">
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-white/70 text-base md:text-lg leading-relaxed transition-colors text-justify">
                                     <p>
-                                        Kerapatan jarak antara susunan satu huruf dengan huruf lain dapat direnggangkan atau dikompres melalui utilitas <code>tracking</code>. Kaidah emas tipografi mewajibkan: 
+                                        Kerapatan jarak karakter (<em>letter-spacing</em>) dan orientasi perataan paragraf adalah detil mikrotipografi yang membedakan desain amatir dan profesional.
                                     </p>
-                                    <p>
-                                        Setiap kata berukuran kecil yang diketik kapital semua wajib diberikan jarak napas ekstra menggunakan <code>tracking-wider</code> agar tidak menyatu dempet. Sebaliknya, kata berukuran raksasa sebaiknya dikompres rapat dengan <code>tracking-tighter</code> demi menjadikannya tampak tebal, kokoh, bagai poster film yang padat.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-500 flex justify-center items-center text-[10px] text-white shrink-0">B</span> Orientasi Sisi Blok Teks</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
-                                    <p>
-                                        Banyak pemula tergoda menggunakan perataan penuh pinggir (Justify) pada paragraf situs mereka. Secara teknis layar digital, perintah ini merusak paragraf karena mencabik-cabik spasi antar kata membentuk ruang kosong yang menyiksa jalur baca mata penonton.
-                                    </p>
-                                    <p>
-                                        Prioritaskan utilitas perataan kiri (<code>text-left</code>) untuk mendominasi bagian tulisan badan panjang agar alur pembacaan tetap selaras natural. Simpan utilitas rata tengah (<code>text-center</code>) murni untuk blok teks pendek seperti pernyataan sambutan atau kutipan tunggal.
-                                    </p>
+                                    <ul class="list-disc pl-5 space-y-3 mt-4 border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 p-6 rounded-xl transition-colors">
+                                        <li>Kaidah Emas Tracking: Teks kapital berukuran kecil WAJIB direnggangkan (<code class="text-teal-600 dark:text-teal-300 font-bold transition-colors">tracking-wider</code>), sedangkan judul hero berukuran raksasa sebaiknya dikompres rapat (<code class="text-teal-600 dark:text-teal-300 font-bold transition-colors">tracking-tighter</code>) agar terlihat solid layaknya poster film.</li>
+                                        <li>Kaidah Emas Alignment: Hindari perataan <em>Justify</em> di layar digital karena akan melahirkan sungai rongga kosong yang mengganggu mata. Prioritaskan perataan kiri (<code class="text-teal-600 dark:text-teal-300 font-bold transition-colors">text-left</code>) untuk badan artikel.</li>
+                                    </ul>
                                 </div>
                             </div>
 
                             {{-- SIMULATOR 4 --}}
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl flex flex-col shadow-xl transition-colors mt-8 overflow-hidden">
-                                <div class="w-full bg-emerald-600/95 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-emerald-400 dark:border-emerald-700">
-                                    <div class="flex items-center gap-2 text-sm font-bold">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                                        Simulator: Spasi dan Penambat
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:flex-row w-full flex-1">
-                                    <div class="w-full md:w-1/3 p-6 bg-slate-50 dark:bg-[#18181b] border-b md:border-b-0 md:border-r border-adaptive flex flex-col gap-4">
-                                        <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1">Renggang Karakter</div>
+                            <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl p-6 lg:p-8 shadow-xl dark:shadow-2xl relative group hover:border-teal-400 dark:hover:border-teal-500/30 transition-all mt-8">
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-muted uppercase mb-4 text-center transition-colors tracking-widest">Simulator: Spasi & Penambat Paragraf</h4>
+
+                                <div class="flex flex-col md:flex-row w-full gap-4 lg:gap-6 relative z-10 mt-8">
+                                    <div class="w-full md:w-1/3 flex flex-col gap-4 justify-center">
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Renggang Huruf Judul</div>
                                         <div class="flex flex-wrap gap-2">
-                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-tighter')" class="btn-sim-4-track px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-emerald-500 transition bg-white dark:bg-black/30">Tighter</button>
-                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-normal')" class="btn-sim-4-track px-3 py-1.5 border border-emerald-400 rounded text-xs font-bold text-white transition bg-emerald-500 shadow-md">Normal</button>
-                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-widest')" class="btn-sim-4-track px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-emerald-500 transition bg-white dark:bg-black/30">Widest</button>
+                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-tighter')" class="btn-sim-4-track px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Rapat</button>
+                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-normal')" class="btn-sim-4-track px-3 py-1.5 rounded bg-teal-600 text-white shadow-md border border-teal-400 transition text-xs font-bold">Normal</button>
+                                            <button onclick="updateSimTrackAlign(this, 'track', 'tracking-widest')" class="btn-sim-4-track px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Renggang</button>
                                         </div>
-                                        <div class="border-t border-adaptive my-2"></div>
-                                        <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1">Arah Teks</div>
+                                        
+                                        <div class="border-t border-slate-200 dark:border-white/10 my-2"></div>
+                                        
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Arah Paragraf</div>
                                         <div class="flex flex-wrap gap-2">
-                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-left')" class="btn-sim-4-align px-3 py-1.5 border border-emerald-400 rounded text-xs font-bold text-white transition bg-emerald-500 shadow-md">Kiri</button>
-                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-center')" class="btn-sim-4-align px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-emerald-500 transition bg-white dark:bg-black/30">Tengah</button>
-                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-justify')" class="btn-sim-4-align px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-emerald-500 transition bg-white dark:bg-black/30">Sama Sisi</button>
+                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-left')" class="btn-sim-4-align px-3 py-1.5 rounded bg-teal-600 text-white shadow-md border border-teal-400 transition text-xs font-bold">Kiri</button>
+                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-center')" class="btn-sim-4-align px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Tengah</button>
+                                            <button onclick="updateSimTrackAlign(this, 'align', 'text-justify')" class="btn-sim-4-align px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Sama Sisi</button>
                                         </div>
                                     </div>
-                                    <div class="w-full md:w-2/3 p-6 flex flex-col justify-center bg-slate-100 dark:bg-[#111] min-h-[300px] relative">
+                                    <div class="w-full md:w-2/3 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-black/40 rounded-xl min-h-[350px] border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                        <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-sm border border-adaptive w-full relative z-10 transition-all duration-300">
-                                            <h4 id="demo-track" class="text-3xl font-black text-heading mb-4 uppercase tracking-normal transition-all duration-300 border-b border-adaptive pb-4">
+                                        <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/5 w-full relative z-10 transition-all duration-300 mb-16">
+                                            <h4 id="demo-track" class="text-3xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-normal transition-all duration-300 border-b border-slate-200 dark:border-white/10 pb-4">
                                                 Sorotan Berita
                                             </h4>
-                                            <p id="demo-align" class="text-sm text-muted text-left transition-all duration-300 leading-relaxed">
-                                                Penentuan batas pelurusan tepi kalimat adalah elemen kunci pembentukan keseimbangan visual layar web. Simulasikan modifikasi untuk melihat rentang ruang yang ditinggalkan akibat dorongan perataan paragraf secara asimetris di bagian kiri.
+                                            <p id="demo-align" class="text-sm text-slate-500 dark:text-white/60 text-left transition-all duration-300 leading-relaxed">
+                                                Penentuan batas pelurusan tepi kalimat adalah elemen kunci pembentukan keseimbangan visual layar web. Simulasikan modifikasi untuk melihat rentang ruang yang ditinggalkan akibat perataan asimetris atau paksaan pelurusan pinggir secara artifisial.
                                             </p>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 right-4 bg-teal-50 dark:bg-teal-900/40 border border-teal-100 dark:border-teal-800/50 p-3 rounded-lg text-xs text-teal-800 dark:text-teal-200 flex items-start gap-3 backdrop-blur-sm shadow-sm z-20">
+                                            <span class="text-base shrink-0">💡</span>
+                                            <p id="demo-track-align-insight" class="insight-box m-0 leading-relaxed">Formasi <code class="font-bold">text-left</code> adalah landasan mutlak untuk tubuh artikel karena mata manusia telah terlatih melacak tepi rata lurus di sisi kiri tulisan.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -467,143 +457,147 @@
 
                     {{-- LESSON 50: ORNAMENT --}}
                     <section id="section-50" class="lesson-section scroll-mt-32" data-lesson-id="50">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest">Pelajaran 3.1.5</span>
-                                <h2 class="text-3xl md:text-4xl font-black text-heading leading-[1.1]">
-                                    Hiasan Dekoratif Transformasi
+                        <div class="space-y-10">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.1.5</span>
+                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                    Ornamen & Transformasi
                                 </h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-cyan-500 flex justify-center items-center text-[10px] text-white shrink-0">A</span> Rekayasa Kapitalisasi</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
+                            <div class="space-y-6">
+                                <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-white/70 text-base md:text-lg leading-relaxed transition-colors text-justify">
                                     <p>
-                                        Mengetik judul dengan menahan tuas Capslock di papan ketik adalah cara masa lalu. Secara modern, tampilan huruf kapital harus direkayasa menggunakan kode pembungkus agar teks sumber di sistem pelacak tetap netral.
+                                        Mengetik data judul secara manual menggunakan tombol Caps Lock di database sangat tidak disarankan. Biarkan data murni apa adanya, lalu rekayasa tampilan kapitalisasinya di lapisan depan (frontend) menggunakan kelas <code class="text-indigo-600 dark:text-indigo-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">uppercase</code> atau <code class="text-indigo-600 dark:text-indigo-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">capitalize</code>.
                                     </p>
                                     <p>
-                                        Implementasikan <code>uppercase</code> untuk membakar kalimat menjadi kapital absolut, <code>lowercase</code> untuk menciutkannya, atau panggil kelas sakti <code>capitalize</code> untuk otomatis membesarkan setiap ujung awalan huruf dalam tiap kata secara mandiri.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2"><span class="w-5 h-5 rounded bg-cyan-500 flex justify-center items-center text-[10px] text-white shrink-0">B</span> Modifikasi Ornamen Garis Bawah</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base leading-relaxed text-justify">
-                                    <p>
-                                        Kelemahan terbesar hiasan garis bawah standar bawaan peramban adalah tabrakan garis batas yang menyiksa kaki abjad (seperti huruf y atau g). Tailwind merombak batasan klasik ini dengan utilitas mutakhir.
-                                    </p>
-                                    <p>
-                                        Semayamkan kelas <code>underline</code> yang ditemani <code>underline-offset-4</code> untuk melonggarkan batas garis agar merosot turun dan tidak memotong perut kata. Anda juga berkuasa menebalkan tinta garis hiasan dengan komando <code>decoration-2</code>, bahkan memberinya tekstur gaya bergelombang via <code>decoration-wavy</code>.
+                                        Untuk tautan web, garis bawah standar browser kerap memotong perut huruf "g", "y", "p". Bebaskan mereka menggunakan kombinasi <code class="text-indigo-600 dark:text-indigo-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">underline</code> ditambah dengan <code class="text-indigo-600 dark:text-indigo-300 font-bold bg-slate-100 dark:bg-white/10 px-1 rounded transition-colors">underline-offset-4</code> agar garis menjauh ke bawah dan terlihat jauh lebih modern.
                                     </p>
                                 </div>
                             </div>
 
                             {{-- SIMULATOR 5 --}}
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl flex flex-col shadow-xl transition-colors mt-8 overflow-hidden">
-                                <div class="w-full bg-cyan-600/95 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-cyan-400 dark:border-cyan-700">
-                                    <div class="flex items-center gap-2 text-sm font-bold">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
-                                        Simulator: Modifikasi Hiasan
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:flex-row w-full flex-1">
-                                    <div class="w-full md:w-1/3 p-6 bg-slate-50 dark:bg-[#18181b] border-b md:border-b-0 md:border-r border-adaptive flex flex-col gap-4">
-                                        <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1">Konversi Teks</div>
+                            <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl p-6 lg:p-8 shadow-xl dark:shadow-2xl relative group hover:border-indigo-400 dark:hover:border-indigo-500/30 transition-all mt-8">
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-muted uppercase mb-4 text-center transition-colors tracking-widest">Simulator: Transformasi & Ornamen CSS</h4>
+
+                                <div class="flex flex-col md:flex-row w-full gap-4 lg:gap-6 relative z-10 mt-8">
+                                    <div class="w-full md:w-1/3 flex flex-col gap-4 justify-center">
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Konversi Kapitalisasi</div>
                                         <div class="flex flex-wrap gap-2">
-                                            <button onclick="updateSimTransDecor(this, 'trans', 'normal-case')" class="btn-sim-5-trans px-3 py-1.5 border border-cyan-400 rounded text-xs font-bold text-white transition bg-cyan-500 shadow-md">Asli</button>
-                                            <button onclick="updateSimTransDecor(this, 'trans', 'uppercase')" class="btn-sim-5-trans px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-cyan-500 transition bg-white dark:bg-black/30">Kapital</button>
-                                            <button onclick="updateSimTransDecor(this, 'trans', 'capitalize')" class="btn-sim-5-trans px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-cyan-500 transition bg-white dark:bg-black/30">Awalan</button>
+                                            <button onclick="updateSimTransDecor(this, 'trans', 'normal-case')" class="btn-sim-5-trans px-3 py-1.5 rounded bg-indigo-600 text-white shadow-md border border-indigo-400 transition text-xs font-bold">Asli</button>
+                                            <button onclick="updateSimTransDecor(this, 'trans', 'uppercase')" class="btn-sim-5-trans px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Kapital</button>
+                                            <button onclick="updateSimTransDecor(this, 'trans', 'capitalize')" class="btn-sim-5-trans px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Awalan</button>
                                         </div>
-                                        <div class="border-t border-adaptive my-2"></div>
-                                        <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1">Garis Ornamen</div>
+                                        
+                                        <div class="border-t border-slate-200 dark:border-white/10 my-2"></div>
+                                        
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Garis Ornamen</div>
                                         <div class="flex flex-wrap gap-2">
-                                            <button onclick="updateSimTransDecor(this, 'decor', '')" class="btn-sim-5-decor px-3 py-1.5 border border-cyan-400 rounded text-xs font-bold text-white transition bg-cyan-500 shadow-md">Tanpa Garis</button>
-                                            <button onclick="updateSimTransDecor(this, 'decor', 'underline underline-offset-4 decoration-2 decoration-cyan-500')" class="btn-sim-5-decor px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-cyan-500 transition bg-white dark:bg-black/30">Garis Offset</button>
-                                            <button onclick="updateSimTransDecor(this, 'decor', 'underline decoration-wavy decoration-pink-500')" class="btn-sim-5-decor px-3 py-1.5 border border-adaptive rounded text-xs font-bold text-slate-700 dark:text-gray-300 hover:border-cyan-500 transition bg-white dark:bg-black/30">Gelombang</button>
+                                            <button onclick="updateSimTransDecor(this, 'decor', '')" class="btn-sim-5-decor px-3 py-1.5 rounded bg-indigo-600 text-white shadow-md border border-indigo-400 transition text-xs font-bold">Polos</button>
+                                            <button onclick="updateSimTransDecor(this, 'decor', 'underline underline-offset-4 decoration-2 decoration-indigo-500')" class="btn-sim-5-decor px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Garis Modern</button>
+                                            <button onclick="updateSimTransDecor(this, 'decor', 'underline decoration-wavy decoration-pink-500')" class="btn-sim-5-decor px-3 py-1.5 rounded bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border border-transparent hover:bg-slate-300 dark:hover:bg-white/10 transition text-xs font-bold">Gelombang</button>
                                         </div>
                                     </div>
-                                    <div class="w-full md:w-2/3 p-6 flex flex-col justify-center items-center bg-slate-100 dark:bg-[#111] min-h-[250px] relative">
+                                    <div class="w-full md:w-2/3 p-6 flex flex-col items-center justify-center bg-slate-100 dark:bg-black/40 rounded-xl min-h-[300px] border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
                                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-                                        <p id="demo-trans-decor" class="text-3xl font-bold text-heading transition-all duration-300 normal-case relative z-10 py-2">
-                                            bunga penyangga taman
-                                        </p>
+                                        <div class="w-full flex items-center justify-center mb-16">
+                                            <p id="demo-trans-decor" class="text-3xl sm:text-5xl font-bold text-slate-900 dark:text-white transition-all duration-300 normal-case relative z-10 py-2 text-center">
+                                                gaya pergelangan web
+                                            </p>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 right-4 bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-100 dark:border-indigo-800/50 p-3 rounded-lg text-xs text-indigo-800 dark:text-indigo-200 flex items-start gap-3 backdrop-blur-sm shadow-sm z-20">
+                                            <span class="text-base shrink-0">💡</span>
+                                            <p id="demo-trans-decor-insight" class="insight-box m-0 leading-relaxed">Kalimat dirender sesuai dengan integritas format dari pangkalan data asalnya tanpa diintervensi oleh gaya CSS tambahan.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {{-- FINAL MISSION (EXPERT CHALLENGE - BUTTON PANEL) --}}
-                    <section id="section-51" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive" data-lesson-id="51" data-manual="true">
-                        <div class="relative rounded-[1.5rem] md:rounded-[2.5rem] sim-bg-adaptive border border-adaptive p-4 sm:p-6 lg:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-indigo-500/30 transition-all duration-500 flex flex-col">
+                    {{-- FINAL MISSION (EXPERT MODE - MONACO EDITOR) --}}
+                    <section id="section-51" class="lesson-section scroll-mt-32 pt-10 border-t border-slate-200 dark:border-white/10 transition-colors" data-lesson-id="51" data-type="activity">
+                        <div class="relative rounded-[2rem] md:rounded-[2.5rem] bg-white dark:bg-[#050b14] border border-slate-200 dark:border-white/10 p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-400 dark:hover:border-cyan-500/30 transition-all duration-500 flex flex-col">
                             
-                            <div class="absolute -top-24 -right-24 w-40 h-40 sm:w-64 sm:h-64 bg-indigo-600/10 dark:bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
+                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-400/20 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
 
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6 sm:mb-8 relative z-10 shrink-0">
-                                <div class="p-3 sm:p-4 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-xl sm:rounded-2xl text-white shadow-lg shadow-indigo-500/30 shrink-0">
-                                    <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-8 relative z-10 shrink-0">
+                                <div class="p-3 sm:p-4 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white shadow-lg shadow-cyan-500/30 shrink-0">
+                                    <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
                                 <div>
-                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
-                                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-heading tracking-tight transition-colors">Misi Penugasan Ahli</h2>
-                                        <span class="w-max px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 uppercase tracking-wider transition-colors">Studi Kasus Editorial</span>
+                                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mb-2">
+                                        <h2 class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">Misi Editorial Akhir</h2>
+                                        <span class="px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 uppercase tracking-wider shadow-sm transition-colors">Expert Live Code</span>
                                     </div>
-                                    <p class="text-slate-600 dark:text-indigo-200/60 text-xs sm:text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">
-                                        Perusahaan media ternama menugaskan Anda memperbaiki tipografi halaman artikel harian mereka agar terlihat elegan, kokoh, dan tidak menyakiti mata. <br><br>
-                                        <strong>Instruksi Pembenahan Judul:</strong> Pastikan jenis huruf bersifat kaku kuno klasik, berukuran ekstra jumbo, tebal membaja, bertinta hitam dominan tajam. <br>
-                                        <strong>Instruksi Pembenahan Isi:</strong> Ratakan barisan tepi penuh, rentangkan napas spasi setara longgar, warnai tulisan menjadi pudar kenyamanan menengah.
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm leading-relaxed max-w-2xl text-justify transition-colors">
+                                        Sebuah portal berita elit menugaskan Anda merombak tipografi artikel harian mereka. Melalui terminal kode di bawah, suntikkan kelas utilitas pada elemen judul dan paragraf sesuai dengan parameter desain ketat yang diminta oleh klien.
                                     </p>
+                                    
+                                    {{-- TOOLBOX CLUE --}}
+                                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1 transition-colors">Persenjataan Kelas Anda:</span>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 px-2 py-1 rounded shadow-sm transition-colors">font-serif</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 px-2 py-1 rounded shadow-sm transition-colors">text-6xl</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 px-2 py-1 rounded shadow-sm transition-colors">font-black</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 px-2 py-1 rounded shadow-sm transition-colors">text-slate-900</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 px-2 py-1 rounded shadow-sm transition-colors">text-left</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 px-2 py-1 rounded shadow-sm transition-colors">leading-relaxed</code>
+                                        <code class="text-[10px] md:text-xs font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 px-2 py-1 rounded shadow-sm transition-colors">text-slate-500</code>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="flex flex-col lg:grid lg:grid-cols-12 gap-6 border border-adaptive rounded-2xl overflow-hidden min-h-[600px] shadow-lg transition-colors relative z-10 flex-1 bg-[#0f141e]">
+                            <div class="flex flex-col xl:grid xl:grid-cols-2 gap-0 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-2xl relative z-10 flex-1 transition-colors">
                                 
-                                {{-- CONTROL PANEL EXPERT --}}
-                                <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-white/10 p-5 sm:p-6 flex flex-col h-full bg-[#0a0d14]">
-                                    <h3 class="text-[11px] font-bold text-white/50 uppercase tracking-widest mb-6 border-b border-white/10 pb-3">Konsol Manajemen Kelas</h3>
+                                {{-- EDITOR KIRI --}}
+                                <div class="bg-slate-50 dark:bg-[#151515] border-b xl:border-b-0 xl:border-r border-slate-200 dark:border-white/10 flex flex-col relative w-full xl:w-auto min-h-[500px] xl:min-h-[600px] transition-colors">
                                     
-                                    <div class="flex-1 space-y-6 overflow-y-auto custom-scrollbar pr-2" id="practice-controls">
+                                    {{-- LOCK OVERLAY --}}
+                                    <div id="lockOverlay" class="hidden absolute inset-0 bg-white/95 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-8 transition-colors border-2 border-emerald-500/20">
+                                        <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] animate-bounce transition-colors">
+                                            <svg class="w-10 h-10 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                                         </div>
+                                        <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">ESTETIKA EDITORIAL VALID!</h3>
+                                        <p class="text-xs sm:text-sm font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Pemahaman tipografi digital Anda diakui profesional. Data modul telah tersinkronisasi server.</p>
+                                        <button disabled class="w-full sm:w-auto px-8 py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-400 dark:text-white/30 text-[10px] sm:text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Editor Terkunci</button>
+                                    </div>
+
+                                    <div class="bg-slate-100 dark:bg-[#1e1e1e] px-4 py-3 border-b border-slate-200 dark:border-white/5 flex justify-between items-center shrink-0 transition-colors">
+                                        <span class="text-[10px] sm:text-xs text-slate-500 dark:text-white/50 font-mono font-bold transition-colors">Editorial-View.html</span>
+                                        <button onclick="resetEditor()" class="text-[10px] text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 uppercase font-bold focus:outline-none bg-red-100 dark:bg-red-500/10 px-3 py-1.5 rounded shadow-sm border border-red-200 dark:border-red-500/20 active:scale-95 transition">Hapus Tinta</button>
+                                    </div>
                                     
-                                    <div class="pt-6 mt-6 border-t border-white/10">
-                                        <button id="checkBtn" onclick="checkExpertSolution()" class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_4px_15px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
-                                            Kirim Validasi Konfigurasi Resolusi
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                    <div id="codeEditor" class="flex-1 w-full border-b border-slate-200 dark:border-white/5 min-h-[250px] relative transition-colors"></div>
+
+                                    <div class="p-5 bg-slate-50 dark:bg-[#0f141e] flex flex-col shrink-0 h-auto sm:h-[230px] transition-colors">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <span class="text-[10px] uppercase font-bold text-slate-400 dark:text-white/30 tracking-widest transition-colors">Syarat Kontrak Desain</span>
+                                            <span id="progressText" class="text-[9px] sm:text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-900/30 px-2 py-0.5 rounded border border-cyan-200 dark:border-cyan-500/20 shadow-inner transition-colors">0/3 Terpenuhi</span>
+                                        </div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] sm:text-[11px] font-mono text-slate-600 dark:text-white/50 mb-4 flex-1 overflow-y-auto custom-scrollbar p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/5 transition-colors">
+                                            <div id="check-title-font" class="flex items-start gap-2.5"><span class="w-3.5 h-3.5 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] shrink-0 transition-colors"></span> <div><b class="block mb-1 text-slate-800 dark:text-white/80 transition-colors">Identitas Font (#news-title):</b> Hapus atribut aslinya, lalu wajibkan penggunaan huruf klasik (serif) dan ukuran ekstra jumbo 6xl.</div></div>
+                                            <div id="check-title-weight" class="flex items-start gap-2.5"><span class="w-3.5 h-3.5 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] shrink-0 transition-colors"></span> <div><b class="block mb-1 text-slate-800 dark:text-white/80 transition-colors">Bobot Warna (#news-title):</b> Pastikan tinta tulisan tersebut ditebalkan sekokoh baja (black) dengan pigmen hitam pekat (slate-900).</div></div>
+                                            <div id="check-body-style" class="flex items-start gap-2.5 sm:col-span-2 mt-2 pt-2 border-t border-slate-200 dark:border-white/5 transition-colors"><span class="w-3.5 h-3.5 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] shrink-0 transition-colors"></span> <div><b class="block mb-1 text-slate-800 dark:text-white/80 transition-colors">Tubuh Teks (#news-body):</b> Singkirkan pemusatan paragraf. Patok pada tepi kiri, longgarkan pernapasan spasi antar baris secara leluasa, dan redamkan kontras pigmen ke tingkat menengah (slate-500).</div></div>
+                                        </div>
+                                        <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-2.5 sm:py-3 rounded-lg bg-emerald-600 text-white font-bold text-[11px] sm:text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 hover:-translate-y-0.5 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 focus:outline-none active:scale-95">
+                                            <span>Selesaikan Semua Syarat Pemeriksaan Dulu</span>
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                         </button>
-                                        <div id="feedback-area" class="mt-4 hidden p-4 rounded-xl text-center text-sm font-bold border"></div>
                                     </div>
                                 </div>
 
-                                {{-- PREVIEW EXPERT --}}
-                                <div class="lg:col-span-7 bg-white p-6 sm:p-10 flex flex-col items-center relative overflow-y-auto custom-scrollbar">
-                                    <div class="absolute top-4 right-4 text-[9px] font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded shadow-sm">SIMULASI BROWSER KLIEN</div>
-
-                                    <div class="w-full max-w-xl mt-8">
-                                        
-                                        <div class="relative group mb-6">
-                                            <div class="absolute -left-3 -top-6 sm:-left-8 sm:top-2 bg-indigo-600 text-white text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition shadow-md whitespace-nowrap z-20">BLOK JUDUL</div>
-                                            <div class="p-4 border-2 border-dashed border-indigo-200 rounded-xl bg-indigo-50/30 group-hover:border-indigo-500 transition-colors relative z-10">
-                                                <h1 id="target-title" class="font-sans text-xl font-normal text-slate-300 transition-all duration-300 leading-tight">
-                                                    Sistem Antarmuka Evolusioner Mendobrak Batas Estetika Tradisional
-                                                </h1>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center gap-3 text-xs text-slate-400 mb-8 border-b border-slate-200 pb-4 font-sans">
-                                            <span class="font-bold text-rose-600 uppercase tracking-widest">Opini Pakar</span>
-                                            <span>&bull;</span> <span>{{ date('d M Y') }}</span>
-                                        </div>
-
-                                        <div class="relative group">
-                                            <div class="absolute -left-3 -top-6 sm:-left-8 sm:top-2 bg-fuchsia-600 text-white text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition shadow-md whitespace-nowrap z-20">BLOK PARAGRAF</div>
-                                            <div class="p-4 border-2 border-dashed border-fuchsia-200 rounded-xl bg-fuchsia-50/30 group-hover:border-fuchsia-500 transition-colors relative z-10">
-                                                <p id="target-body" class="font-sans text-left leading-none text-slate-900 transition-all duration-300">
-                                                    Arsitek rancangan dunia maya pada abad modern dipaksa menelan pil pahit kebenaran bahwa pengguna perangkat genggam tidak lagi membaca deretan paragraf melainkan menyapu memindai pola teks. Penerapan pemecahan spasi hiruk-pikuk yang terlalu sesak akan menghancurkan retensi minat secara seketika dan menaikkan persentase pentalan lalu lintas penonton web korporat Anda menuju jurang kehancuran bisnis komersial absolut tanpa celah ampun sama sekali di medan persaingan global ini.
-                                                </p>
-                                            </div>
-                                        </div>
-
+                                {{-- PREVIEW KANAN --}}
+                                <div class="bg-slate-100 dark:bg-[#1e1e1e] flex flex-col relative overflow-hidden w-full xl:w-auto h-[400px] xl:h-auto transition-colors">
+                                    <div class="bg-slate-200 dark:bg-[#2d2d2d] px-4 py-3 border-b border-slate-300 dark:border-white/5 flex items-center justify-between shrink-0 transition-colors">
+                                        <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Live Browser Rendering</span>
+                                        <span class="text-[9px] sm:text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm transition-colors">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_#10b981]"></span> Auto-Sync
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 bg-slate-100 dark:bg-gray-900 relative w-full h-full p-0 transition-colors">
+                                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay"></div>
+                                        <iframe id="previewFrame" class="w-full h-full border-0 bg-transparent relative z-10 custom-scrollbar"></iframe>
                                     </div>
                                 </div>
                             </div>
@@ -612,23 +606,24 @@
 
                 </article>
 
-                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
-                    <a href="{{ route('courses.layout-mgmt') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shadow-sm dark:shadow-none shrink-0">
+                {{-- FOOTER NAVIGATION --}}
+                <div class="mt-32 pt-8 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
+                    <a href="{{ route('courses.layout-mgmt') ?? '#' }}" class="group flex items-center gap-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition w-full sm:w-auto justify-center sm:justify-start">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center bg-slate-100 dark:bg-transparent group-hover:bg-slate-200 dark:group-hover:bg-white/5 transition shrink-0">
                             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
                         <div class="text-center sm:text-left">
-                            <div class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-60 mb-0.5">Kembali</div>
-                            <div class="font-black text-xs md:text-sm line-clamp-1">Layouting Tailwind CSS</div>
+                            <div class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-50 mb-0.5">Sebelumnya</div>
+                            <div class="font-bold text-xs md:text-sm line-clamp-1">Layouting CSS</div>
                         </div>
                     </a>
                     
-                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end flex-row-reverse sm:flex-row">
+                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end flex-row-reverse sm:flex-row">
                         <div class="text-center sm:text-right">
-                            <div id="nextLabel" class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-60 mb-0.5 text-rose-500 dark:text-red-400">Selanjutnya</div>
-                            <div class="font-black text-xs md:text-sm line-clamp-1">Background </div>
+                            <div id="nextLabel" class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-50 mb-0.5 text-rose-500 dark:text-rose-400 transition-colors">Berikutnya</div>
+                            <div class="font-bold text-xs md:text-sm line-clamp-1">Background </div>
                         </div>
-                        <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shadow-sm dark:shadow-none shrink-0">
+                        <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-200 dark:border-white/5 flex items-center justify-center bg-slate-100 dark:bg-white/5 shrink-0 transition-colors">
                             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
@@ -640,28 +635,30 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 
 <script>
-    /* --- 1. KONFIGURASI BASIS DATA --- */
+    /* --- 1. CONFIGURATION (AJAX & DATABASE) --- */
     window.LESSON_IDS = [46, 47, 48, 49, 50, 51]; 
-    
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
     window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
     let completedSet = new Set(window.COMPLETED_IDS);
     
+    // Config Aktivitas Akhir Tipografi 3.1
     const ACTIVITY_LESSON_ID = 51; 
     let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
 
+    /* --- 2. INITIALIZATION --- */
     document.addEventListener('DOMContentLoaded', () => {
-        initScrollSpy();
         initSidebarScroll();
+        initVisualEffects();
         
         updateProgressUI(false); 
         
-        initExpertChallenge();
-
+        initMonaco();
+        
         if (activityCompleted) {
-            lockExpertUI();
+            lockActivityUI();
             unlockNextChapter();
         }
 
@@ -675,7 +672,9 @@
         });
     });
 
-    /* --- 2. MANAJEMEN STATUS & NAVIGASI --- */
+    /* ==========================================
+       LOGIKA KEMAJUAN PELAJARAN (PROGRESS BAR)
+       ========================================== */
     function updateProgressUI(animate = true) {
         const total = window.LESSON_IDS.length; 
         const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length; 
@@ -684,11 +683,11 @@
         const bar = document.getElementById('topProgressBar');
         const label = document.getElementById('progressLabelTop');
         
-        if(!animate && bar) bar.style.transition = 'none';
-        if(bar) bar.style.width = percent + '%'; 
-        if(!animate && bar) setTimeout(() => bar.style.transition = 'all 0.5s', 50);
+        if(!animate) bar.style.transition = 'none';
+        bar.style.width = percent + '%'; 
+        if(!animate) setTimeout(() => bar.style.transition = 'all 0.5s', 50);
         
-        if(label) label.innerText = percent + '%';
+        label.innerText = percent + '%';
         if(percent === 100 && activityCompleted) unlockNextChapter();
     }
 
@@ -697,13 +696,21 @@
         if(navItem) {
             const dot = navItem.querySelector('.dot');
             if(dot) {
-                dot.outerHTML = `<svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                const isActivity = navItem.querySelector('.sidebar-anchor')?.dataset.type === 'activity';
+                if (isActivity) {
+                    dot.outerHTML = `<svg class="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                } else {
+                    dot.outerHTML = `<svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                }
             }
         }
     }
 
+    /* ==========================================
+       AJAX POST REQUEST KE DATABASE
+       ========================================== */
     async function saveLessonToDB(lessonId) { 
-        lessonId = Number(lessonId); 
+        lessonId = Number(lessonId);
         if(completedSet.has(lessonId)) return; 
 
         try {
@@ -726,10 +733,13 @@
                 markSidebarDone(lessonId);
             }
         } catch(e) {
-            console.error('Pemutusan penyambungan lokal:', e);
+            console.error('Network Error:', e);
         }
     }
 
+    /* ==========================================
+       MASTER SCROLL OBSERVER
+       ========================================== */
     function initMasterObserver() {
         const mainScroll = document.getElementById('mainScroll'); 
         const sections = document.querySelectorAll('.lesson-section');
@@ -746,7 +756,7 @@
                     if (entry.isIntersecting) {
                         const targetId = entry.target.id;
                         const lessonId = Number(entry.target.dataset.lessonId);
-                        const isActivity = entry.target.dataset.manual === 'true';
+                        const isActivity = entry.target.dataset.type === 'activity';
 
                         if (typeof highlightAnchor === 'function') {
                             highlightAnchor(targetId);
@@ -763,280 +773,337 @@
         }
     }
 
+    /* --- 4. FINISH LOGIC (ACTIVITY EXPERT MONACO) --- */
+    let editor;
+    const starterCode = `<div class="bg-slate-100 p-8 min-h-screen">
+  <article class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+    
+    <h1 id="news-title" class="font-sans text-xl font-normal text-slate-400 mb-4">
+      Evolusi Tipografi Digital di Era Modern
+    </h1>
+
+    <div class="h-px bg-slate-200 my-4 w-1/4"></div>
+
+    <p id="news-body" class="font-sans text-center leading-none text-slate-900">
+      Tipografi bukan sekadar memilih jenis huruf, melainkan seni mengatur teks agar postur visualnya seimbang dan nyaman dibaca. Di era digital moderen yang berkecepatan tinggi, pengaturan mikrotipografi pernapasan spasi antar baris dan perataan tepi paragraf sangat menentukan secara absolut apakah pembaca akan memusatkan perhatian lebih lama atau pergi meninggalkan produk web komersial Anda dalam hitungan sepersekian detik.
+    </p>
+
+  </article>
+</div>`;
+
+    function initMonaco() {
+        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            
+            editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                value: starterCode, 
+                language: 'html', 
+                theme: 'vs-dark', // Force dark theme for cosmic design consistently
+                fontSize: window.innerWidth < 768 ? 12 : 14,
+                minimap: { enabled: false }, 
+                automaticLayout: true, 
+                padding: { top: 16, bottom: 16 }, 
+                lineNumbers: 'on',
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                formatOnPaste: true,
+            });
+            
+            window.addEventListener('resize', () => { if(editor) editor.layout(); });
+
+            updatePreview(starterCode);
+            
+            if (activityCompleted) {
+                lockActivityUI();
+            }
+            
+            editor.onDidChangeModelContent(() => {
+                if(activityCompleted) return;
+                const code = editor.getValue();
+                updatePreview(code);
+                validateCodeRegex(code);
+            });
+        });
+    }
+
+    function updatePreview(code) {
+        const frame = document.getElementById('previewFrame');
+        const content = `
+        <!doctype html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+                body { margin: 0; padding: 0; background-color: transparent; }
+                * { transition: all 0.3s ease-in-out; }
+            </style>
+        </head>
+        <body class="w-full h-full flex items-start justify-center pt-8">
+            ${code}
+        </body>
+        </html>`;
+        frame.srcdoc = content;
+    }
+
+    function validateCodeRegex(code) {
+        let passed = 0;
+        
+        const titleMatch = code.match(/id="news-title"[^>]*class="([^"]*)"/);
+        const bodyMatch = code.match(/id="news-body"[^>]*class="([^"]*)"/);
+
+        const titleCls = titleMatch ? titleMatch[1] : '';
+        const bodyCls = bodyMatch ? bodyMatch[1] : '';
+
+        const checks = [
+            { id: 'check-title-font', valid: /\bfont-serif\b/.test(titleCls) && /\btext-6xl\b/.test(titleCls) && !/\bfont-sans\b/.test(titleCls) },
+            { id: 'check-title-weight', valid: /\bfont-black\b/.test(titleCls) && /\btext-slate-900\b/.test(titleCls) },
+            { id: 'check-body-style', valid: /\btext-left\b/.test(bodyCls) && /\bleading-relaxed\b/.test(bodyCls) && /\btext-slate-500\b/.test(bodyCls) && !/\btext-center\b/.test(bodyCls) }
+        ];
+
+        checks.forEach(c => {
+            const el = document.getElementById(c.id);
+            if (!el) return;
+            const dot = el.querySelector('span'); 
+            const textDiv = el.querySelector('div');
+            
+            if(c.valid) {
+                textDiv.classList.add('text-green-500', 'dark:text-green-400');
+                textDiv.querySelector('b').classList.add('text-green-600', 'dark:text-green-300');
+                textDiv.querySelector('b').classList.remove('text-slate-800', 'dark:text-white/80');
+                dot.innerHTML = '✓'; 
+                dot.classList.remove('border-slate-300', 'dark:border-white/20');
+                dot.classList.add('bg-emerald-500', 'border-transparent', 'text-white');
+                passed++;
+            } else {
+                textDiv.classList.remove('text-green-500', 'dark:text-green-400');
+                textDiv.querySelector('b').classList.remove('text-green-600', 'dark:text-green-300');
+                textDiv.querySelector('b').classList.add('text-slate-800', 'dark:text-white/80');
+                dot.innerHTML = ''; 
+                dot.classList.remove('bg-emerald-500', 'border-transparent', 'text-white');
+                dot.classList.add('border-slate-300', 'dark:border-white/20');
+            }
+        });
+
+        document.getElementById('progressText').innerText = passed + '/3 Selesai';
+        
+        const btn = document.getElementById('submitExerciseBtn');
+        if (passed === 3) {
+            btn.disabled = false;
+            btn.classList.remove('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = '<span>Simpan Arsitektur Server & Lanjut</span><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+        } else {
+            btn.disabled = true;
+            btn.classList.add('cursor-not-allowed', 'opacity-50');
+            btn.innerHTML = '<span>Selesaikan Semua Syarat Test Dulu</span><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
+        }
+    }
+
+    function resetEditor() { 
+        if(editor && !activityCompleted) { 
+            editor.setValue(starterCode); 
+            validateCodeRegex(starterCode); 
+        } 
+    }
+
+    async function submitExercise() {
+        const btn = document.getElementById('submitExerciseBtn');
+        btn.innerHTML = '<span class="animate-pulse">Menyimpan Tinta Komando ke Database...</span>'; 
+        btn.disabled = true;
+        
+        try {
+            await saveLessonToDB(ACTIVITY_LESSON_ID); 
+            activityCompleted = true;
+            lockActivityUI();   
+            unlockNextChapter(); 
+        } catch(e) { 
+            console.error(e); 
+            btn.innerHTML = "Sistem Menolak Koneksi. Silakan Coba Tekan Lagi.";
+            btn.disabled = false;
+            btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 500);
+        }
+    }
+
+    function lockActivityUI() {
+        document.getElementById('lockOverlay').classList.remove('hidden');
+        if(editor) editor.updateOptions({ readOnly: true });
+        
+        const btn = document.getElementById('submitExerciseBtn'); 
+        btn.innerText = "Sistem Arsitektur Modul Terkunci Otomatis"; 
+        btn.disabled = true;
+        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+        btn.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-500', 'dark:text-slate-400', 'cursor-not-allowed', 'shadow-none');
+        
+        if(editor && activityCompleted) {
+            editor.setValue(`<div class="bg-slate-100 p-8 min-h-screen">\n  <article class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">\n    \n    <h1 id="news-title" class="font-serif text-6xl font-black text-slate-900 mb-4">\n      Evolusi Tipografi Digital di Era Modern\n    </h1>\n\n    <div class="h-px bg-slate-200 my-4 w-1/4"></div>\n\n    <p id="news-body" class="font-sans text-left leading-relaxed text-slate-500">\n      Tipografi bukan sekadar memilih jenis huruf, melainkan seni mengatur teks agar postur visualnya seimbang dan nyaman dibaca. Di era digital moderen yang berkecepatan tinggi, pengaturan mikrotipografi pernapasan spasi antar baris dan perataan tepi paragraf sangat menentukan secara absolut apakah pembaca akan memusatkan perhatian lebih lama atau pergi meninggalkan produk web komersial Anda dalam hitungan sepersekian detik.\n    </p>\n\n  </article>\n</div>`);
+            validateCodeRegex(editor.getValue());
+        }
+    }
+
     function unlockNextChapter() {
         const btn = document.getElementById('nextChapterBtn');
         if(btn) {
-            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
-            btn.classList.add('text-indigo-600', 'dark:text-indigo-400', 'cursor-pointer');
+            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
+            btn.classList.add('text-cyan-600', 'dark:text-cyan-400', 'hover:text-cyan-700', 'dark:hover:text-white', 'cursor-pointer');
             
-            const label = document.getElementById('nextLabel');
-            if(label) {
-                label.innerText = "Berikutnya";
-                label.classList.remove('opacity-60', 'text-rose-500', 'dark:text-red-400');
-                label.classList.add('text-indigo-600', 'dark:text-indigo-400', 'opacity-100');
-            }
+            document.getElementById('nextLabel').innerText = "Berikutnya";
+            document.getElementById('nextLabel').classList.remove('opacity-50', 'text-rose-500', 'dark:text-rose-400');
+            document.getElementById('nextLabel').classList.add('text-cyan-600', 'dark:text-cyan-400', 'opacity-100');
             
             const icon = document.getElementById('nextIcon');
-            if(icon) {
-                icon.innerHTML = `<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
-                icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
-                icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/50', 'text-indigo-600', 'dark:text-indigo-400', 'shadow-lg');
-            }
+            icon.innerHTML = `<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
+            icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
+            icon.classList.add('bg-cyan-100', 'dark:bg-cyan-500/10', 'border-cyan-300', 'dark:border-cyan-500/30', 'text-cyan-600', 'dark:text-cyan-400', 'shadow-md', 'dark:shadow-lg');
             
             btn.onclick = () => window.location.href = "{{ route('courses.backgrounds') ?? '#' }}"; 
         }
     }
 
-    /* --- 3. LOGIKA FUNGSI SIMULATOR MATERI LOKAL --- */
+    /* --- 5. SIMULATOR LOGIC INTERAKTIF --- */
     window.updateSimFont = function(btn, cls) {
-        $('.btn-sim-1').removeClass('bg-indigo-500 text-white shadow-md border-indigo-400').addClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-indigo-500 border-adaptive');
-        $(btn).removeClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-indigo-500 border-adaptive').addClass('bg-indigo-500 text-white shadow-md border-indigo-400');
+        $('.btn-sim-1').removeClass('bg-cyan-600 text-white shadow-lg border-cyan-400').addClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border-transparent hover:bg-slate-300 dark:hover:bg-white/10');
+        $(btn).removeClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 border-transparent hover:bg-slate-300 dark:hover:bg-white/10').addClass('bg-cyan-600 text-white shadow-lg border-cyan-400');
         
         const el = document.getElementById('demo-font-title');
         const body = document.getElementById('demo-font-body');
-        el.className = `text-xl font-bold text-heading transition-all duration-300 mb-2 ${cls}`;
-        body.className = `text-sm text-muted transition-all duration-300 ${cls}`;
+        el.className = `text-xl font-bold text-slate-900 dark:text-white transition-all duration-300 mb-2 ${cls}`;
+        body.className = `text-sm text-slate-500 dark:text-white/60 transition-all duration-300 leading-relaxed ${cls}`;
+
+        const insight = document.getElementById('demo-font-insight');
+        if(cls === 'font-sans') insight.innerHTML = "Gunakan <code class='font-bold'>font-sans</code> sebagai fondasi utama antarmuka (UI) karena sifatnya yang netral dan sangat mudah dibaca pada berbagai ukuran layar.";
+        if(cls === 'font-serif') insight.innerHTML = "Nuansa <code class='font-bold'>font-serif</code> memancarkan kesan intelektual, formal, dan editorial bergengsi. Pilihan absolut untuk blog dan koran digital.";
+        if(cls === 'font-mono') insight.innerHTML = "Pola mekanis <code class='font-bold'>font-mono</code> memaksa setiap huruf memakan lebar area yang sama. Esensial jika Anda merancang tabel angka atau papan kode blok.";
+        
+        insight.classList.remove('insight-box'); void insight.offsetWidth; insight.classList.add('insight-box');
     };
 
     window.updateSimSize = function(btn, size) {
-        $('.btn-sim-2').removeClass('border-purple-500').addClass('border-transparent hover:border-purple-400');
-        $(btn).removeClass('border-transparent hover:border-purple-400').addClass('border-purple-500');
+        $('.btn-sim-2').removeClass('border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-r').addClass('border-transparent hover:border-blue-400 bg-slate-50 dark:bg-white/5 rounded-r');
+        $(btn).removeClass('border-transparent hover:border-blue-400 bg-slate-50 dark:bg-white/5').addClass('border-blue-500 bg-blue-50 dark:bg-blue-900/20');
 
         const el = document.getElementById('demo-size');
-        el.className = `font-bold text-heading transition-all duration-300 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/50 p-2 rounded ${size}`;
+        el.className = `text-base text-slate-900 dark:text-white font-bold transition-all duration-300 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 p-3 rounded leading-normal ${size}`;
+
+        const insight = document.getElementById('demo-size-insight');
+        if(size === 'text-sm') insight.innerHTML = "Ukuran <code class='font-bold'>text-sm</code> secara otomatis merenggangkan barisnya agar teks mungil ini tetap nyaman disapu pandangan.";
+        if(size === 'text-base') insight.innerHTML = "Keseimbangan absolut. Tailwind menyetel rasio paling sempurna pada <code class='font-bold'>text-base</code> untuk tulisan panjang (body text).";
+        if(size === 'text-2xl') insight.innerHTML = "Menjelang ukuran <code class='font-bold'>text-2xl</code>, perhatikan barisnya ditarik menjadi sedikit lebih kompak dan mampat ke dalam.";
+        if(size === 'text-4xl') insight.innerHTML = "Pada ukuran super jumbo <code class='font-bold'>text-4xl</code>, spasi baris wajib sangat rapat agar sepasang kalimat judul tidak terlihat retak/terpisah secara optikal.";
+        insight.classList.remove('insight-box'); void insight.offsetWidth; insight.classList.add('insight-box');
     };
 
     window.updateSimWeight = function(btn, cls) {
-        $('.btn-sim-3').removeClass('bg-pink-500 text-white border-pink-400 shadow-md').addClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-pink-500 border-adaptive');
-        $(btn).removeClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-pink-500 border-adaptive').addClass('bg-pink-500 text-white border-pink-400 shadow-md');
+        $('.btn-sim-3').removeClass('bg-sky-600 text-white border-sky-400 shadow-lg').addClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent');
+        $(btn).removeClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent').addClass('bg-sky-600 text-white border-sky-400 shadow-lg');
 
         const el = document.getElementById('demo-weight');
         el.className = `text-4xl text-white transition-all duration-300 antialiased ${cls}`;
+
+        const insight = document.getElementById('demo-weight-insight');
+        if(cls === 'font-light') insight.innerHTML = "Efek <code class='font-bold'>font-light</code> menampilkan visual ramping bersahaja. Ideal untuk subjudul besar yang sengaja dirancang agar tidak berisik mencuri sorotan utama.";
+        if(cls === 'font-normal') insight.innerHTML = "Kembali ke setelan netral alami. Paragraf panjang hampir selalu dikunci dengan <code class='font-bold'>font-normal</code> agar penglihatan pembaca tidak teraniaya.";
+        if(cls === 'font-bold') insight.innerHTML = "Menghunjam seketika! <code class='font-bold'>font-bold</code> adalah perangkat tajam mutlak guna memaku nama data terpenting di tumpukan UI Anda.";
+        if(cls === 'font-black') insight.innerHTML = "Massa dan bobot puncaknya <code class='font-bold'>font-black</code> menghasilkan daya dorong dominan. Spesial untuk tipografi bergaya sampul poster yang pendek.";
+        insight.classList.remove('insight-box'); void insight.offsetWidth; insight.classList.add('insight-box');
     };
 
     window.updateSimTrackAlign = function(btn, type, cls) {
-        $(`.btn-sim-4-${type}`).removeClass('bg-emerald-500 text-white border-emerald-400 shadow-md').addClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-emerald-500 border-adaptive');
-        $(btn).removeClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-emerald-500 border-adaptive').addClass('bg-emerald-500 text-white border-emerald-400 shadow-md');
+        $(`.btn-sim-4-${type}`).removeClass('bg-teal-600 text-white border-teal-400 shadow-md').addClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent');
+        $(btn).removeClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent').addClass('bg-teal-600 text-white border-teal-400 shadow-md');
+
+        const insight = document.getElementById('demo-track-align-insight');
 
         if(type === 'track') {
             const el = document.getElementById('demo-track');
-            el.className = `text-3xl font-black text-heading mb-4 uppercase transition-all duration-300 border-b border-adaptive pb-4 ${cls}`;
+            el.className = `text-3xl font-black text-slate-900 dark:text-white mb-4 uppercase transition-all duration-300 border-b border-slate-200 dark:border-white/10 pb-4 ${cls}`;
+            
+            if(cls === 'tracking-tighter') insight.innerHTML = "Kompresi spasi dengan <code class='font-bold'>tracking-tighter</code> mengeratkan susunan kata, mendongkrak teks Hero ini sehingga dirasa mengunci satu sama lain laksana tajuk majalah kenamaan.";
+            if(cls === 'tracking-normal') insight.innerHTML = "Karakter asali yang wajar, polos, aman diterapkan secara meluas tanpa riak distorsi mental bagi otak yang memindainya.";
+            if(cls === 'tracking-widest') insight.innerHTML = "Regangan longgar dari <code class='font-bold'>tracking-widest</code> melahirkan sirkulasi ruang nan lapang, memoles frasa judul seketika terasa sinematik dan berkelas tinggi (premium).";
         } else {
             const el = document.getElementById('demo-align');
             el.className = el.className.replace(/text-(left|center|right|justify)/g, '');
             el.classList.add(cls);
+
+            if(cls === 'text-left') insight.innerHTML = "Formasi <code class='font-bold'>text-left</code> adalah landasan mutlak untuk tubuh artikel panjang karena mata manusia telah terlatih melacak tepi rata lurus di sisi kiri tulisan.";
+            if(cls === 'text-center') insight.innerHTML = "Formasi simetris <code class='font-bold'>text-center</code>. Hindari penerapannya untuk naskah lebih dari tiga baris kalimat, karena titik awal pandang mata pengguna menjadi acak berpindah-pindah.";
+            if(cls === 'text-justify') insight.innerHTML = "Awas jebakan pemula! Memaksa tepian sejajar dengan <code class='font-bold'>text-justify</code> menelurkan ruang spasial compang-camping di antara susunan kata, sangat merusak keindahan susunan pada perangkat layar kecil.";
         }
+        insight.classList.remove('insight-box'); void insight.offsetWidth; insight.classList.add('insight-box');
     };
 
     window.updateSimTransDecor = function(btn, type, cls) {
-        $(`.btn-sim-5-${type}`).removeClass('bg-cyan-500 text-white border-cyan-400 shadow-md').addClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-cyan-500 border-adaptive');
-        $(btn).removeClass('bg-white dark:bg-black/30 text-slate-700 dark:text-gray-300 hover:border-cyan-500 border-adaptive').addClass('bg-cyan-500 text-white border-cyan-400 shadow-md');
+        $(`.btn-sim-5-${type}`).removeClass('bg-indigo-600 text-white border-indigo-400 shadow-md').addClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent');
+        $(btn).removeClass('bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-white/50 hover:bg-slate-300 dark:hover:bg-white/10 border-transparent').addClass('bg-indigo-600 text-white border-indigo-400 shadow-md');
 
         const el = document.getElementById('demo-trans-decor');
+        const insight = document.getElementById('demo-trans-decor-insight');
+
         if(type === 'trans') {
             el.className = el.className.replace(/normal-case|uppercase|lowercase|capitalize/g, '');
             el.classList.add(cls === '' ? 'normal-case' : cls);
+            
+            if(cls === 'uppercase') insight.innerHTML = "Modifikasi absolut! Filter <code class='font-bold'>uppercase</code> melapisi antarmuka grafis di garis depan, membiarkan nilai rekaman mentah di database Anda bersih dan lugu selamanya.";
+            if(cls === 'capitalize') insight.innerHTML = "Penyulap awalan! Kelas pintar <code class='font-bold'>capitalize</code> memaksa abjad muka dalam untaian kalimat berdiri menyambut secara kapital, membersihkan rutinitas melelahkan via JS.";
+            if(cls === 'normal-case' || cls === '') insight.innerHTML = "Kalimat dirender sesuai dengan integritas format dari pangkalan data asalnya tanpa diintervensi oleh gaya CSS tambahan.";
         } else {
             el.className = el.className.replace(/underline[\w-]*|decoration-[\w-]*|line-through/g, '');
             if(cls !== '') {
                 const parts = cls.split(' ');
                 parts.forEach(p => el.classList.add(p));
             }
+
+            if(cls.includes('underline-offset')) insight.innerHTML = "Lihat saat Anda meletikkan bilah <strong>Garis Modern</strong>. Tinta garis bawah longsor mengendur dari himpitan dasar huruf dan menghadirkan rongga segar memanjakan lekukan lengkung huruf g/y/p.";
+            else if(cls.includes('decoration-wavy')) insight.innerHTML = "Menumpuk properti! Menjajarkan ornamen <code class='font-bold'>decoration-wavy</code> jamak dijumpai dalam sorotan modul cek-ejaan (spell-check) atau rancang seni moderen nan nakal berestetika eksentrik.";
+            else insight.innerHTML = "Sebuah tautan tak harus selamanya dijerat ikatan tali bawah. Menghilangkannya memutihkan kanvas aplikasi menuju tatanan era UI yang jauh lebih bersih ketimbang situs purba era 90-an.";
         }
+        insight.classList.remove('insight-box'); void insight.offsetWidth; insight.classList.add('insight-box');
     };
 
-    /* --- 4. LOGIKA MESIN AKTIVITAS FINAL (EXPERT CHALLENGE) --- */
-    const studyCaseConfig = {
-        title: {
-            id: 'target-title',
-            label: 'Perombakan Baris Judul',
-            categories: {
-                font: { title: 'Langgam Karakter', options: [{cls: 'font-sans', name: 'Modern'}, {cls: 'font-serif', name: 'Klasik Kuno', correct: true}, {cls: 'font-mono', name: 'Mesin Ketik'}] },
-                size: { title: 'Rasio Ukuran', options: [{cls: 'text-xl', name: 'Sederhana'}, {cls: 'text-3xl', name: 'Biasa'}, {cls: 'text-6xl', name: 'Ekstra Jumbo', correct: true}] },
-                weight: { title: 'Ketegasan Tinta', options: [{cls: 'font-normal', name: 'Normal'}, {cls: 'font-bold', name: 'Tebal'}, {cls: 'font-black', name: 'Baja Padat', correct: true}] },
-                color: { title: 'Nuansa Gelap', options: [{cls: 'text-slate-900', name: 'Hitam Penuh', correct: true}, {cls: 'text-indigo-600', name: 'Biru Laut'}, {cls: 'text-slate-300', name: 'Kelabu Memudar'}] }
-            }
-        },
-        body: {
-            id: 'target-body',
-            label: 'Perombakan Baris Paragraf',
-            categories: {
-                align: { title: 'Pedoman Pinggir', options: [{cls: 'text-left', name: 'Rata Sisi Kiri'}, {cls: 'text-center', name: 'Pusat Tengah'}, {cls: 'text-justify', name: 'Rata Tepi Penuh', correct: true}] },
-                leading: { title: 'Celah Pernapasan', options: [{cls: 'leading-none', name: 'Sangat Menjerat'}, {cls: 'leading-normal', name: 'Sedang'}, {cls: 'leading-relaxed', name: 'Longgar Leluasa', correct: true}] },
-                color: { title: 'Pigmen Kenyamanan', options: [{cls: 'text-slate-900', name: 'Menikam Mata'}, {cls: 'text-slate-500', name: 'Kenyamanan Menengah', correct: true}, {cls: 'text-red-500', name: 'Merah Darah'}] }
-            }
-        }
-    };
-
-    let userChoices = { 
-        title: { font: 'font-sans', size: 'text-xl', weight: 'font-normal', color: 'text-slate-300' }, 
-        body: { align: 'text-left', leading: 'leading-none', color: 'text-slate-900' } 
-    };
-
-    function initExpertChallenge() {
-        const container = $('#practice-controls');
-        if(!container.length) return;
-        
-        Object.entries(studyCaseConfig).forEach(([sectionKey, sectionData]) => {
-            let html = `<div class="bg-white/5 p-5 rounded-2xl border border-white/10 mb-6 shadow-md relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <h4 class="text-indigo-300 font-bold mb-5 uppercase text-[11px] tracking-[0.15em] border-b border-white/10 pb-3 flex items-center gap-2 relative z-10">
-                    <span class="w-1.5 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_#6366f1]"></span> ${sectionData.label}
-                </h4>`;
-                
-            Object.entries(sectionData.categories).forEach(([catKey, catData]) => {
-                html += `<div class="mb-5 last:mb-0 relative z-10">
-                    <label class="text-[10px] text-white/50 mb-2 block font-bold tracking-widest uppercase">${catData.title}</label>
-                    <div class="flex flex-wrap gap-2">`;
-                
-                catData.options.forEach(opt => {
-                    const isInit = userChoices[sectionKey][catKey] === opt.cls;
-                    const btnClass = isInit ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30' : 'text-white/60 border-white/10 hover:border-indigo-400 hover:bg-indigo-500/20 bg-white/5';
-                    html += `<button onclick="selectExpertOption('${sectionKey}','${catKey}','${opt.cls}',this)" class="btn-expert-${sectionKey}-${catKey} px-3 py-2 rounded-lg text-xs font-bold border transition-all active:scale-95 ${btnClass}">${opt.name}</button>`;
-                });
-                
-                html += `</div></div>`;
-            });
-            html += `</div>`;
-            container.append(html);
-        });
-    }
-
-    window.selectExpertOption = function(sKey, cKey, cls, btn) {
-        if(activityCompleted) return;
-        
-        $(`.btn-expert-${sKey}-${cKey}`).removeClass('bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30').addClass('text-white/60 border-white/10 bg-white/5');
-        $(btn).removeClass('text-white/60 border-white/10 bg-white/5').addClass('bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30');
-        
-        userChoices[sKey][cKey] = cls;
-        
-        const target = $(`#${studyCaseConfig[sKey].id}`);
-        const allCls = studyCaseConfig[sKey].categories[cKey].options.map(o=>o.cls);
-        target.removeClass(allCls.join(' ')).addClass(cls);
-    };
-
-    window.checkExpertSolution = async function() {
-        if(activityCompleted) return;
-        
-        let isCorrect = true;
-        Object.entries(studyCaseConfig).forEach(([sKey, sData]) => {
-            Object.entries(sData.categories).forEach(([cKey, catData]) => {
-                const pick = userChoices[sKey][cKey];
-                const correctOpt = catData.options.find(o => o.correct);
-                if(correctOpt && pick !== correctOpt.cls) isCorrect = false;
-            });
-        });
-
-        const fb = $('#feedback-area');
-        fb.removeClass('hidden bg-rose-500/10 text-rose-400 border-rose-500/30 bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-emerald-500/20 shadow-rose-500/20');
-        
-        if(isCorrect) {
-            fb.addClass('bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-md shadow-emerald-500/20').html(`
-                <div class="text-4xl mb-3 animate-bounce mt-2">🏅</div>
-                <div class="text-lg font-black mb-1">Estetika Sempurna Diakui</div>
-                <div class="text-[11px] opacity-80 leading-relaxed max-w-xs mx-auto mb-2">Tatanan piksel karya Anda telah selaras. Membuka blokir penguncian rute...</div>
-            `);
-            await finishExpertChallenge();
-        } else {
-            fb.addClass('bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-md shadow-rose-500/20').html(`
-                <div class="text-4xl mb-3 animate-pulse mt-2">⚖️</div>
-                <div class="text-lg font-black mb-1">Ketidakseimbangan Rasio Deteksi</div>
-                <div class="text-[11px] opacity-80 leading-relaxed max-w-xs mx-auto mb-2">Amati instruksi di atas kembali. Pastikan perpaduan ketebalan ekstrim pada judul diseimbangkan dengan kelembutan pudar di paragraf.</div>
-            `);
-        }
-        fb.removeClass('hidden');
-    };
-
-    async function finishExpertChallenge() {
-        const btn = document.getElementById('checkBtn');
-        btn.innerHTML = '<span class="animate-pulse">Menghubungi Pusat Satelit Verifikasi...</span>'; 
-        btn.disabled = true;
-        
-        try {
-            await saveLessonToDB(ACTIVITY_LESSON_ID); 
-            activityCompleted = true;
-            lockExpertUI();   
-            unlockNextChapter(); 
-        } catch(e) { 
-            console.error(e); 
-            btn.innerHTML = "Tautan Satelit Gugur. Ulangi Penekanan.";
-            btn.disabled = false;
-            btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 500);
-        }
-    }
-
-    function lockExpertUI() {
-        $('#practice-controls button').prop('disabled', true).addClass('opacity-50 cursor-not-allowed grayscale');
-        
-        const btn = document.getElementById('checkBtn'); 
-        if(btn) {
-            btn.innerText = "Sektor Penugasan Ini Telah Diasuransikan Permanen (Selesai)"; 
-            btn.disabled = true;
-            btn.classList.remove('from-indigo-600', 'to-fuchsia-600', 'hover:-translate-y-0.5', 'hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)]');
-            btn.classList.add('bg-emerald-600', 'cursor-not-allowed', 'shadow-none');
-        }
-
-        if(activityCompleted) {
-            // Force valid final UI state
-            const titleTarget = $('#target-title');
-            titleTarget.removeClass().addClass('p-4 border-2 border-dashed border-indigo-200 rounded-xl bg-indigo-50/30 group-hover:border-indigo-500 transition-colors relative z-10 font-serif text-6xl font-black text-slate-900 leading-tight');
-            
-            const bodyTarget = $('#target-body');
-            bodyTarget.removeClass().addClass('p-4 border-2 border-dashed border-fuchsia-200 rounded-xl bg-fuchsia-50/30 group-hover:border-fuchsia-500 transition-colors relative z-10 font-sans text-justify leading-relaxed text-slate-500 transition-all duration-300');
-            
-            const fb = $('#feedback-area');
-            fb.removeClass('hidden').addClass('bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-md shadow-emerald-500/20').html(`
-                <div class="text-2xl mb-2 mt-2">🛡️</div>
-                <div class="text-sm font-black mb-1">Rancangan Terkunci Abadi</div>
-                <div class="text-[10px] opacity-80 leading-relaxed">Nilai estetika Anda telah dipertahankan di pusat bank data pengarsipan peladen utama kami.</div>
-            `);
-        }
-    }
-
-    /* --- 5. LOGIKA PENDUKUNG NAVIGASI SAMPING --- */
+    /* --- 7. SCROLL SPY & SIDEBAR LOGIC --- */
     function highlightAnchor(id) {
-        const isDark = document.documentElement.classList.contains('dark');
         const anchors = document.querySelectorAll('.sidebar-anchor');
 
         anchors.forEach(a => {
-            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-indigo-500', 'border-purple-500');
+            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-cyan-500', 'border-amber-500');
             a.classList.add('border-transparent');
             
             const dot = a.querySelector('.anchor-dot');
             const isActivity = a.dataset.type === 'activity';
 
-            if(dot) dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#6366f1]', 'dark:shadow-[0_0_10px_#a855f7]', 'bg-indigo-500', 'dark:bg-indigo-400');
+            if(dot) dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
             
             if (isActivity) {
-                if(dot) { dot.classList.remove('bg-purple-500', 'dark:bg-purple-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
+                if(dot) { dot.classList.remove('bg-amber-400'); dot.classList.add('bg-slate-300', 'dark:bg-slate-600'); }
             } else {
-                if(dot) { dot.classList.remove('bg-indigo-500', 'dark:bg-indigo-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
+                if(dot) { dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400'); dot.classList.add('bg-slate-300', 'dark:bg-slate-600'); }
             }
 
             const text = a.querySelector('.anchor-text');
-            if(text) { text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold'); text.classList.add('text-slate-500'); }
+            if(text) { text.classList.remove('text-slate-900', 'dark:text-white', 'font-bold'); text.classList.add('text-slate-500', 'dark:text-slate-500'); }
         });
 
         const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
         if (activeAnchor) {
             const isActivity = activeAnchor.dataset.type === 'activity';
             
-            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100');
-            activeAnchor.classList.add(isActivity ? 'border-purple-500' : 'border-indigo-500');
+            activeAnchor.classList.add('bg-slate-100', 'dark:bg-white/5');
+            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-cyan-500');
             activeAnchor.classList.remove('border-transparent');
             
             const dot = activeAnchor.querySelector('.anchor-dot');
             if(dot) {
-                dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
+                dot.classList.remove('bg-slate-300', 'dark:bg-slate-600');
                 if (isActivity) {
-                    dot.classList.add(isDark ? 'dark:bg-purple-400' : 'bg-purple-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#a855f7]' : 'shadow-sm');
+                    dot.classList.add('bg-amber-500', 'dark:bg-amber-400', 'scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#f59e0b]');
                 } else {
-                    dot.classList.add(isDark ? 'dark:bg-indigo-400' : 'bg-indigo-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#6366f1]' : 'shadow-sm');
+                    dot.classList.add('bg-cyan-600', 'dark:bg-cyan-400', 'scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]');
                 }
             }
             
             const text = activeAnchor.querySelector('.anchor-text');
-            if(text) { text.classList.remove('text-slate-500'); text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold'); }
+            if(text) { text.classList.remove('text-slate-500', 'dark:text-slate-500'); text.classList.add('text-slate-900', 'dark:text-white', 'font-bold'); }
         }
     }
 
@@ -1073,24 +1140,6 @@
         }
     }
 
-    function initScrollSpy() {
-        const mainScroll = document.getElementById('mainScroll'); 
-        const sections = document.querySelectorAll('.lesson-section');
-
-        if (mainScroll && sections.length > 0) {
-            const observerOptions = { root: mainScroll, threshold: 0.5 };
-            const observer = new IntersectionObserver((entries) => {
-                let intersectingEntries = entries.filter(e => e.isIntersecting);
-                if(intersectingEntries.length > 0) {
-                    if (typeof highlightAnchor === 'function') {
-                        highlightAnchor(intersectingEntries[0].target.id);
-                    }
-                }
-            }, observerOptions);
-            sections.forEach(section => observer.observe(section));
-        }
-    }
-
     function initSidebarScroll(){
         const m = document.getElementById('mainScroll');
         const l = document.querySelectorAll('.accordion-content .nav-item');
@@ -1105,6 +1154,28 @@
                 if (k.getAttribute('data-target') === c) k.classList.add('active');
             })
         });
+    }
+
+    function initVisualEffects(){
+        const c = document.getElementById('stars');
+        if(!c) return;
+        const x = c.getContext('2d');
+        function r(){ c.width = innerWidth; c.height = innerHeight; }
+        r(); window.addEventListener('resize', r);
+        let s=[];
+        for(let i=0; i<100; i++) s.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.2, v:Math.random()*0.2+.1});
+        
+        function drawStars() {
+            x.clearRect(0,0,c.width,c.height);
+            x.fillStyle='rgba(255,255,255,.3)';
+            s.forEach(t=>{
+                x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill();
+                t.y += t.v;
+                if(t.y > c.height) t.y = 0;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
     }
 </script>
 @endsection

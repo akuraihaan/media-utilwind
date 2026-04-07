@@ -196,7 +196,7 @@
                         <div class="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/10 dark:to-purple-900/10 border border-indigo-300 dark:border-indigo-500/20 p-6 rounded-xl flex items-start gap-4 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] transition group h-full col-span-1 lg:col-span-4 cursor-default">
                             <div class="w-10 h-10 rounded-lg bg-white/50 dark:bg-white/10 text-indigo-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-lg border border-white/10 shadow-sm dark:shadow-none transition-colors">🏁</div>
                             <div>
-                                <h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-2 transition-colors">Final Mission: Fix the Navbar (Expert)</h4>
+                                <h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-2 transition-colors">Final Mission</h4>
                                 <p class="text-xs text-indigo-800 dark:text-white/60 leading-relaxed max-w-3xl transition-colors">Analisis antarmuka yang rusak, lalu perbaiki strukturnya dengan kombinasi utilitas Flexbox agar responsif dan solid pada seluruh ukuran layar perangkat.</p>
                             </div>
                         </div>

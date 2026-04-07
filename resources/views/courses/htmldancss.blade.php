@@ -181,7 +181,7 @@
                         </div>
                         <div class="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 border border-indigo-200 dark:border-indigo-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition group h-full cursor-default sm:col-span-2 md:col-span-1">
                             <div class="w-8 h-8 rounded-lg bg-white/50 dark:bg-white/10 text-indigo-600 dark:text-white flex items-center justify-center shrink-0 font-bold shadow-sm dark:shadow-none">🏁</div>
-                            <div><h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-1 transition-colors">Final Project</h4><p class="text-[11px] text-indigo-700 dark:text-white/70 leading-relaxed transition-colors">Membangun komponen Kartu Produk interaktif secara presisi.</p></div>
+                            <div><h4 class="text-sm font-bold text-indigo-900 dark:text-white mb-1 transition-colors">Final Mission</h4><p class="text-[11px] text-indigo-700 dark:text-white/70 leading-relaxed transition-colors">Membangun komponen Kartu Produk interaktif secara presisi.</p></div>
                         </div>
                     </div>
                 </div>
@@ -782,7 +782,7 @@
                     
                     <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end">
                         <div class="text-right">
-                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Akses Modul Terkunci Sistem</div>
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Berikutnya</div>
                             <div class="font-black text-xs md:text-sm line-clamp-1">Latar Belakang Tailwind CSS</div>
                         </div>
                         <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shrink-0">
@@ -989,7 +989,7 @@
             btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
             btn.classList.add('text-indigo-600', 'dark:text-indigo-400', 'cursor-pointer');
             
-            document.getElementById('nextLabel').innerText = "Selanjutnya";
+            document.getElementById('nextLabel').innerText = "Berikutnya";
             document.getElementById('nextLabel').classList.remove('opacity-60');
             document.getElementById('nextLabel').classList.add('text-indigo-600', 'dark:text-indigo-400', 'opacity-100');
             

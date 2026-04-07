@@ -1,141 +1,139 @@
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 w-full h-16 md:h-20 bg-white/90 dark:bg-[#020617]/90 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 transition-colors duration-500">
+{{-- NAVBAR COMPONENT (TALL & ELEGANT SAAS EDITION) --}}
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-[100] w-full h-[76px] md:h-[88px] bg-white/90 dark:bg-[#020617]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-white/[0.05] transition-all duration-500">
     
-    <div class="w-full h-full px-6 md:px-10 lg:px-16">
-        <div class="flex items-center justify-between h-full relative">
+    <div class="w-full h-full px-5 md:px-10 lg:px-16 max-w-[1440px] mx-auto">
+        <div class="flex items-center justify-between h-full">
             
-            {{-- 1. LOGO --}}
-            <div class="flex items-center shrink-0 z-30">
-                <a href="{{ url('/') }}" class="block group relative">
-                    <div class="absolute -inset-2 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+            {{-- 1. KIRI: LOGO BRAND (Ukuran Besar) --}}
+            <div class="flex items-center shrink-0 h-full py-3">
+                <a href="{{ url('/') }}" class="block h-full flex items-center focus:outline-none group">
                     <img src="{{ asset('images/logo.png') }}" 
-                         alt="Logo Brand" 
-                         class="relative h-16 md:h-[76px] w-auto object-contain transition-all duration-300 group-hover:scale-105 invert dark:invert-0 drop-shadow-sm dark:drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]">
+                         alt="Utilwind Logo" 
+                         {{-- Logo dikembalikan ke ukuran besar dan proporsional --}}
+                         class="h-12 md:h-[60px] w-auto object-contain invert dark:invert-0 transition-transform duration-300 group-hover:scale-105"
+                         onerror="this.style.display='none'">
                 </a>
             </div>
 
-            {{-- 2. NAVIGASI TENGAH (DESKTOP) --}}
-            <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-sm font-medium z-20">
+            {{-- 2. TENGAH: NAVIGASI (Teks lebih besar dan berjarak) --}}
+            <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 z-20">
                 @foreach(['Beranda' => route('landing'), 'Materi' => route('courses.curriculum'), 'Sandbox' => route('sandbox')] as $label => $link)
-                    <a href="{{ $link }}" class="relative text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 py-2 group font-semibold tracking-wide">
+                    <a href="{{ $link }}" class="text-[14px] md:text-[15px] font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 tracking-wide focus:outline-none">
                         {{ $label }}
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
                     </a>
                 @endforeach
 
                 {{-- DROPDOWN RESOURCES --}}
                 <div class="relative" id="resource-menu-container">
-                    <button onclick="toggleResourceMenu()" class="flex items-center gap-2 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 py-2 group font-semibold tracking-wide focus:outline-none">
-                        <span class="text-fuchsia-500 dark:text-fuchsia-400 group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-300 transition animate-pulse-slow">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        </span>
+                    <button onclick="toggleResourceMenu()" class="flex items-center gap-1.5 text-[14px] md:text-[15px] font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 tracking-wide focus:outline-none group">
                         Resources
-                        <svg id="resource-chevron" class="w-3 h-3 text-slate-400 dark:text-white/40 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        <span class="absolute -top-2 -right-5 text-[8px] bg-fuchsia-500 text-white px-1.5 py-0.5 rounded font-bold shadow-md dark:shadow-lg dark:shadow-fuchsia-500/50">NEW</span>
+                        <svg id="resource-chevron" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
                     </button>
 
-                    <div id="resource-dropdown" class="hidden absolute top-full left-1/2 -translate-x-1/2 mt-4 w-56 bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/80 overflow-hidden transform transition-all duration-200 opacity-0 scale-95 ring-1 ring-slate-100 dark:ring-white/5 origin-top">
-                        <div class="p-1.5 space-y-1">
-                            <a href="{{ route('cheatsheet.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700 dark:text-white/80 hover:text-fuchsia-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition group">
-                                <span class="w-8 h-8 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500 dark:text-fuchsia-400 group-hover:bg-fuchsia-100 dark:group-hover:bg-fuchsia-500/20 transition border border-fuchsia-100 dark:border-fuchsia-500/10">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                </span>
-                                <div>
-                                    <span class="block font-bold">Cheat Sheet</span>
-                                    <span class="block text-[10px] text-slate-500 dark:text-white/40">Kumpulan Syntax</span>
-                                </div>
-                            </a>
-                            <a href="{{ route('gallery.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700 dark:text-white/80 hover:text-cyan-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition group">
-                                <span class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center text-cyan-500 dark:text-cyan-400 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-500/20 transition border border-cyan-100 dark:border-cyan-500/10">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                </span>
-                                <div>
-                                    <span class="block font-bold">UI Gallery</span>
-                                    <span class="block text-[10px] text-slate-500 dark:text-white/40">Inspirasi Komponen</span>
-                                </div>
-                            </a>
-                        </div>
+                    {{-- DROPDOWN PANEL --}}
+                    <div id="resource-dropdown" class="hidden absolute top-[calc(100%+18px)] left-1/2 -translate-x-1/2 w-[260px] bg-white dark:bg-[#0a0e17] border border-slate-200/80 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.8)] overflow-hidden transform transition-all duration-200 opacity-0 scale-95 origin-top p-1.5 z-50">
+                        <a href="{{ route('cheatsheet.index') }}" class="flex items-start gap-3.5 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors focus:outline-none group">
+                            <div class="mt-0.5 text-fuchsia-500 dark:text-fuchsia-400 group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            </div>
+                            <div>
+                                <span class="block text-[14px] font-bold text-slate-900 dark:text-white leading-none mb-1.5">Cheat Sheet</span>
+                                <span class="block text-[12px] text-slate-500 dark:text-slate-400 leading-snug">Kamus referensi utilitas CSS.</span>
+                            </div>
+                        </a>
+                        <a href="{{ route('gallery.index') }}" class="flex items-start gap-3.5 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors focus:outline-none group mt-1">
+                            <div class="mt-0.5 text-cyan-500 dark:text-cyan-400 group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            </div>
+                            <div>
+                                <span class="block text-[14px] font-bold text-slate-900 dark:text-white leading-none mb-1.5">UI Gallery</span>
+                                <span class="block text-[12px] text-slate-500 dark:text-slate-400 leading-snug">Inspirasi komponen antarmuka.</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            {{-- 3. KANAN: THEME SWITCHER + USER MENU --}}
-            <div class="flex items-center gap-3 md:gap-5 shrink-0 z-30">
+            {{-- 3. KANAN: THEME, AUTH & USER --}}
+            <div class="flex items-center gap-2 md:gap-4 shrink-0 z-30">
                 
-                {{-- TOMBOL THEME SWITCHER (Muncul di Mobile & Desktop) --}}
-                <button class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500/50">
-                    <svg class="icon-sun hidden dark:block w-5 h-5 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    <svg class="icon-moon block dark:hidden w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                {{-- THEME SWITCHER (Lebih Besar) --}}
+                <button class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full text-slate-400 hover:text-slate-800 dark:text-slate-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all focus:outline-none cursor-pointer">
+                    <svg class="hidden dark:block w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg class="block dark:hidden w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                 </button>
 
-                {{-- DESKTOP: User Menu & Auth Buttons --}}
-                <div class="hidden md:flex items-center gap-4">
+                {{-- VERTICAL DIVIDER --}}
+                <div class="hidden md:block w-px h-6 bg-slate-200 dark:bg-white/10 mx-1"></div>
+
+                {{-- DESKTOP AUTH / USER --}}
+                <div class="hidden md:flex items-center">
                     @auth
                         <div class="relative" id="desktop-user-menu">
-                            <button onclick="toggleUserMenu()" class="flex items-center gap-3 p-1.5 pr-4 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 group focus:outline-none">
+                            <button onclick="toggleUserMenu()" class="flex items-center gap-3 py-1.5 pl-1.5 pr-3.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors focus:outline-none group">
                                 <div class="relative">
                                     @if(Auth::user()->avatar)
-                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/20 object-cover">
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-white/10">
                                     @else
-                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center text-xs font-bold text-white border border-slate-200 dark:border-white/20">
+                                        <div class="w-9 h-9 rounded-full bg-slate-900 dark:bg-white flex items-center justify-center text-xs font-bold text-white dark:text-slate-900">
                                             {{ substr(Auth::user()->name, 0, 2) }}
                                         </div>
                                     @endif
-                                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#020617] rounded-full"></span>
+                                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#020617] rounded-full"></span>
                                 </div>
                                 <div class="text-left">
-                                    <p class="text-[10px] text-slate-500 dark:text-white/50 font-bold uppercase tracking-wider leading-none mb-1">Akun</p>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 leading-none truncate max-w-[100px] transition-colors">{{ Auth::user()->name }}</p>
+                                    <p class="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate max-w-[120px]">{{ explode(' ', Auth::user()->name)[0] }}</p>
                                 </div>
-                                <svg id="menu-chevron" class="w-4 h-4 text-slate-400 dark:text-white/40 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                <svg id="menu-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
                             </button>
 
-                            <div id="user-dropdown" class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/80 overflow-hidden transform transition-all duration-200 opacity-0 scale-95 origin-top-right">
-                                
-                                {{-- PERBAIKAN: Penambahan dark:bg-transparent agar tidak bentrok --}}
-                                <div class="px-5 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-transparent dark:bg-gradient-to-r dark:from-white/[0.02] dark:to-transparent">
-                                    <p class="text-xs text-slate-500 dark:text-white/50 uppercase font-bold tracking-wider mb-1">Signed in as</p>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ Auth::user()->email }}</p>
+                            {{-- USER DROPDOWN --}}
+                            <div id="user-dropdown" class="hidden absolute right-0 top-[calc(100%+16px)] w-64 bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.8)] overflow-hidden transform transition-all duration-200 opacity-0 scale-95 origin-top-right z-50">
+                                <div class="px-5 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
+                                    <p class="text-[14px] font-bold text-slate-900 dark:text-white truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-[12px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
                                 </div>
 
                                 <div class="p-2 space-y-1">
                                     @if(auth()->user()->role === 'admin')
-                                        <a href="{{ route('admin.dashboard') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-700 dark:text-white/90 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition border border-transparent hover:border-slate-200 dark:hover:border-white/5 dark:bg-white/[0.02]">
-                                            <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-500 dark:text-indigo-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/30 transition">⚡</span>
-                                            <div class="flex flex-col"><span class="font-bold">Panel Admin</span><span class="text-[10px] text-slate-500 dark:text-white/40 font-normal">Kelola Sistem</span></div>
+                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                            <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                            Panel Admin
                                         </a>
                                     @endif
-                                    <a href="{{ route('profile.edit') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition">
-                                        <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-fuchsia-500 dark:text-fuchsia-400 group-hover:bg-slate-200 dark:group-hover:bg-fuchsia-500/20 transition">⚙️</span> Edit Profil
+                                    
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                        <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                        Dasbor Belajar
                                     </a>
-                                    @if(auth()->user()->role === 'student')
-                                        <a href="{{ route('dashboard') }}" class="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition">
-                                            <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-blue-500 dark:text-blue-400 group-hover:bg-slate-200 dark:group-hover:bg-blue-500/20 transition">📊</span> Dashboard Belajar
-                                        </a>
-                                    @endif
+
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                        <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                                        Pengaturan Akun
+                                    </a>
                                 </div>
                                 <div class="p-2 border-t border-slate-100 dark:border-white/5">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
-                                            <span class="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition">🚪</span> Keluar
+                                        <button type="submit" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                            <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                            Keluar
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     @else
-                        <div class="flex items-center gap-4">
-                            <a href="{{ route('login') }}" class="text-sm font-bold text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition">Masuk</a>
-                            <a href="{{ route('register') }}" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-[#020617] text-sm font-bold hover:scale-105 transition shadow-md">Mulai Belajar</a>
-                        </div>
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-[14px] font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none">Masuk</a>
+                        <a href="{{ route('register') }}" class="ml-2 h-[42px] px-6 flex items-center justify-center bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[14px] font-bold rounded-full hover:scale-105 transition-transform duration-300 shadow-md focus:outline-none">Daftar</a>
                     @endauth
                 </div>
 
-                {{-- MOBILE HAMBURGER ICON --}}
+                {{-- MOBILE HAMBURGER --}}
                 <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" class="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition focus:outline-none">
-                        <svg id="hamburger-icon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg id="close-icon" class="w-6 h-6 hidden text-fuchsia-600 dark:text-fuchsia-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <button onclick="toggleMobileMenu()" class="flex items-center justify-center w-11 h-11 rounded-full text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 transition-colors focus:outline-none relative z-[110]">
+                        <svg id="hamburger-icon" class="w-6 h-6 transition-transform duration-300 absolute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg id="close-icon" class="w-6 h-6 transition-transform duration-300 absolute opacity-0 scale-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
@@ -143,194 +141,212 @@
         </div>
     </div>
 
-    {{-- MOBILE MENU DRAWER --}}
-    <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-white/95 dark:bg-[#020617]/95 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 shadow-2xl transition-all duration-300 origin-top transform scale-y-95 opacity-0 h-screen overflow-y-auto z-40">
-        <div class="px-6 py-8 space-y-6 pb-40">
+    {{-- ========================================== --}}
+    {{-- MOBILE MENU DRAWER (FULLSCREEN) --}}
+    {{-- ========================================== --}}
+    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 top-[76px] bg-white dark:bg-[#020617] transition-all duration-300 opacity-0 transform translate-y-4 h-[calc(100dvh-76px)] overflow-y-auto z-[90] border-t border-slate-200 dark:border-white/5">
+        
+        <div class="flex flex-col min-h-full px-5 py-8">
             
-            {{-- User Info Mobile --}}
             @auth
-                <div class="flex items-center gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 relative overflow-hidden">
+                <div class="flex items-center gap-5 mb-8 p-5 rounded-[1.5rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0a0e17] shadow-sm">
                     @if(Auth::user()->avatar)
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full border-2 border-slate-300 dark:border-white/20 object-cover shadow-sm dark:shadow-lg z-10">
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border border-slate-200 dark:border-white/10">
                     @else
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-2xl shadow-sm dark:shadow-lg z-10">{{ substr(Auth::user()->name, 0, 2) }}</div>
+                        <div class="w-16 h-16 rounded-full bg-slate-900 dark:bg-white flex items-center justify-center font-bold text-white dark:text-slate-900 text-xl">
+                            {{ substr(Auth::user()->name, 0, 2) }}
+                        </div>
                     @endif
-                    <div class="overflow-hidden z-10 flex-1">
+                    <div class="flex-1 min-w-0">
                         <p class="text-slate-900 dark:text-white font-black text-xl truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-sm text-slate-500 dark:text-white/50 truncate font-medium">{{ Auth::user()->email }}</p>
-                        <div class="mt-3 flex gap-2"><a href="{{ route('profile.edit') }}" class="text-[10px] font-bold px-4 py-1.5 rounded-full bg-fuchsia-100 dark:bg-fuchsia-500/20 text-fuchsia-700 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-fuchsia-500/30">Edit Profil</a></div>
+                        <p class="text-[13px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
                     </div>
                 </div>
             @endauth
 
-            <div class="space-y-3">
-                {{-- TOMBOL MENU UTAMA (ADMIN / DASHBOARD) MOBILE --}}
-                @if(auth()->check())
-                    @if(auth()->user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="block px-5 py-4 rounded-2xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/40 text-indigo-700 dark:text-indigo-300 font-bold text-lg transition flex justify-between items-center group mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center">⚡</span> 
-                                Panel Admin
-                            </div>
-                            <span class="text-indigo-500 dark:text-indigo-400 group-hover:translate-x-1 transition">→</span>
-                        </a>
-                    @elseif(auth()->user()->role === 'student')
-                        <a href="{{ route('dashboard') }}" class="block px-5 py-4 rounded-2xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 font-bold text-lg transition flex justify-between items-center group mb-4 shadow-sm dark:shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                            <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">📊</span> 
-                                Dashboard Siswa
-                            </div>
-                            <span class="text-blue-500 dark:text-blue-400 group-hover:translate-x-1 transition">→</span>
-                        </a>
-                    @endif
+            <div class="flex flex-col gap-2 flex-1">
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 font-bold text-[16px] transition-colors mb-4 border border-indigo-100 dark:border-indigo-500/20">
+                        <div class="flex items-center gap-4">
+                            <svg class="w-6 h-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Panel Admin
+                        </div>
+                        <span>→</span>
+                    </a>
                 @endif
 
-                {{-- Main Public Navigation --}}
-                @foreach(['Beranda' => route('landing'), 'Materi' => route('courses.curriculum'), 'Sandbox' => route('sandbox')] as $label => $link)
-                    <a href="{{ $link }}" class="block px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/10 text-slate-800 dark:text-white font-bold text-lg transition flex justify-between items-center group">
-                        {{ $label }} <span class="text-slate-400 dark:text-white/20 group-hover:text-slate-900 dark:group-hover:text-white group-hover:translate-x-1 transition">→</span>
+                @foreach([
+                    ['label' => 'Beranda', 'link' => route('landing')],
+                    ['label' => 'Materi Belajar', 'link' => route('courses.curriculum')],
+                    ['label' => 'Live Sandbox', 'link' => route('sandbox')]
+                ] as $menu)
+                    <a href="{{ $menu['link'] }}" class="flex items-center justify-between p-4 rounded-2xl text-slate-800 dark:text-slate-200 font-bold text-[18px] hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent dark:hover:border-white/5">
+                        {{ $menu['label'] }}
+                        <span class="text-slate-400 dark:text-slate-500">→</span>
                     </a>
                 @endforeach
-                
-                {{-- Mobile Resources Link --}}
-                <div class="grid grid-cols-2 gap-3 mt-4">
-                    <a href="{{ route('cheatsheet.index') }}" class="block px-4 py-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 text-slate-800 dark:text-white font-bold text-center hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
-                        <span class="block text-fuchsia-500 dark:text-fuchsia-400 mb-1 text-2xl">⚡</span> Cheat Sheet
-                    </a>
-                    <a href="{{ route('gallery.index') }}" class="block px-4 py-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 text-slate-800 dark:text-white font-bold text-center hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
-                        <span class="block text-cyan-500 dark:text-cyan-400 mb-1 text-2xl">🎨</span> UI Gallery
-                    </a>
+
+                <div class="mt-4 pt-6 border-t border-slate-200 dark:border-white/10">
+                    <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 ml-4">Resources</p>
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('cheatsheet.index') }}" class="flex items-center gap-4 p-4 rounded-2xl text-slate-700 dark:text-slate-300 font-semibold text-[16px] hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                            <svg class="w-6 h-6 text-fuchsia-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            Cheat Sheet
+                        </a>
+                        <a href="{{ route('gallery.index') }}" class="flex items-center gap-4 p-4 rounded-2xl text-slate-700 dark:text-slate-300 font-semibold text-[16px] hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                            <svg class="w-6 h-6 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            UI Gallery
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-slate-200 dark:border-white/10 mt-6">
+            <div class="mt-10 pt-6 border-t border-slate-200 dark:border-white/10 pb-6">
                 @auth
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <button class="w-full py-4 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 font-bold text-lg hover:bg-red-100 dark:hover:bg-red-500/20 transition flex items-center justify-center gap-3">
-                            Keluar Aplikasi
-                        </button>
-                    </form>
+                    <div class="flex flex-col gap-3">
+                        <a href="{{ route('dashboard') }}" class="w-full py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-[16px] text-center shadow-lg">Buka Dasbor Belajar</a>
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <button class="w-full py-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 font-bold text-[16px] text-center transition-colors">Keluar Akun</button>
+                        </form>
+                    </div>
                 @else
-                    <div class="grid grid-cols-1 gap-4">
-                        <a href="{{ route('register') }}" class="py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-center text-white font-black text-lg shadow-xl hover:scale-[1.02] transition-transform">Daftar Sekarang 🚀</a>
-                        <a href="{{ route('login') }}" class="py-4 rounded-2xl border-2 border-slate-300 dark:border-white/10 text-center text-slate-800 dark:text-white font-bold text-lg hover:bg-slate-50 dark:hover:bg-white/5 transition">Masuk Akun</a>
+                    <div class="flex flex-col gap-3">
+                        <a href="{{ route('register') }}" class="w-full py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-center font-bold text-[16px] shadow-lg">Daftar Sekarang - Gratis</a>
+                        <a href="{{ route('login') }}" class="w-full py-4 rounded-xl border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white text-center font-bold text-[16px]">Masuk ke Akun</a>
                     </div>
                 @endauth
             </div>
+
         </div>
     </div>
 </nav>
 
-{{-- SCRIPT PENGENDALI --}}
+{{-- SCRIPT PENGENDALI KHUSUS NAVBAR --}}
 <script>
-    // --- 1. THEME SWITCHER LOGIC ---
-    document.addEventListener('DOMContentLoaded', function() {
-        const htmlEl = document.documentElement;
-        const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+    // --- 1. LOGIKA THEME SWITCHER GLOBAL ---
+    if (typeof window.themeSwitcherInitialized === 'undefined') {
+        window.themeSwitcherInitialized = true;
         
-        themeToggleBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                htmlEl.classList.toggle('dark');
-                if (htmlEl.classList.contains('dark')) {
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    localStorage.setItem('color-theme', 'light');
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            const htmlEl = document.documentElement;
+            const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+            
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlEl.classList.add('dark');
+            } else {
+                htmlEl.classList.remove('dark');
+            }
+
+            themeToggleBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    htmlEl.classList.toggle('dark');
+                    if (htmlEl.classList.contains('dark')) {
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                });
             });
         });
-    });
+    }
 
-    // --- 2. USER MENU TOGGLE ---
+    // --- 2. USER MENU DESKTOP ---
     function toggleUserMenu() {
         const menu = document.getElementById('user-dropdown');
         const chevron = document.getElementById('menu-chevron');
-        
         closeResourceMenu();
 
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
             setTimeout(() => {
                 menu.classList.remove('opacity-0', 'scale-95');
-                menu.classList.add('opacity-100', 'scale-100');
                 if(chevron) chevron.classList.add('rotate-180');
             }, 10);
-        } else {
-            closeUserMenu();
-        }
+        } else { closeUserMenu(); }
     }
     
     function closeUserMenu() {
         const menu = document.getElementById('user-dropdown');
         const chevron = document.getElementById('menu-chevron');
         if(!menu) return;
-        menu.classList.remove('opacity-100', 'scale-100');
         menu.classList.add('opacity-0', 'scale-95');
         if(chevron) chevron.classList.remove('rotate-180');
         setTimeout(() => { menu.classList.add('hidden'); }, 200);
     }
 
-    // --- 3. RESOURCE MENU TOGGLE ---
+    // --- 3. RESOURCE MENU DESKTOP ---
     function toggleResourceMenu() {
         const menu = document.getElementById('resource-dropdown');
         const chevron = document.getElementById('resource-chevron');
-
         closeUserMenu();
 
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
             setTimeout(() => {
                 menu.classList.remove('opacity-0', 'scale-95');
-                menu.classList.add('opacity-100', 'scale-100');
                 if(chevron) chevron.classList.add('rotate-180');
             }, 10);
-        } else {
-            closeResourceMenu();
-        }
+        } else { closeResourceMenu(); }
     }
     
     function closeResourceMenu() {
         const menu = document.getElementById('resource-dropdown');
         const chevron = document.getElementById('resource-chevron');
         if(!menu) return;
-        menu.classList.remove('opacity-100', 'scale-100');
         menu.classList.add('opacity-0', 'scale-95');
         if(chevron) chevron.classList.remove('rotate-180');
         setTimeout(() => { menu.classList.add('hidden'); }, 200);
     }
 
-    // --- 4. MOBILE MENU TOGGLE ---
+    // --- 4. MOBILE MENU DRAWER (APP-LIKE) ---
     function toggleMobileMenu() {
         const mobileMenu = document.getElementById('mobile-menu');
         const hamburger = document.getElementById('hamburger-icon');
         const close = document.getElementById('close-icon');
+        const isHidden = mobileMenu.classList.contains('hidden');
         
-        if (mobileMenu.classList.contains('hidden')) {
+        if (isHidden) {
             mobileMenu.classList.remove('hidden');
-            hamburger.classList.add('hidden');
-            close.classList.remove('hidden');
             
+            // Animasi Icon
+            hamburger.classList.add('opacity-0', 'rotate-90', 'scale-50');
             setTimeout(() => {
-                mobileMenu.classList.remove('scale-y-95', 'opacity-0');
-                mobileMenu.classList.add('scale-y-100', 'opacity-100');
+                hamburger.classList.add('hidden');
+                close.classList.remove('hidden');
+                setTimeout(() => {
+                    close.classList.remove('opacity-0', 'scale-50', 'rotate-90');
+                }, 10);
+            }, 150);
+
+            setTimeout(() => {
+                mobileMenu.classList.remove('translate-y-4', 'opacity-0');
             }, 10);
             
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; 
         } else {
-            mobileMenu.classList.remove('scale-y-100', 'opacity-100');
-            mobileMenu.classList.add('scale-y-95', 'opacity-0');
+            mobileMenu.classList.add('translate-y-4', 'opacity-0');
             
+            // Animasi Icon
+            close.classList.add('opacity-0', 'scale-50', 'rotate-90');
+            setTimeout(() => {
+                close.classList.add('hidden');
+                hamburger.classList.remove('hidden');
+                setTimeout(() => {
+                    hamburger.classList.remove('opacity-0', 'rotate-90', 'scale-50');
+                }, 10);
+            }, 150);
+
             setTimeout(() => {
                 mobileMenu.classList.add('hidden');
-                hamburger.classList.remove('hidden');
-                close.classList.add('hidden');
             }, 300);
             
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
         }
     }
 
-    // --- 5. CLICK OUTSIDE HANDLER ---
+    // --- 5. KLIK DI LUAR UNTUK MENUTUP DROPDOWN ---
     document.addEventListener('click', function(event) {
         const desktopMenu = document.getElementById('desktop-user-menu');
         const userDropdown = document.getElementById('user-dropdown');

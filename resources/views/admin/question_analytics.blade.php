@@ -305,7 +305,7 @@
 
     <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-opacity" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
-    {{-- ==================== 1. SIDEBAR ==================== --}}
+     {{-- ==================== 1. SIDEBAR ==================== --}}
     <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
@@ -370,11 +370,10 @@
             </div>
             
             {{-- THEME TOGGLE BUTTON --}}
-            {{-- PROFILE Bawah Sidebar & Theme Switcher --}}
-            <button id="theme-toggle" type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-300/50 dark:hover:bg-white/10 text-slate-700 dark:text-white/80 transition-colors mb-4 text-xs font-bold border border-transparent dark:border-white/5 shadow-sm">
-                <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
-                <span id="theme-toggle-text">Ubah Tema</span>
+            <button id="theme-toggle-sidebar" type="button" class="w-full mb-2 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors border border-transparent dark:border-transparent text-xs font-bold shadow-sm dark:shadow-none">
+                <svg id="theme-toggle-dark-icon-sidebar" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon-sidebar" class="hidden w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                <span id="theme-toggle-text-sidebar">Ubah Tema</span>
             </button>
 
             <form method="POST" action="{{ route('logout') }}">
@@ -1210,28 +1209,32 @@
 <script>
     // --- SINKRONISASI TEMA GELAP/TERANG ---
     document.addEventListener('DOMContentLoaded', () => {
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        const themeToggleText = document.getElementById('theme-toggle-text');
+        const themeToggleBtnSidebar = document.getElementById('theme-toggle-sidebar');
+        const themeToggleDarkIconSidebar = document.getElementById('theme-toggle-dark-icon-sidebar');
+        const themeToggleLightIconSidebar = document.getElementById('theme-toggle-light-icon-sidebar');
+        const themeToggleTextSidebar = document.getElementById('theme-toggle-text-sidebar');
 
+        // Fungsi sinkronisasi ikon berdasarkan tema saat ini
         const syncIcons = (isDark) => {
             if (isDark) {
-                themeToggleLightIcon?.classList.remove('hidden');
-                themeToggleDarkIcon?.classList.add('hidden');
-                if(themeToggleText) themeToggleText.textContent = "Tema Terang";
+                themeToggleLightIconSidebar?.classList.remove('hidden');
+                themeToggleDarkIconSidebar?.classList.add('hidden');
+                if(themeToggleTextSidebar) themeToggleTextSidebar.textContent = "Tema Terang";
             } else {
-                themeToggleLightIcon?.classList.add('hidden');
-                themeToggleDarkIcon?.classList.remove('hidden');
-                if(themeToggleText) themeToggleText.textContent = "Tema Gelap";
+                themeToggleLightIconSidebar?.classList.add('hidden');
+                themeToggleDarkIconSidebar?.classList.remove('hidden');
+                if(themeToggleTextSidebar) themeToggleTextSidebar.textContent = "Tema Gelap";
             }
         };
 
+        // Inisialisasi awal
         const isDarkTheme = document.documentElement.classList.contains('dark');
         syncIcons(isDarkTheme);
 
-        themeToggleBtn?.addEventListener('click', function() {
+        // Event listener saat tombol diklik
+        themeToggleBtnSidebar?.addEventListener('click', function() {
             const willBeDark = !document.documentElement.classList.contains('dark');
+            
             if (willBeDark) {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('color-theme', 'dark');
@@ -1239,8 +1242,9 @@
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
             }
+            
             syncIcons(willBeDark);
-            window.dispatchEvent(new Event('theme-toggled')); // Render ulang chart
+            window.dispatchEvent(new Event('theme-toggled'));
         });
     });
 

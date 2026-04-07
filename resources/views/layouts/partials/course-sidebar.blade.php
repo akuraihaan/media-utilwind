@@ -202,20 +202,20 @@
                 [
                     'id' => '3.1', 'title' => 'Tipografi', 'route' => 'courses.typography', 
                     'anchors' => [
-                        ['id' => 'section-46', 'label' => 'Font Family, Size & Smoothing'], 
-                        ['id' => 'section-47', 'label' => 'Font Style & Weight'], 
-                        ['id' => 'section-48', 'label' => 'Letter Spacing & Alignment'], 
-                        ['id' => 'section-49', 'label' => 'Text Color & Decoration'], 
-                        ['id' => 'section-50', 'label' => 'Transform & Overflow'],
+                        ['id' => 'section-46', 'label' => 'Font Family'], 
+                        ['id' => 'section-47', 'label' => 'Skala Modular & Hirarki'], 
+                        ['id' => 'section-48', 'label' => 'Ketebalan Huruf & Resolusi Piksel'], 
+                        ['id' => 'section-49', 'label' => 'Manajemen Spasi & Penambat'], 
+                        ['id' => 'section-50', 'label' => 'Ornamen & Transformasi'],
                         ['id' => 'section-51', 'label' => 'Aktivitas Latihan']
                     ]
                 ],
                 [
                     'id' => '3.2', 'title' => 'Backgrounds', 'route' => 'courses.backgrounds', 
                     'anchors' => [
-                        ['id' => 'section-52', 'label' => 'Attachment, Clip & Origin'], 
-                        ['id' => 'section-53', 'label' => 'Color, Position & Repeat'], 
-                        ['id' => 'section-54', 'label' => 'Size, Image & Gradient'],
+                        ['id' => 'section-52', 'label' => 'Background Attachment'], 
+                        ['id' => 'section-53', 'label' => 'Dimensi Gambar & Manajemen Titik Fokus'], 
+                        ['id' => 'section-54', 'label' => 'Overlay & Gradien'],
                         ['id' => 'section-55', 'label' => 'Aktivitas Latihan']
                     ]
                 ],
@@ -223,18 +223,18 @@
                     'id' => '3.3', 'title' => 'Borders & Effects', 'route' => 'courses.borders', 
                     'anchors' => [
                         ['id' => 'section-56', 'label' => 'Radius & Width'], 
-                        ['id' => 'section-57', 'label' => 'Style, Color & Divide'], 
-                        ['id' => 'section-58', 'label' => 'Outline & Ring'],
+                        ['id' => 'section-57', 'label' => 'Estetika & Gaya Garis'], 
+                        ['id' => 'section-58', 'label' => 'Dividers'],
                         ['id' => 'section-59', 'label' => 'Aktivitas Latihan']
                     ]
                 ],
                 [
                     'id' => '3.4', 'title' => 'Efek Visual', 'route' => 'courses.effects', 
                     'anchors' => [
-                        ['id' => 'section-60', 'label' => 'Box Shadow & Color'], 
+                        ['id' => 'section-60', 'label' => 'Box Shadow '], 
                         ['id' => 'section-61', 'label' => 'Opacity'], 
-                        ['id' => 'section-62', 'label' => 'Filter'], 
-                        ['id' => 'section-63', 'label' => 'Transisi dan Animasi'], 
+                        ['id' => 'section-62', 'label' => 'Blur'], 
+                        ['id' => 'section-63', 'label' => 'Animasi'], 
                         ['id' => 'section-64', 'label' => 'Transform'],
                         ['id' => 'section-65', 'label' => 'Aktivitas Latihan']
                     ]

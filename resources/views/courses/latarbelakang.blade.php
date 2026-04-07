@@ -174,7 +174,7 @@
                         </div>
                         <div class="bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 border border-purple-200 dark:border-purple-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-3 cursor-default">
                             <div class="w-8 h-8 rounded bg-white/50 dark:bg-white/10 text-purple-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-sm dark:shadow-none">🏁</div>
-                            <div><h4 class="text-sm font-bold text-purple-900 dark:text-white mb-1 transition-colors">Final Mission: JIT Precision Challenge</h4><p class="text-[11px] text-purple-800 dark:text-white/70 leading-relaxed transition-colors">Ujian akhir menggunakan <span class="hl-term">Arbitrary Values</span> untuk menciptakan desain dengan presisi tinggi.</p></div>
+                            <div><h4 class="text-sm font-bold text-purple-900 dark:text-white mb-1 transition-colors">Final Mission</h4><p class="text-[11px] text-purple-800 dark:text-white/70 leading-relaxed transition-colors">Ujian akhir menggunakan <span class="hl-term">Arbitrary Values</span> untuk menciptakan desain dengan presisi tinggi.</p></div>
                         </div>
                     </div>
                 </div>
