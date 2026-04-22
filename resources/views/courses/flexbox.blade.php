@@ -154,9 +154,8 @@
                 {{-- TUJUAN PEMBELAJARAN --}}
                 <div class="mb-24">
                     <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2 transition-colors">
-                        <svg class="w-5 h-5 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
+                                                <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+
                         Tujuan Pembelajaran
                     </h3>
                     
@@ -501,40 +500,51 @@
 
                             {{-- SIMULATOR 4 --}}
                             <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-6 lg:p-8 relative transition-colors mt-8">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-4 text-center transition-colors">Simulator: Uji Coba Responsivitas</h4>
+                                <h4 class="text-xs font-bold text-muted uppercase mb-4 text-center transition-colors">Simulator: Sizing & Shrink</h4>
                                 
                                 <div class="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-500/30 rounded-lg p-4 mb-8 text-sm text-pink-800 dark:text-pink-300 relative z-10 transition-colors">
                                     <p class="font-bold flex items-center gap-2 mb-2">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        Interaksi Kursor
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        Panduan Simulasi Pemadatan
                                     </p>
-                                    <p class="m-0 opacity-90 leading-relaxed text-justify">Arahkan kursor (<span class="hl-term text-[10px] px-1 py-0.5 border-none">Hover</span>) ke area kotak biru di bawah untuk menyimulasikan pemuaian ukuran dinamis. Lihat bagaimana bagian Sidebar statis tetap aman dan tidak menyusut.</p>
+                                    <p class="m-0 opacity-90 leading-relaxed text-justify">Ubah lebar kontainer menggunakan slider. Perhatikan bagaimana elemen Target (Avatar) akan menjadi gepeng secara bawaan karena terdesak oleh elemen konten di sebelahnya. Terapkan kelas <span class="hl-term text-[10px] px-1 py-0.5 border-none">shrink-0</span> untuk melindunginya dari kompresi.</p>
                                 </div>
 
-                                <div class="p-6 md:p-10 flex flex-col items-center justify-center relative z-10 bg-slate-50 dark:bg-[#0b0f19] rounded-xl border border-adaptive shadow-inner transition-colors">
-                                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none mix-blend-overlay"></div>
-                                    
-                                    <div class="flex gap-2 w-full max-w-3xl bg-slate-200 dark:bg-black/50 p-3 md:p-4 rounded-xl border border-slate-300 dark:border-white/10 transition-colors shadow-inner h-40 md:h-48 relative group/canvas z-10">
-                                        <div class="w-24 md:w-40 h-full bg-gradient-to-b from-purple-500 to-purple-600 rounded-lg flex flex-col items-center justify-center text-[10px] md:text-sm text-white font-bold flex-none shadow-md text-center border border-white/20 transition-all duration-300 shrink-0 p-2 md:p-3 relative z-10">
-                                            Sidebar Statis<br>
-                                            <span class="font-mono font-normal opacity-90 mt-2 block text-[8px] md:text-[11px] bg-black/20 p-2 rounded w-full border border-white/10 leading-tight">
-                                                <span class="text-pink-300 font-bold block mb-1">flex-none</span>
-                                                <span class="text-pink-300 font-bold block">shrink-0</span>
-                                            </span>
+                                <div class="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-10 relative z-10">
+                                    <div class="w-full lg:w-1/2 p-5 font-mono text-[11px] sm:text-sm flex flex-col bg-slate-50 dark:bg-[#18181b] rounded-lg border border-adaptive transition-colors">
+                                        <div class="mb-6">
+                                            <div class="flex justify-between items-center mb-3">
+                                                <label class="text-[10px] text-pink-600 dark:text-pink-400 font-bold uppercase tracking-wider transition-colors m-0">Lebar Kontainer Utama</label>
+                                                <span class="text-[10px] text-slate-700 dark:text-white font-mono bg-slate-200 dark:bg-white/10 px-2.5 py-1 rounded font-bold shadow-sm border border-slate-300 dark:border-white/10 transition-colors" id="sim4-width-label">100%</span>
+                                            </div>
+                                            <input type="range" min="30" max="100" value="100" oninput="document.getElementById('sim4-container').style.width = this.value + '%'; document.getElementById('sim4-width-label').innerText = this.value + '%';" class="w-full accent-pink-600 dark:accent-pink-500 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-400/50">
+                                            <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-3 italic">*Geser ke kiri untuk memaksakan pemadatan elemen.</p>
                                         </div>
                                         
-                                        <div class="h-full bg-gradient-to-b from-indigo-500 to-indigo-600 rounded-lg flex flex-col items-center justify-center text-sm md:text-base text-white font-bold flex-1 transition-all duration-[800ms] hover:bg-indigo-400 shadow-md cursor-crosshair group text-center border border-white/20 p-2 relative overflow-hidden group-hover/canvas:flex-[0.3] hover:!flex-[2]">
-                                            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
-                                            <span class="mb-1 relative z-10 drop-shadow-md">Area Konten yang Fleksibel</span>
-                                            
-                                            <span class="font-mono font-normal opacity-90 text-[10px] md:text-xs relative z-10 bg-black/20 px-2 py-1 rounded border border-white/10 mt-2">
-                                                <span class="text-cyan-300 font-bold">flex-1</span>
-                                            </span>
-                                            
-                                            <div class="hidden sm:flex group-hover:flex items-center gap-2 mt-4 opacity-90 transition-opacity relative z-10 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 backdrop-blur-sm">
-                                                <svg class="w-4 h-4 animate-pulse text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                                                <span class="text-[10px] tracking-widest uppercase text-cyan-100 font-bold">Gerakan Pemuaian Luas</span>
-                                                <svg class="w-4 h-4 animate-pulse text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m-7 7H3"/></svg>
+                                        <div class="mt-auto">
+                                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
+                                                <label class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider transition-colors">Status Target (Avatar)</label>
+                                                <span class="text-[10px] text-slate-700 dark:text-white font-mono bg-slate-200 dark:bg-white/10 px-2.5 py-1 rounded font-bold shadow-sm border border-slate-300 dark:border-white/10 transition-colors" id="sim4-label">shrink (Bawaan)</span>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                                                <button onclick="document.getElementById('sim4-target').classList.remove('shrink-0'); document.getElementById('sim4-target').classList.add('shrink'); document.getElementById('sim4-label').innerText = 'shrink (Bawaan)';" class="sm:flex-1 px-3 py-2 bg-white dark:bg-black/30 rounded-lg text-[11px] hover:bg-pink-50 dark:hover:bg-pink-600/30 transition border border-slate-300 dark:border-white/10 font-bold text-slate-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500/50">Tanpa shrink-0</button>
+                                                <button onclick="document.getElementById('sim4-target').classList.remove('shrink'); document.getElementById('sim4-target').classList.add('shrink-0'); document.getElementById('sim4-label').innerText = 'shrink-0';" class="sm:flex-1 px-3 py-2 bg-white dark:bg-black/30 rounded-lg text-[11px] hover:bg-pink-50 dark:hover:bg-pink-600/30 transition border border-slate-300 dark:border-white/10 font-bold text-slate-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500/50">shrink-0</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full lg:w-1/2 flex items-center justify-center bg-slate-100 dark:bg-[#0b0f19] rounded-xl border border-adaptive relative overflow-hidden transition-colors shadow-inner min-h-[300px] p-4 sm:p-6">
+                                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                                        
+                                        <div class="w-full h-full flex items-center justify-start relative z-10">
+                                            <div id="sim4-container" style="width: 100%;" class="bg-white dark:bg-[#1e1e1e] p-3 rounded-2xl border border-adaptive flex items-center h-32 transition-all duration-75 gap-3 shadow-lg overflow-hidden mx-auto">
+                                                <div id="sim4-target" class="shrink w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center font-black text-white shadow-md text-[10px] sm:text-xs transition-all duration-300 border-2 border-pink-300 dark:border-pink-500 text-center leading-none">
+                                                    Avatar
+                                                </div>
+                                                <div class="w-[800px] h-20 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-center px-4 gap-3 shrink-0">
+                                                    <div class="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 line-clamp-1">Elemen Lebar (shrink-0)</div>
+                                                    <div class="h-2 w-full bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -546,7 +556,7 @@
                                         Catatan Kesimpulan
                                     </h5>
                                     <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify m-0">
-                                        Perintah kelas penolak kompresi akan menjamin ukuran elemen navigasi tetap terjaga. Di saat bersamaan, area halaman di sebelahnya dibebaskan merenggang secara leluasa mengikuti ruang layar yang ada berkat perintah kelenturan.
+                                        Perintah kelas penolak kompresi <code>shrink-0</code> akan menjamin ukuran elemen navigasi atau logo tetap terjaga proporsinya. Di saat bersamaan, area halaman di sebelahnya tetap dapat dibebaskan untuk merenggang secara leluasa mengikuti ruang layar yang ada berkat perintah kelenturan.
                                     </p>
                                 </div>
                             </div>

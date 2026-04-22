@@ -391,7 +391,7 @@
                             <div class="space-y-4">
                                 <h3 class="text-base md:text-lg font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-5 h-5 rounded bg-purple-500 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Selector & Prioritas (Cascading)</h3>
                                 <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-sm md:text-base leading-relaxed space-y-4 transition-colors text-justify">
-                                    <p>Aturan CSS ditulis dalam bentuk blok deklarasi. Anda membidik elemen dengan <span class="hl-term">Selector</span> (seperti pemanggilan `.class` atau `#id`), kemudian menetapkan properti dalam kurung kurawal `{}`.</p>
+                                    <p>Ataturan CSS ditulis dalam bentuk blok deklarasi. Anda membidik elemen dengan <span class="hl-term">Selector</span> (seperti pemanggilan `.class` atau `#id`), kemudian menetapkan properti dalam kurung kurawal `{}`.</p>
                                     <p>Istilah "Cascading" pada CSS mengacu pada mekanisme prioritas. Jika terjadi konflik antara dua baris perintah, CSS memenangkan pihak yang memiliki skor spesifisitas lebih tinggi (ID lebih kuat dari Class). Bila skornya seimbang, maka gaya yang dideklarasikan paling terakhir (di bawah) yang akan menimpa konfigurasi sebelumnya.</p>
                                 </div>
                             </div>
@@ -691,7 +691,7 @@
                             <div class="flex flex-col lg:flex-row gap-6 relative z-10 p-4 sm:p-6 md:p-10 pt-4 md:pt-6">
                                 
                                 {{-- LEFT: EDITOR --}}
-                                <div class="w-full lg:w-1/2 code-adaptive rounded-xl flex flex-col overflow-hidden relative shadow-inner transition-colors border border-adaptive min-h-[500px] shrink-0">
+                                <div class="w-full lg:w-1/2 code-adaptive rounded-xl flex flex-col overflow-hidden relative shadow-inner transition-colors border border-adaptive min-h-[550px] shrink-0">
                                     
                                     {{-- LOCK OVERLAY --}}
                                     <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg transition-colors">
@@ -706,30 +706,43 @@
                                         <span class="text-[9px] uppercase tracking-widest font-bold text-indigo-500 dark:text-indigo-400">Config Builder</span>
                                     </div>
                                     
-                                    <div class="p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar bg-slate-50 dark:bg-transparent transition-colors pb-6">
-                                        <form id="activityForm" class="space-y-8">
+                                    <div class="p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar bg-slate-50 dark:bg-transparent transition-colors pb-6 flex flex-col gap-6">
+                                        
+                                        <form id="activityForm" class="space-y-4">
                                             <div class="space-y-3">
-                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300">1</span> <span class="leading-tight">Semantic Root Wrapper (Konteks Makna Kontainer DOM)</span></label>
+                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300">1</span> <span class="leading-tight">Semantic Root Wrapper (Konteks Makna Kontainer)</span></label>
                                                 <div class="grid grid-cols-2 gap-3 pl-6">
-                                                    <button type="button" onclick="setAct('tag', 'div', this)" class="opt-btn-tag px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">&lt;div&gt;</button>
-                                                    <button type="button" onclick="setAct('tag', 'article', this)" class="opt-btn-tag px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">&lt;article&gt;</button>
+                                                    <button type="button" onclick="setAct('tag', 'div', this)" class="opt-btn-tag px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">&lt;div&gt;</button>
+                                                    <button type="button" onclick="setAct('tag', 'article', this)" class="opt-btn-tag px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">&lt;article&gt;</button>
                                                 </div>
                                             </div>
                                             <div class="space-y-3">
-                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300 shrink-0">2</span> <span class="leading-tight">Internal Box Model Geometry (Injeksi Kelonggaran Bantalan Interior)</span></label>
+                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300 shrink-0">2</span> <span class="leading-tight">Internal Box Model Geometry (Injeksi Bantalan Interior)</span></label>
                                                 <div class="grid grid-cols-2 gap-3 pl-6">
-                                                    <button type="button" onclick="setAct('pad', '0px', this)" class="opt-btn-pad px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">padding: 0</button>
-                                                    <button type="button" onclick="setAct('pad', '24px', this)" class="opt-btn-pad px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">padding: 24px</button>
+                                                    <button type="button" onclick="setAct('pad', '0px', this)" class="opt-btn-pad px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">padding: 0</button>
+                                                    <button type="button" onclick="setAct('pad', '24px', this)" class="opt-btn-pad px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">padding: 24px</button>
                                                 </div>
                                             </div>
                                             <div class="space-y-3">
-                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300 shrink-0">3</span> <span class="leading-tight">Visual Theme Styling Modifier (Ekseskusi Target Estetika Tampilan)</span></label>
+                                                <label class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/50 font-bold tracking-widest transition-colors flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] text-slate-600 dark:text-slate-300 shrink-0">3</span> <span class="leading-tight">Visual Theme Styling Modifier (Ekseskusi Target Estetika)</span></label>
                                                 <div class="grid grid-cols-2 gap-3 pl-6">
-                                                    <button type="button" onclick="setAct('style', 'plain', this)" class="opt-btn-style px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">Mode Plain Text</button>
-                                                    <button type="button" onclick="setAct('style', 'card', this)" class="opt-btn-style px-3 py-3 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">Mode Styled Card</button>
+                                                    <button type="button" onclick="setAct('style', 'plain', this)" class="opt-btn-style px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">Plain Text</button>
+                                                    <button type="button" onclick="setAct('style', 'card', this)" class="opt-btn-style px-3 py-2 md:py-2.5 rounded-xl bg-white dark:bg-white/5 text-slate-600 dark:text-gray-400 border border-slate-300 dark:border-white/10 text-[11px] md:text-sm font-bold text-center font-mono hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95">Styled Card</button>
                                                 </div>
                                             </div>
                                         </form>
+
+                                        {{-- LIVE CODE PREVIEW UI --}}
+                                        <div class="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-lg flex flex-col shrink-0 shadow-inner overflow-hidden">
+                                            <div class="px-3 py-2 bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+                                                <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-white/50 flex items-center gap-2"><svg class="w-3 h-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg> Live Output Code</span>
+                                                <span class="flex gap-1"><span class="w-2 h-2 rounded-full bg-red-400"></span><span class="w-2 h-2 rounded-full bg-amber-400"></span><span class="w-2 h-2 rounded-full bg-emerald-400"></span></span>
+                                            </div>
+                                            <div id="activity-code-preview" class="p-4 font-mono text-[10px] sm:text-[11px] leading-relaxed overflow-x-auto min-h-[160px]">
+                                                <span class="text-slate-400 dark:text-gray-600 italic">/* Pilih konfigurasi parameter form di atas untuk men-generate dan merefleksikan struktur kode HTML & CSS ke panel ini... */</span>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     
                                     <div class="p-4 bg-slate-200/80 dark:bg-black/60 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 transition-colors shrink-0 backdrop-blur-sm z-20 mt-auto">
@@ -944,6 +957,32 @@
             img.classList.add('hidden');
         }
         content.className = (actConfig.pad === '24px') ? "p-5 sm:p-6 text-slate-900 dark:text-white" : "p-0 text-slate-900 dark:text-white";
+        
+        updateLiveCode();
+    }
+
+    /* UPDATE LIVE CODE BLOCK SECARA DINAMIS */
+    function updateLiveCode() {
+        const codeView = document.getElementById('activity-code-preview');
+        
+        if (!actConfig.tag && !actConfig.pad && !actConfig.style) {
+            codeView.innerHTML = '<span class="text-slate-400 dark:text-gray-600 italic">/* Pilih konfigurasi parameter form di atas untuk men-generate dan merefleksikan struktur kode HTML & CSS ke panel ini... */</span>';
+            return;
+        }
+
+        let tagVal = actConfig.tag ? actConfig.tag : '...';
+        let padVal = actConfig.pad ? actConfig.pad : '...';
+        
+        let cssPadHtml = actConfig.pad ? `<br>&nbsp;&nbsp;<span class="text-blue-600 dark:text-blue-400">padding</span>: <span class="text-emerald-600 dark:text-green-400">${padVal}</span>;` : '';
+        let cssStyleHtml = actConfig.style === 'card' ? `<br>&nbsp;&nbsp;<span class="text-blue-600 dark:text-blue-400">background</span>: <span class="text-emerald-600 dark:text-green-400">#ffffff</span>;<br>&nbsp;&nbsp;<span class="text-blue-600 dark:text-blue-400">border-radius</span>: <span class="text-emerald-600 dark:text-green-400">1rem</span>;<br>&nbsp;&nbsp;<span class="text-blue-600 dark:text-blue-400">box-shadow</span>: <span class="text-emerald-600 dark:text-green-400">0 20px 25px -5px rgba(0,0,0,0.1)</span>;` : '';
+        
+        let cssBlock = `<span class="text-amber-600 dark:text-yellow-400 font-bold">.product-card</span> <span class="text-slate-500">{</span>${cssPadHtml}${cssStyleHtml}<br><span class="text-slate-500">}</span><br><br>`;
+        
+        let imgHtml = actConfig.style === 'card' ? `&nbsp;&nbsp;<span class="text-slate-400 dark:text-white/30 italic">/* Gambar diaktifkan oleh opsi mode card */</span><br>&nbsp;&nbsp;<span class="text-purple-600 dark:text-purple-400 font-bold">&lt;img</span> <span class="text-amber-600 dark:text-yellow-400">src</span>=<span class="text-emerald-600 dark:text-green-400">"keyboard.jpg"</span> <span class="text-purple-600 dark:text-purple-400 font-bold">/&gt;</span><br>` : '';
+        
+        let htmlBlock = `<span class="text-purple-600 dark:text-purple-400 font-bold">&lt;${tagVal}</span> <span class="text-amber-600 dark:text-yellow-400">class</span>=<span class="text-emerald-600 dark:text-green-400">"product-card"</span><span class="text-purple-600 dark:text-purple-400 font-bold">&gt;</span><br>${imgHtml}&nbsp;&nbsp;<span class="text-purple-600 dark:text-purple-400 font-bold">&lt;h3&gt;</span><span class="text-slate-700 dark:text-white">Mechanical Tactile Keyboard</span><span class="text-purple-600 dark:text-purple-400 font-bold">&lt;/h3&gt;</span><br>&nbsp;&nbsp;<span class="text-purple-600 dark:text-purple-400 font-bold">&lt;p&gt;</span><span class="text-slate-700 dark:text-white">Keyboard mekanikal berperforma tinggi...</span><span class="text-purple-600 dark:text-purple-400 font-bold">&lt;/p&gt;</span><br>&nbsp;&nbsp;<span class="text-purple-600 dark:text-purple-400 font-bold">&lt;button&gt;</span><span class="text-slate-700 dark:text-white">Tambahkan Ke Keranjang</span><span class="text-purple-600 dark:text-purple-400 font-bold">&lt;/button&gt;</span><br><span class="text-purple-600 dark:text-purple-400 font-bold">&lt;/${tagVal}&gt;</span>`;
+
+        codeView.innerHTML = cssBlock + htmlBlock;
     }
 
     async function checkSolution() {
@@ -951,7 +990,7 @@
         const btn = document.getElementById('submitBtn');
         const status = document.getElementById('status-text');
         
-        btn.innerHTML = '<span class="animate-pulse">Sistem sedang memverifikasi integritas algoritma konfigurasi arsitektur Anda...</span>'; 
+        btn.innerHTML = '<span class="animate-pulse">Sistem sedang memverifikasi integritas algoritma...</span>'; 
         btn.disabled = true;
         
         await new Promise(r => setTimeout(r, 1200)); 
@@ -966,7 +1005,7 @@
             lockActivityUI();
             unlockNextChapter();
         } else {
-            status.innerText = "PERINGATAN: Validasi ditolak! Pastikan Anda menggunakan tag Container semantik murni (<article>), volume Padding protektif (24px Area), serta Modus Gaya Visual (Styled Card)."; 
+            status.innerText = "PERINGATAN: Validasi ditolak! Pastikan Anda menggunakan tag Container semantik (<article>), volume Padding protektif (24px Area), serta Modus Gaya Visual (Styled Card)."; 
             status.className = "text-[9px] sm:text-[10px] text-red-500 dark:text-red-400 font-mono font-bold leading-tight text-center sm:text-left w-full sm:w-auto";
             btn.innerText = "Ulangi Evaluasi Kalibrasi Tes Uji"; btn.disabled = false; btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 500);
         }
@@ -975,11 +1014,12 @@
     function lockActivityUI() {
         document.getElementById('lockOverlay').classList.remove('hidden');
         const btn = document.getElementById('submitBtn'); 
-        btn.innerText = "Zona Evaluasi Dikunci Rapat (Pencapaian Validasi Lulus Seratus Persen)"; btn.disabled = true;
+        btn.innerText = "Zona Evaluasi Dikunci Rapat (Lulus 100%)"; btn.disabled = true;
         btn.classList.remove('from-indigo-600', 'to-purple-600');
         btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
         
-        actConfig = { tag: 'article', pad: '24px', style: 'card' }; renderFinalCard();
+        actConfig = { tag: 'article', pad: '24px', style: 'card' }; 
+        renderFinalCard();
         document.querySelectorAll('#activityForm button').forEach(b => { b.disabled = true; b.classList.add('cursor-not-allowed'); });
     }
 

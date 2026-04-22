@@ -45,7 +45,8 @@
     }
 
     /* ANIMASI IDE CODE STREAM BACKGROUND */
-    .marquee-container { display: flex; width: max-content; gap: 4rem; }
+    .marquee-container { display: flex; width: max-content; gap: 2rem; }
+    @media (min-width: 768px) { .marquee-container { gap: 4rem; } }
     .animate-ide-scroll-1 { animation: ide-scroll 75s linear infinite; }
     .animate-ide-scroll-2 { animation: ide-scroll-reverse 90s linear infinite; }
     .animate-ide-scroll-3 { animation: ide-scroll 110s linear infinite; }
@@ -129,10 +130,10 @@
     <div id="scrollProgress" class="fixed top-[60px] md:top-[80px] left-0 h-[3px] bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 z-[60] shadow-[0_0_15px_#d946ef] transition-all duration-100" style="width:0%"></div>
 
     {{-- HERO SECTION --}}
-    <section id="hero" class="relative pt-32 pb-20 md:pt-40 md:pb-24 px-5 lg:px-8 min-h-[90vh] flex items-center z-20 overflow-hidden">
+    <section id="hero" class="relative pt-24 pb-16 md:pt-36 md:pb-24 px-5 lg:px-8 min-h-[90vh] flex items-center z-20 overflow-hidden">
         
         {{-- Animated IDE Code Background --}}
-        <div class="absolute inset-0 z-0 h-full w-full pointer-events-none overflow-hidden flex flex-col justify-center gap-10 opacity-40 dark:opacity-30 select-none font-mono text-xl md:text-3xl whitespace-nowrap drop-shadow-sm">
+        <div class="absolute inset-0 z-0 h-full w-full pointer-events-none overflow-hidden flex flex-col justify-center gap-6 md:gap-10 opacity-40 dark:opacity-30 select-none font-mono text-sm md:text-xl lg:text-3xl whitespace-nowrap drop-shadow-sm">
             <div class="marquee-container animate-ide-scroll-1">
                 @for($i=0; $i<3; $i++)
                 <div>
@@ -157,77 +158,78 @@
             <div class="absolute inset-0 bg-gradient-to-b from-slate-50/60 via-slate-50/90 to-slate-50 dark:from-[#020617]/70 dark:via-[#020617]/90 dark:to-[#020617]"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
+        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
+            
             {{-- Copywriting --}}
-            <div class="text-center lg:text-left relative z-10">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 text-xs font-bold font-mono tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-6 animate-fade-in-up backdrop-blur-md shadow-sm dark:shadow-lg floating-element">
-                    <span class="relative flex h-3 w-3">
+            <div class="text-center lg:text-left relative z-10 mt-6 md:mt-0 px-2 sm:px-0">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 text-[10px] md:text-xs font-bold font-mono tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-5 md:mb-6 animate-fade-in-up backdrop-blur-md shadow-sm dark:shadow-lg floating-element">
+                    <span class="relative flex h-2.5 w-2.5 md:h-3 md:w-3">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-fuchsia-500"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 md:h-3 md:w-3 bg-fuchsia-500"></span>
                     </span>
                     Release 1.0 is Live
                 </div>
 
-                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-slate-900 dark:text-white leading-[1.15] mb-6 tracking-tight animate-fade-in-up" style="animation-delay: 0.1s;">
-                    Belajar <span class="font-mono font-light italic text-slate-500 dark:text-slate-400">Utility-First</span><br class="hidden sm:block">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-indigo-500 animate-gradient-x pb-2">Tailwind CSS</span>
+                <h1 class="text-[2.25rem] sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-black text-slate-900 dark:text-white leading-[1.2] sm:leading-[1.15] mb-4 md:mb-6 tracking-tight text-balance animate-fade-in-up" style="animation-delay: 0.1s;">
+                    Belajar <span class="font-mono font-light italic text-slate-500 dark:text-slate-400">Utility-First</span><br class="hidden lg:block">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-indigo-500 animate-gradient-x pb-1 md:pb-2">Tailwind CSS</span>
                 </h1>
 
-                <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed animate-fade-in-up max-w-2xl mx-auto lg:mx-0 mb-10 font-medium" style="animation-delay: 0.2s;">
+                <p class="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 leading-relaxed text-balance animate-fade-in-up max-w-[20rem] sm:max-w-2xl mx-auto lg:mx-0 mb-8 md:mb-10 font-medium" style="animation-delay: 0.2s;">
                     Tinggalkan cara lama menulis CSS panjang. Pelajari cara merancang antarmuka modern dengan cepat, terstruktur, dan cobain langsung di fitur <strong class="text-cyan-600 dark:text-cyan-400 font-bold">Live Sandbox</strong>.
                 </p>
 
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up w-full max-w-[18rem] sm:max-w-none mx-auto lg:mx-0" style="animation-delay: 0.3s;">
                     @auth
-                        <a href="{{ route('courses.curriculum') }}" class="liquid-glass w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-fuchsia-500/25">
-                            Lanjutkan Belajar <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                        <a href="{{ route('courses.curriculum') }}" class="liquid-glass w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold text-sm md:text-base flex items-center justify-center gap-2 shadow-lg shadow-fuchsia-500/25 active:scale-95 transition-transform">
+                            Lanjutkan Belajar <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </a>
                     @else
-                        <a href="{{ route('register') }}" class="liquid-glass w-full sm:w-auto px-8 py-4 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-base flex items-center justify-center shadow-xl">
+                        <a href="{{ route('register') }}" class="liquid-glass w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-base flex items-center justify-center shadow-xl active:scale-95 transition-transform">
                             Mulai Belajar Sekarang
                         </a>
                     @endauth
                     
-                    <a href="#fitur" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/80 dark:bg-[#0f141e]/80 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white font-semibold text-base hover:bg-slate-50 dark:hover:bg-white/10 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm group">
-                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"/></svg>
+                    <a href="#fitur" class="w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-white/80 dark:bg-[#0f141e]/80 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white font-semibold text-sm md:text-base hover:bg-slate-50 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm group active:scale-95">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 text-cyan-500 dark:text-cyan-400 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"/></svg>
                         Lihat Fitur
                     </a>
                 </div>
             </div>
 
             {{-- 3D Editor Mockup --}}
-            <div class="relative w-full max-w-lg mx-auto lg:max-w-none animate-fade-in-up perspective-1000" style="animation-delay: 0.4s;">
+            <div class="relative w-full max-w-sm sm:max-w-md mx-auto lg:max-w-none animate-fade-in-up perspective-1000 mt-8 lg:mt-0" style="animation-delay: 0.4s;">
                 <div class="absolute -inset-1 bg-gradient-to-tr from-cyan-400 via-fuchsia-400 to-indigo-400 dark:from-cyan-500 dark:via-fuchsia-500 dark:to-indigo-500 rounded-2xl blur-2xl opacity-40 dark:opacity-30 animate-pulse"></div>
                 
                 <div id="tiltEditor" class="relative rounded-2xl bg-[#fafafa] dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden preserve-3d transition-transform duration-300 ease-out">
-                    <div class="flex items-center px-4 py-3 bg-slate-100 dark:bg-[#060a14] border-b border-slate-200 dark:border-white/5">
-                        <div class="flex gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                    <div class="flex items-center px-3 py-2.5 md:px-4 md:py-3 bg-slate-100 dark:bg-[#060a14] border-b border-slate-200 dark:border-white/5">
+                        <div class="flex gap-1.5 md:gap-2">
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-400"></div>
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-emerald-400"></div>
                         </div>
-                        <div class="mx-auto flex items-center gap-2 text-[10px] font-mono text-slate-500 font-bold bg-white dark:bg-white/5 px-3 py-1.5 rounded-md border border-slate-200 dark:border-white/10 shadow-sm">
-                            <svg class="w-3 h-3 text-cyan-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Live Preview
+                        <div class="mx-auto flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-mono text-slate-500 font-bold bg-white dark:bg-white/5 px-2 py-1 md:px-3 md:py-1.5 rounded-md border border-slate-200 dark:border-white/10 shadow-sm">
+                            <svg class="w-2.5 h-2.5 md:w-3 md:h-3 text-cyan-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Live Preview
                         </div>
                     </div>
                     
-                    <div class="p-6 font-mono text-[13px] overflow-x-auto text-slate-700 dark:text-slate-300 leading-loose min-h-[220px]">
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">1</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;div</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"group hover:scale-105 transition-all"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">2</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;button</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"<span id="autoType" class="text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-1 py-0.5 rounded"></span><span class="animate-pulse bg-slate-800 dark:bg-white/60 w-1.5 h-4 inline-block align-middle ml-1"></span>"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">3</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;Submit</span></div>
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">4</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;/button&gt;</span></span></div>
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">5</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-slate-400 italic">&lt;!-- &rarr; --&gt;</span></span></div>
-                        <div class="flex"><span class="w-8 text-slate-400 select-none">6</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;/div&gt;</span></span></div>
+                    <div class="p-4 md:p-6 font-mono text-[10px] sm:text-[11px] md:text-[13px] overflow-x-auto text-slate-700 dark:text-slate-300 leading-loose min-h-[180px] md:min-h-[220px]">
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">1</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;div</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"group hover:scale-105 transition-all"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">2</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;button</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"<span id="autoType" class="text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-1 py-0.5 rounded"></span><span class="animate-pulse bg-slate-800 dark:bg-white/60 w-1 md:w-1.5 h-3 md:h-4 inline-block align-middle ml-1"></span>"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">3</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;Submit</span></div>
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">4</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;/button&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">5</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-slate-400 italic">&lt;!-- &rarr; --&gt;</span></span></div>
+                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">6</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;/div&gt;</span></span></div>
                     </div>
                 </div>
                 
                 {{-- Decorative floating UI elements --}}
-                <div class="absolute -bottom-6 -left-6 bg-white/80 dark:bg-[#1e293b]/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 floating-element z-20 hidden md:block">
-                    <div class="flex gap-3 items-center">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 shadow-lg shadow-cyan-500/30"></div>
+                <div class="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-white/80 dark:bg-[#1e293b]/80 backdrop-blur-md p-3 md:p-4 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 floating-element z-20 hidden sm:block">
+                    <div class="flex gap-2.5 md:gap-3 items-center">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 shadow-lg shadow-cyan-500/30"></div>
                         <div>
-                            <div class="h-2.5 w-16 bg-slate-200 dark:bg-slate-600 rounded-full mb-2"></div>
-                            <div class="h-2 w-10 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
+                            <div class="h-2 md:h-2.5 w-12 md:w-16 bg-slate-200 dark:bg-slate-600 rounded-full mb-1.5 md:mb-2"></div>
+                            <div class="h-1.5 md:h-2 w-8 md:w-10 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
                         </div>
                     </div>
                 </div>
@@ -236,20 +238,20 @@
     </section>
 
     {{-- STATS BANNER SECTION --}}
-    <section class="py-8 border-y border-slate-200 dark:border-white/5 bg-white/40 dark:bg-[#060a14]/40 backdrop-blur-xl relative z-20">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <div class="flex flex-wrap justify-center md:justify-between items-center gap-6 md:gap-12 text-center md:text-left">
+    <section class="py-6 md:py-8 border-y border-slate-200 dark:border-white/5 bg-white/40 dark:bg-[#060a14]/40 backdrop-blur-xl relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
+            <div class="grid grid-cols-2 md:flex md:flex-wrap justify-center md:justify-between items-center gap-6 sm:gap-8 md:gap-12 text-left">
                 @foreach([
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />', 'num' => '10+ Modul', 'text' => 'Materi Terstruktur', 'color' => 'text-fuchsia-600 dark:text-fuchsia-400'],
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />', 'num' => 'Live Editor', 'text' => 'Koding Tanpa Setup', 'color' => 'text-cyan-600 dark:text-cyan-400'],
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />', 'num' => 'Mini Quiz', 'text' => 'Evaluasi Pemahaman', 'color' => 'text-indigo-600 dark:text-indigo-400'],
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />', 'num' => '100% Gratis', 'text' => 'Tanpa Biaya Tersembunyi', 'color' => 'text-emerald-600 dark:text-emerald-400']
                 ] as $stat)
-                <div class="flex items-center gap-4 reveal">
-                    <div class="w-12 h-12 rounded-xl icon-luxury flex items-center justify-center {{ $stat['color'] }} transition-transform hover:scale-110">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $stat['icon'] !!}</svg>
+                <div class="flex items-center gap-3 sm:gap-4 reveal">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl icon-luxury flex shrink-0 items-center justify-center {{ $stat['color'] }} transition-transform hover:scale-110">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $stat['icon'] !!}</svg>
                     </div>
-                    <div><h4 class="text-lg font-bold text-slate-900 dark:text-white">{{ $stat['num'] }}</h4><p class="text-xs font-medium text-slate-500">{{ $stat['text'] }}</p></div>
+                    <div><h4 class="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight">{{ $stat['num'] }}</h4><p class="text-[10px] sm:text-xs font-medium text-slate-500">{{ $stat['text'] }}</p></div>
                 </div>
                 @endforeach
             </div>
@@ -257,47 +259,47 @@
     </section>
 
     {{-- INTERACTIVE SHOWCASE (DENGAN LOGO UTILWIND MEWAH) --}}
-    <section class="py-24 relative overflow-hidden bg-slate-50 dark:bg-[#020617]">
+    <section class="py-16 md:py-24 relative overflow-hidden bg-slate-50 dark:bg-[#020617]">
         <div class="max-w-7xl mx-auto px-5 lg:px-8 wrapper-sihir-sandbox">
-            <div class="text-center mb-16 reveal">
-                <h2 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 leading-tight">Sihir <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500">Live Sandbox</span></h2>
-                <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">Ketik kodenya, dan lihat UI berubah secara <i class="font-semibold">real-time</i>. Tidak perlu refresh, tidak perlu instalasi.</p>
+            <div class="text-center mb-10 md:mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-3 md:mb-4 text-balance leading-tight">Sihir <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500">Live Sandbox</span></h2>
+                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium text-balance">Ketik kodenya, dan lihat UI berubah secara <i class="font-semibold">real-time</i>. Tidak perlu refresh, tidak perlu instalasi.</p>
             </div>
 
-            <div class="grid lg:grid-cols-2 gap-8 items-center bg-white/70 dark:bg-[#0a0e17]/70 rounded-[2rem] p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-2xl reveal backdrop-blur-md relative z-10">
+            <div class="grid lg:grid-cols-2 gap-6 md:gap-8 items-center bg-white/70 dark:bg-[#0a0e17]/70 rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-2xl reveal backdrop-blur-md relative z-10">
                 
                 {{-- Editor Side (Menyesuaikan dengan tag img logo) --}}
-                <div class="rounded-2xl overflow-hidden bg-[#0d1117] shadow-inner border border-white/5">
-                    <div class="px-4 py-3 bg-[#161b22] flex gap-2 border-b border-white/5">
-                        <div class="w-3 h-3 rounded-full bg-rose-500"></div><div class="w-3 h-3 rounded-full bg-amber-500"></div><div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <div class="rounded-xl md:rounded-2xl overflow-hidden bg-[#0d1117] shadow-inner border border-white/5 w-full">
+                    <div class="px-3 py-2 md:px-4 md:py-3 bg-[#161b22] flex gap-1.5 md:gap-2 border-b border-white/5">
+                        <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-rose-500"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-amber-500"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-emerald-500"></div>
                     </div>
-                    <div class="p-6 font-mono text-[13px] text-slate-300 leading-[1.8] overflow-x-auto">
-                        <div class="flex"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"bg-white rounded-2xl shadow-xl p-6 flex items-center gap-6"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-4"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"w-16 h-16 rounded-full flex items-center justify-center border"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-8"><span class="text-pink-400">&lt;img</span> <span class="text-sky-400">src=</span><span class="text-emerald-300">"utilwind.png"</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"w-10 h-10 hover:scale-110"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
-                        <div class="flex pl-4"><span class="text-pink-400">&lt;div&gt;</span></div>
-                        <div class="flex pl-8"><span class="text-pink-400">&lt;h3</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"text-xl font-bold text-slate-800"</span><span class="text-pink-400">&gt;</span>Utilwind<span class="text-pink-400">&lt;/h3&gt;</span></div>
-                        <div class="flex pl-8"><span class="text-pink-400">&lt;p</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"text-slate-500"</span><span class="text-pink-400">&gt;</span>Membuat UI itu mudah.<span class="text-pink-400">&lt;/p&gt;</span></div>
-                        <div class="flex pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
+                    <div class="p-4 md:p-6 font-mono text-[10px] sm:text-[11px] md:text-[13px] text-slate-300 leading-[1.6] md:leading-[1.8] overflow-x-auto w-full">
+                        <div class="flex"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6"</span><span class="text-pink-400">&gt;</span></div>
+                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border"</span><span class="text-pink-400">&gt;</span></div>
+                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;img</span> <span class="text-sky-400">src=</span><span class="text-emerald-300">"utilwind.png"</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"w-8 h-8 sm:w-10 sm:h-10 hover:scale-110"</span><span class="text-pink-400">&gt;</span></div>
+                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
+                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;div&gt;</span></div>
+                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;h3</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"text-lg sm:text-xl font-bold text-slate-800"</span><span class="text-pink-400">&gt;</span>Utilwind<span class="text-pink-400">&lt;/h3&gt;</span></div>
+                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;p</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"text-sm sm:text-base text-slate-500"</span><span class="text-pink-400">&gt;</span>Membuat UI itu mudah.<span class="text-pink-400">&lt;/p&gt;</span></div>
+                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
                         <div class="flex"><span class="text-pink-400">&lt;/div&gt;</span></div>
                     </div>
                 </div>
 
                 {{-- Result Side (Menampilkan Gambar Logo Asli) --}}
-                <div class="h-full min-h-[250px] rounded-2xl bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDIwMCwgMjAwLCAyMDAsIDAuNSkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDQwLCA0MCwgNDAsIDAuOCkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] border border-slate-200 dark:border-white/5 flex items-center justify-center p-8 relative overflow-hidden">
+                <div class="h-full min-h-[200px] md:min-h-[250px] rounded-xl md:rounded-2xl bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDIwMCwgMjAwLCAyMDAsIDAuNSkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDQwLCA0MCwgNDAsIDAuOCkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] border border-slate-200 dark:border-white/5 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden w-full">
                     <div class="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-[2px]"></div>
                     
-                    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 flex items-center gap-6 hover:-translate-y-2 transition-transform duration-300 w-full max-w-sm border border-slate-100 dark:border-white/5">
+                    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover:-translate-y-2 transition-transform duration-300 w-full max-w-[280px] sm:max-w-sm border border-slate-100 dark:border-white/5">
                         
                         {{-- Menggunakan Image Logo Utilwind --}}
-                        <div class="w-16 h-16 rounded-full bg-white dark:bg-slate-900 shrink-0 shadow-inner border border-slate-200/70 dark:border-white/10 flex items-center justify-center overflow-hidden">
-                            <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-10 h-10 object-contain hover:scale-110 transition-transform duration-500" onerror="this.style.display='none'">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-slate-900 shrink-0 shadow-inner border border-slate-200/70 dark:border-white/10 flex items-center justify-center overflow-hidden">
+                            <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain hover:scale-110 transition-transform duration-500" onerror="this.style.display='none'">
                         </div>
                         
                         <div>
-                            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Utilwind</h3>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Membuat UI itu mudah.</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">Utilwind</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Membuat UI itu mudah.</p>
                         </div>
                     </div>
                 </div>
@@ -321,69 +323,69 @@
     </section>
 
     {{-- BENTO GRID FEATURES --}}
-    <section id="fitur" class="py-24 relative border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617]">
+    <section id="fitur" class="py-16 md:py-24 relative border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617]">
         <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <div class="text-center mb-16 md:mb-24 reveal">
-                <div class="inline-block px-4 py-1.5 rounded-full border border-cyan-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6 bg-cyan-50 dark:bg-cyan-500/10 shadow-sm">Fasilitas Belajar</div>
-                <h2 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">Apa saja yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600">akan didapat?</span></h2>
+            <div class="text-center mb-12 md:mb-16 md:mb-24 reveal">
+                <div class="inline-block px-3 py-1.5 md:px-4 md:py-1.5 rounded-full border border-cyan-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400 text-[9px] md:text-[10px] font-bold tracking-widest uppercase mb-4 md:mb-6 bg-cyan-50 dark:bg-cyan-500/10 shadow-sm">Fasilitas Belajar</div>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 md:mb-6 leading-tight text-balance">Apa saja yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600">akan didapat?</span></h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
                 {{-- Feature 1 --}}
-                <div class="md:col-span-2 group p-8 rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-indigo-400/50 transition-all duration-500 reveal flex flex-col justify-between overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none">
-                    <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-100 dark:bg-indigo-500/10 rounded-full blur-[80px] group-hover:bg-indigo-200 transition duration-700"></div>
+                <div class="md:col-span-2 group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-indigo-400/50 transition-all duration-500 reveal flex flex-col justify-between overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none">
+                    <div class="absolute right-0 top-0 w-48 h-48 md:w-64 md:h-64 bg-indigo-100 dark:bg-indigo-500/10 rounded-full blur-[60px] md:blur-[80px] group-hover:bg-indigo-200 transition duration-700"></div>
                     <div class="relative z-10 flex-1">
-                        <div class="w-14 h-14 rounded-2xl icon-luxury flex items-center justify-center mb-6 text-indigo-600 dark:text-indigo-400">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-indigo-600 dark:text-indigo-400 shrink-0">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Materi Terstruktur</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md mb-8 font-medium">Tidak perlu bingung mulai dari mana. Materi disusun bertahap, mulai dari dasar Box Model hingga teknik layout yang responsif.</p>
-                        <a href="{{ route('courses.htmldancss') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors border border-indigo-200 dark:border-indigo-500/30 shadow-sm">Lihat Silabus &rarr;</a>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Materi Terstruktur</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md mb-6 md:mb-8 font-medium">Tidak perlu bingung mulai dari mana. Materi disusun bertahap, mulai dari dasar Box Model hingga teknik layout yang responsif.</p>
+                        <a href="{{ route('courses.htmldancss') }}" class="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 font-bold text-xs md:text-sm hover:bg-indigo-600 hover:text-white transition-colors border border-indigo-200 dark:border-indigo-500/30 shadow-sm">Lihat Silabus &rarr;</a>
                     </div>
                 </div>
 
                 {{-- Feature 2 --}}
-                <div class="group p-8 rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-fuchsia-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 100ms">
-                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-fuchsia-100 dark:bg-fuchsia-500/10 rounded-full blur-[60px] group-hover:bg-fuchsia-200 transition duration-700"></div>
-                    <div class="relative z-10 flex-1">
-                        <div class="w-14 h-14 rounded-2xl icon-luxury flex items-center justify-center mb-6 text-fuchsia-600 dark:text-fuchsia-400">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                <div class="group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-fuchsia-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 100ms">
+                    <div class="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-fuchsia-100 dark:bg-fuchsia-500/10 rounded-full blur-[50px] md:blur-[60px] group-hover:bg-fuchsia-200 transition duration-700"></div>
+                    <div class="relative z-10 flex-1 flex flex-col">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-fuchsia-600 dark:text-fuchsia-400 shrink-0">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Kamus Class</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Kamus mini terintegrasi untuk mencari class Tailwind dengan mudah dan efisien.</p>
-                        <a href="{{ route('cheatsheet.index') }}" class="text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Buka Kamus &rarr;</a>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Kamus Class</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Kamus mini terintegrasi untuk mencari class Tailwind dengan mudah dan efisien.</p>
+                        <a href="{{ route('cheatsheet.index') }}" class="text-[10px] md:text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Buka Kamus &rarr;</a>
                     </div>
                 </div>
 
                 {{-- Feature 3 --}}
-                <div class="group p-8 rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-cyan-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 200ms">
-                    <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-100 dark:bg-cyan-500/10 rounded-full blur-[60px] group-hover:bg-cyan-200 transition duration-700"></div>
-                    <div class="relative z-10 flex-1">
-                        <div class="w-14 h-14 rounded-2xl icon-luxury flex items-center justify-center mb-6 text-cyan-600 dark:text-cyan-400">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                <div class="group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-cyan-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 200ms">
+                    <div class="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-100 dark:bg-cyan-500/10 rounded-full blur-[50px] md:blur-[60px] group-hover:bg-cyan-200 transition duration-700"></div>
+                    <div class="relative z-10 flex-1 flex flex-col">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-cyan-600 dark:text-cyan-400 shrink-0">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Editor Native</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Tidak perlu install ekstensi. Rasakan pengalaman koding modern langsung di browser.</p>
-                        <a href="{{ route('sandbox') }}" class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Mulai Koding &rarr;</a>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Editor Native</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Tidak perlu install ekstensi. Rasakan pengalaman koding modern langsung di browser.</p>
+                        <a href="{{ route('sandbox') }}" class="text-[10px] md:text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Mulai Koding &rarr;</a>
                     </div>
                 </div>
 
                 {{-- Feature 4: Analytics --}}
-                <div class="md:col-span-2 group p-8 rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-emerald-400/50 transition-all duration-500 reveal flex flex-col md:flex-row items-center gap-8 overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 300ms">
-                    <div class="absolute bottom-0 right-0 w-64 h-64 bg-emerald-100 dark:bg-emerald-500/10 rounded-full blur-[80px] group-hover:bg-emerald-200 transition duration-700"></div>
-                    <div class="flex-1 relative z-10">
-                        <div class="w-14 h-14 rounded-2xl icon-luxury flex items-center justify-center mb-6 text-emerald-600 dark:text-emerald-400">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                <div class="md:col-span-2 group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-emerald-400/50 transition-all duration-500 reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 300ms">
+                    <div class="absolute bottom-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-emerald-100 dark:bg-emerald-500/10 rounded-full blur-[60px] md:blur-[80px] group-hover:bg-emerald-200 transition duration-700"></div>
+                    <div class="flex-1 relative z-10 w-full text-center md:text-left">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-emerald-600 dark:text-emerald-400 mx-auto md:mx-0 shrink-0">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Pantau Progres Belajarmu</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm mb-6 font-medium">Mulai dari durasi belajar, materi yang diselesaikan, hingga nilai kuis tercatat rapi secara visual di Dasbor.</p>
-                        <a href="{{ route('dashboard') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">Lihat Dasbor &rarr;</a>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Pantau Progres Belajarmu</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm mb-5 md:mb-6 font-medium mx-auto md:mx-0">Mulai dari durasi belajar, materi yang diselesaikan, hingga nilai kuis tercatat rapi secara visual di Dasbor.</p>
+                        <a href="{{ route('dashboard') }}" class="text-[10px] md:text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center justify-center md:justify-start gap-2 group-hover:translate-x-2 transition-transform">Lihat Dasbor &rarr;</a>
                     </div>
-                    <div class="relative z-10 w-full md:w-64 h-36 bg-slate-50 dark:bg-[#020617] rounded-2xl border border-slate-200 dark:border-white/5 flex items-end gap-3 p-5 pt-10 shadow-inner">
+                    <div class="relative z-10 w-full md:w-64 h-32 md:h-36 bg-slate-50 dark:bg-[#020617] rounded-xl md:rounded-2xl border border-slate-200 dark:border-white/5 flex items-end gap-2 md:gap-3 p-4 md:p-5 pt-8 md:pt-10 shadow-inner">
                         <div class="w-full bg-slate-300 dark:bg-slate-700 rounded-t-lg bar-anim transition-all duration-1000" data-h="40%"></div>
                         <div class="w-full bg-slate-400 dark:bg-slate-600 rounded-t-lg bar-anim transition-all duration-1000 delay-100" data-h="65%"></div>
-                        <div class="w-full bg-emerald-500 rounded-t-lg bar-anim shadow-[0_0_20px_rgba(16,185,129,0.5)] relative flex justify-center transition-all duration-1000 delay-200" data-h="95%">
-                            <span class="absolute -top-7 text-[11px] font-black text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity delay-500">95%</span>
+                        <div class="w-full bg-emerald-500 rounded-t-lg bar-anim shadow-[0_0_15px_rgba(16,185,129,0.5)] md:shadow-[0_0_20px_rgba(16,185,129,0.5)] relative flex justify-center transition-all duration-1000 delay-200" data-h="95%">
+                            <span class="absolute -top-6 md:-top-7 text-[10px] md:text-[11px] font-black text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity delay-500">95%</span>
                         </div>
                     </div>
                 </div>
@@ -392,27 +394,27 @@
     </section>
 
     {{-- ALUR BELAJAR --}}
-    <section class="py-20 md:py-32 relative bg-white dark:bg-[#060a14] border-t border-slate-200 dark:border-white/5 overflow-hidden">
+    <section class="py-16 md:py-24 relative bg-white dark:bg-[#060a14] border-t border-slate-200 dark:border-white/5 overflow-hidden">
         <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <h2 class="text-3xl md:text-5xl font-black text-center text-slate-900 dark:text-white mb-16 reveal">Alur <span class="font-mono text-fuchsia-600 dark:text-fuchsia-400">Belajar</span></h2>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-center text-slate-900 dark:text-white mb-12 md:mb-16 reveal">Alur <span class="font-mono text-fuchsia-600 dark:text-fuchsia-400">Belajar</span></h2>
             <div class="relative max-w-4xl mx-auto">
-                <div class="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-400/30 via-fuchsia-400/30 to-transparent hidden sm:block md:-translate-x-1/2"></div>
-                <div class="space-y-12">
+                <div class="absolute left-[23px] sm:left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-400/30 via-fuchsia-400/30 to-transparent md:-translate-x-1/2"></div>
+                <div class="space-y-8 md:space-y-12">
                     @foreach([
                         ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />', 'color' => 'text-cyan-500', 'title' => 'Pilih Materi', 'desc' => 'Tentukan kelas atau topik spesifik Tailwind CSS yang ingin kamu kuasai hari ini.'],
                         ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />', 'color' => 'text-fuchsia-500', 'title' => 'Baca Teori Singkat', 'desc' => 'Pahami konsep utility-first dengan bahasa yang sederhana dan langsung ke intinya.'],
                         ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />', 'color' => 'text-indigo-500', 'title' => 'Langsung Praktik', 'desc' => 'Gunakan Live Sandbox untuk menulis dan melihat hasil kodemu secara instan.'],
                         ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />', 'color' => 'text-emerald-500', 'title' => 'Kumpulkan Poin', 'desc' => 'Jawab kuis ringan di akhir materi untuk memastikan kamu benar-benar paham.']
                     ] as $i => $step)
-                    <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-normal md:odd:flex-row-reverse group reveal">
-                        <div class="absolute left-0 md:left-1/2 w-14 h-14 icon-luxury rounded-full flex items-center justify-center shadow-lg z-10 group-hover:scale-110 transition duration-500 md:-translate-x-1/2 hidden sm:flex {{ $step['color'] }}">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $step['icon'] !!}</svg>
+                    <div class="relative flex flex-row items-center md:items-start justify-normal md:even:flex-row-reverse group reveal">
+                        <div class="absolute left-0 md:left-1/2 w-12 h-12 sm:w-14 sm:h-14 icon-luxury rounded-full flex items-center justify-center shadow-lg z-10 group-hover:scale-110 transition duration-500 md:-translate-x-1/2 shrink-0 {{ $step['color'] }}">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $step['icon'] !!}</svg>
                         </div>
-                        <div class="w-full sm:pl-20 md:pl-0 md:w-[45%]">
-                            <div class="p-6 md:p-8 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/5 rounded-2xl group-hover:bg-white dark:group-hover:bg-slate-900/50 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-default">
-                                <span class="text-[10px] font-mono {{ $step['color'] }} mb-3 block font-bold uppercase tracking-widest">Langkah 0{{ $i+1 }}</span>
-                                <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2">{{ $step['title'] }}</h3>
-                                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{{ $step['desc'] }}</p>
+                        <div class="w-full pl-16 sm:pl-20 md:pl-0 md:w-[45%]">
+                            <div class="p-5 md:p-8 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/5 rounded-2xl md:rounded-[1.5rem] group-hover:bg-white dark:group-hover:bg-slate-900/50 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-default">
+                                <span class="text-[9px] md:text-[10px] font-mono {{ $step['color'] }} mb-2 md:mb-3 block font-bold uppercase tracking-widest">Langkah 0{{ $i+1 }}</span>
+                                <h3 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2">{{ $step['title'] }}</h3>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{{ $step['desc'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -423,21 +425,21 @@
     </section>
 
     {{-- TARGET AUDIENCE SECTION --}}
-    <section class="py-24 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] relative overflow-hidden">
+    <section class="py-16 md:py-24 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
-            <h2 class="text-3xl md:text-4xl font-black text-center text-slate-900 dark:text-white mb-12 revealleading-tight">Siapa yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500 leading-tight">Cocok Belajar di Sini?</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-center text-slate-900 dark:text-white mb-10 md:mb-12 revealleading-tight text-balance">Siapa yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500 leading-tight">Cocok Belajar di Sini?</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 reveal">
                 @foreach([
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.434 4.434 0 002.946-2.946 4.493 4.493 0 004.306-1.758q-2.25-.001-4.501-4.5m0 0l-1.06-1.06" />', 'color' => 'text-cyan-600 dark:text-cyan-400', 'title' => 'Pemula (Beginner)', 'desc' => 'Yang baru belajar HTML & CSS dan ingin transisi ke framework modern.'],
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />', 'color' => 'text-fuchsia-600 dark:text-fuchsia-400', 'title' => 'Frontend Developer', 'desc' => 'Yang ingin membuat UI cepat dan responsif tanpa pusing memikirkan class CSS.'],
                     ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />', 'color' => 'text-indigo-600 dark:text-indigo-400', 'title' => 'Mahasiswa IT', 'desc' => 'Sebagai bahan referensi tugas akhir, atau persiapan portofolio kerja.']
                 ] as $aud)
-                <div class="bg-white/90 dark:bg-[#0a0e17]/90 backdrop-blur-sm p-8 rounded-[2rem] border border-slate-200 dark:border-white/5 text-center hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-xl relative overflow-hidden">
-                    <div class="w-16 h-16 mx-auto rounded-2xl icon-luxury flex items-center justify-center mb-6 {{ $aud['color'] }} relative z-10">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $aud['icon'] !!}</svg>
+                <div class="bg-white/90 dark:bg-[#0a0e17]/90 backdrop-blur-sm p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 dark:border-white/5 text-center hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-xl relative overflow-hidden">
+                    <div class="w-14 h-14 md:w-16 md:h-16 mx-auto rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-4 md:mb-6 {{ $aud['color'] }} relative z-10 shrink-0">
+                        <svg class="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $aud['icon'] !!}</svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 relative z-10">{{ $aud['title'] }}</h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed relative z-10">{{ $aud['desc'] }}</p>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3 relative z-10">{{ $aud['title'] }}</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed relative z-10">{{ $aud['desc'] }}</p>
                     {{-- Subtle background blobcape --}}
                     <div class="absolute -inset-2 wrapper-bento-audience-bg opacity-30">
                         <div class="lux-blobascape" style="position: absolute; inset: 0; background: conic-gradient(from 180deg at 50% 50%, #d946ef22, #06b6d422); blur: 3xl; rounded: full;"></div>
@@ -458,43 +460,48 @@
     </section>
 
     {{-- CALL TO ACTION --}}
-    <section class="py-24 md:py-32 relative bg-white dark:bg-[#060a14] overflow-hidden border-t border-slate-200 dark:border-white/5">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-cyan-400/20 via-fuchsia-400/20 to-indigo-400/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+    <section class="py-20 md:py-32 relative bg-white dark:bg-[#060a14] overflow-hidden border-t border-slate-200 dark:border-white/5">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-gradient-to-r from-cyan-400/20 via-fuchsia-400/20 to-indigo-400/20 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse"></div>
         <div class="max-w-3xl mx-auto px-5 text-center relative z-10 reveal">
-            <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-[1.15]">Siap Menjadi <br> Tailwind Expert?</h2>
-            <p class="text-slate-600 dark:text-slate-400 text-base md:text-lg mb-10 max-w-xl mx-auto font-medium">Buat akun gratismu hari ini. Akses penuh ke materi, kamus class, dan live sandbox tanpa batasan.</p>
-            <a href="{{ route('register') }}" class="liquid-glass inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-lg shadow-xl hover:shadow-2xl">
-                Daftar Sekarang - Gratis!
-            </a>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4 md:mb-6 leading-[1.15] text-balance">Siap Menjadi <br class="hidden sm:block"> Tailwind Expert?</h2>
+            <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base md:text-lg mb-8 md:mb-10 max-w-xl mx-auto font-medium text-balance">Buat akun gratismu hari ini. Akses penuh ke materi, kamus class, dan live sandbox tanpa batasan.</p>
+            
+            @guest
+                <a href="{{ route('register') }}" class="liquid-glass inline-flex items-center justify-center gap-2 px-8 py-4 md:px-10 md:py-5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-lg shadow-xl hover:shadow-2xl w-full sm:w-auto">
+                    Daftar Sekarang - Gratis!
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}" class="liquid-glass inline-flex items-center justify-center gap-2 px-8 py-4 md:px-10 md:py-5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-lg shadow-xl hover:shadow-2xl w-full sm:w-auto">
+                    Lanjutkan Belajar &rarr;
+                </a>
+            @endguest
         </div>
     </section>
 
     {{-- FOOTER --}}
-    <footer class="bg-slate-50 dark:bg-[#020617] border-t border-slate-200 dark:border-white/10 pt-16 pb-8">
+    <footer class="bg-slate-50 dark:bg-[#020617] border-t border-slate-200 dark:border-white/10 pt-12 pb-8 md:pt-16 md:pb-8">
         <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-8 mb-10 md:mb-12">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind" class="h-8 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500" onerror="this.style.display='none'">
-                    <span class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Utilwind</span>
+                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind" class="h-6 md:h-8 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500" onerror="this.style.display='none'">
+                    <span class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Utilwind</span>
                 </div>
-                <div class="flex flex-wrap justify-center gap-6 text-sm font-bold text-slate-600 dark:text-slate-400">
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400">
                     <a href="{{ route('courses.htmldancss') }}" class="hover:text-cyan-600 transition-colors">Course</a>
                     <a href="{{ route('sandbox') }}" class="hover:text-cyan-600 transition-colors">Sandbox</a>
                     <a href="{{ route('cheatsheet.index') }}" class="hover:text-fuchsia-600 transition-colors">Cheat Sheet</a>
                     <a href="{{ route('gallery.index') }}" class="hover:text-emerald-600 transition-colors">Gallery</a>
                 </div>
-                <div class="flex gap-4 text-sm font-bold">
+                <div class="flex flex-wrap justify-center gap-3 md:gap-4 text-xs md:text-sm font-bold">
                     @guest
-                        <a href="{{ route('login') }}" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-4 py-2">Masuk</a>
-                        <a href="{{ route('register') }}" class="text-white dark:text-[#020617] bg-slate-900 dark:bg-white hover:bg-slate-800 transition-colors px-4 py-2 rounded-xl shadow-sm">Daftar</a>
+                        <a href="{{ route('login') }}" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-2 md:px-4 md:py-2">Masuk</a>
+                        <a href="{{ route('register') }}" class="text-white dark:text-[#020617] bg-slate-900 dark:bg-white hover:bg-slate-800 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-xl shadow-sm">Daftar</a>
                     @else
-                        <a href="{{ route('dashboard') }}" class="text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/30 transition-colors px-4 py-2 rounded-xl border border-indigo-200 dark:border-indigo-500/30">Ke Dasbor &rarr;</a>
+                        <a href="{{ route('dashboard') }}" class="text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/30 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-xl border border-indigo-200 dark:border-indigo-500/30">Ke Dasbor &rarr;</a>
                     @endguest
                 </div>
             </div>
-            <div class="border-t border-slate-200 dark:border-white/5 pt-6 text-center md:text-left text-[11px] text-slate-500 font-mono">
-                <p>&copy; {{ date('Y') }} Utilwind Interactive Learning.</p>
-            </div>
+            
         </div>
     </footer>
 

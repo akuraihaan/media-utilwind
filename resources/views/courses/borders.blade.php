@@ -86,7 +86,7 @@
         #mobileOverlay.show { display: block; }
     }
     
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
+    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; border-left-width: 2px; border-color: transparent;}
     .nav-item:hover { color: var(--text-main); background: var(--card-hover); }
     .nav-item.active { color: var(--accent); background: rgba(99, 102, 241, 0.05); font-weight: 600; }
     .dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; transition: all 0.3s; }
@@ -115,7 +115,13 @@
     }
 </style>
 
+<button id="mobileSidebarToggle" class="lg:hidden fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none transition-transform hover:scale-110">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+    </svg>
+</button>
 
+<div id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
 
 <div id="courseRoot" class="relative h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
@@ -186,7 +192,7 @@
                             <div class="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">4</div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Cincin Interaksi</h4>
-                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors">Mengganti kebiasaan border hover dengan Rings elegan yang tidak akan merusak susunan tata letak.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-white/50 leading-relaxed transition-colors">Mengganti kebiasaan border hover dengan Rings elegan yang tidak merusak susunan tata letak.</p>
                             </div>
                         </div>
 
@@ -207,7 +213,7 @@
                     <section id="section-56" class="lesson-section scroll-mt-32" data-lesson-id="56">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.3.1</span>
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.3.1</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Bentuk (Radius) & <br> Ketebalan Garis (Width)
                                 </h2>
@@ -294,7 +300,7 @@
                     <section id="section-57" class="lesson-section scroll-mt-32" data-lesson-id="57">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-sky-500 pl-6">
-                                <span class="text-sky-600 dark:text-sky-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.3.2</span>
+                                <span class="text-sky-600 dark:text-sky-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.3.2</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Estetika Harmoni & <br> Semantik Gaya Garis
                                 </h2>
@@ -357,13 +363,13 @@
                         </div>
                     </section>
 
-                    {{-- LESSON 58: DIVIDE UTILITIES --}}
+                    {{-- LESSON 58: DIVIDE UTILITIES & RINGS --}}
                     <section id="section-58" class="lesson-section scroll-mt-32" data-lesson-id="58">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-teal-500 pl-6">
-                                <span class="text-teal-600 dark:text-teal-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.3.3</span>
+                                <span class="text-teal-600 dark:text-teal-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.3.3</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
-                                    Utilitas Cerdas: <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500 dark:from-teal-400 dark:to-emerald-400">Smart Dividers</span>
+                                    Utilitas Cerdas: <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500 dark:from-teal-400 dark:to-emerald-400">Smart Dividers & Rings</span>
                                 </h2>
                             </div>
 
@@ -425,17 +431,13 @@
                                     <p id="demo-58-insight" class="insight-box m-0 leading-relaxed font-medium">Bagus sekali! Utilitas ajaib <code class="font-bold bg-white dark:bg-black/40 px-1 rounded text-teal-600 dark:text-teal-300">divide-y</code> otomatis membelah irisan celah antara menu tanpa menyumbat bagian atap atau membocorkan alas kotak elemen tersebut.</p>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                            
+                            <div class="my-16 border-t border-slate-200 dark:border-white/10"></div>
 
-                    {{-- LESSON 59: RINGS --}}
-                    <section id="section-59" class="lesson-section scroll-mt-32" data-lesson-id="59">
-                        <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-rose-500 pl-6">
-                                <span class="text-rose-600 dark:text-rose-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.3.4</span>
-                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
+                                <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Elevasi Fokus: Rings Outline
-                                </h2>
+                                </h3>
                             </div>
 
                             <div class="space-y-6">
@@ -490,11 +492,12 @@
                                     <p id="demo-59-insight" class="insight-box m-0 leading-relaxed font-medium">Bintang kelasnya! Memadukan <code class="font-bold bg-white dark:bg-black/40 px-1 rounded text-rose-600 dark:text-rose-300">ring-4</code> dengan pelindung udara renggang bernilai <code class="font-bold bg-white dark:bg-black/40 px-1 rounded text-rose-600 dark:text-rose-300">ring-offset-4</code> mempresentasikan kemewahan arsitektur ring sempurna tanpa layout bergeser.</p>
                                 </div>
                             </div>
+
                         </div>
                     </section>
 
                     {{-- FINAL CHALLENGE (EXPERT ACTIVITY) --}}
-                    <section id="section-60" class="lesson-section scroll-mt-32 pt-10 border-t border-slate-200 dark:border-white/10 transition-colors" data-lesson-id="60" data-type="activity">
+                    <section id="section-59" class="lesson-section scroll-mt-32 pt-10 border-t border-slate-200 dark:border-white/10 transition-colors" data-lesson-id="59" data-type="activity">
                         <div class="relative rounded-[2rem] md:rounded-[2.5rem] bg-white dark:bg-[#050b14] border border-slate-200 dark:border-white/10 p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-indigo-400 dark:hover:border-indigo-500/30 transition-all duration-500 flex flex-col">
                             
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-400/20 dark:bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
@@ -553,7 +556,7 @@
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border-2 border-slate-300 dark:border-white/20 flex items-center justify-center text-[10px] shrink-0 transition-colors font-bold text-white"></span> 
                                                 <div class="leading-relaxed">
                                                     <b class="block mb-1 text-slate-800 dark:text-white/90 transition-colors font-extrabold text-sm">1. Transformasi Avatar & Pendaran:</b> 
-                                                    Pada tag gambar <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="profile-avatar"</code>, hapus kelas perusak seperti <code class="text-[10px] text-rose-500 line-through decoration-rose-500">rounded-none</code>, terapkan bentuk bulat presisi <code class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">rounded-full</code>, serta pasang cincin pemancar <code class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">ring-4</code> dengan warna <code class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">ring-indigo-500</code>.
+                                                    Pada tag gambar <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="profile-avatar"</code>, hapus kelas perusak seperti <code class="text-[10px] text-rose-500 line-through decoration-rose-500">rounded-none</code>, terapkan bentuk bulat presisi <code class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">rounded-full</code>, serta pasang cincin pemancar <code class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">ring-4</code>.
                                                 </div>
                                             </div>
                                             
@@ -561,7 +564,7 @@
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border-2 border-slate-300 dark:border-white/20 flex items-center justify-center text-[10px] shrink-0 transition-colors font-bold text-white"></span> 
                                                 <div class="leading-relaxed">
                                                     <b class="block mb-1 text-slate-800 dark:text-white/90 transition-colors font-extrabold text-sm">2. Injeksi Ilusi Dorongan Bawah Tombol:</b> 
-                                                    Pada komponen <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="action-btn"</code>, buang kepingan statis <code class="text-[10px] text-rose-500 line-through decoration-rose-500">rounded-none</code> dan tambahkan batas tebal hanya di lantai utamanya (<code class="text-[10px] font-bold text-fuchsia-600 dark:text-fuchsia-400">border-b-4</code>) serta perlindungan kelengkungan umum seperti <code class="text-[10px] font-bold text-fuchsia-600 dark:text-fuchsia-400">rounded-xl</code> atau semacamnya.
+                                                    Pada komponen <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="action-btn"</code>, buang kepingan statis <code class="text-[10px] text-rose-500 line-through decoration-rose-500">border-0 rounded-none</code> dan tambahkan batas tebal hanya di lantai utamanya (<code class="text-[10px] font-bold text-fuchsia-600 dark:text-fuchsia-400">border-b-4</code>).
                                                 </div>
                                             </div>
                                             
@@ -569,7 +572,7 @@
                                                 <span class="w-4 h-4 mt-0.5 rounded-full border-2 border-slate-300 dark:border-white/20 flex items-center justify-center text-[10px] shrink-0 transition-colors font-bold text-white"></span> 
                                                 <div class="leading-relaxed">
                                                     <b class="block mb-1 text-slate-800 dark:text-white/90 transition-colors font-extrabold text-sm">3. Pembedahan Data Elegan dengan Smart Divider:</b> 
-                                                    Pada induk kontainer statistik pengikut di <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="stats-list"</code>, tanamkan pembelah horizontal canggih (<code class="text-[10px] font-bold text-teal-600 dark:text-teal-400">divide-y</code>) dan hapus kebodohan tumpukan <code class="text-[10px] text-rose-500 line-through decoration-rose-500">divide-y-0</code>.
+                                                    Pada induk kontainer statistik pengikut di <code class="text-[11px] bg-slate-100 dark:bg-white/10 px-1 rounded text-rose-500 font-mono">id="stats-list"</code>, tanamkan pembelah horizontal canggih (<code class="text-[10px] font-bold text-teal-600 dark:text-teal-400">divide-y</code>) dan hapus tumpukan <code class="text-[10px] text-rose-500 line-through decoration-rose-500">divide-y-0</code>.
                                                 </div>
                                             </div>
                                             
@@ -602,7 +605,7 @@
                 <div class="mt-32 pt-8 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
                     <a href="{{ route('courses.backgrounds') ?? '#' }}" class="group flex items-center gap-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition w-full sm:w-auto justify-center sm:justify-start">
                         <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center bg-slate-100 dark:bg-transparent group-hover:bg-slate-200 dark:group-hover:bg-white/5 transition shrink-0">
-                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            <span class="text-lg group-hover:-translate-x-1 transition-transform">←</span>
                         </div>
                         <div class="text-center sm:text-left">
                             <div class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-50 mb-0.5">Sebelumnya</div>
@@ -610,6 +613,7 @@
                         </div>
                     </a>
                     
+                    {{-- TOMBOL NEXT TERKUNCI --}}
                     <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-slate-500 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end flex-row-reverse sm:flex-row">
                         <div class="text-center sm:text-right">
                             <div id="nextLabel" class="text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-50 mb-0.5 text-rose-500 dark:text-rose-400 transition-colors">Berikutnya</div>
@@ -630,20 +634,23 @@
 
 <script>
     window.LESSON_IDS = [56, 57, 58, 59]; 
-    let rawCompletedIds = {!! json_encode($completedLessonIds ?? '[]') !!};
-    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
-    let completedSet = new Set(window.COMPLETED_IDS);
-    
     const ACTIVITY_LESSON_ID = 59; 
+
+    let rawCompletedIds = {!! json_encode($completedLessonIds ?? '[]') !!};
+    window.COMPLETED_IDS = Array.isArray(rawCompletedIds) ? rawCompletedIds.map(id => Number(id)) : []; 
+
+    let completedSet = new Set(window.COMPLETED_IDS);
     let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID) || {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
+    
+    // Antrian request API agar tidak terjadi redudansi pemanggilan
+    let pendingRequests = new Set();
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initVisualEffects();
+        initMonaco();
         
         updateProgressUI(false); 
-        
-        initMonaco();
         
         if (activityCompleted) {
             lockActivityUI();
@@ -652,10 +659,9 @@
 
         initMasterObserver();
         
-        document.querySelectorAll('.nav-item').forEach(item => {
-            const targetId = parseInt(item.getAttribute('data-target').replace('#section-', ''));
-            if(completedSet.has(targetId)) {
-                markSidebarDone(targetId);
+        window.LESSON_IDS.forEach(id => {
+            if(completedSet.has(id)) {
+                markSidebarDone(id);
             }
         });
     });
@@ -663,17 +669,27 @@
     function updateProgressUI(animate = true) {
         const total = window.LESSON_IDS.length; 
         const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length; 
-        const percent = Math.round((done / total) * 100);
+        let percent = Math.round((done / total) * 100);
+        
+        const isActivityDone = completedSet.has(ACTIVITY_LESSON_ID);
+        
+        // Membatasi persentase maksimum jika belum menyelesaikan Expert Mode (ID 59)
+        if (!isActivityDone && percent >= 100) {
+             percent = Math.floor(((total - 1) / total) * 100); 
+        }
         
         const bar = document.getElementById('topProgressBar');
         const label = document.getElementById('progressLabelTop');
         
-        if(!animate) bar.style.transition = 'none';
-        bar.style.width = percent + '%'; 
-        if(!animate) setTimeout(() => bar.style.transition = 'all 0.5s', 50);
+        if(!animate && bar) bar.style.transition = 'none';
+        if(bar) bar.style.width = percent + '%'; 
+        if(!animate && bar) setTimeout(() => bar.style.transition = 'all 0.5s ease-out', 50);
         
-        label.innerText = percent + '%';
-        if(percent === 100 && activityCompleted) unlockNextChapter();
+        if(label) label.innerText = percent + '%';
+        
+        if(percent === 100 && isActivityDone) {
+            unlockNextChapter();
+        }
     }
 
     function markSidebarDone(lessonId) {
@@ -691,9 +707,15 @@
         }
     }
 
+    // Melakukan update optimis agar progress bar bergerak instan, request dikirim dibelakang layar
     async function saveLessonToDB(lessonId) { 
         lessonId = Number(lessonId);
-        if(completedSet.has(lessonId)) return; 
+        if(completedSet.has(lessonId) || pendingRequests.has(lessonId)) return; 
+
+        pendingRequests.add(lessonId);
+        completedSet.add(lessonId); 
+        updateProgressUI(true);
+        markSidebarDone(lessonId);
 
         try {
             const formData = new FormData();
@@ -710,12 +732,16 @@
             });
 
             if (response.ok) {
-                completedSet.add(lessonId);
-                updateProgressUI(true);
-                markSidebarDone(lessonId);
+                pendingRequests.delete(lessonId);
+            } else {
+                throw new Error("Gagal mengamankan log laporan.");
             }
         } catch(e) {
             console.error('Network Error:', e);
+            // Kembalikan UI jika gagal (opsional)
+            completedSet.delete(lessonId);
+            pendingRequests.delete(lessonId);
+            updateProgressUI(true);
         }
     }
 
@@ -933,7 +959,15 @@
         btn.disabled = true;
         
         try {
-            await fetch('/activity/complete', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ activity_id: ACTIVITY_ID, score: 100 }) });
+            await fetch('/activity/complete', { 
+                method: 'POST', 
+                headers: { 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}', 
+                    'Accept': 'application/json', 
+                    'Content-Type': 'application/json' 
+                }, 
+                body: JSON.stringify({ activity_id: 10, score: 100 }) // Adjust Activity ID accordingly
+            });
             await saveLessonToDB(ACTIVITY_LESSON_ID); 
             activityCompleted = true;
             lockActivityUI();   
@@ -1183,42 +1217,115 @@
         }
     }
 
-    function initSidebarScroll(){
+    // SCROLL SPY PENYEMPURNAAN MUTLAK (ANTI-NEMPEL)
+    function initSidebarScroll() {
         const m = document.getElementById('mainScroll');
-        const l = document.querySelectorAll('.accordion-content .nav-item');
-        if(!m) return;
-        m.addEventListener('scroll', () => {
-            let c = '';
-            document.querySelectorAll('.lesson-section').forEach(s => {
-                if (m.scrollTop >= s.offsetTop - 250) c = '#' + s.id;
+        const sections = document.querySelectorAll('.lesson-section');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        if (!m || sections.length === 0 || navItems.length === 0) return;
+
+        let isClickScrolling = false;
+
+        const syncScrollSpy = () => {
+            if (isClickScrolling) return;
+
+            let currentId = '';
+            // Kompensasi jarak hitung agar transisi sidebar responsif saat section berada di bawah header
+            const scrollPosition = m.scrollTop + 150; 
+
+            sections.forEach(section => {
+                if (section.offsetTop <= scrollPosition) {
+                    currentId = '#' + section.id;
+                }
             });
-            l.forEach(k => {
-                k.classList.remove('active');
-                if (k.getAttribute('data-target') === c) k.classList.add('active');
-            })
+
+            if (m.scrollTop + m.clientHeight >= m.scrollHeight - 50) {
+                currentId = '#' + sections[sections.length - 1].id;
+            }
+
+            if(!currentId && sections.length > 0) {
+                currentId = '#' + sections[0].id;
+            }
+
+            navItems.forEach(item => {
+                const target = item.getAttribute('data-target') || item.getAttribute('href');
+                
+                // Pembersihan Total
+                item.classList.remove('active');
+                item.className = item.className.replace(/\b(border-(cyan|blue|indigo|purple|amber|rose|emerald|fuchsia|sky|teal)-\d+|bg-(slate|white)\/\d+|bg-slate-\d+)\b/g, '').trim();
+                item.classList.add('border-transparent');
+                
+                // Penyorotan Menu Aktif Saja
+                if (target === currentId) {
+                    item.classList.add('active');
+                    item.classList.remove('border-transparent');
+                    
+                    const isActivity = item.dataset.type === 'activity' || (item.innerText && item.innerText.toLowerCase().includes('latihan')) || (item.innerText && item.innerText.toLowerCase().includes('mission'));
+                    
+                    if (isActivity) {
+                        item.classList.add('border-amber-500', 'bg-slate-100', 'dark:bg-white/5');
+                    } else {
+                        item.classList.add('border-indigo-500', 'bg-slate-100', 'dark:bg-white/5'); 
+                    }
+                }
+            });
+        };
+
+        let ticking = false;
+        m.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    syncScrollSpy();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        syncScrollSpy();
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const targetSelector = item.getAttribute('data-target') || item.getAttribute('href');
+                if(!targetSelector) return;
+                
+                const targetSection = document.querySelector(targetSelector);
+                if (targetSection) {
+                    if(targetSelector.startsWith('#') && item.tagName === 'A') e.preventDefault();
+                    
+                    isClickScrolling = true;
+
+                    m.scrollTo({
+                        top: targetSection.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+
+                    navItems.forEach(k => {
+                        k.classList.remove('active');
+                        k.className = k.className.replace(/\b(border-(cyan|blue|indigo|purple|amber|rose|emerald|fuchsia|sky|teal)-\d+|bg-(slate|white)\/\d+|bg-slate-\d+)\b/g, '').trim();
+                        k.classList.add('border-transparent');
+                    });
+                    
+                    item.classList.remove('border-transparent');
+                    item.classList.add('active', 'bg-slate-100', 'dark:bg-white/5');
+                    
+                    const isActivity = item.dataset.type === 'activity' || (item.innerText && item.innerText.toLowerCase().includes('latihan')) || (item.innerText && item.innerText.toLowerCase().includes('mission'));
+                    if (isActivity) {
+                        item.classList.add('border-amber-500');
+                    } else {
+                        item.classList.add('border-indigo-500');
+                    }
+
+                    setTimeout(() => {
+                        isClickScrolling = false;
+                        syncScrollSpy();
+                    }, 800);
+                }
+            });
         });
     }
 
-    function initVisualEffects(){
-        const c = document.getElementById('stars');
-        if(!c) return;
-        const x = c.getContext('2d');
-        function r(){ c.width = innerWidth; c.height = innerHeight; }
-        r(); window.addEventListener('resize', r);
-        let s=[];
-        for(let i=0; i<100; i++) s.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.2, v:Math.random()*0.2+.1});
-        
-        function drawStars() {
-            x.clearRect(0,0,c.width,c.height);
-            x.fillStyle='rgba(255,255,255,.3)';
-            s.forEach(t=>{
-                x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill();
-                t.y += t.v;
-                if(t.y > c.height) t.y = 0;
-            });
-            requestAnimationFrame(drawStars);
-        }
-        drawStars();
-    }
+    function initVisualEffects(){const c=document.getElementById('stars');if(!c)return;const x=c.getContext('2d');function r(){c.width=innerWidth;c.height=innerHeight}r();window.onresize=r;let s=[];for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});(function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.3)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a)})();}
 </script>
 @endsection

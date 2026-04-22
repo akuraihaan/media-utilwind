@@ -118,14 +118,6 @@
     .dark .nav-item.active .dot { background: #818cf8; box-shadow: 0 0 8px #818cf8; }
 </style>
 
-<button id="mobileSidebarToggle" class="lg:hidden fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none transition-transform hover:scale-110">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-    </svg>
-</button>
-
-<div id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
-
 <div id="courseRoot" class="relative h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-white font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
     {{-- BACKGROUND LAYER --}}
@@ -167,7 +159,7 @@
                 <div class="mb-24 animate-fade-in-up">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2 transition-colors">
                         <svg class="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Target Pembelajaran
+                        Tujuan Pembelajaran
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         
@@ -203,11 +195,12 @@
                             </div>
                         </div>
 
-                        <div class="bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/40 dark:to-violet-900/40 border border-indigo-200 dark:border-indigo-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-md dark:hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-4 cursor-pointer" onclick="document.getElementById('section-45').scrollIntoView({ behavior: 'smooth', block: 'start' });">
-                            <div class="w-8 h-8 rounded bg-indigo-100 dark:bg-white/10 text-indigo-600 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs transition-colors shadow-inner border border-indigo-300 dark:border-white/20">🏁</div>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-md dark:hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-4 cursor-default">
+                            <div class="w-8 h-8 rounded bg-blue-100 dark:bg-white/10 text-blue-600 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs transition-colors">🏁</div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-1 transition-colors">Final Mission</h4>
                                 <p class="text-[11px] text-slate-600 dark:text-white/70 leading-relaxed transition-colors">Memahami integrasi tumpukan sumbu 3D dengan mengkombinasikan paku bumi navigasi permanen (fixed navbar) berserta lencana absolut yang diikat oleh wadah referensi.</p>
+                            
                             </div>
                         </div>
 
@@ -497,7 +490,7 @@
                                     </div>
                                     <div class="flex gap-1 items-center bg-slate-100 dark:bg-black/40 p-1.5 rounded-lg border border-slate-200 dark:border-white/10 shadow-inner flex-wrap sm:flex-nowrap w-full md:w-auto transition-colors">
                                         <span class="text-[9px] text-slate-500 dark:text-white/40 uppercase font-bold px-2 hidden lg:block transition-colors tracking-widest">Tarik Depan (z-50):</span>
-                                        <button onclick="simZIndex('red')" class="flex-1 px-4 py-2 text-[10px] sm:text-xs font-bold rounded bg-red-100 dark:bg-red-600/30 hover:bg-red-200 dark:hover:bg-red-500 text-red-700 dark:text-red-300 transition border border-red-300 dark:border-red-500/50 shrink-0 focus:outline-none">Merah</button>
+                                        <button onclick="simZIndex('red')" class="flex-1 px-4 py-2 text-[10px] sm:text-xs font-bold rounded bg-red-100 dark:bg-red-600/30 hover:bg-red-200 dark:hover:bg-red-50 text-red-700 dark:text-red-300 transition border border-red-300 dark:border-red-500/50 shrink-0 focus:outline-none">Merah</button>
                                         <button onclick="simZIndex('blue')" class="flex-1 px-4 py-2 text-[10px] sm:text-xs font-bold rounded bg-blue-100 dark:bg-blue-600/30 hover:bg-blue-200 dark:hover:bg-blue-500 text-blue-700 dark:text-blue-300 transition border border-blue-300 dark:border-blue-500/50 shrink-0 focus:outline-none">Biru</button>
                                         <button onclick="simZIndex('green')" class="flex-1 px-4 py-2 text-[10px] sm:text-xs font-bold rounded bg-emerald-100 dark:bg-emerald-600/30 hover:bg-emerald-200 dark:hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 transition border border-emerald-300 dark:border-emerald-500/50 shrink-0 focus:outline-none">Hijau</button>
                                     </div>
@@ -668,7 +661,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex flex-col lg:grid lg:grid-cols-12 gap-0 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-md dark:shadow-xl relative z-10 flex-1 transition-colors bg-white dark:bg-slate-950 mt-8">
+                            <div class="flex flex-col xl:grid xl:grid-cols-12 gap-0 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-md dark:shadow-xl relative z-10 flex-1 transition-colors bg-white dark:bg-slate-950 mt-8">
                                 
                                 {{-- EDITOR KIRI --}}
                                 <div class="lg:col-span-5 bg-slate-50 dark:bg-[#111112] border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-white/10 flex flex-col relative min-h-[500px] xl:min-h-[600px] transition-colors w-full">
@@ -758,7 +751,7 @@
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 
 <script>
-    /* --- CONFIGURATION --- */
+    /* --- 1. CONFIGURATION --- */
     window.LESSON_IDS = [41, 42, 43, 44, 45]; 
     window.COMPLETED_IDS = {!! json_encode($completedLessonIds ?? []) !!};
     let completedSet = new Set(window.COMPLETED_IDS.map(Number));
@@ -767,6 +760,7 @@
     const ACTIVITY_ID = 9; 
     const ACTIVITY_LESSON_ID = 45;
 
+    /* --- 2. INITIALIZATION --- */
     document.addEventListener('DOMContentLoaded', () => {
         initLessonObserver();
         initVisualEffects();
@@ -780,7 +774,7 @@
         });
     });
 
-    /* --- SIMULATOR LOGICS --- */
+    /* --- 3. SIMULATOR LOGICS --- */
     window.clsMxAuto = false; window.clsPx4 = false; window.clsWidth = 'w-full';
     window.simContainer = function(widthCls, btn) {
         const c = document.getElementById('sim1-target');
@@ -819,7 +813,6 @@
         document.getElementById('sim1-pad-l').style.opacity = window.clsPx4 ? '1' : '0'; document.getElementById('sim1-pad-r').style.opacity = window.clsPx4 ? '1' : '0';
     }
 
-    /* --- SIMULATOR 2: FLOAT & CLEAR --- */
     window.sim2Float = 'left';
     window.sim2Text = 'short';
     window.sim2Clear = false;
@@ -876,7 +869,6 @@
         }
     }
 
-    /* --- SIMULATOR 3: Z-INDEX --- */
     window.simPos = 'relative';
     window.simPosition = function(val, btn) {
         window.simPos = val;
@@ -921,7 +913,6 @@
         if(color === 'green') { g.classList.replace('z-30', 'z-50'); g.classList.replace('shadow-[0_10px_20px_rgba(16,185,129,0.3)]', 'shadow-[0_20px_40px_rgba(16,185,129,0.6)]'); lg.innerText = "Z-50 (PUNCAK)"; lg.classList.replace('text-emerald-900', 'text-emerald-700'); lg.classList.replace('dark:text-white', 'dark:text-emerald-300'); lg.classList.replace('bg-white/90', 'bg-white'); lg.classList.replace('dark:bg-black/50', 'dark:bg-emerald-900/80'); lg.classList.add('animate-pulse'); }
     }
 
-    /* --- SIMULATOR 4: TABLE INJECT --- */
     window.simTableInject = function(btn) {
         btn.innerHTML = '<span class="animate-pulse flex items-center gap-2 text-[10px] tracking-wide"><svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> Menyuntikkan Payload...</span>';
         btn.disabled = true;
@@ -947,7 +938,7 @@
         }, 1200);
     }
 
-    /* --- EXPERT ACTIVITY (MONACO) --- */
+    /* --- 4. EXPERT ACTIVITY (MONACO) --- */
     let editor;
     const starterCode = `<div class="bg-slate-900 min-h-screen w-full font-sans text-slate-200 relative">
   
@@ -1093,7 +1084,7 @@
         } else {
             btn.disabled = true;
             btn.classList.add('cursor-not-allowed', 'opacity-50');
-            btn.innerHTML = '<span class="tracking-wide uppercase">Penuhi Syarat Validator Terlebih Dahulu</span><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
+            btn.innerHTML = '<span class="tracking-wide uppercase">Penuhi Syarat Terlebih Dahulu</span><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
             
             document.getElementById('progressText').classList.replace('text-emerald-700', 'text-indigo-700');
             document.getElementById('progressText').classList.replace('dark:text-emerald-300', 'dark:text-indigo-300');
@@ -1156,14 +1147,14 @@
             document.getElementById('nextLabel').classList.remove('opacity-50');
             document.getElementById('nextLabel').classList.add('text-indigo-700', 'dark:text-indigo-400', 'opacity-100');
             const icon = document.getElementById('nextIcon');
-            icon.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>`;
+            icon.innerHTML = `<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>`;
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5', 'text-slate-400', 'dark:text-slate-500');
             icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/40', 'text-indigo-700', 'dark:text-indigo-400', 'shadow-md', 'dark:shadow-[0_0_15px_rgba(99,102,241,0.3)]', 'group-hover:translate-x-1');
             btn.onclick = () => window.location.href = "{{ route('lab.start', ['id' => 2]) ?? '#' }}"; 
         }
     }
 
-    /* --- SYSTEM FUNCTIONS & PERFECT SCROLL SPY --- */
+    /* --- 6. SYSTEM FUNCTIONS & PERFECT SCROLL SPY --- */
     function updateProgressUI() {
         const total = window.LESSON_IDS.length;
         const done = window.LESSON_IDS.filter(id => completedSet.has(id)).length;
@@ -1191,7 +1182,12 @@
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
                     if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
-                        try { await saveLessonToDB(id); completedSet.add(id); updateProgressUI(); } catch(e) {}
+                        try { 
+                            await saveLessonToDB(id); 
+                            completedSet.add(id); 
+                            updateProgressUI(); 
+                            markSidebarDone(id);
+                        } catch(e) {}
                     }
                 }
             }
@@ -1207,112 +1203,91 @@
         }); 
     }
 
-    // SCROLL SPY YANG DISEMPURNAKAN (MENCEGAH "NEMPEL")
-    function initSidebarScroll() {
+    // SCROLL SPY YANG DISEMPURNAKAN
+    function initSidebarScroll(){
         const m = document.getElementById('mainScroll');
-        const sections = document.querySelectorAll('.lesson-section');
-        const navItems = document.querySelectorAll('.nav-item');
-
-        if (!m || sections.length === 0 || navItems.length === 0) return;
-
-        let isClickScrolling = false;
-
-        const syncScrollSpy = () => {
-            if (isClickScrolling) return;
-
-            let currentId = '';
-            const scrollPosition = m.scrollTop + 150; 
-
-            sections.forEach(section => {
-                if (section.offsetTop <= scrollPosition) {
-                    currentId = '#' + section.id;
-                }
-            });
-
-            if (m.scrollTop + m.clientHeight >= m.scrollHeight - 50) {
-                currentId = '#' + sections[sections.length - 1].id;
-            }
-
-            if(!currentId && sections.length > 0) {
-                currentId = '#' + sections[0].id;
-            }
-
-            navItems.forEach(item => {
-                const target = item.getAttribute('data-target') || item.getAttribute('href');
-                
-                item.classList.remove('active');
-                item.className = item.className.replace(/\b(border-(cyan|blue|indigo|purple|amber|rose|emerald)-\d+|bg-(slate|white)\/\d+|bg-slate-\d+)\b/g, '').trim();
-                item.classList.add('border-transparent');
-                
-                if (target === currentId) {
-                    item.classList.add('active');
-                    item.classList.remove('border-transparent');
-                    
-                    const isActivity = item.dataset.type === 'activity' || (item.innerText && item.innerText.toLowerCase().includes('latihan')) || (item.innerText && item.innerText.toLowerCase().includes('tugas'));
-                    
-                    if (isActivity) {
-                        item.classList.add('border-amber-500', 'bg-slate-100', 'dark:bg-white/5');
-                    } else {
-                        item.classList.add('border-indigo-500', 'bg-slate-100', 'dark:bg-white/5'); 
-                    }
-                }
-            });
-        };
-
-        let ticking = false;
+        const l = document.querySelectorAll('.nav-item');
+        if(!m) return;
         m.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    syncScrollSpy();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        });
-
-        syncScrollSpy();
-
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const targetSelector = item.getAttribute('data-target') || item.getAttribute('href');
-                if(!targetSelector) return;
-                
-                const targetSection = document.querySelector(targetSelector);
-                if (targetSection) {
-                    if(targetSelector.startsWith('#') && item.tagName === 'A') e.preventDefault();
-                    
-                    isClickScrolling = true;
-
-                    m.scrollTo({
-                        top: targetSection.offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-
-                    navItems.forEach(k => {
-                        k.classList.remove('active');
-                        k.className = k.className.replace(/\b(border-(cyan|blue|indigo|purple|amber|rose|emerald)-\d+|bg-(slate|white)\/\d+|bg-slate-\d+)\b/g, '').trim();
-                        k.classList.add('border-transparent');
-                    });
-                    
-                    item.classList.remove('border-transparent');
-                    item.classList.add('active', 'bg-slate-100', 'dark:bg-white/5');
-                    
-                    const isActivity = item.dataset.type === 'activity' || (item.innerText && item.innerText.toLowerCase().includes('latihan')) || (item.innerText && item.innerText.toLowerCase().includes('tugas'));
-                    if (isActivity) {
-                        item.classList.add('border-amber-500');
-                    } else {
-                        item.classList.add('border-indigo-500');
-                    }
-
-                    setTimeout(() => {
-                        isClickScrolling = false;
-                        syncScrollSpy();
-                    }, 800);
+            let c = '';
+            document.querySelectorAll('.lesson-section').forEach(s => {
+                if (m.scrollTop >= (s.offsetTop - 300)) {
+                    c = '#' + s.id;
                 }
             });
+            l.forEach(k => {
+                k.classList.remove('active');
+                if (c && k.getAttribute('data-target') === c) {
+                    k.classList.add('active');
+                    
+                    const accordionContent = k.closest('.accordion-content');
+                    if (accordionContent && (accordionContent.style.maxHeight === '0px' || !accordionContent.style.maxHeight)) {
+                        const btnId = accordionContent.id.replace('collapse-', '');
+                        toggleAccordion('collapse-' + btnId);
+                    }
+                }
+            })
         });
+        
+        setTimeout(() => m.dispatchEvent(new Event('scroll')), 200);
+    }
+    
+    // FUNGSI NAVIGASI & SIDEBAR LAINNYA
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        if(window.innerWidth < 1024) toggleMobileSidebar();
     }
 
-    function initVisualEffects(){const c=document.getElementById('stars');if(!c)return;const x=c.getContext('2d');function r(){c.width=innerWidth;c.height=innerHeight}r();window.onresize=r;let s=[];for(let i=0;i<100;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,v:Math.random()*0.2+.1});(function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.3)';s.forEach(t=>{x.beginPath();x.arc(t.x,t.y,t.r,0,6.28);x.fill();t.y+=t.v;if(t.y>c.height)t.y=0});requestAnimationFrame(a)})();}
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('courseSidebar');
+        const overlay = document.getElementById('mobileOverlay');
+        if (sidebar && overlay) {
+            if (sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('show');
+            } else {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('show');
+            }
+        }
+    }
+
+    function toggleAccordion(id) {
+        const content = document.getElementById(id);
+        const icon = document.getElementById('icon-' + id.replace('collapse-', ''));
+        if (content) {
+            const isClosed = content.style.maxHeight === '0px' || content.style.maxHeight === '';
+            content.style.maxHeight = isClosed ? content.scrollHeight + "px" : "0px";
+            content.style.opacity = isClosed ? "1" : "0";
+            if(icon) {
+                 if(isClosed) icon.classList.add('rotate-180', 'bg-slate-200', 'dark:bg-white/10');
+                 else icon.classList.remove('rotate-180', 'bg-slate-200', 'dark:bg-white/10');
+            }
+        }
+    }
+
+    function initVisualEffects(){
+        const c = document.getElementById('stars');
+        if(!c) return;
+        const x = c.getContext('2d');
+        function r(){ c.width = innerWidth; c.height = innerHeight; }
+        r(); window.addEventListener('resize', r);
+        let s=[];
+        for(let i=0; i<100; i++) s.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.2, v:Math.random()*0.2+.1});
+        
+        function drawStars() {
+            x.clearRect(0,0,c.width,c.height);
+            x.fillStyle='rgba(255,255,255,.3)';
+            s.forEach(t=>{
+                x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill();
+                t.y += t.v;
+                if(t.y > c.height) t.y = 0;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+    }
 </script>
 @endsection

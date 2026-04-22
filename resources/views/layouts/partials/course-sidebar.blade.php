@@ -235,8 +235,7 @@
                         ['id' => 'section-61', 'label' => 'Opacity'], 
                         ['id' => 'section-62', 'label' => 'Blur'], 
                         ['id' => 'section-63', 'label' => 'Animasi'], 
-                        ['id' => 'section-64', 'label' => 'Transform'],
-                        ['id' => 'section-65', 'label' => 'Aktivitas Latihan']
+                        ['id' => 'section-64', 'label' => 'Aktivitas Latihan']
                     ]
                 ],
             ]

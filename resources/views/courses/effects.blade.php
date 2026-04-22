@@ -183,7 +183,7 @@
                 <div class="mb-24">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2 transition-colors">
                         <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Target Pembelajaran
+                        Tujuan Pembelajaran
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         
@@ -236,7 +236,7 @@
                     <section id="section-60" class="lesson-section scroll-mt-32" data-lesson-id="60">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-6">
-                                <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.4.1</span>
+                                <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.4.1</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Ilusi Elevasi: Box Shadow
                                 </h2>
@@ -323,7 +323,7 @@
                     <section id="section-61" class="lesson-section scroll-mt-32" data-lesson-id="61">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-blue-500 pl-6">
-                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.4.2</span>
+                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.4.2</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Transparansi: Opacity vs Latar Tembus Pandang
                                 </h2>
@@ -399,7 +399,7 @@
                     <section id="section-62" class="lesson-section scroll-mt-32" data-lesson-id="62">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.4.3</span>
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.4.3</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Akselerasi GPU: Efek Kaca (Glassmorphism)
                                 </h2>
@@ -478,7 +478,7 @@
                     <section id="section-63" class="lesson-section scroll-mt-32" data-lesson-id="63">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-sky-500 pl-6">
-                                <span class="text-sky-600 dark:text-sky-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.4.4</span>
+                                <span class="text-sky-600 dark:text-sky-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.4.4</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Animasi Interaktif Berbasis Transform GPU
                                 </h2>
@@ -609,7 +609,7 @@
                     </section>
 
                     {{-- 5. EXPERT CHALLENGE (LIVE EDITOR) --}}
-                    <section id="visual-challenge" class="lesson-section scroll-mt-32 pt-10 border-t border-slate-200 dark:border-white/10 transition-colors" data-lesson-id="64" data-type="activity">
+                    <section id="visual-challenge" class="lesson-section scroll-mt-32 pt-10 border-t border-slate-200 dark:border-white/10 transition-colors" data-lesson-id="65" data-type="activity">
                         <div class="relative rounded-[2rem] md:rounded-[2.5rem] bg-white dark:bg-[#050b14] border border-slate-200 dark:border-white/10 p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-blue-400 dark:hover:border-blue-500/30 transition-all duration-500 flex flex-col">
                             
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-blue-400/20 dark:bg-blue-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
@@ -745,11 +745,10 @@
         </main>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 
 <script>
-    window.LESSON_IDS = [60, 61, 62, 63, 64, 65]; 
+    window.LESSON_IDS = [60, 61, 62, 63, 65]; 
     const ACTIVITY_LESSON_ID = 65; 
 
     let rawCompletedIds = @json($completedLessonIds ?? []);
@@ -758,6 +757,7 @@
     window.COMPLETED_IDS = Array.isArray(rawCompletedIds) ? rawCompletedIds.map(Number) : []; 
 
     let completedSet = new Set(window.COMPLETED_IDS);
+    // Jika activity_id 65 sudah selesai di DB, pastikan ia masuk ke dalam Set
     if (isActCompleted) completedSet.add(ACTIVITY_LESSON_ID); 
 
     let pendingRequests = new Set(); 
@@ -775,6 +775,7 @@
         updateSim62Flex();
         updateSim63Flex();
 
+        // Jika aktivitas (65) sudah pernah diselesaikan, kunci UI-nya
         if (completedSet.has(ACTIVITY_LESSON_ID)) {
             lockActivityUI();
             unlockNextChapter();
@@ -797,6 +798,7 @@
         let percent = Math.round((done / total) * 100);
         const isActivityDone = completedSet.has(ACTIVITY_LESSON_ID);
         
+        // Pencegahan agar tidak 100% jika Expert Mode belum diselesaikan
         if (!isActivityDone && percent >= 100) {
              percent = Math.floor(((total - 1) / total) * 100); 
         }
@@ -833,6 +835,7 @@
     async function saveLessonToDB(lessonId) { 
         lessonId = Number(lessonId);
         
+        // Safeguard: Jika sudah ada di set, batalkan pengiriman ke DB
         if (completedSet.has(lessonId) || pendingRequests.has(lessonId)) return; 
 
         completedSet.add(lessonId);
@@ -890,6 +893,7 @@
                             highlightAnchor(targetId);
                         }
 
+                        // Auto-save untuk materi teori (bukan activity)
                         if (lessonId && !isActivity && !completedSet.has(lessonId)) {
                             saveLessonToDB(lessonId); 
                         }
@@ -1081,6 +1085,7 @@
         } 
     }
 
+    // --- PERBAIKAN BUG DISINI ---
     async function submitExercise() {
         const btn = document.getElementById('submitExerciseBtn');
         btn.innerHTML = '<span class="animate-pulse">Menghubungi Pusat Validasi Sistem Server...</span>'; 
@@ -1089,6 +1094,7 @@
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             
+            // 1. Panggil request aktivitas terlebih dahulu
             await fetch('/activity/complete', { 
                 method: 'POST', 
                 headers: { 
@@ -1099,12 +1105,12 @@
                 body: JSON.stringify({ activity_id: ACTIVITY_LESSON_ID, score: 100 }) 
             });
 
-            completedSet.add(ACTIVITY_LESSON_ID);
-            updateProgressUI(true);
-            markSidebarDone(ACTIVITY_LESSON_ID);
-            lockActivityUI();   
-
+            // 2. Gunakan fungsi saveLessonToDB yang akan otomatis memasukkan ID ke dalam completedSet,
+            //    menjalankan updateProgressUI(true), dan markSidebarDone(ACTIVITY_LESSON_ID)
             await saveLessonToDB(ACTIVITY_LESSON_ID);
+
+            // 3. Kunci UI editor Live Sandbox
+            lockActivityUI();   
 
         } catch(e) { 
             console.error("Gagal Submit Aktivitas:", e); 
@@ -1137,7 +1143,7 @@
             btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-slate-500');
             btn.classList.add('text-blue-600', 'dark:text-blue-400', 'hover:text-blue-700', 'dark:hover:text-white', 'cursor-pointer');
             
-            document.getElementById('nextLabel').innerText = "Rute Jalur Materi Tahap Selanjutnya Tersedia";
+            document.getElementById('nextLabel').innerText = "Berikutnya";
             document.getElementById('nextLabel').classList.remove('opacity-50', 'text-rose-500', 'dark:text-rose-400');
             document.getElementById('nextLabel').classList.add('text-blue-600', 'dark:text-blue-400', 'opacity-100');
             

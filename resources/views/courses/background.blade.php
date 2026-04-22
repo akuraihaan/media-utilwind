@@ -206,7 +206,7 @@
                     <section id="section-52" class="lesson-section scroll-mt-32" data-lesson-id="52">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-blue-500 pl-6">
-                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.2.1</span>
+                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.2.1</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Perilaku Scroll <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">(Background Attachment)</span>
                                 </h2>
@@ -292,7 +292,7 @@
                     <section id="section-53" class="lesson-section scroll-mt-32" data-lesson-id="53">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.2.2</span>
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.2.2</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Dimensi Gambar & <br> Manajemen Titik Fokus
                                 </h2>
@@ -385,7 +385,7 @@
                     <section id="section-54" class="lesson-section scroll-mt-32" data-lesson-id="54">
                         <div class="space-y-10">
                             <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Pelajaran 3.2.3</span>
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 3.2.3</span>
                                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] transition-colors">
                                     Aksesibilitas Kontras (Overlay) & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-teal-500 dark:from-cyan-400 dark:to-teal-400">Teks Gradien</span>
                                 </h2>
