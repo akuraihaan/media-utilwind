@@ -88,9 +88,10 @@
     <div class="flex flex-1 overflow-hidden relative" 
          x-data="{ 
             sidebarOpen: false, showJoinModal: false, showLessonModal: false,
-            showLabModal: false, showQuizModal: false, showChapterModal: false
+            showLabModal: false, showQuizModal: false, showChapterModal: false,
+            showDashboardInfoModal: false
          }"
-         @keydown.escape.window="sidebarOpen = false; showJoinModal = false; showLessonModal = false; showLabModal = false; showQuizModal = false; showChapterModal = false;">
+         @keydown.escape.window="sidebarOpen = false; showJoinModal = false; showLessonModal = false; showLabModal = false; showQuizModal = false; showChapterModal = false; showDashboardInfoModal = false;">
 
         {{-- Overlay Mobile --}}
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] lg:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
@@ -116,7 +117,7 @@
                     
                     @php $isUnlocked = Auth::user() && (Auth::user()->role === 'admin' || !empty(Auth::user()->class_group)); @endphp
                     @if($isUnlocked)
-                        <a href="{{ route('courses.htmldancss') }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        <a href="{{ route('courses.curriculum') }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                             <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                             <span class="text-[14px] font-medium">Materi Belajar</span>
                         </a>
@@ -142,29 +143,7 @@
                 </nav>
             </div>
 
-            {{-- Profil Bawah --}}
-            <div class="mt-auto p-4 shrink-0 border-t border-slate-200/80 dark:border-white/5 transition-colors relative z-10">
-                <div class="flex items-center gap-3 mb-3 px-2">
-                    <div class="w-9 h-9 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white font-bold text-xs shrink-0 border border-white dark:border-[#020617] transition-colors shadow-sm">
-                        @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full rounded-full object-cover">
-                        @else
-                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[13px] font-bold text-slate-900 dark:text-white truncate transition-colors leading-tight">{{ Auth::user()->name }}</p>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate transition-colors">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 font-medium text-[13px] hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors focus:outline-none">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        Keluar Akun
-                    </button>
-                </form>
-            </div>
+            
         </aside>
 
         {{-- MAIN CONTENT (Scrollable Area) --}}
@@ -194,20 +173,31 @@
                             <span class="text-cyan-600 dark:text-cyan-400 transition-colors">Dashboard Akademik</span>
                         </nav>
 
-                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-3 tracking-tight transition-colors reveal-up">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Dashboard</span> 
-                        </h1>
+                        {{-- HEADLINE & PANDUAN BUTTON --}}
+                        <div class="flex items-center gap-4 mb-3 reveal-up">
+                            <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Dashboard</span> 
+                            </h1>
+                            <button @click="showDashboardInfoModal = true" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 hover:border-cyan-200 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none group" title="Panduan Dasbor">
+                                <svg class="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                        </div>
                         <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base transition-colors max-w-2xl reveal-up delay-100">Pantau pencapaian materi, hasil evaluasi, dan analitik kinerja belajar.</p>
                         
-                        <div class="mt-6 inline-flex items-center gap-4 px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/[0.02] backdrop-blur-sm border border-slate-200/80 dark:border-white/[0.05] shadow-sm w-full md:w-auto transition-colors reveal-up delay-200">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center font-bold text-white shadow-sm text-lg shrink-0">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-0.5 transition-colors">Status Kelas</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full shrink-0 {{ Auth::user()->class_group ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-yellow-500 shadow-[0_0_8px_#eab308] animate-pulse' }}"></span>
-                                    <span class="text-[13px] md:text-sm font-bold text-slate-800 dark:text-white truncate transition-colors">{{ Auth::user()->class_group ?? 'Belum Terhubung ke Kelas' }}</span>
+                        <div class="mt-6 flex flex-wrap items-center gap-4 reveal-up delay-200">
+                            {{-- Status Kelas Badge --}}
+                            <div class="inline-flex items-center gap-4 px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/[0.02] backdrop-blur-sm border border-slate-200/80 dark:border-white/[0.05] shadow-sm w-full md:w-auto transition-colors">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center font-bold text-white shadow-sm text-lg shrink-0">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-0.5 transition-colors">Status Kelas</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full shrink-0 {{ Auth::user()->class_group ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-yellow-500 shadow-[0_0_8px_#eab308] animate-pulse' }}"></span>
+                                        <span class="text-[13px] md:text-sm font-bold text-slate-800 dark:text-white truncate transition-colors">{{ Auth::user()->class_group ?? 'Belum Terhubung ke Kelas' }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -328,7 +318,7 @@
                                 </div>
                                 <div class="tooltip-container tooltip-blue tooltip-down" @click.stop>
                                     <div class="tooltip-trigger"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-                                    <div class="tooltip-content">Praktikum koding yang berhasil diselesaikan dengan nilai kelulusan minimal 70.</div>
+                                    <div class="tooltip-content">Praktikum per bab yang berhasil diselesaikan dengan nilai kelulusan minimal 70.</div>
                                 </div>
                             </div>
                             <div class="flex items-baseline gap-1 mt-4">
@@ -563,12 +553,12 @@
             </div>
 
             {{-- =========================================================================
-                 MODAL INSIGHT ANALITIK
+                 MODAL INSIGHT ANALITIK & PANDUAN DASBOR
                  ========================================================================= --}}
-            {{-- Modals remain same logic, just refined classes --}}
-            {{-- 1. Modal Insight Materi --}}
-            <div x-show="showLessonModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
-                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showLessonModal = false"></div>
+            
+            {{-- Modal Insight Materi --}}
+            <div x-show="showLessonModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showLessonModal = false" x-transition.opacity></div>
                 <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-colors flex flex-col max-h-[85vh]" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
                     
                     <div class="flex justify-between items-start mb-4 md:mb-6 shrink-0">
@@ -622,8 +612,8 @@
             </div>
 
             {{-- Modal Insight Lab --}}
-            <div x-show="showLabModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
-                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showLabModal = false"></div>
+            <div x-show="showLabModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showLabModal = false" x-transition.opacity></div>
                 <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
                     <div class="flex justify-between items-start mb-4 md:mb-6">
                         <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center transition-colors">
@@ -643,8 +633,8 @@
             </div>
 
             {{-- Modal Insight Kuis --}}
-            <div x-show="showQuizModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
-                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showQuizModal = false"></div>
+            <div x-show="showQuizModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showQuizModal = false" x-transition.opacity></div>
                 <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
                     <div class="flex justify-between items-start mb-4 md:mb-6">
                         <div class="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-500/20 flex items-center justify-center transition-colors">
@@ -663,8 +653,8 @@
             </div>
 
             {{-- Modal Insight Bab Lulus --}}
-            <div x-show="showChapterModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
-                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showChapterModal = false"></div>
+            <div x-show="showChapterModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showChapterModal = false" x-transition.opacity></div>
                 <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
                     <div class="flex justify-between items-start mb-4 md:mb-6">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center transition-colors">
@@ -682,11 +672,69 @@
                 </div>
             </div>
 
-            {{-- =========================================================================
-                 MODAL GABUNG KELAS
-                 ========================================================================= --}}
+            {{-- MODAL PANDUAN DASBOR --}}
+            <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
+                
+                <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-8 md:p-10 shadow-xl dark:shadow-2xl transition-all" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                    
+                    <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Panduan Dasbor Akademik</h3>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Navigasi & Analitik Pembelajaran</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                        Halaman ini adalah pusat kendali akademik Anda. Gunakan metrik yang tersedia untuk memantau progress belajar dan hasil evaluasi.
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                            <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Kartu Insight Interaktif</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Metrik utama (Materi, Lab, Kuis, Bab) dapat diklik untuk membuka rincian spesifik dan jejak penyelesaian dari masing-masing kategori.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                            <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Grafik Perkembangan</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Visualisasi tren nilai dari waktu ke waktu. Membantu Anda memonitor konsistensi pemahaman materi pada setiap bab.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                            <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Log Aktivitas & Riwayat</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Daftar rekaman langsung (real-time) setiap tindakan akademik yang Anda lakukan, lengkap dengan filter kategori untuk pencarian cepat.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button @click="showDashboardInfoModal = false" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors focus:outline-none">
+                            Tutup Panduan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- MODAL GABUNG KELAS --}}
             @empty(Auth::user()->class_group)
-            <div x-show="showJoinModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4" x-cloak>
+            <div x-show="showJoinModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
                 <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#000000]/60 backdrop-blur-sm transition-colors" @click="showJoinModal = false"></div>
                 <div class="relative w-full max-w-sm md:max-w-md bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
                     

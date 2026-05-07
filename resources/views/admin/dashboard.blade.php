@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard · Utilwind</title>
+    <title>Admin Dashboard</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -148,8 +148,9 @@
 <body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{ 
     sidebarOpen: false, showImport: false, showAdd: false, 
     showLabModal: false, showStudentModal: false, showQuizModal: false, 
-    showAvgModal: false, showRemedialModal: false, showPassedModal: false, isFullscreen: false 
-}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showLabModal = false; showStudentModal = false; showQuizModal = false; showAvgModal = false; showRemedialModal = false; showPassedModal = false;" :class="{'modal-open': showStudentModal || showQuizModal || showLabModal || showAvgModal || showRemedialModal || showPassedModal || showAdd || showImport}">
+    showAvgModal: false, showRemedialModal: false, showPassedModal: false, isFullscreen: false,
+    showDashboardInfoModal: false 
+}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showLabModal = false; showStudentModal = false; showQuizModal = false; showAvgModal = false; showRemedialModal = false; showPassedModal = false; showDashboardInfoModal = false;" :class="{'modal-open': showStudentModal || showQuizModal || showLabModal || showAvgModal || showRemedialModal || showPassedModal || showAdd || showImport || showDashboardInfoModal}">
 
     {{-- ==============================================================================
          LOGIKA DATA BLADE TERPISAH DENGAN DETAIL KALKULASI YANG JELAS
@@ -428,7 +429,14 @@
                                     <li class="inline-flex items-center"><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard </a></li>
                                 </ol>
                             </nav>
-                            <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Analytics Overview</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Analytics Overview</h2>
+                                
+                                {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
+                                <button @click="showDashboardInfoModal = true" class="w-5 h-5 md:w-6 md:h-6 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none" title="Panduan Dasbor">
+                                    ?
+                                </button>
+                            </div>
                             <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
                                 Live Data Monitoring
@@ -1047,7 +1055,65 @@
         </div>
     </main>
 
-    {{-- ==================== ALL HERO MODALS (WITH INSIGHT HEADERS) ==================== --}}
+    {{-- ==================== HERO MODAL PANDUAN DASBOR ==================== --}}
+    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+        <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
+        
+        <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+            
+            <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <!-- Hero Logo Section -->
+            <div class="relative w-24 h-24 mx-auto mb-6">
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-cyan-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
+                <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
+                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Dasbor Analitik</span></h3>
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Kendali & Pemantauan Akademik</p>
+            
+            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
+                <p>Halaman ini direkayasa sebagai instrumen observasi utama bagi Administrator guna mengawasi dan meninjau kualitas proses pendidikan secara presisi.</p>
+                
+                <div class="space-y-3 mt-4 text-left">
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Metrik & Evaluasi Makro</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Rekapitulasi tingkat kelulusan, tren performa mingguan, hingga analisis probabilitas kesulitan butir soal.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Log Aktivitas & Audit</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pemantauan progres siswa secara waktu-nyata dan pencatatan transparansi tindakan yang dilakukan oleh jajaran Administrator.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Direktori Pengguna</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pusat manajemen basis data pendaftaran siswa, integrasi pemindahan dokumen (Impor/Ekspor), serta tinjauan kapabilitas individu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
+                <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
+                    Mengerti, Tutup Panduan
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- ==================== ALL HERO MODALS LAINNYA (DATA ENTRY, LIST, DLL) ==================== --}}
 
     {{-- 1. MODAL: DATA SISWA TERDAFTAR (INDIGO HERO) --}}
     <div x-show="showStudentModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
@@ -1259,9 +1325,9 @@
                     </div>
                 </div>
                 @empty
-                <div class="flex flex-col items-center justify-center py-10 text-emerald-600 dark:text-emerald-400 transition-colors">
-                    <span class="text-xs font-bold tracking-widest uppercase text-center">Aman Terkendali!<br>Tidak Ada Tindakan Diperlukan.</span>
-                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex flex-col items-center justify-center py-10 text-emerald-600 dark:text-emerald-400 transition-colors border border-dashed border-emerald-200 dark:border-emerald-500/20 rounded-xl bg-emerald-50 dark:bg-emerald-500/5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-center">Semua Aman!</span>
+                    <svg class="w-5 h-5 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 </div>
                 @endforelse
             </div>

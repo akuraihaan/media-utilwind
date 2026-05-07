@@ -746,6 +746,15 @@
                         <p class="text-slate-500 dark:text-white/50 text-base md:text-lg max-w-2xl leading-relaxed transition-colors">
                             Kumpulan 50+ komponen antarmuka modern yang dibangun sepenuhnya dengan utilitas Tailwind CSS. Salin kodenya atau bedah langsung di Sandbox interaktif.
                         </p>
+
+                        {{-- TOMBOL TRIGGER POPUP PANDUAN KOMPONEN --}}
+                        <div class="flex items-center flex-wrap gap-4 mt-6">
+                            <button onclick="openKamusInfoModal()" class="group relative inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-full text-slate-700 dark:text-white text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-cyan-500/25 transition-all hover:-translate-y-0.5">
+                                <span class="absolute inset-0 bg-cyan-400/20 dark:bg-cyan-400/30 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                                <svg class="w-4 h-4 text-cyan-500 dark:text-cyan-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span class="relative z-10">Panduan Komponen</span>
+                            </button>
+                        </div>
                     </div>
                     
                     {{-- Search Box --}}
@@ -776,7 +785,7 @@
 
                             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                                 @foreach($cat['items'] as $item)
-                                    <div class="comp-card group bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden hover:border-cyan-400 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-cyan-900/10 flex flex-col h-full ring-1 ring-transparent hover:ring-slate-100 dark:hover:ring-white/10">
+                                    <div class="comp-card group bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden hover:border-cyan-400 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-cyan-900/10 flex flex-col h-full ring-1 ring-transparent hover:ring-slate-100 dark:hover:ring-white/10" data-class="{{ $item['name'] }}">
                                         
                                         {{-- Header: Actions --}}
                                         <div class="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] flex justify-between items-center transition-colors">
@@ -801,9 +810,9 @@
                                             </div>
                                         </div>
 
-                                        {{-- Visual Preview (Sama dengan halaman Kamus Utility, kanvas responsif terhadap tema terang/gelap) --}}
+                                        {{-- Visual Preview --}}
                                         <div class="p-6 md:p-10 bg-slate-50 dark:bg-[#020617] flex items-center justify-center min-h-[200px] md:min-h-[250px] relative overflow-hidden flex-1 group-hover:bg-white dark:group-hover:bg-[#050912] transition-colors">
-                                            {{-- Checkerboard Pattern (Transparency Grid) --}}
+                                            {{-- Checkerboard Pattern --}}
                                             <div class="absolute inset-0 opacity-10 dark:opacity-10" style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 16px 16px;"></div>
                                             
                                             {{-- Render Component --}}
@@ -838,6 +847,78 @@
 
             </div>
         </main>
+    </div>
+
+    {{-- ========================================================= --}}
+    {{-- MODAL POPUP: INFORMASI KAMUS KOMPONEN --}}
+    {{-- ========================================================= --}}
+    <div id="kamusInfoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeKamusInfoModal()"></div>
+        
+        <div id="kamusInfoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+            <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+                
+                <button onclick="closeKamusInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Panduan Kamus Komponen</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Eksplorasi & Integrasi UI Library</p>
+                    </div>
+                </div>
+                
+                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                    Halaman ini memuat 50+ komponen antarmuka modular yang siap digunakan. Semua blok dibangun 100% menggunakan utilitas Tailwind murni. Gunakan fitur di bawah untuk mempercepat alur kerja Anda:
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Sidebar & Pencarian Pintar</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gunakan navigasi sebelah kiri untuk melompat antar kategori, atau tekan <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded font-mono">CTRL</kbd> + <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded font-mono">K</kbd> untuk mencari komponen spesifik secara instan (cth: "card", "button").</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Live Visual Preview</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Komponen dirender secara *live* pada kanvas. Arahkan kursor (hover) atau klik elemen untuk melihat interaksi animasi bawaannya.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Ekstraksi Source Code</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Klik ikon mata (<svg class="w-3 h-3 inline text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>) untuk membuka struktur HTML penyusun, atau gunakan ikon salin untuk meng-copy keseluruhan blok kode secara otomatis.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">04</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Integrasi Sandbox</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Klik tombol <strong class="text-cyan-500">Try</strong> pada pojok kanan atas kartu untuk mengirim komponen tersebut langsung ke halaman Sandbox dan mengedit strukturnya secara *real-time*.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button onclick="closeKamusInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors">
+                        Tutup Panduan
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- TOAST NOTIFICATION (Visual Feedback) --}}
@@ -949,6 +1030,33 @@
     }, { rootMargin: '-10% 0px -80% 0px' });
 
     sections.forEach(section => observer.observe(section));
+
+    // 7. MODAL POPUP LOGIC PANDUAN KAMUS KOMPONEN
+    function openKamusInfoModal() {
+        const modal = document.getElementById('kamusInfoModal');
+        const content = document.getElementById('kamusInfoContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeKamusInfoModal() {
+        const modal = document.getElementById('kamusInfoModal');
+        const content = document.getElementById('kamusInfoContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
+    }
 
 </script>
 

@@ -176,7 +176,7 @@
                 </h1>
 
                 <p class="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 leading-relaxed text-balance animate-fade-in-up max-w-[20rem] sm:max-w-2xl mx-auto lg:mx-0 mb-8 md:mb-10 font-medium" style="animation-delay: 0.2s;">
-                    Tinggalkan cara lama menulis CSS panjang. Pelajari cara merancang antarmuka modern dengan cepat, terstruktur, dan cobain langsung di fitur <strong class="text-cyan-600 dark:text-cyan-400 font-bold">Live Sandbox</strong>.
+                    Pelajari cara merancang antarmuka modern dengan cepat, terstruktur, dan coba langsung di fitur <strong class="text-cyan-600 dark:text-cyan-400 font-bold">Live Sandbox</strong>.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up w-full max-w-[18rem] sm:max-w-none mx-auto lg:mx-0" style="animation-delay: 0.3s;">

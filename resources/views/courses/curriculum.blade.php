@@ -19,13 +19,13 @@
             'color' => 'cyan', 
             
             // Logic Prasyarat Bab
-            'quiz_req_prev' => null, // Tidak ada syarat bab sebelumnya
+            'quiz_req_prev' => null, 
             
             // Logic Materi
             'last_lesson_code' => '1.6', 
             
             // Logic Lab
-            'lab_id' => 1, // ID Lab di Database
+            'lab_id' => 1, 
             'lab_title' => 'Setup Environment & Config',
             
             // Logic Kuis
@@ -49,7 +49,7 @@
             'desc' => 'Kuasai teknik tata letak modern menggunakan Flexbox dan Grid System yang responsif.', 
             'color' => 'indigo', 
             
-            'quiz_req_prev' => 'quiz_1', // Syarat: Lulus Kuis Bab 1
+            'quiz_req_prev' => 'quiz_1', 
             'last_lesson_code' => '2.3',
             
             'lab_id' => 2,
@@ -72,7 +72,7 @@
             'desc' => 'Teknik dekorasi tingkat lanjut, tipografi, filter efek, dan animasi interaktif.', 
             'color' => 'fuchsia', 
             
-            'quiz_req_prev' => 'quiz_2', // Syarat: Lulus Kuis Bab 2
+            'quiz_req_prev' => 'quiz_2', 
             'last_lesson_code' => '3.4',
             
             'lab_id' => 3,
@@ -90,14 +90,11 @@
         ]
     ];
 
-    // Cek Akses Admin (Sesuaikan atribut 'role' dengan nama kolom database Anda jika berbeda)
     $isAdmin = auth()->check() && auth()->user()->role === 'admin';
-
-    // Logika Waterfall Awal
     $previousItemComplete = true; 
 @endphp
 
-{{-- CSS Custom Dinamis untuk Glass Card --}}
+{{-- CSS Custom Dinamis --}}
 <style>
     .glass-card {
         background: rgba(255, 255, 255, 0.7);
@@ -127,8 +124,6 @@
     .delay-200 { animation-delay: 200ms; }
     .delay-300 { animation-delay: 300ms; }
     @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
-
-    /* Fix untuk rotasi text vertikal di Referensi */
     .writing-vertical-rl { writing-mode: vertical-rl; }
 </style>
 
@@ -149,8 +144,8 @@
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-12 reveal-up">
             <div class="space-y-4 max-w-3xl w-full">
                 
-                {{-- BREADCRUMB START --}}
-                <nav class="flex items-center gap-2 mb-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-white/40 transition-colors" aria-label="Breadcrumb">
+                {{-- BREADCRUMB --}}
+                <nav class="flex items-center gap-2 mb-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-white/40 transition-colors">
                     <a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
                         <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         Home
@@ -160,17 +155,24 @@
                     <span class="text-slate-300 dark:text-white/20 transition-colors">/</span>
                     <span class="text-cyan-600 dark:text-cyan-400 drop-shadow-none dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-colors">Materi</span>
                 </nav>
-                {{-- BREADCRUMB END --}}
 
-                <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tight transition-colors">
-                    Silabus <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-indigo-600 to-fuchsia-600 dark:from-cyan-400 dark:via-indigo-400 dark:to-fuchsia-400">
-                        Utilwind
-                    </span>
-                </h1>
-                <p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed mt-4 transition-colors">
-                    Selesaikan Materi, kerjakan Hands-on Lab, lalu taklukkan Kuis untuk membuka level berikutnya.
+                {{-- HEADLINE & TOOLTIP TRIGGER --}}
+                <div class="flex items-start gap-4">
+                    <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tight transition-colors">
+                        Silabus <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-indigo-600 to-fuchsia-600 dark:from-cyan-400 dark:via-indigo-400 dark:to-fuchsia-400">
+                            Utilwind
+                        </span>
+                    </h1>
+                    <button onclick="openInfoModal()" class="mt-4 md:mt-6 w-8 h-8 md:w-10 md:h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-sm md:text-lg font-black text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-cyan-200 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none shrink-0" title="Informasi Silabus">
+                        ?
+                    </button>
+                </div>
+                
+                <p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl leading-relaxed transition-colors mt-2">
+                    Panduan belajar disusun secara berurutan. Pelajari setiap materi bacaan, ikuti kegiatan praktik, dan selesaikan evaluasi untuk membuka akses ke bab selanjutnya.
                 </p>
+
                 @if($isAdmin)
                 <div class="inline-block mt-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">
                      Admin Override Active: All Unlocked
@@ -203,21 +205,17 @@
             
             @foreach($chapters as $chapter)
                 @php
-                    // --- 1. LOGIC KUNCI BAB (LEVEL) ---
                     $isChapterUnlocked = true;
                     if ($chapter['quiz_req_prev']) {
-                        // Terbuka jika Admin ATAU kuis bab sebelumnya sudah lulus
                         $isChapterUnlocked = $isAdmin || !empty($completedLessonsMap[$chapter['quiz_req_prev']]);
                     }
 
-                    // Reset logic waterfall untuk materi
                     if ($isChapterUnlocked) {
                         $previousItemComplete = true; 
                     } else {
                         $previousItemComplete = false;
                     }
 
-                    // Styles
                     $cardStyle = $isChapterUnlocked ? 'glass-card hover:-translate-y-2 shadow-md dark:shadow-none' : 'glass-card-locked opacity-70 grayscale shadow-sm dark:shadow-none';
                     $borderColor = $isChapterUnlocked ? "group-hover:border-{$chapter['color']}-400 dark:group-hover:border-{$chapter['color']}-500/50" : 'border-slate-200 dark:border-white/5';
                     $textColor = "text-{$chapter['color']}-600 dark:text-{$chapter['color']}-400";
@@ -226,7 +224,6 @@
 
                 <div class="group relative rounded-[2rem] flex flex-col transition-all duration-500 {{ $cardStyle }} {{ $borderColor }}">
                     
-                    {{-- Lock Overlay (Jika Bab Terkunci) --}}
                     @if(!$isChapterUnlocked)
                         <div class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-100/60 dark:bg-[#020617]/60 backdrop-blur-[2px] rounded-[2rem] transition-colors">
                             <div class="w-14 h-14 rounded-full bg-slate-200/80 dark:bg-black/60 border border-slate-300 dark:border-white/10 flex items-center justify-center mb-4 shadow-md dark:shadow-xl transition-colors">
@@ -239,7 +236,6 @@
                         </div>
                     @endif
 
-                    {{-- Card Header --}}
                     <div class="p-8 pb-0">
                         <div class="flex justify-between items-start mb-6">
                             <span class="text-[10px] font-black tracking-widest px-3 py-1.5 rounded-lg border transition-colors {{ $isChapterUnlocked ? $bgBadge : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400 dark:text-white/30' }} {{ $isChapterUnlocked ? $textColor : '' }}">
@@ -252,24 +248,18 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 transition-colors">{{ $chapter['desc'] }}</p>
                     </div>
 
-                    {{-- Lesson Timeline --}}
                     <div class="p-8 flex-1">
                         <div class="space-y-0 relative">
-                            {{-- Vertical Line --}}
                             <div class="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-slate-300 dark:from-white/10 via-slate-200 dark:via-white/5 to-transparent transition-colors"></div>
 
                             @foreach($chapter['topics'] as $topic)
                                 @php
                                     $isCompleted = !empty($completedLessonsMap[$topic['code']]);
-                                    
-                                    // Logic Akses Materi: Admin override ATAU (Bab terbuka DAN materi sebelumnya selesai)
                                     $isAccessible = $isAdmin || ($isChapterUnlocked && $previousItemComplete);
-                                    
-                                    $previousItemComplete = $isCompleted; // Set untuk lesson selanjutnya
+                                    $previousItemComplete = $isCompleted; 
                                 @endphp
 
                                 <div class="relative pl-6 py-2.5 group/lesson">
-                                    {{-- Dot --}}
                                     <div class="absolute left-[3px] top-[18px] w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a] z-10 transition-all duration-300
                                         {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 shadow-sm dark:shadow-[0_0_10px_#10b981]' : ($isAccessible ? "bg-{$chapter['color']}-500 border-{$chapter['color']}-500 animate-pulse" : 'bg-slate-300 dark:bg-slate-700 border-slate-300 dark:border-slate-700') }}">
                                     </div>
@@ -307,20 +297,14 @@
                         </div>
                     </div>
 
-                    {{-- SECTION BARU: HANDS-ON LAB --}}
                     @php
-                        // --- 2. LOGIC KUNCI LAB ---
                         $areAllLessonsDone = !empty($completedLessonsMap[$chapter['last_lesson_code']]);
                         $isLabPassed = isset($passedLabsMap[$chapter['lab_id']]);
-                        
-                        // Lab terbuka jika Admin ATAU seluruh materi di bab ini selesai
                         $canAccessLab = $isAdmin || $areAllLessonsDone;
                         
-                        // Link Lab
                         $labLink = $canAccessLab ? route('lab.start', ['id' => $chapter['lab_id']]) : '#';
                         $labStatusText = $isLabPassed ? 'LAB SELESAI' : ($canAccessLab ? 'MULAI LAB' : 'SELESAIKAN MATERI');
                         
-                        // Styling Lab adaptif
                         if ($isLabPassed) {
                             $labBorder = "border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5";
                             $labIconBg = "bg-emerald-500 text-white shadow-emerald-500/20";
@@ -345,7 +329,7 @@
                             </div>
                             
                             <div class="flex-1 text-left">
-                                <div class="text-[10px] font-bold tracking-wider opacity-80 dark:opacity-60 mb-0.5 transition-colors {{ $canAccessLab ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500' }}">HANDS-ON LAB</div>
+                                <div class="text-[10px] font-bold tracking-wider opacity-80 dark:opacity-60 mb-0.5 transition-colors {{ $canAccessLab ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500' }}">KEGIATAN PRAKTIK</div>
                                 <div class="text-xs font-bold text-slate-800 dark:text-white truncate w-40 transition-colors">{{ $chapter['lab_title'] ?? 'Practical Exercise' }}</div>
                             </div>
 
@@ -355,13 +339,8 @@
                         </button>
                     </div>
 
-                    {{-- SECTION: KUIS --}}
                     @php
-                        // --- 3. LOGIC KUNCI KUIS ---
-                        // Kuis terbuka jika Admin ATAU Lab sudah lulus
                         $canTakeQuiz = $isAdmin || $isLabPassed; 
-                        
-                        // Status kuis
                         $isQuizPassed = !empty($completedLessonsMap[$chapter['quiz_key_db']]);
                     @endphp
 
@@ -373,13 +352,13 @@
                             </div>
                         @elseif($canTakeQuiz)
                             <a href="{{ route('quiz.intro', ['chapterId' => $chapter['quiz_id']]) }}" class="group/btn w-full py-3.5 rounded-xl bg-gradient-to-r from-{{ $chapter['color'] }}-500 to-indigo-500 dark:from-{{ $chapter['color'] }}-600 dark:to-indigo-600 hover:scale-[1.02] active:scale-[0.98] text-white text-xs font-bold uppercase tracking-widest shadow-md dark:shadow-lg shadow-{{ $chapter['color'] }}-500/30 dark:shadow-{{ $chapter['color'] }}-500/20 transition-all flex justify-center items-center gap-2">
-                                <span>Mulai Kuis Akhir</span> 
+                                <span>Mulai Evaluasi Akhir</span> 
                                 <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             </a>
                         @else
                             <button disabled class="w-full py-3.5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2 cursor-not-allowed transition-colors">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                                <span>{{ $canAccessLab ? 'Selesaikan Lab Dulu' : 'Materi Belum Selesai' }}</span>
+                                <span>{{ $canAccessLab ? 'Selesaikan Praktik Dulu' : 'Materi Belum Selesai' }}</span>
                             </button>
                         @endif
                     </div>
@@ -389,16 +368,16 @@
 
         </div>
 
-        {{-- 3. REFERENCES SECTION --}}
+        {{-- REFERENCES SECTION --}}
         <div class="mt-32 pt-20 border-t border-slate-200 dark:border-white/5 reveal-up delay-500 transition-colors">
             <div class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-widest uppercase transition-colors">
                         Sumber Belajar
                     </div>
-                    <h2 class="text-3xl font-black text-slate-900 dark:text-white transition-colors">Referensi Kurikulum</h2>
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white transition-colors">Referensi Modul</h2>
                     <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-2xl transition-colors">
-                        Materi pada platform ini disusun berdasarkan best-practice dari literatur Tailwind CSS terkemuka di industri.
+                        Materi pada platform ini disusun berdasarkan literatur dan dokumentasi resmi terkini.
                     </p>
                 </div>
             </div>
@@ -439,4 +418,104 @@
 
     </div>
 </div>
+
+{{-- ========================================================= --}}
+{{-- MODAL POPUP: INFORMASI SILABUS --}}
+{{-- ========================================================= --}}
+<div id="infoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+    
+    <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeInfoModal()"></div>
+    
+    <div id="infoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+        
+        <div class="relative glass-card rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+            
+            <button onclick="closeInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Informasi Modul Pembelajaran</h3>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Panduan Struktur Kurikulum Dasar</p>
+                </div>
+            </div>
+            
+            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                Halaman ini memuat hierarki pembelajaran yang disusun secara sekuensial. Setiap peserta wajib menyelesaikan tahapan berikut di masing-masing bab:
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono">01</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Materi Bacaan</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pemahaman teori dasar yang disusun secara sistematis pada setiap topik.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono">02</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Kegiatan Praktik</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Latihan implementasi untuk memvalidasi pemahaman materi yang telah dipelajari.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono">03</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Evaluasi </h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Uji kompetensi di penghujung bab. Akses ke bab selanjutnya mensyaratkan pencapaian nilai batas kelulusan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button onclick="closeInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors">
+                    Tutup Panduan
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- Skrip Pengendali Modal Popup --}}
+<script>
+    function openInfoModal() {
+        const modal = document.getElementById('infoModal');
+        const content = document.getElementById('infoContent');
+        
+        // Tampilkan elemen
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Jeda transisi
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeInfoModal() {
+        const modal = document.getElementById('infoModal');
+        const content = document.getElementById('infoContent');
+        
+        // Putar balik transisi
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+        
+        // Sembunyikan elemen
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
+    }
+</script>
 @endsection

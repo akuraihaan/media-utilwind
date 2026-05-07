@@ -113,7 +113,12 @@
         .tooltip-down:hover .tooltip-content { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
         .tooltip-down .tooltip-content::after { content: ''; position: absolute; bottom: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: transparent transparent #ffffff transparent; }
         .dark .tooltip-down .tooltip-content::after { border-color: transparent transparent #020617 transparent; }
-        
+
+        .tooltip-up .tooltip-content { bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(10px); }
+        .tooltip-up:hover .tooltip-content { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
+        .tooltip-up .tooltip-content::after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: #ffffff transparent transparent transparent; }
+        .dark .tooltip-up .tooltip-content::after { border-color: #0f141e transparent transparent transparent; }
+
         .tooltip-left .tooltip-content { left: auto; right: -12px; transform: translateX(0) translateY(-10px); }
         .tooltip-down.tooltip-left:hover .tooltip-content { transform: translateX(0) translateY(0); }
         .tooltip-left .tooltip-content::after { left: auto; right: 15px; margin-left: 0; }
@@ -278,6 +283,8 @@
           showStudentDetailModal: false,
           selectedStudent: null,
 
+          showDashboardInfoModal: false,
+
           init() {
               const dataElement = document.getElementById('student-data-json');
               if(dataElement) {
@@ -300,14 +307,12 @@
               this.showStudentDetailModal = true;
           }
       }" 
-      @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showQuestionsModal = false; showParticipantsModal = false; showAccuracyModal = false; showHardModal = false; showStudentDetailModal = false; closeModal(); closeInsightModal();" 
-      :class="{'modal-open': sidebarOpen || showQuestionsModal || showParticipantsModal || showAccuracyModal || showHardModal || showStudentDetailModal}">
+      @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showQuestionsModal = false; showParticipantsModal = false; showAccuracyModal = false; showHardModal = false; showStudentDetailModal = false; showDashboardInfoModal = false; closeModal(); closeInsightModal();" 
+      :class="{'modal-open': sidebarOpen || showQuestionsModal || showParticipantsModal || showAccuracyModal || showHardModal || showStudentDetailModal || showDashboardInfoModal}">
 
     <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-opacity" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
      {{-- ==================== 1. SIDEBAR ==================== --}}
-    <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
-
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -387,23 +392,25 @@
     </aside>
 
     {{-- ==================== MAIN CONTENT ==================== --}}
-    <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
+    <main class="flex-1 flex flex-col relative z-10 h-full overflow-y-auto overflow-x-hidden">
         
-        {{-- Background FX --}}
+        {{-- Background FX Main --}}
         <div class="fixed inset-0 pointer-events-none z-0">
-            <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors"></div>
-            <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors"></div>
-            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay"></div>
+            <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-indigo-300/20 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors duration-500"></div>
+            <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-cyan-300/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors duration-500"></div>
+            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay transition-opacity duration-500"></div>
         </div>
 
-        {{-- HEADER RESPONSIVE --}}
-        <header class="h-24 glass-header flex flex-col justify-center px-6 md:px-10 shrink-0 sticky top-0 z-40 transition-colors">
+        {{-- HEADER RESPONSIVE & BREADCRUMB --}}
+        <header class="h-24 glass-header flex flex-col justify-center px-6 md:px-10 shrink-0 sticky top-0 z-40 transition-colors duration-500">
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = true" class="md:hidden p-2 bg-slate-200 dark:bg-white/5 rounded-lg text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-white/10 transition-colors shadow-sm dark:shadow-none">
+                    {{-- Hamburger Menu --}}
+                    <button @click="sidebarOpen = true" class="md:hidden p-2 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                     
+                    {{-- Judul & Breadcrumb --}}
                     <div class="flex items-center gap-3">
                         <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke Overview">
                             <svg class="w-4 h-4 text-slate-500 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
@@ -421,7 +428,14 @@
                                     </li>
                                 </ol>
                             </nav>
-                            <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Bank Soal & Analisis Evaluasi' : 'Detail Bab: ' + activeChapterName"></h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Bank Soal & Analisis Evaluasi' : 'Detail Bab: ' + activeChapterName"></h2>
+                                
+                                {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
+                                <button x-show="currentView === 'dashboard'" @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Modul Soal">
+                                    ?
+                                </button>
+                            </div>
                             <p class="text-[9px] md:text-xs text-adaptive-muted flex items-center gap-1.5 mt-0.5 transition-colors">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
                                 <span x-text="currentView === 'dashboard' ? 'Tinjauan Performa Kuis ' : 'Mode Bank Soal'"></span>
@@ -434,6 +448,7 @@
                     <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Refresh Data">
                         <svg class="w-4 h-4 hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </button>
+
                     <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Fullscreen Mode">
                         <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                         <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -459,8 +474,8 @@
             </div>
         </header>
 
-        {{-- CONTENT SCROLLABLE --}}
-        <div class="flex-1 p-6 md:p-10 relative z-10">
+        {{-- Scroll Area Data --}}
+        <div class="flex-1 p-4 md:p-8 lg:p-10 relative z-10">
             <div class="max-w-7xl mx-auto space-y-8 md:space-y-12">
 
                 {{-- =======================================================
@@ -928,7 +943,7 @@
                                 <div class="flex items-center gap-4">
                                     <span class="text-xs font-bold" :class="chapter.score >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'" x-text="'Skor: ' + chapter.score"></span>
                                     <span class="text-[10px] text-slate-500 dark:text-white/40 transition-colors border-l border-slate-300 dark:border-white/10 pl-4"><span x-text="chapter.answers.length"></span> Soal</span>
-                                    <svg class="w-4 h-4 text-slate-400 dark:text-white/40 transition-transform" :class="{'rotate-180': !open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    <svg class="w-4 h-4 text-slate-400 dark:text-white/40 transition-transform" :class="{'rotate-180': !open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7-7-7-7"/></svg>
                                 </div>
                             </div>
                             
@@ -1099,7 +1114,7 @@
         <div class="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-white/5 pb-4 transition-colors">
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-                    <svg class="w-5 h-5 text-red-600 dark:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z"/></svg>
+                    <svg class="w-5 h-5 text-red-600 dark:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     Daftar Soal Kritis (Banyak yang Gagal)
                 </h3>
                 <p class="text-[10px] text-red-600 dark:text-red-400 mt-1 font-mono transition-colors">Hanya menampilkan soal dengan rasio kegagalan > 50%</p>
@@ -1201,6 +1216,62 @@
                 <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-widest flex items-center gap-2 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Jawaban Salah</p><span id="countWrong" class="text-[10px] bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 px-3 py-1 rounded-lg font-bold border border-red-200 dark:border-red-500/20 transition-colors">0 Siswa</span></div>
                 <div id="listWrong" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
+<div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+    <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
+    
+    <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+        
+        <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="relative w-24 h-24 mx-auto mb-6">
+            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-cyan-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
+            <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
+                <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
+            </div>
+        </div>
+        
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Analisis Soal</span></h3>
+        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Manajemen & Tinjauan Komprehensif</p>
+        
+        <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
+            <p>Halaman kontrol ini direkayasa untuk memfasilitasi peran pengajar (Administrator) dalam melakukan peninjauan terhadap kualitas butir evaluasi teori yang disajikan kepada peserta didik.</p>
+            
+            <div class="space-y-3 mt-4 text-left">
+                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Metrik Makro</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kartu rangkuman yang menyajikan status agregat, meliputi rasio penyelesaian kuis, kalkulasi akurasi global, serta rekapitulasi data pengerjaan.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Mode Drill-Down Bab</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Klik salah satu kartu kategori Bab (Pendahuluan, Layouting, dll) untuk membuka lembar analisis mendalam terhadap kualitas spesifik tiap soal yang diujikan.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tinjauan Mikro Peserta</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Melalui daftar direktori evaluasi siswa, administrator dapat menekan tombol panel aksi untuk memeriksa lembar jawaban individu secara terperinci.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
+            <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
+                Mengerti, Tutup Panduan
+            </button>
         </div>
     </div>
 </div>

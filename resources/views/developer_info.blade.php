@@ -18,7 +18,7 @@
     @include('layouts.partials.navbar')
     
     {{-- WRAPPER UTAMA DENGAN ALPINEJS --}}
-    <div class="flex flex-1 overflow-hidden relative" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
+    <div class="flex flex-1 overflow-hidden relative" x-data="{ sidebarOpen: false, showInfoModal: false }" @keydown.escape.window="sidebarOpen = false; showInfoModal = false">
 
         {{-- Overlay Mobile --}}
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] lg:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
@@ -46,7 +46,7 @@
                     {{-- Nav 2: Materi Belajar --}}
                     @php $isUnlocked = Auth::user() && (Auth::user()->role === 'admin' || !empty(Auth::user()->class_group)); @endphp
                     @if($isUnlocked)
-                        <a href="{{ route('courses.htmldancss') }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        <a href="{{ route('courses.curriculum') }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                             <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                             <span class="text-[14px] font-medium">Materi Belajar</span>
                         </a>
@@ -66,7 +66,7 @@
                         <span class="text-[14px] font-medium">Pengaturan</span>
                     </a>
                     
-                    {{-- Nav 4: Informasi (ACTIVE) --}}
+                  {{-- Nav 4: Informasi (ACTIVE) --}}
                     <a href="{{ route('developer.info') }}" class="group flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-100/80 dark:bg-white/5 text-slate-900 dark:text-white font-semibold transition-all">
                         <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <span class="text-[14px]">Informasi Sistem</span>
@@ -74,29 +74,7 @@
                 </nav>
             </div>
 
-            {{-- Profil Bawah --}}
-            <div class="mt-auto p-4 shrink-0 border-t border-slate-200/80 dark:border-white/5 transition-colors relative z-10">
-                <div class="flex items-center gap-3 mb-3 px-2">
-                    <div class="w-9 h-9 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white font-bold text-xs shrink-0 border border-white dark:border-[#020617] transition-colors shadow-sm">
-                        @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full rounded-full object-cover">
-                        @else
-                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[13px] font-bold text-slate-900 dark:text-white truncate transition-colors leading-tight">{{ Auth::user()->name }}</p>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate transition-colors">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 font-medium text-[13px] hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors focus:outline-none">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        Keluar Akun
-                    </button>
-                </form>
-            </div>
+            
         </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
@@ -133,7 +111,14 @@
                         </nav>
                         {{-- BREADCRUMB END --}}
 
-                        <h2 class="text-slate-900 dark:text-white font-black text-3xl md:text-4xl tracking-tight transition-colors">Project & Developer Hub</h2>
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-slate-900 dark:text-white font-black text-3xl md:text-4xl tracking-tight transition-colors">Project & Developer Hub</h2>
+                            
+                            {{-- TOMBOL TRIGGER HERO MODAL --}}
+                            <button @click="showInfoModal = true" class="w-7 h-7 md:w-8 md:h-8 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-sm md:text-base font-black text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-cyan-200 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-1" title="Filosofi Platform">
+                                ?
+                            </button>
+                        </div>
                         <p class="text-[14px] text-slate-600 dark:text-slate-400 mt-2 transition-colors">Informasi penelitian dan penyusun platform.</p>
                     </div>
                 </header>
@@ -265,6 +250,41 @@
 
                 </div>
             </div>
+            
+            {{-- HERO MODAL POPUP: FILOSOFI PLATFORM --}}
+            <div x-show="showInfoModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showInfoModal = false" x-transition.opacity></div>
+                
+                <div class="relative w-full max-w-lg bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                    
+                    <button @click="showInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+
+                    <div class="relative w-24 h-24 mx-auto mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-indigo-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
+                        <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
+                            <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Filosofi <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Utilwind</span></h3>
+                    <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Landasan Konseptual Platform</p>
+                    
+                    <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
+                        <p>Nomenklatur <strong>"Utilwind"</strong> merupakan konjungsi linguistik yang merangkai lema <em>Utility</em> (nilai guna/manfaat) dan <em>Wind</em> (angin).</p>
+                        <p>Pemilihan terminologi ini merepresentasikan landasan filosofis dari sistem yang diusung: menghadirkan fungsionalitas yang berdaya guna tinggi, sembari memfasilitasi proses pembelajaran yang dinamis, adaptif, serta responsif layaknya pergerakan aliran angin.</p>
+                        <p>Adapun representasi visual dari logo ini menjadi pengejawantahan visi platform dalam menyajikan pengalaman belajar yang terstruktur, terpadu, dan berorientasi langsung pada peningkatkan kompetensi peserta didik.</p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
+                        <button @click="showInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
+                            Tutup Informasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 </div>
@@ -283,6 +303,7 @@
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     .reveal { opacity: 0; transform: translateY(20px); animation: revealAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .reveal-up { opacity: 0; transform: translateY(20px); animation: revealAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     @keyframes revealAnim { to { opacity: 1; transform: translateY(0); } }
 
     /* 3D Perspective Card Setup */

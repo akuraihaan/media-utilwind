@@ -56,9 +56,16 @@
                     <span class="text-cyan-600 dark:text-cyan-400 drop-shadow-none dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-colors">Pengaturan Profil</span>
                 </nav>
 
-                <h1 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-2 transition-colors">
-                    Profil <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Pengguna</span>
-                </h1>
+                {{-- HEADLINE & MODAL TRIGGER --}}
+                <div class="flex items-center gap-4 mb-2">
+                    <h1 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">
+                        Profil <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Pengguna</span>
+                    </h1>
+                    <button onclick="openProfileInfoModal()" class="w-7 h-7 md:w-8 md:h-8 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-sm md:text-base font-black text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-cyan-200 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-1" title="Panduan Profil">
+                        ?
+                    </button>
+                </div>
+
                 <p class="text-slate-500 dark:text-white/50 text-sm md:text-base transition-colors">Kelola informasi data diri, foto profil, dan keamanan akun Anda.</p>
             </div>
         </div>
@@ -97,7 +104,7 @@
                     </div>
                 </div>
 
-                {{-- 2. Informasi Kelas (Baru) --}}
+                {{-- 2. Informasi Kelas --}}
                 <div class="bg-white/80 dark:bg-[#0f141e]/80 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 border border-slate-200 dark:border-white/10 shadow-md dark:shadow-xl transition-colors duration-500 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-400/10 dark:bg-indigo-500/10 rounded-full blur-[40px] pointer-events-none transition-colors"></div>
                     
@@ -146,7 +153,7 @@
                         <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center border border-cyan-100 dark:border-transparent transition-colors">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                                 </div>
                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300 transition-colors">Rata-rata Kuis</span>
                             </div>
@@ -384,6 +391,70 @@
     </main>
 </div>
 
+{{-- ========================================================= --}}
+{{-- MODAL POPUP: INFORMASI PROFIL --}}
+{{-- ========================================================= --}}
+<div id="profileInfoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeProfileInfoModal()"></div>
+    
+    <div id="profileInfoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+        <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+            
+            <button onclick="closeProfileInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Panduan Pengaturan Profil</h3>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Manajemen Identitas & Keamanan</p>
+                </div>
+            </div>
+            
+            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                Halaman ini berfungsi sebagai pusat kendali data pengguna. Seluruh perubahan yang dilakukan akan langsung tersinkronisasi dengan database dan status akademik Anda.
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Informasi Dasar & Avatar</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pembaruan nama, email, dan instansi. Pastikan menggunakan format gambar yang valid untuk memperbarui avatar.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Status Keterhubungan Kelas</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Mengecek status integrasi akun dengan rombongan belajar menggunakan token yang divalidasi oleh sistem.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Keamanan Kredensial</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ubah kata sandi secara berkala. Sistem menyediakan indikator kekuatan sandi untuk menjamin standar keamanan akun.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button onclick="closeProfileInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors focus:outline-none">
+                    Tutup Panduan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- CSS Tambahan & Animasi --}}
 <style>
     /* Styling autofill browser adaptif */
@@ -422,8 +493,7 @@
     .input-group:focus-within .label-text { color: var(--focus-color, #06b6d4); }
 </style>
 
-{{-- Alpine JS & JQUERY SCRIPT UNTUK UX MAKSIMAL --}}
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+{{-- JQUERY SCRIPT UNTUK UX MAKSIMAL --}}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -448,7 +518,7 @@
                     const img = $('#avatar-display-main');
                     // Jika div inisial (text), ganti jadi tag IMG
                     if(img.prop("tagName") === 'DIV') {
-                        const newImg = $(`<img id="avatar-display-main" src="${e.target.result}" class="relative w-full h-full object-cover rounded-full border-4 border-white dark:border-[#0f141e] shadow-md dark:shadow-xl transition-all duration-500 group-hover:scale-105" alt="Profile Photo">`);
+                        const newImg = $(`<img id="avatar-display-main" src="${e.target.result}" class="relative w-full h-full object-cover rounded-full border-4 border-white dark:border-[#0f141e] shadow-md dark:shadow-xl transition-all duration-500 group-hover:scale-105 bg-slate-100 dark:bg-slate-800" alt="Profile Photo">`);
                         img.replaceWith(newImg);
                     } else {
                         img.attr('src', e.target.result);
@@ -542,6 +612,33 @@
             $(this).css('--focus-color', isRed ? '#ef4444' : '#06b6d4');
         });
     });
+
+    // 6. MODAL POPUP LOGIC PANDUAN PROFIL
+    function openProfileInfoModal() {
+        const modal = document.getElementById('profileInfoModal');
+        const content = document.getElementById('profileInfoContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeProfileInfoModal() {
+        const modal = document.getElementById('profileInfoModal');
+        const content = document.getElementById('profileInfoContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
+    }
 </script>
 
 @endsection

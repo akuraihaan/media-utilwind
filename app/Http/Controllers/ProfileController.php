@@ -7,19 +7,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\QuizAttempt;
-use App\Models\LabHistory; // Menggunakan LabHistory sesuai konteks sebelumnya
+use App\Models\LabHistory;
 use App\Models\User;
 
 class ProfileController extends Controller
 {
     public function edit()
     {
-        $user = Auth::user();
+        // Ekstraksi ID untuk memastikan query builder aman dan efisien di hosting
+        $userId = Auth::id();
 
         // --- 1. MENGHITUNG INSIGHTS (STATISTIK) ---
         
         // A. Data Kuis (Hanya yg sudah selesai)
-        $quizAttempts = QuizAttempt::where('user_id', $user->id)
+        $quizAttempts = QuizAttempt::where('user_id', $userId)
             ->whereNotNull('completed_at')
             ->get();
         
@@ -27,44 +28,47 @@ class ProfileController extends Controller
         $quizTotalScore = $quizAttempts->sum('score');
         
         // B. Data Lab (Hanya yg lulus/selesai)
-        // Asumsi menggunakan LabHistory atau LabSession yg status='completed'
-        $labsCompleted = LabHistory::where('user_id', $user->id)
+        $labsCompleted = LabHistory::where('user_id', $userId)
             ->where('final_score', '>=', 50)
             ->count();
-        $labTotalScore = LabHistory::where('user_id', $user->id)->sum('final_score');
+        $labTotalScore = LabHistory::where('user_id', $userId)->sum('final_score');
 
         // C. Kalkulasi Total XP & Rata-rata
         $totalActivities = $quizAttempts->count() + $labsCompleted;
         $grandTotalScore = $quizTotalScore + $labTotalScore;
         
         $stats = [
-            'xp' => $grandTotalScore * 10, // Asumsi 1 point = 10 XP
+            'xp' => $grandTotalScore * 10,
             'avg_score' => $totalActivities > 0 ? round($grandTotalScore / $totalActivities, 1) : 0,
             'labs_done' => $labsCompleted,
             'quizzes_passed' => $quizzesPassed
         ];
+
+        // Memastikan $user adalah instance Model utuh (menghindari error property pada interface Authenticatable)
+        $user = User::find($userId);
 
         return view('profile.edit', compact('user', 'stats'));
     }
 
     public function update(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::id();
+        $user = User::find($userId);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
             'phone' => 'nullable|string|max:20',
             'institution' => 'nullable|string|max:100',
             'study_program' => 'nullable|string|max:100',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle File Upload
+        // Handle File Upload secara spesifik menggunakan disk 'public'
         if ($request->hasFile('avatar')) {
-            // Hapus foto lama jika ada (dan bukan default)
-            if ($user->avatar && Storage::exists('public/' . $user->avatar)) {
-                Storage::delete('public/' . $user->avatar);
+            // Hapus foto lama jika ada
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
             }
 
             // Simpan foto baru
@@ -85,16 +89,13 @@ class ProfileController extends Controller
 
     public function updatePassword(Request $request)
     {
+        // Memanfaatkan rules 'current_password' bawaan Laravel
         $request->validate([
-            'current_password' => 'required',
-            'password' => 'required|min:8|confirmed',
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
-            return back()->withErrors(['current_password' => 'Password saat ini salah.']);
-        }
-
-        Auth::user()->update([
+        User::find(Auth::id())->update([
             'password' => Hash::make($request->password)
         ]);
 

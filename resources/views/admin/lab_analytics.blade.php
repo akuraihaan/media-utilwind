@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Lab Intelligence · Global Overview</title>
+    <title>Lab Analytics</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -177,7 +177,8 @@
     showSuccessRateModal: false,
     showAvgScoreModal: false,
     showDurationModal: false,
-}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showAttemptsModal = false; showSuccessRateModal = false; showAvgScoreModal = false; showDurationModal = false;" :class="{'modal-open': sidebarOpen || showAttemptsModal || showSuccessRateModal || showAvgScoreModal || showDurationModal}">
+    showDashboardInfoModal: false
+}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showAttemptsModal = false; showSuccessRateModal = false; showAvgScoreModal = false; showDurationModal = false; showDashboardInfoModal = false;" :class="{'modal-open': sidebarOpen || showAttemptsModal || showSuccessRateModal || showAvgScoreModal || showDurationModal || showDashboardInfoModal}">
 
     @php
         $totalAttempts = $totalAttempts ?? 0;
@@ -199,8 +200,6 @@
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/80 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-opacity" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
     {{-- ==================== 1. SIDEBAR ==================== --}}
-    <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
-
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -278,17 +277,18 @@
             </form>
         </div>
     </aside>
+
         {{-- ==================== MAIN CONTENT ==================== --}}
-        <main class="flex-1 flex flex-col relative z-10 h-full overflow-y-auto overflow-x-hidden">
+        <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
             
             {{-- Background FX --}}
             <div class="fixed inset-0 pointer-events-none z-0">
-                <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-indigo-300/30 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors"></div>
-                <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-cyan-300/30 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors"></div>
+                <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors"></div>
+                <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors"></div>
                 <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay"></div>
             </div>
 
-            {{-- HEADER RESPONSIVE & BREADCRUMB IDENTIK DASHBOARD --}}
+            {{-- HEADER RESPONSIVE --}}
             <header class="h-24 glass-header flex flex-col justify-center px-6 md:px-10 shrink-0 sticky top-0 z-40 transition-colors">
                 <div class="flex items-center justify-between w-full">
                     <div class="flex items-center gap-4">
@@ -296,23 +296,32 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                         
-                        <div>
-                            <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
-                                <ol class="inline-flex items-center space-x-1">
-                                    <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
-                                    <li>
-                                        <div class="flex items-center">
-                                            <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                            <span class="text-slate-900 dark:text-white transition-colors">Lab Analytics</span>
-                                        </div>
-                                    </li>
-                                </ol>
-                            </nav>
-                            <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Lab Intelligence Center</h2>
-                            <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                Global Overview & Monitoring
-                            </p>
+                        <div class="flex items-center gap-3">
+                            <div>
+                                <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
+                                    <ol class="inline-flex items-center space-x-1">
+                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
+                                        <li>
+                                            <div class="flex items-center transition-colors">
+                                                <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                <span class="text-slate-900 dark:text-white transition-colors">Lab Analytics</span>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </nav>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Lab Intelligence Center</h2>
+                                    
+                                    {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
+                                    <button @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Tinjauan Evaluasi Lab">
+                                        ?
+                                    </button>
+                                </div>
+                                <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                                    Global Overview & Monitoring
+                                </p>
+                            </div>
                         </div>
                     </div>
                     
@@ -537,6 +546,63 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    {{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
+    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
+        <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
+        
+        <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+            
+            <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <!-- Hero Logo Section -->
+            <div class="relative w-24 h-24 mx-auto mb-6">
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-cyan-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
+                <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
+                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Lab Intelligence</span></h3>
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Analitik & Pemantauan Performa</p>
+            
+            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
+                <p>Halaman ini dikonstruksikan sebagai instrumen analitik komprehensif bagi Administrator dalam mengevaluasi efektivitas modul praktikum (Lab) secara terpusat.</p>
+                
+                <div class="space-y-3 mt-4 text-left">
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Indikator Kinerja Makro</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menyajikan kompilasi data kuantitatif terkait agregat percobaan, rasio keberhasilan murni, serta kalkulasi rata-rata skor dan durasi pelaksanaan praktikum.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Visualisasi Tren & Rasio</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pemetaan grafis distribusi kelulusan dan fluktuasi intensitas aktivitas harian siswa untuk mengukur pola partisipasi akademik.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Hierarki Prestasi Peserta</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Direktori peringkat siswa yang diklasifikasikan berdasarkan performa perolehan nilai tertinggi (Top Performers).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
+                <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
+                    Mengerti, Tutup Panduan
+                </button>
+            </div>
+        </div>
     </div>
 
     {{-- ==================== HERO MODALS (INSIGHT DATA PER CARD) ==================== --}}

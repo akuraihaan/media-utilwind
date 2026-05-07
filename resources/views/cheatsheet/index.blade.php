@@ -463,6 +463,15 @@
                         <p class="text-slate-500 dark:text-white/50 text-base md:text-lg max-w-2xl leading-relaxed transition-colors">
                             Panduan visual 50+ kelas utilitas Tailwind paling krusial. Pahami cara kerjanya secara instan atau bedah kodenya langsung di Sandbox.
                         </p>
+                        
+                        {{-- TOMBOL TRIGGER POPUP PANDUAN KAMUS --}}
+                        <div class="flex items-center flex-wrap gap-4 mt-6">
+                            <button onclick="openKamusInfoModal()" class="group relative inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-full text-slate-700 dark:text-white text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-cyan-500/25 transition-all hover:-translate-y-0.5">
+                                <span class="absolute inset-0 bg-cyan-400/20 dark:bg-cyan-400/30 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                                <svg class="w-4 h-4 text-cyan-500 dark:text-cyan-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span class="relative z-10">Panduan Kamus</span>
+                            </button>
+                        </div>
                     </div>
                     
                     {{-- Search Box --}}
@@ -518,9 +527,9 @@
                                             </div>
                                         </div>
 
-                                        {{-- Visual Preview (Kanvas selalu terang di light mode, gelap di dark mode, kecuali warna spesifik pada elemennya) --}}
+                                        {{-- Visual Preview --}}
                                         <div class="p-6 md:p-10 bg-slate-50 dark:bg-[#020617] flex items-center justify-center min-h-[200px] md:min-h-[250px] relative overflow-hidden flex-1 group-hover:bg-white dark:group-hover:bg-[#050912] transition-colors">
-                                            {{-- Checkerboard Pattern (Transparency Grid) disesuaikan agar lebih lembut di mode terang --}}
+                                            {{-- Checkerboard Pattern --}}
                                             <div class="absolute inset-0 opacity-10 dark:opacity-10" style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 16px 16px;"></div>
                                             
                                             {{-- Render Component (HTML Utuh) --}}
@@ -529,7 +538,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Source Code Area (Default Hidden) - Selalu gelap ala editor kode --}}
+                                        {{-- Source Code Area (Default Hidden) --}}
                                         <div id="code-{{ $item['id'] }}" class="hidden bg-[#0b0f19] border-t border-slate-200 dark:border-white/10 p-0 relative group/code transition-all animate-fade-in-down">
                                             <textarea id="raw-{{ $item['id'] }}" class="hidden">{{ $item['code'] }}</textarea>
                                             <div class="relative">
@@ -555,6 +564,78 @@
 
             </div>
         </main>
+    </div>
+
+    {{-- ========================================================= --}}
+    {{-- MODAL POPUP: INFORMASI KAMUS UTILITAS --}}
+    {{-- ========================================================= --}}
+    <div id="kamusInfoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeKamusInfoModal()"></div>
+        
+        <div id="kamusInfoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+            <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+                
+                <button onclick="closeKamusInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Panduan Kamus Utilitas</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Struktur Library & Interaksi Visual</p>
+                    </div>
+                </div>
+                
+                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                    Halaman ini adalah galeri referensi interaktif yang memuat 50 implementasi utilitas utama. Gunakan fitur-fitur berikut untuk mengoptimalkan eksplorasi Anda:
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Sidebar & Pencarian Pintar</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gunakan navigasi sebelah kiri untuk melompat antar kategori, atau tekan <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded font-mono">CTRL</kbd> + <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded font-mono">K</kbd> untuk mencari nama kelas CSS spesifik secara instan.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Visual Preview</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Setiap kartu komponen merender hasil nyata dari struktur kode. Arahkan kursor (hover) untuk melihat interaksi animasi pada utilitas tertentu.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Ekstraksi Source Code</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Klik ikon mata (<svg class="w-3 h-3 inline text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>) untuk membuka struktur HTML di balik visualisasi, atau gunakan ikon salin untuk meng-copy keseluruhan blok kode.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">04</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Integrasi Sandbox</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Klik tombol <strong class="text-fuchsia-500">Try</strong> pada pojok kanan atas kartu untuk mengekspor komponen langsung ke halaman Sandbox dan mengeditnya secara live.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button onclick="closeKamusInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors">
+                        Tutup Panduan
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- TOAST NOTIFICATION (Visual Feedback) --}}
@@ -667,6 +748,33 @@
     }, { rootMargin: '-10% 0px -80% 0px' });
 
     sections.forEach(section => observer.observe(section));
+
+    // 7. MODAL POPUP LOGIC PANDUAN KAMUS
+    function openKamusInfoModal() {
+        const modal = document.getElementById('kamusInfoModal');
+        const content = document.getElementById('kamusInfoContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeKamusInfoModal() {
+        const modal = document.getElementById('kamusInfoModal');
+        const content = document.getElementById('kamusInfoContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
+    }
 
 </script>
 

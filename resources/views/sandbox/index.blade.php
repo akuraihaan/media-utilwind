@@ -50,7 +50,13 @@
                     <span class="text-[9px] md:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 tracking-wider uppercase whitespace-nowrap transition-colors">Live Env<span class="hidden md:inline">ironment</span></span>
                 </div>
                 
-                <span id="saveStatus" class="text-[9px] text-slate-400 dark:text-white/40 hidden lg:block font-mono transition-colors">Changes saved locally</span>
+                {{-- TOMBOL INFO PANDUAN BARU --}}
+                <button onclick="openSandboxInfoModal()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 transition-colors group" title="Panduan Sandbox">
+                    <svg class="w-3.5 h-3.5 group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider hidden md:inline">Panduan</span>
+                </button>
+
+                <span id="saveStatus" class="text-[9px] text-slate-400 dark:text-white/40 hidden xl:block font-mono transition-colors ml-2">Changes saved locally</span>
             </div>
 
             {{-- Right: Actions --}}
@@ -80,7 +86,7 @@
             {{-- ================= LEFT: EDITOR PANE ================= --}}
             <div class="w-full md:w-1/2 flex flex-col bg-white dark:bg-[#1e1e1e] border-r border-slate-200 dark:border-white/10 relative group/editor h-1/2 md:h-full transition-colors duration-500">
                 
-                {{-- Editor Tabs (Tab style.css dihapus sesuai instruksi) --}}
+                {{-- Editor Tabs --}}
                 <div class="h-9 bg-slate-100 dark:bg-[#0f141e] flex items-end px-2 border-b border-slate-200 dark:border-white/5 select-none shrink-0 transition-colors duration-500">
                     <div class="px-4 py-2 bg-white dark:bg-[#1e1e1e] text-cyan-600 dark:text-cyan-400 text-[11px] font-bold border-t-2 border-cyan-500 rounded-t flex items-center gap-2 transition-colors">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
@@ -140,6 +146,78 @@
         </div>
     </div>
 
+    {{-- ========================================================= --}}
+    {{-- MODAL POPUP: INFORMASI SANDBOX --}}
+    {{-- ========================================================= --}}
+    <div id="sandboxInfoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeSandboxInfoModal()"></div>
+        
+        <div id="sandboxInfoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+            <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+                
+                <button onclick="closeSandboxInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Informasi Sandbox</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Panduan Lingkungan Kerja Interaktif</p>
+                    </div>
+                </div>
+                
+                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
+                    Halaman ini adalah Live Environment untuk menguji dan memvisualisasikan implementasi kode secara langsung. Berikut adalah struktur area kerja Anda:
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Editor Code (Panel Kiri)</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gunakan editor berbasis Monaco untuk menulis struktur HTML dan utility class. Kode akan tersimpan secara otomatis (Auto-save).</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Live Preview (Panel Kanan)</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Menampilkan hasil render visual secara instan (real-time) setiap kali Anda mengubah kode di Editor.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">System Console (Panel Bawah)</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Memeriksa kesehatan sintaks HTML Anda. Console akan memberikan peringatan jika terdapat tag penutup (div) yang tidak seimbang.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">04</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Shortcut Render Manual</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Selain auto-render, Anda dapat menekan <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Enter</kbd> untuk mengeksekusi ulang panel Preview.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button onclick="closeSandboxInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors">
+                        Tutup Panduan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- TOAST NOTIFICATION --}}
     <div id="toast" class="fixed bottom-10 right-10 max-w-[80vw] bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/30 text-slate-800 dark:text-white px-4 md:px-5 py-3 rounded-xl shadow-xl dark:shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 z-[100] flex items-center gap-3 backdrop-blur-md">
         <div class="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 transition-colors">
@@ -193,7 +271,7 @@
 </style>
 
 {{-- ======================================================================
-     SCRIPTS (MONACO, LOGIC, IMPORT HANDLER)
+     SCRIPTS (MONACO, LOGIC, IMPORT HANDLER, MODAL HANDLER)
      ====================================================================== --}}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
@@ -430,6 +508,33 @@
             function animateStars() { x.clearRect(0,0,c.width,c.height); x.fillStyle='rgba(255,255,255,0.3)'; s.forEach(t=>{ x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill(); t.y-=t.v; if(t.y<0)t.y=c.height; }); requestAnimationFrame(animateStars); }
             window.addEventListener('resize', initStars); initStars(); animateStars();
         }
+    }
+
+    // 7. MODAL POPUP LOGIC
+    function openSandboxInfoModal() {
+        const modal = document.getElementById('sandboxInfoModal');
+        const content = document.getElementById('sandboxInfoContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeSandboxInfoModal() {
+        const modal = document.getElementById('sandboxInfoModal');
+        const content = document.getElementById('sandboxInfoContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
     }
 </script>
 @endsection
