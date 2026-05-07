@@ -9,7 +9,6 @@
                 <a href="{{ url('/') }}" class="block h-full flex items-center focus:outline-none group">
                     <img src="{{ asset('images/logo.png') }}" 
                          alt="Utilwind Logo" 
-                         {{-- Logo dikembalikan ke ukuran besar dan proporsional --}}
                          class="h-12 md:h-[60px] w-auto object-contain invert dark:invert-0 transition-transform duration-300 group-hover:scale-105"
                          onerror="this.style.display='none'">
                 </a>
@@ -73,7 +72,7 @@
                             <button onclick="toggleUserMenu()" class="flex items-center gap-3 py-1.5 pl-1.5 pr-3.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors focus:outline-none group">
                                 <div class="relative">
                                     @if(Auth::user()->avatar)
-                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-white/10">
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-white/10">
                                     @else
                                         <div class="w-9 h-9 rounded-full bg-slate-900 dark:bg-white flex items-center justify-center text-xs font-bold text-white dark:text-slate-900">
                                             {{ substr(Auth::user()->name, 0, 2) }}
@@ -103,7 +102,7 @@
                                     @endif
                                     
                                     <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                        <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                        <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                         Dasbor Belajar
                                     </a>
 
@@ -151,7 +150,7 @@
             @auth
                 <div class="flex items-center gap-5 mb-8 p-5 rounded-[1.5rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0a0e17] shadow-sm">
                     @if(Auth::user()->avatar)
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border border-slate-200 dark:border-white/10">
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border border-slate-200 dark:border-white/10" alt="{{ Auth::user()->name }}">
                     @else
                         <div class="w-16 h-16 rounded-full bg-slate-900 dark:bg-white flex items-center justify-center font-bold text-white dark:text-slate-900 text-xl">
                             {{ substr(Auth::user()->name, 0, 2) }}

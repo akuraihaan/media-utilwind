@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File; // Facade File untuk manajemen folder dan file
 use App\Models\QuizAttempt;
 use App\Models\LabHistory;
 use App\Models\User;
@@ -14,8 +14,8 @@ class ProfileController extends Controller
 {
     public function edit()
     {
-        // Ekstraksi ID untuk memastikan query builder aman dan efisien di hosting
         $userId = Auth::id();
+        $user = User::find($userId);
 
         // --- 1. MENGHITUNG INSIGHTS (STATISTIK) ---
         
@@ -44,9 +44,6 @@ class ProfileController extends Controller
             'quizzes_passed' => $quizzesPassed
         ];
 
-        // Memastikan $user adalah instance Model utuh (menghindari error property pada interface Authenticatable)
-        $user = User::find($userId);
-
         return view('profile.edit', compact('user', 'stats'));
     }
 
@@ -64,16 +61,28 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle File Upload secara spesifik menggunakan disk 'public'
         if ($request->hasFile('avatar')) {
-            // Hapus foto lama jika ada
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            
+            // 1. Hapus foto lama jika ada
+            if (!empty($user->avatar) && File::exists(public_path($user->avatar))) {
+                File::delete(public_path($user->avatar));
             }
 
-            // Simpan foto baru
-            $path = $request->file('avatar')->store('profile-photos', 'public');
-            $user->avatar = $path;
+            $file = $request->file('avatar');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('profile-photos');
+
+            // 2. CEK DAN BUAT FOLDER OTOMATIS
+            // Jika folder 'profile-photos' belum ada di dalam folder 'public', Laravel akan membuatnya dengan permission 755
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true, true);
+            }
+            
+            // 3. Pindahkan file
+            $file->move($destinationPath, $filename);
+            
+            // 4. Simpan ke database
+            $user->avatar = 'profile-photos/' . $filename;
         }
 
         $user->name = $request->name;
@@ -89,7 +98,6 @@ class ProfileController extends Controller
 
     public function updatePassword(Request $request)
     {
-        // Memanfaatkan rules 'current_password' bawaan Laravel
         $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'min:8', 'confirmed'],
