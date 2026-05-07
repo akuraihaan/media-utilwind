@@ -5,20 +5,20 @@
 @section('content')
 
 {{-- ==============================================================================
-     LOGIKA PROFIL & KELAS
+     LOGIKA PROFIL & KELAS (HOSTING FIXED)
      ============================================================================== --}}
 @php
     use Illuminate\Support\Str;
 
-    // 1. Logika Foto Profil Anti-Broken (Untuk Hosting)
+    // 1. Logika Foto Profil Anti-Broken (Sesuai Konfigurasi public/uploads)
     $avatarUrl = null;
     $fallbackAvatar = 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=06b6d4&color=fff&size=256';
     
     if (Auth::user()->avatar) {
-        // Cek apakah avatar adalah URL eksternal (Google/Github) atau file lokal storage
+        // Cek apakah avatar adalah URL eksternal (Google/Github) atau file lokal di uploads/
         $avatarUrl = Str::startsWith(Auth::user()->avatar, ['http://', 'https://']) 
             ? Auth::user()->avatar 
-            : asset('storage/' . Auth::user()->avatar);
+            : asset('uploads/' . Auth::user()->avatar); // <-- PERUBAHAN DI SINI (Menggunakan folder uploads/)
     }
 
     // 2. Ambil Informasi Kelas & Token dari DB
@@ -516,7 +516,9 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = $('#avatar-display-main');
-                    // Jika div inisial (text), ganti jadi tag IMG
+                    const preview = $('#preview-img');
+
+                    // Ganti di kartu identitas
                     if(img.prop("tagName") === 'DIV') {
                         const newImg = $(`<img id="avatar-display-main" src="${e.target.result}" class="relative w-full h-full object-cover rounded-full border-4 border-white dark:border-[#0f141e] shadow-md dark:shadow-xl transition-all duration-500 group-hover:scale-105 bg-slate-100 dark:bg-slate-800" alt="Profile Photo">`);
                         img.replaceWith(newImg);
@@ -525,6 +527,9 @@
                         img.removeClass('scale-105').addClass('scale-95');
                         setTimeout(() => img.removeClass('scale-95').addClass('scale-105 transition-transform duration-300'), 150);
                     }
+
+                    // Ganti di form upload
+                    preview.attr('src', e.target.result);
                 }
                 reader.readAsDataURL(file);
                 
@@ -593,7 +598,7 @@
             if(type === 'text') {
                 $(this).html('<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0a10.05 10.05 0 015.71-1.29c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0l-3.29-3.29"/></svg>');
             } else {
-                $(this).html('<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>');
+                $(this).html('<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>');
             }
         });
 

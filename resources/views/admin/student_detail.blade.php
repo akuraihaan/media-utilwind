@@ -90,38 +90,48 @@
         .dark .tab-btn:hover { color: #cbd5e1; }
         .tab-btn.active { color: #6366f1; font-weight: 700; }
         .dark .tab-btn.active { color: #fff; font-weight: 600; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent); box-shadow: 0 -2px 10px var(--accent); border-radius: 2px 2px 0 0; }
-
-        .table-row { transition: background 0.2s; border-bottom: 1px solid rgba(0,0,0,0.03); }
-        .table-row:hover { background: rgba(0,0,0,0.02); }
-        .dark .table-row { border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .dark .table-row:hover { background: rgba(255,255,255,0.02); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #6366f1; box-shadow: 0 -2px 10px #6366f1; border-radius: 2px 2px 0 0; }
 
         .reveal { opacity: 0; transform: translateY(15px); animation: revealAnim 0.5s forwards ease-out; }
         @keyframes revealAnim { to { opacity: 1; transform: translateY(0); } }
         [x-cloak] { display: none !important; }
 
-        /* SISTEM TOOLTIP SUPER SOLID (Theme Adaptive) */
-        .tooltip-container { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; }
-        .tooltip-container:hover { z-index: 99999; }
-        .tooltip-trigger { width: 18px; height: 18px; border-radius: 50%; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: help; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.1); }
-        .dark .tooltip-trigger { color: white; border-color: rgba(255,255,255,0.2); }
-        .tooltip-trigger:hover { transform: scale(1.15); }
-        .tooltip-content { opacity: 0; visibility: hidden; position: absolute; pointer-events: none; width: max-content; min-width: 200px; max-width: 260px; white-space: normal; text-align: left; background-color: #ffffff; color: #1e293b; font-size: 11px; padding: 14px 16px; line-height: 1.5; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 99999; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dark .tooltip-content { background-color: #020617; color: #e2e8f0; box-shadow: 0 20px 60px rgba(0,0,0,1); border: none; }
-        .tooltip-down .tooltip-content { top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-10px); }
-        .tooltip-down:hover .tooltip-content { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
-        .tooltip-down .tooltip-content::after { content: ''; position: absolute; bottom: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: transparent transparent #ffffff transparent; }
-        .dark .tooltip-down .tooltip-content::after { border-color: transparent transparent #020617 transparent; }
-        .tooltip-left .tooltip-content { left: auto; right: -12px; transform: translateX(0) translateY(-10px); }
-        .tooltip-down.tooltip-left:hover .tooltip-content { transform: translateX(0) translateY(0); }
-        .tooltip-left .tooltip-content::after { left: auto; right: 15px; margin-left: 0; }
+        /* --- TOOLTIP INSIGHT (PETUNJUK HALAMAN) --- */
+        .insight-tooltip { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; }
+        .insight-tooltip:hover { z-index: 99999; }
         
-        .dark .tooltip-indigo .tooltip-trigger { background-color: #6366f1; box-shadow: 0 0 10px rgba(99,102,241,0.5); border-color: transparent; } .dark .tooltip-indigo .tooltip-trigger:hover { background-color: #818cf8; box-shadow: 0 0 15px rgba(99,102,241,0.8); } .dark .tooltip-indigo .tooltip-content { border: 1px solid rgba(99,102,241,0.5); }
-        .dark .tooltip-emerald .tooltip-trigger { background-color: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.5); border-color: transparent; } .dark .tooltip-emerald .tooltip-trigger:hover { background-color: #34d399; box-shadow: 0 0 15px rgba(16,185,129,0.8); } .dark .tooltip-emerald .tooltip-content { border: 1px solid rgba(16,185,129,0.5); }
-        .dark .tooltip-yellow .tooltip-trigger { background-color: #eab308; color: #020617; box-shadow: 0 0 10px rgba(234,179,8,0.5); border-color: transparent; } .dark .tooltip-yellow .tooltip-trigger:hover { background-color: #facc15; box-shadow: 0 0 15px rgba(234,179,8,0.8); } .dark .tooltip-yellow .tooltip-content { border: 1px solid rgba(234,179,8,0.5); }
-        .dark .tooltip-cyan .tooltip-trigger { background-color: #06b6d4; box-shadow: 0 0 10px rgba(6,182,212,0.5); border-color: transparent; } .dark .tooltip-cyan .tooltip-trigger:hover { background-color: #22d3ee; box-shadow: 0 0 15px rgba(6,182,212,0.8); } .dark .tooltip-cyan .tooltip-content { border: 1px solid rgba(6,182,212,0.5); }
-        .dark .tooltip-fuchsia .tooltip-trigger { background-color: #d946ef; box-shadow: 0 0 10px rgba(217,70,239,0.5); border-color: transparent; } .dark .tooltip-fuchsia .tooltip-trigger:hover { background-color: #e879f9; box-shadow: 0 0 15px rgba(217,70,239,0.8); } .dark .tooltip-fuchsia .tooltip-content { border: 1px solid rgba(217,70,239,0.5); }
+        .insight-trigger { 
+            display: flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #6366f1; font-size: 10px; font-weight: 800; cursor: help;
+            transition: all 0.3s;
+        }
+        .dark .insight-trigger { background: rgba(129, 140, 248, 0.1); border-color: rgba(129, 140, 248, 0.3); color: #818cf8; }
+        .insight-tooltip:hover .insight-trigger { background: #6366f1; color: white; border-color: #6366f1; transform: scale(1.1); }
+        
+        .insight-content {
+            opacity: 0; visibility: hidden; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(10px);
+            width: max-content; max-width: 240px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            color: #f8fafc; font-size: 11px; padding: 10px 14px; border-radius: 12px; text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; font-weight: 500; line-height: 1.5;
+        }
+        .dark .insight-content { background: rgba(255, 255, 255, 0.95); color: #0f172a; border: 1px solid rgba(0,0,0,0.1); }
+        
+        .insight-tooltip:hover .insight-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .insight-content::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 6px; border-style: solid; border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+        }
+        .dark .insight-content::after { border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent; }
+        
+        /* Tooltip Posisi Kanan (Bawah) */
+        .insight-right .insight-content { bottom: auto; top: 50%; left: calc(100% + 10px); transform: translateY(-50%) translateX(-10px); }
+        .insight-right:hover .insight-content { transform: translateY(-50%) translateX(0); }
+        .insight-right .insight-content::after { top: 50%; left: -11px; transform: translateY(-50%); border-color: transparent rgba(15, 23, 42, 0.95) transparent transparent; border-width: 6px; }
+        .dark .insight-right .insight-content::after { border-color: transparent rgba(255, 255, 255, 0.95) transparent transparent; }
+
     </style>
 </head>
 <body class="h-screen w-full flex overflow-hidden selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-white" 
@@ -134,7 +144,6 @@
           searchLesson: '',
           showProgress: false,
           
-          // State Modals Insight Database Absolut
           showLessonModal: false,
           showLabModal: false,
           showQuizModal: false,
@@ -150,17 +159,14 @@
       @keydown.escape.window="showLessonModal = false; showLabModal = false; showQuizModal = false; showAvgLabModal = false; showAvgQuizModal = false; showGlobalProgressModal = false; showEdit = false;"
       x-init="setTimeout(() => showProgress = true, 200); $watch('activeTab', value => { if(value === 'overview') { showProgress = false; setTimeout(() => showProgress = true, 50); } });">
 
-    {{-- HELPER DATA BLADE (Real Database Collections & Logical Duration Formatter) --}}
+    {{-- HELPER DATA BLADE --}}
     @php
-        // Fungsi format waktu cerdas dengan fallback
+        use Illuminate\Support\Str;
+
         function formatTime($seconds) {
             if ($seconds === null || $seconds === '') return '-';
             if ($seconds == 0) return '0s';
-            
-            // Jika lebih dari 12 jam, anggap sesi ditinggalkan/lupa logout
-            if ($seconds > 43200) { 
-                return '> 12j'; 
-            }
+            if ($seconds > 43200) return '> 12j'; 
             
             $h = floor($seconds / 3600);
             $m = floor(($seconds % 3600) / 60);
@@ -179,7 +185,6 @@
         $lessonHistories = isset($lessonHistories) ? collect($lessonHistories) : collect([]);
         $completedLessonIds = $completedLessonIds ?? [];
         
-        // PETA BLUEPRINT TRACKER
         $curriculumMap = [
             [
                 'id' => 1, 'number' => '01', 'title' => 'PENDAHULUAN', 'color' => 'cyan', 'lab_id' => 1, 'lab_name' => 'Setup Environment', 'quiz_key' => '1',
@@ -194,6 +199,25 @@
                 'topics' => [['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)], ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)], ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)], ['name' => '3.4 Effects & Filters', 'ids' => range(60, 65)]]
             ]
         ];
+
+        // ANTI-BROKEN IMAGE LOGIC (Uploads & Cache Busting)
+        $pathPrefix = 'uploads/'; 
+
+        // Avatar untuk ADMIN
+        $adminAvatarUrl = 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name ?? 'A').'&background=6366f1&color=fff&size=256';
+        if (!empty(Auth::user()->avatar)) {
+            $adminAvatarUrl = Str::startsWith(Auth::user()->avatar, ['http://', 'https://']) 
+                ? Auth::user()->avatar 
+                : asset($pathPrefix . Auth::user()->avatar) . '?v=' . time(); 
+        }
+
+        // Avatar untuk SISWA
+        $studentAvatarUrl = 'https://ui-avatars.com/api/?name='.urlencode($user->name ?? 'S').'&background=06b6d4&color=fff&size=256';
+        if (!empty($user->avatar)) {
+            $studentAvatarUrl = Str::startsWith($user->avatar, ['http://', 'https://']) 
+                ? $user->avatar 
+                : asset($pathPrefix . $user->avatar) . '?v=' . time();
+        }
     @endphp
 
      {{-- ==================== 1. SIDEBAR ==================== --}}
@@ -253,7 +277,7 @@
         {{-- USER PROFILE Bawah Sidebar --}}
         <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
             <div class="flex items-center gap-3 mb-4 px-2">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
+                <img src="{{ $adminAvatarUrl }}" alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover shadow-lg border border-slate-200 dark:border-white/10 bg-indigo-500">
                 <div class="overflow-hidden">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
                     <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
@@ -294,13 +318,11 @@
                     <button @click="sidebarOpen = true" class="md:hidden p-2 bg-slate-200/50 dark:bg-white/5 rounded-lg text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition mt-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
                     <div class="flex items-center gap-4">
                         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 p-[1px] shadow-lg hidden sm:block relative">
-                            @if($user->avatar)
-                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-full h-full object-cover rounded-[10px]">
-                            @else
-                                <div class="w-full h-full bg-white dark:bg-[#0f141e] rounded-[11px] flex items-center justify-center font-black text-slate-900 dark:text-white text-base transition-colors">{{ substr($user->name ?? 'S', 0, 2) }}</div>
-                            @endif
+                            {{-- LOGO SISWA DI HEADER --}}
+                            <img src="{{ $studentAvatarUrl }}" alt="Avatar" class="w-full h-full object-cover rounded-[10px] bg-white dark:bg-[#0f141e]">
+                            
                             {{-- Lencana Terverifikasi --}}
-                            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-[#020617] flex items-center justify-center text-white" title="Akun Siswa Terverifikasi Aktif">
+                            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-[#020617] flex items-center justify-center text-white">
                                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                         </div>
@@ -321,9 +343,16 @@
                 </div>
                 
                 <div class="flex items-center gap-3 sm:gap-6 mt-1">
-                    {{-- Global Progress (Interactive) --}}
-                    <div class="hidden xl:flex flex-col items-end mr-2 cursor-pointer hover:opacity-80 transition-opacity" @click="showGlobalProgressModal = true" title="Klik untuk melihat detail kalkulasi progres">
-                        <p class="text-[9px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-widest mb-1.5 transition-colors">Global Progress</p>
+                    {{-- Global Progress --}}
+                    <div class="hidden xl:flex flex-col items-end mr-2 cursor-pointer hover:opacity-80 transition-opacity" @click="showGlobalProgressModal = true">
+                        <div class="flex items-center gap-1.5 mb-1.5">
+                            <p class="text-[9px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-widest transition-colors">Global Progress</p>
+                            {{-- TOOLTIP INSIGHT --}}
+                            <div class="insight-tooltip">
+                                <span class="insight-trigger">?</span>
+                                <div class="insight-content">Kalkulasi persentase penyelesaian keseluruhan berdasarkan materi bacaan, kelulusan praktikum lab, dan nilai evaluasi kuis siswa.</div>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-3">
                             <div class="w-24 h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full overflow-hidden border border-slate-300 dark:border-white/5 shadow-inner transition-colors">
                                 <div class="h-full bg-cyan-500 dark:bg-cyan-400 rounded-full transition-colors" style="width: {{ $globalProgress ?? 0 }}%"></div>
@@ -339,13 +368,27 @@
                             <span class="hidden sm:inline">Export</span>
                         </button>
                         <div x-show="exportOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-xl shadow-lg dark:shadow-[0_15px_50px_rgba(0,0,0,0.9)] z-[9999] overflow-hidden transition-colors" style="display: none;" x-transition>
-                            <div class="px-4 py-2 border-b border-slate-100 dark:border-white/5 text-[9px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest bg-slate-50 dark:bg-[#0a0e17] transition-colors">Pilih Format</div>
+                            <div class="px-4 py-2 border-b border-slate-100 dark:border-white/5 text-[9px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest bg-slate-50 dark:bg-[#0a0e17] flex justify-between items-center transition-colors">
+                                Pilih Format
+                                {{-- TOOLTIP INSIGHT --}}
+                                <div class="insight-tooltip insight-right">
+                                    <span class="insight-trigger">?</span>
+                                    <div class="insight-content">Unduh seluruh riwayat pengerjaan materi, praktik, dan kuis siswa dalam format dokumen yang Anda pilih.</div>
+                                </div>
+                            </div>
                             <a href="{{ route('admin.student.export.csv', $user->id) }}" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition border-b border-slate-100 dark:border-white/5"><svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Export CSV</a>
                             <a href="{{ route('admin.student.export.pdf', $user->id) }}" target="_blank" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition"><svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> Print PDF</a>
                         </div>
                     </div>
 
-                    <button @click="showEdit = true" class="p-2.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-white border border-indigo-200 dark:border-indigo-500/20 hover:border-indigo-300 dark:hover:border-indigo-500 transition-all shadow-sm dark:shadow-lg active:scale-95" title="Edit Student"><svg class="w-4 h-4 transition-transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                    <div class="flex items-center gap-2">
+                        <button @click="showEdit = true" class="p-2.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-white border border-indigo-200 dark:border-indigo-500/20 hover:border-indigo-300 dark:hover:border-indigo-500 transition-all shadow-sm dark:shadow-lg active:scale-95"><svg class="w-4 h-4 transition-transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                        {{-- TOOLTIP INSIGHT --}}
+                        <div class="insight-tooltip insight-right">
+                            <span class="insight-trigger">?</span>
+                            <div class="insight-content">Klik tombol edit ini untuk memperbarui profil, mengganti kelas, atau mengatur ulang kata sandi milik siswa.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -372,20 +415,14 @@
                      ========================================================= --}}
                 <div x-show="activeTab === 'overview'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-12" style="display: none;" x-cloak>
                     
-                    {{-- =========================================================
-                         PROFIL & STATUS KELAS
-                         ========================================================= --}}
+                    {{-- PROFIL & STATUS KELAS --}}
                     <div class="animate-fade-in-up mb-8">
                         <div class="glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm dark:shadow-lg border border-slate-200 dark:border-white/5 transition-colors">
                             
                             {{-- Student Basic Info --}}
                             <div class="flex items-center gap-5 w-full md:w-auto">
-                                <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-black border border-indigo-200 dark:border-indigo-500/30 shrink-0 transition-colors shadow-inner overflow-hidden relative">
-                                    @if($user->avatar)
-                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
-                                    @else
-                                        {{ substr($user->name, 0, 2) }}
-                                    @endif
+                                <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xl font-bold shrink-0 transition-colors overflow-hidden border border-slate-200 dark:border-white/5">
+                                    <img src="{{ $studentAvatarUrl }}" alt="Avatar" class="w-full h-full object-cover">
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight transition-colors flex items-center gap-2">
@@ -399,19 +436,11 @@
                                         @if($user->study_program)
                                             <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 uppercase tracking-widest">{{ $user->study_program }}</span>
                                         @endif
-                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1" title="Tanggal Mendaftar: {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> 
-                                            Joined {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('M Y') }}
-                                        </span>
-                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1" title="Terakhir Update: {{ \Carbon\Carbon::parse($user->updated_at)->translatedFormat('d F Y, H:i') }}">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                            Upd. {{ \Carbon\Carbon::parse($user->updated_at)->diffForHumans() }}
-                                        </span>
                                     </div>
                                 </div>
                             </div>
                             
-                            {{-- Class Status (Interactive Edit) --}}
+                            {{-- Class Status --}}
                             <div class="w-full md:w-auto min-w-[280px]">
                                 @empty($user->class_group)
                                     <button @click.stop="showEdit = true" class="w-full py-3 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 hover:bg-indigo-100 dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-white text-xs font-bold transition-colors border border-indigo-200 dark:border-indigo-500/30">
@@ -419,7 +448,7 @@
                                     </button>
                                 @else
                                     <div class="flex flex-col gap-2 w-full relative z-10" @click.stop>
-                                        <div @click="showEdit = true" class="flex items-center justify-between gap-4 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3 rounded-xl border border-emerald-200 dark:border-emerald-500/20 w-full transition-colors cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-500/20 group" title="Ubah data siswa & kelas">
+                                        <div @click="showEdit = true" class="flex items-center justify-between gap-4 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3 rounded-xl border border-emerald-200 dark:border-emerald-500/20 w-full transition-colors cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-500/20 group">
                                             <span class="flex items-center gap-2 font-bold"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Kelas: {{ $user->class_group }}</span>
                                             <div class="flex items-center gap-3">
                                                 @if(isset($classGroup))
@@ -441,36 +470,29 @@
                         </div>
                     </div>
 
-                    {{-- VISUAL SEPARATOR --}}
+                    {{-- VISUAL SEPARATOR & TOOLTIP PETUNJUK --}}
                     <div class="flex items-center gap-4 py-4">
                         <div class="h-px bg-slate-200 dark:bg-white/10 flex-1 transition-colors"></div>
-                        <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] bg-white dark:bg-[#020617] px-3 py-1 border border-slate-200 dark:border-white/5 rounded-full transition-colors">Academic Analytics</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] bg-white dark:bg-[#020617] px-3 py-1 border border-slate-200 dark:border-white/5 rounded-full transition-colors">Academic Analytics</span>
+                            <div class="insight-tooltip">
+                                <span class="insight-trigger">?</span>
+                                <div class="insight-content">Kartu-kartu di bawah dapat diklik untuk menampilkan modal detail rincian data metrik akademik siswa.</div>
+                            </div>
+                        </div>
                         <div class="h-px bg-slate-200 dark:bg-white/10 flex-1 transition-colors"></div>
                     </div>
 
-                    {{-- =========================================================
-                         ZONA AKADEMIK
-                         ========================================================= --}}
+                    {{-- ZONA AKADEMIK CARDS --}}
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
                         
                         {{-- 1. Materi Dibaca --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-cyan-400 dark:hover:border-cyan-500/40 cursor-pointer transition-colors" @click="showLessonModal = true">
                             <div class="flex justify-between items-start mb-3">
                                 <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Materi Dibaca</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
-                                        <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                        <div class="tooltip-content border-cyan-glow">
-                                            <span class="block font-bold text-cyan-600 dark:text-cyan-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Total Materi</span>
-                                            Jumlah slide materi teori yang telah dibaca dan diselesaikan oleh siswa ini. Klik untuk melihat rincian.
-                                        </div>
-                                    </div>
-                                    <span class="p-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                                    </span>
-                                </div>
+                                <span class="p-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                </span>
                             </div>
                             <div class="flex items-end gap-2">
                                 <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors" x-data="{ count: 0 }" x-init="let target = {{ $lessonsCompleted ?? count($completedLessonIds ?? []) }}; let i = setInterval(() => { if(count < target) count++; else clearInterval(i); }, 30);" x-text="count"></p>
@@ -485,20 +507,9 @@
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-indigo-400 dark:hover:border-indigo-500/40 cursor-pointer transition-colors" @click="showLabModal = true">
                             <div class="flex justify-between items-start mb-3">
                                 <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Labs Lulus</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
-                                        <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                        <div class="tooltip-content border-indigo-glow">
-                                            <span class="block font-bold text-indigo-600 dark:text-indigo-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Lab Praktikum</span>
-                                            Jumlah modul praktikum yang telah dikerjakan dan berhasil divalidasi Lulus. Klik untuk melihat daftar riwayat.
-                                        </div>
-                                    </div>
-                                    <span class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                    </span>
-                                </div>
+                                <span class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                </span>
                             </div>
                             <div class="flex items-end gap-2">
                                 <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]">{{ $labsCompleted ?? ($labStats['total'] ?? 0) }}</p>
@@ -513,20 +524,9 @@
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-fuchsia-400 dark:hover:border-fuchsia-500/40 cursor-pointer transition-colors" @click="showQuizModal = true">
                             <div class="flex justify-between items-start mb-3">
                                 <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">Quiz Lulus</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left">
-                                        <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                        <div class="tooltip-content border-fuchsia-glow">
-                                            <span class="block font-bold text-fuchsia-600 dark:text-fuchsia-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Evaluasi Kuis</span>
-                                            Jumlah evaluasi teori yang diselesaikan dengan skor minimal 70. Klik untuk melihat detail.
-                                        </div>
-                                    </div>
-                                    <span class="p-1.5 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                                    </span>
-                                </div>
+                                <span class="p-1.5 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                                </span>
                             </div>
                             <div class="flex items-end gap-2">
                                 <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(217,70,239,0.3)]">{{ count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70)) }}</p>
@@ -540,25 +540,14 @@
                         {{-- 4. Avg Lab Score --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-emerald-400 dark:hover:border-emerald-500/40 cursor-pointer transition-colors" @click="showAvgLabModal = true">
                             <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Rata Rata nilai Labs</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
-                                        <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                        <div class="tooltip-content border-emerald-glow">
-                                            <span class="block font-bold text-emerald-600 dark:text-emerald-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Average Lab</span>
-                                            Nilai rata-rata dari seluruh modul praktikum lab yang dikerjakan. Klik untuk melihat.
-                                        </div>
-                                    </div>
-                                    <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
-                                    </span>
-                                </div>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Rata-rata Labs</p>
+                                <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+                                </span>
                             </div>
                             <div class="flex items-end gap-2">
                                 <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">{{ number_format($labAverage ?? ($labStats['avg_score'] ?? 0), 1) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ 100</p>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">pts</p>
                             </div>
                             <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
                                 <div class="h-full bg-emerald-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ $labAverage ?? ($labStats['avg_score'] ?? 0) }}%' : 'width: 0%'"></div>
@@ -568,25 +557,14 @@
                         {{-- 5. Avg Quiz Score --}}
                         <div class="glass-card p-5 rounded-2xl relative group hover:border-amber-400 dark:hover:border-amber-500/40 cursor-pointer transition-colors" @click="showAvgQuizModal = true">
                             <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Rata Rata nilai Kuis</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="tooltip-container tooltip-yellow tooltip-down tooltip-left">
-                                        <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                        <div class="tooltip-content border-yellow-glow">
-                                            <span class="block font-bold text-yellow-600 dark:text-yellow-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Average Quiz</span>
-                                            Nilai rata-rata dari seluruh evaluasi kuis teori yang dikerjakan. Klik untuk melihat.
-                                        </div>
-                                    </div>
-                                    <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                    </span>
-                                </div>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Rata-rata Kuis</p>
+                                <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                </span>
                             </div>
                             <div class="flex items-end gap-2">
                                 <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]">{{ number_format($quizAverage ?? ($quizStats['avg_score'] ?? 0), 1) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ 100</p>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">pts</p>
                             </div>
                             <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
                                 <div class="h-full bg-amber-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ $quizAverage ?? ($quizStats['avg_score'] ?? 0) }}%' : 'width: 0%'"></div>
@@ -607,7 +585,7 @@
                                         <div class="flex-1 pr-4">
                                             <p class="text-xs font-bold text-slate-900 dark:text-white transition-colors">Praktik (Labs)</p>
                                             @php $pLabs = ($totalLabs ?? 4) > 0 ? (($labsCompleted ?? ($labStats['total'] ?? 0)) / ($totalLabs ?? 4)) * 100 : 0; @endphp
-                                            <div class="flex items-center justify-between w-full mt-2" title="Kemajuan Praktikum">
+                                            <div class="flex items-center justify-between w-full mt-2">
                                                 <div class="w-full bg-slate-200 dark:bg-[#020617] h-1 rounded-full mr-3 shadow-inner">
                                                     <div class="{{ $pLabs == 100 ? 'bg-emerald-500' : 'bg-indigo-500' }} h-1 rounded-full transition-all duration-1000" style="width: {{ $pLabs }}%"></div>
                                                 </div>
@@ -627,7 +605,7 @@
                                                 $qC = count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70));
                                                 $pQuiz = ($totalQuizzes ?? 4) > 0 ? ($qC / ($totalQuizzes ?? 4)) * 100 : 0; 
                                             @endphp
-                                            <div class="flex items-center justify-between w-full mt-2" title="Kemajuan Ujian Kuis">
+                                            <div class="flex items-center justify-between w-full mt-2">
                                                 <div class="w-full bg-slate-200 dark:bg-[#020617] h-1 rounded-full mr-3 shadow-inner">
                                                     <div class="{{ $pQuiz == 100 ? 'bg-emerald-500' : 'bg-fuchsia-500' }} h-1 rounded-full transition-all duration-1000" style="width: {{ $pQuiz }}%"></div>
                                                 </div>
@@ -635,22 +613,6 @@
                                         </div>
                                     </div>
                                     <span class="text-sm font-black transition-colors {{ $qC >= ($totalQuizzes ?? 4) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-300' }} shrink-0">{{ $qC }}/{{ $totalQuizzes ?? 4 }}</span>
-                                </div>
-                                <div class="bg-cyan-50/50 dark:bg-cyan-500/5 border border-cyan-200 dark:border-cyan-500/20 rounded-xl p-4 flex items-center justify-between hover:border-cyan-400 dark:hover:border-cyan-500/30 transition group/status cursor-default cursor-pointer" @click="showGlobalProgressModal = true" title="Klik untuk rincian formula progres keseluruhan">
-                                    <div class="flex items-center gap-4 w-full">
-                                        <div class="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-500/20 border border-cyan-300 dark:border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 text-lg shadow-sm dark:shadow-[0_0_15px_rgba(34,211,238,0.2)] group-hover/status:rotate-12 transition-colors shrink-0">
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
-                                        </div>
-                                        <div class="flex-1 pr-4">
-                                            <p class="text-xs font-bold text-slate-900 dark:text-white transition-colors">Tingkat Akhir</p>
-                                            <div class="flex items-center justify-between w-full mt-2">
-                                                <div class="w-full bg-cyan-100 dark:bg-[#020617] h-1 rounded-full mr-3 shadow-inner">
-                                                    <div class="bg-cyan-500 h-1 rounded-full shadow-[0_0_5px_currentColor] transition-all duration-1000" style="width: {{ $globalProgress ?? 0 }}%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="text-lg font-black text-cyan-600 dark:text-cyan-400 drop-shadow-sm dark:drop-shadow-[0_0_5px_rgba(34,211,238,0.5)] transition-colors shrink-0">{{ $globalProgress ?? 0 }}%</span>
                                 </div>
                             </div>
                         </div>
@@ -661,17 +623,13 @@
                                     <h3 class="text-sm font-black text-slate-900 dark:text-white tracking-wide transition-colors">Tren Performa Lab</h3>
                                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 transition-colors">Visualisasi skor dari 10 modul praktik terakhir (Sumbu Y = Skor 0-100, Sumbu X = Nama Modul).</p>
                                 </div>
-                                <span class="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold border border-indigo-200 dark:border-indigo-500/20 flex items-center gap-1.5 shadow-sm dark:shadow-inner transition-colors cursor-default">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                                    Grafik Nilai
-                                </span>
                             </div>
                             <div class="flex-1 min-h-[250px] w-full relative">
                                 @if(isset($chartScores) && count($chartScores) > 0)
                                     <canvas id="scoreChart"></canvas>
                                 @else
                                     <div class="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-white/[0.01] transition-colors">
-                                        <svg class="w-8 h-8 text-slate-400 dark:text-slate-600 mb-3 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                        <svg class="w-8 h-8 text-slate-400 dark:text-slate-600 mb-3 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                                         <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 transition-colors">Belum Ada Data Grafik</p>
                                         <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 transition-colors">Siswa belum menyelesaikan praktik lab dengan status lulus.</p>
                                     </div>
@@ -685,6 +643,15 @@
                 {{-- TAB 2: CURRICULUM TRACKER --}}
                 {{-- ============================== --}}
                 <div x-show="activeTab === 'curriculum'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" x-cloak>
+                    
+                    <div class="flex items-center gap-2 mb-6 ml-2">
+                        <span class="text-lg font-black text-slate-800 dark:text-white tracking-tight">Capaian Kurikulum</span>
+                        <div class="insight-tooltip insight-right">
+                            <span class="insight-trigger">?</span>
+                            <div class="insight-content">Fitur ini melacak progres materi (slide), kelulusan lab praktikum, dan status evaluasi untuk setiap sub-bab.</div>
+                        </div>
+                    </div>
+
                     <div class="grid lg:grid-cols-3 gap-6 mb-8">
                         @foreach($curriculumMap as $index => $chapter)
                             @php
@@ -727,7 +694,7 @@
                                                 $total = count($topic['ids']);
                                                 $progressW = ($partial/$total)*100;
                                             @endphp
-                                            <div class="relative pl-6 flex items-center justify-between group/item hover:bg-slate-50 dark:hover:bg-white/[0.02] p-1.5 -ml-1.5 rounded-lg transition-colors cursor-default" title="Tersisa {{ $total - $partial }} slide untuk diselesaikan">
+                                            <div class="relative pl-6 flex items-center justify-between group/item hover:bg-slate-50 dark:hover:bg-white/[0.02] p-1.5 -ml-1.5 rounded-lg transition-colors cursor-default">
                                                 <div class="flex items-center gap-3">
                                                     <div class="absolute left-[3.5px] top-3 w-2.5 h-2.5 rounded-full border-[2px] border-white dark:border-[#0f141e] {{ $isTopicDone ? 'bg-emerald-500 shadow-sm dark:shadow-[0_0_8px_#10b981]' : 'bg-slate-300 dark:bg-slate-700' }} transition-colors duration-300"></div>
                                                     <div class="flex flex-col">
@@ -746,7 +713,7 @@
                                     </div>
 
                                     <div class="mt-auto space-y-3 pt-5 border-t border-slate-200 dark:border-white/5 transition-colors">
-                                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors" title="Bobot Praktik: Tambahan persentase jika Lulus">
+                                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors">
                                             <div class="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium transition-colors">
                                                 <div class="w-6 h-6 rounded bg-{{ $chapter['color'] }}-100 dark:bg-{{ $chapter['color'] }}-500/20 flex items-center justify-center text-{{ $chapter['color'] }}-600 dark:text-{{ $chapter['color'] }}-400 text-xs shadow-sm dark:shadow-inner transition-colors">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
@@ -757,7 +724,7 @@
                                                 {{ $labDone ? 'LULUS' : 'PENDING' }}
                                             </span>
                                         </div>
-                                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors" title="Bobot Evaluasi: Tambahan persentase jika Skor >= 70">
+                                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors">
                                             <div class="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium transition-colors">
                                                 <div class="w-6 h-6 rounded bg-{{ $chapter['color'] }}-100 dark:bg-{{ $chapter['color'] }}-500/20 flex items-center justify-center text-{{ $chapter['color'] }}-600 dark:text-{{ $chapter['color'] }}-400 text-xs shadow-sm dark:shadow-inner transition-colors">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
@@ -780,9 +747,16 @@
                 {{-- ============================== --}}
                 <div x-show="activeTab === 'history'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-8" style="display: none;" x-cloak>
                     
+                    <div class="flex items-center gap-2 mb-6 ml-2">
+                        <span class="text-lg font-black text-slate-800 dark:text-white tracking-tight">Log Aktivitas</span>
+                        <div class="insight-tooltip insight-right">
+                            <span class="insight-trigger">?</span>
+                            <div class="insight-content">Tabel di bawah berisi rekaman absolut dari setiap percobaan praktik dan evaluasi kuis yang dikumpulkan oleh siswa.</div>
+                        </div>
+                    </div>
+
                     {{-- 1. Lab History --}}
                     <div class="glass-card rounded-2xl relative z-10 flex flex-col transition-colors" style="overflow: visible !important;">
-                        {{-- Header Table --}}
                         <div class="p-6 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#020617]/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 rounded-t-2xl transition-colors">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
@@ -790,7 +764,6 @@
                                         <svg class="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                                     </span> Riwayat Praktik Lab
                                 </h3>
-                                <p class="text-xs text-slate-500 dark:text-white/40 mt-1 transition-colors">Log aktivitas penyelesaian modul praktikum yang dikerjakan siswa.</p>
                             </div>
                             
                             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-40">
@@ -802,7 +775,6 @@
                             </div>
                         </div>
 
-                        {{-- Data Table --}}
                         <div class="overflow-x-auto relative p-0 sm:p-6 pt-0 border-t border-slate-200 dark:border-white/5 sm:border-none transition-colors">
                             <table class="w-full text-sm text-left whitespace-nowrap sm:whitespace-normal border border-slate-200 dark:border-white/5 rounded-xl shadow-inner bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors duration-500">
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-20 transition-colors">
@@ -810,7 +782,7 @@
                                         <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5 w-10 text-center">#</th>
                                         <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Judul Modul</th>
                                         <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Status</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5" title="Skor dalam rentang 0-100">Skor</th>
+                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Skor</th>
                                         <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Waktu Pengumpulan</th>
                                         <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Aksi Panel</th>
                                     </tr>
@@ -825,7 +797,6 @@
                                         
                                         @php
                                             $labStatusStr = strtolower($h->status ?? '');
-                                            // Deteksi Waktu Habis: Status spesifik, is_timeout true, atau durasi melebihi batas/tidak masuk akal (>12 jam)
                                             $limitLabSec = isset($h->lab->time_limit) ? $h->lab->time_limit * 60 : (isset($h->lab->duration) ? $h->lab->duration * 60 : 0);
                                             $isLabTimeout = $labStatusStr === 'timeout' || $labStatusStr === 'waktu habis' || (isset($h->is_timeout) && $h->is_timeout == 1) || ($limitLabSec > 0 && $h->duration_seconds >= $limitLabSec) || $h->duration_seconds > 43200;
                                             $isLabPassed = $labStatusStr === 'passed' || $labStatusStr === 'lulus';
@@ -845,23 +816,23 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            <span class="text-slate-900 dark:text-white font-black transition-colors" title="Skor Evaluasi Otomatis">{{ $h->final_score }}</span>
+                                            <span class="text-slate-900 dark:text-white font-black transition-colors">{{ $h->final_score }}</span>
                                         </td>
                                         
                                         <td class="px-6 py-4 text-right text-slate-500 dark:text-slate-400 text-xs font-mono transition-colors">
-                                            <span class="block text-[11px] text-slate-700 dark:text-slate-300" title="{{ \Carbon\Carbon::parse($h->created_at)->diffForHumans() }}">
+                                            <span class="block text-[11px] text-slate-700 dark:text-slate-300">
                                                 {{ \Carbon\Carbon::parse($h->created_at)->format('d M Y, H:i') }} WIB
                                             </span>
                                             <div class="flex items-center justify-end gap-1.5 mt-0.5">
-                                                <span class="text-[9px] opacity-70" title="Total durasi yang dihabiskan siswa">Durasi: {{ formatTime($h->duration_seconds) }}</span>
+                                                <span class="text-[9px] opacity-70">Durasi: {{ formatTime($h->duration_seconds) }}</span>
                                                 @if($isLabTimeout)
-                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu">Sesi Habis</span>
+                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30">Sesi Habis</span>
                                                 @endif
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             @if($h->last_code_snapshot != null && $h->last_code_snapshot != '')
-                                                <button @click="expanded = !expanded" title="Lihat Snapshot Kode" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white dark:bg-[#020617] hover:bg-indigo-600 border border-slate-200 dark:border-white/10 hover:border-indigo-500 text-slate-700 hover:text-white dark:text-white text-[10px] font-bold transition-all shadow-sm dark:shadow-inner hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] group/btn relative z-30 gap-1.5">
+                                                <button @click="expanded = !expanded" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white dark:bg-[#020617] hover:bg-indigo-600 border border-slate-200 dark:border-white/10 hover:border-indigo-500 text-slate-700 hover:text-white dark:text-white text-[10px] font-bold transition-all shadow-sm dark:shadow-inner hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] group/btn relative z-30 gap-1.5">
                                                     <svg x-show="!expanded" class="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 group-hover/btn:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                                                     <svg x-show="expanded" style="display:none;" class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                                     <span x-text="expanded ? 'Tutup Kode' : 'Lihat Kode'"></span>
@@ -882,9 +853,8 @@
                                                         <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Hasil Kode Terakhir</p>
                                                     </div>
                                                     <div class="rounded-xl overflow-hidden border border-slate-300/80 dark:border-slate-800 shadow-xl bg-[#0d1117] transition-colors relative" x-data="{ copied: false }">
-                                                        {{-- Copy Button Overlay --}}
                                                         <button @click="navigator.clipboard.writeText(`{{ addslashes($h->last_code_snapshot) }}`); copied = true; setTimeout(() => copied = false, 2000)" 
-                                                                class="absolute top-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/50 hover:text-white transition-all z-10 flex items-center justify-center" title="Salin Kode ke Clipboard">
+                                                                class="absolute top-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/50 hover:text-white transition-all z-10 flex items-center justify-center">
                                                             <svg x-show="!copied" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                                             <svg x-show="copied" style="display:none;" class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                                         </button>
@@ -916,17 +886,11 @@
                                 </tbody>
                                 @endforelse
                             </table>
-                            @if(count($labHistories) > 0)
-                                <div class="p-3 border-t border-slate-200 dark:border-white/5 bg-slate-50/30 dark:bg-[#020617]/20 text-center transition-colors">
-                                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Menampilkan {{ count($labHistories) }} Riwayat Terakhir</span>
-                                </div>
-                            @endif
                         </div>
                     </div>
 
                     {{-- 2. Quiz History --}}
                     <div class="glass-card rounded-2xl relative z-10 flex flex-col transition-colors mt-8" style="overflow: visible !important;">
-                        {{-- Header Table --}}
                         <div class="p-6 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#020617]/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 rounded-t-2xl transition-colors">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
@@ -934,7 +898,6 @@
                                         <svg class="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                     </span> Riwayat Evaluasi Kuis
                                 </h3>
-                                <p class="text-xs text-slate-500 dark:text-white/40 mt-1 transition-colors">Log aktivitas pengambilan kuis dan evaluasi teori.</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-40">
                                 <div class="relative w-full sm:w-64 group">
@@ -945,22 +908,21 @@
                             </div>
                         </div>
                         
-                        {{-- Data Table --}}
                         <div class="overflow-x-auto relative p-0 sm:p-6 pt-0 border-t border-slate-200 dark:border-white/5 sm:border-none transition-colors">
                             <table class="w-full text-sm text-left whitespace-nowrap sm:whitespace-normal border border-slate-200 dark:border-white/5 rounded-xl shadow-inner bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors duration-500">
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-20 transition-colors">
                                     <tr>
-                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5 w-10 text-center" title="Diurutkan dari yang terbaru">#</th>
+                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5 w-10 text-center">#</th>
                                         <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Judul Evaluasi</th>
                                         <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Status</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5" title="Skor dalam rentang 0-100">Skor</th>
+                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Skor</th>
                                         <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Waktu Pengumpulan</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 dark:divide-white/5 transition-colors">
                                     @forelse($quizAttempts as $idx => $q)
                                     @php 
-                                        $qName = $q->chapter_id == '99' ? 'Final Evaluation' : 'Evaluasi Bab '.$q->chapter_id; 
+                                        $qName = $q->chapter_id == '99' ? 'Evaluasi Akhir' : 'Evaluasi Bab '.$q->chapter_id; 
                                         $quizStatusStr = strtolower($q->status ?? '');
                                         
                                         $limitQuizSec = isset($q->time_limit) ? $q->time_limit * 60 : 0;
@@ -976,7 +938,7 @@
                                             $qStatClass = 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20';
                                         }
                                     @endphp
-                                    <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group table-row" x-show="searchQuiz === '' || '{{ addslashes(strtolower($qName)) }}'.includes(searchQuiz.toLowerCase())">
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group table-row" x-show="searchQuiz === '' || '{{ addslashes(strtolower($qName)) }}'.includes(searchQuiz.toLowerCase())">
                                         <td class="px-6 py-4 text-center text-slate-400 font-mono text-xs">{{ $idx + 1 }}</td>
                                         <td class="px-6 py-4">
                                             <span class="block text-slate-900 dark:text-white font-semibold transition group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-300">{{ $qName }}</span>
@@ -987,16 +949,16 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            <span class="text-slate-900 dark:text-white font-black transition-colors" title="Skor Tertinggi Evaluasi">{{ $q->score }}</span>
+                                            <span class="text-slate-900 dark:text-white font-black transition-colors">{{ $q->score }}</span>
                                         </td>
                                         <td class="px-6 py-4 text-right text-slate-500 dark:text-slate-400 text-xs font-mono transition-colors">
-                                            <span class="block text-[11px] text-slate-700 dark:text-slate-300" title="{{ \Carbon\Carbon::parse($q->created_at)->diffForHumans() }}">
+                                            <span class="block text-[11px] text-slate-700 dark:text-slate-300">
                                                 {{ \Carbon\Carbon::parse($q->created_at)->format('d M Y, H:i') }} WIB
                                             </span>
                                             <div class="flex items-center justify-end gap-1.5 mt-0.5">
-                                                <span class="text-[9px] opacity-70" title="Total durasi yang dihabiskan siswa">Durasi: {{ formatTime($qDuration) }}</span>
+                                                <span class="text-[9px] opacity-70">Durasi: {{ formatTime($qDuration) }}</span>
                                                 @if($isQuizTimeout)
-                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu evaluasi">Sesi Habis</span>
+                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30">Sesi Habis</span>
                                                 @endif
                                             </div>
                                         </td>
@@ -1011,11 +973,6 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            @if(count($quizAttempts) > 0)
-                                <div class="p-3 border-t border-slate-200 dark:border-white/5 bg-slate-50/30 dark:bg-[#020617]/20 text-center transition-colors">
-                                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Menampilkan {{ count($quizAttempts) }} Riwayat Terakhir</span>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -1028,23 +985,23 @@
 
     {{-- MODAL INFO AKADEMIK 1: MATERI (LESSON) --}}
     <div x-show="showLessonModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showLessonModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showLessonModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Detail Materi Dibaca</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa menyelesaikan <span class="font-bold text-cyan-600 dark:text-cyan-400">{{ count($completedLessonIds ?? []) }} dari {{ $totalLessons ?? 65 }}</span> materi teori.</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Detail Materi Dibaca</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa menyelesaikan <span class="font-bold text-slate-900 dark:text-white">{{ count($completedLessonIds ?? []) }} dari {{ $totalLessons ?? 65 }}</span> materi.</p>
                 </div>
-                <button @click="showLessonModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showLessonModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             
             <div class="max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 space-y-4">
                 @foreach($curriculumMap as $chapter)
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] border border-slate-200 dark:border-white/5 rounded-xl p-4 transition-colors">
-                        <h4 class="text-xs font-black text-slate-800 dark:text-white mb-3 uppercase tracking-widest transition-colors">Bab {{ $chapter['number'] }}: {{ $chapter['title'] }}</h4>
-                        <div class="space-y-2">
+                    <div class="bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl p-5 transition-colors">
+                        <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 transition-colors">Bab {{ $chapter['number'] }}: {{ $chapter['title'] }}</h4>
+                        <div class="space-y-3">
                             @foreach($chapter['topics'] as $topic)
                                 @php 
                                     $intersect = array_intersect($topic['ids'], $completedLessonIds ?? []);
@@ -1053,17 +1010,16 @@
                                     $isDone = $doneCount === $totalCount;
                                 @endphp
                                 @if($doneCount > 0)
-                                <div class="flex justify-between items-center text-[11px]">
-                                    <span class="text-slate-600 dark:text-slate-300 flex items-center gap-2 font-medium transition-colors">
-                                        <span class="w-1.5 h-1.5 rounded-full {{ $isDone ? 'bg-emerald-500 shadow-[0_0_5px_#10b981]' : 'bg-amber-500' }}"></span>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600 dark:text-slate-300 font-medium transition-colors">
                                         {{ $topic['name'] }}
                                     </span>
-                                    <span class="font-mono font-bold {{ $isDone ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }} transition-colors">{{ $doneCount }}/{{ $totalCount }} Slide</span>
+                                    <span class="font-semibold text-slate-900 dark:text-white transition-colors">{{ $doneCount }}/{{ $totalCount }}</span>
                                 </div>
                                 @endif
                             @endforeach
                             @if(count(array_intersect(Arr::collapse(array_column($chapter['topics'], 'ids')), $completedLessonIds ?? [])) === 0)
-                                <p class="text-[10px] text-slate-400 dark:text-slate-500 italic transition-colors">Belum ada materi yang dibaca pada bab ini.</p>
+                                <p class="text-sm text-slate-400 dark:text-slate-500 italic transition-colors">Belum ada materi yang dibaca.</p>
                             @endif
                         </div>
                     </div>
@@ -1074,14 +1030,14 @@
     
     {{-- MODAL INFO AKADEMIK 2: LAB LULUS --}}
     <div x-show="showLabModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showLabModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-indigo-200 dark:border-indigo-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showLabModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Detail Kelulusan Lab</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa lulus <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ count($passedLabIds ?? []) }} dari {{ $totalLabs ?? 4 }}</span> modul praktikum.</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Detail Kelulusan Praktik</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa lulus <span class="font-bold text-slate-900 dark:text-white">{{ count($passedLabIds ?? []) }} dari {{ $totalLabs ?? 4 }}</span> modul.</p>
                 </div>
-                <button @click="showLabModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showLabModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -1089,27 +1045,20 @@
             <div class="max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 space-y-3">
                 @php $passedLabsList = $labHistories->where('status', 'passed'); @endphp
                 @forelse($passedLabsList as $lab)
-                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-xl transition-colors hover:border-indigo-300 dark:hover:border-indigo-500/30">
+                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl transition-colors">
                     <div>
-                        <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">{{ $lab->lab->title ?? 'Modul Lab #'.$lab->lab_id }}</p>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5 transition-colors" title="{{ \Carbon\Carbon::parse($lab->created_at)->translatedFormat('l, d F Y') }}">
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            {{ \Carbon\Carbon::parse($lab->created_at)->format('d M Y, H:i') }} WIB
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white transition-colors">{{ $lab->lab->title ?? 'Modul Lab #'.$lab->lab_id }}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 transition-colors">
+                            {{ \Carbon\Carbon::parse($lab->created_at)->format('d M Y, H:i') }}
                         </p>
                     </div>
                     <div class="text-right">
-                        <span class="text-base font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $lab->final_score }}</span>
-                        <div class="flex items-center justify-end gap-1 mt-0.5">
-                            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 transition-colors">
-                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                {{ formatTime($lab->duration_seconds) }}
-                            </p>
-                        </div>
+                        <span class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ $lab->final_score }}</span>
                     </div>
                 </div>
                 @empty
                 <div class="text-center py-10">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 italic transition-colors">Belum ada modul praktikum yang diselesaikan dengan status lulus.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 italic transition-colors">Belum ada modul yang lulus.</p>
                 </div>
                 @endforelse
             </div>
@@ -1118,14 +1067,14 @@
     
     {{-- MODAL INFO AKADEMIK 3: KUIS LULUS --}}
     <div x-show="showQuizModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showQuizModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showQuizModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Detail Kuis Lulus</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa lulus <span class="font-bold text-fuchsia-600 dark:text-fuchsia-400">{{ count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70)) }} dari {{ $totalQuizzes ?? 4 }}</span> evaluasi bab.</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Detail Evaluasi Lulus</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Siswa lulus <span class="font-bold text-slate-900 dark:text-white">{{ count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70)) }} dari {{ $totalQuizzes ?? 4 }}</span> evaluasi.</p>
                 </div>
-                <button @click="showQuizModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showQuizModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -1133,27 +1082,20 @@
             <div class="max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 space-y-3">
                 @php $passedQuizzesList = $quizAttempts->where('score', '>=', 70); @endphp
                 @forelse($passedQuizzesList as $quiz)
-                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-xl transition-colors hover:border-fuchsia-300 dark:hover:border-fuchsia-500/30">
+                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl transition-colors">
                     <div>
-                        <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">{{ $quiz->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab '.$quiz->chapter_id }}</p>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5 transition-colors" title="{{ \Carbon\Carbon::parse($quiz->created_at)->translatedFormat('l, d F Y') }}">
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            {{ \Carbon\Carbon::parse($quiz->created_at)->format('d M Y, H:i') }} WIB
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white transition-colors">{{ $quiz->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab '.$quiz->chapter_id }}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 transition-colors">
+                            {{ \Carbon\Carbon::parse($quiz->created_at)->format('d M Y, H:i') }}
                         </p>
                     </div>
                     <div class="text-right">
-                        <span class="text-base font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $quiz->score }}</span>
-                        <div class="flex items-center justify-end gap-1 mt-0.5">
-                            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 transition-colors">
-                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                {{ formatTime($quiz->time_spent_seconds ?? 0) }}
-                            </p>
-                        </div>
+                        <span class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ $quiz->score }}</span>
                     </div>
                 </div>
                 @empty
                 <div class="text-center py-10">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 italic transition-colors">Belum ada riwayat kuis dengan nilai kelulusan (>= 70).</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 italic transition-colors">Belum ada evaluasi yang lulus.</p>
                 </div>
                 @endforelse
             </div>
@@ -1162,51 +1104,41 @@
 
     {{-- MODAL INFO AKADEMIK 4: AVG LAB --}}
     <div x-show="showAvgLabModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showAvgLabModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-emerald-200 dark:border-emerald-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showAvgLabModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Analisis Rata-rata Lab</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan lab: <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ count($labHistories) }} Kali</span></p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Analisis Praktik</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($labHistories) }} Kali</span></p>
                 </div>
-                <button @click="showAvgLabModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showAvgLabModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-slate-50 dark:bg-[#0a0e17] p-4 rounded-xl border border-slate-200 dark:border-white/5 transition-colors">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 transition-colors">Skor Tertinggi</p>
-                    <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $labHistories->max('final_score') ?? 0 }}</p>
+                <div class="bg-slate-50 dark:bg-[#1d1d1f] p-5 rounded-2xl transition-colors">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1 transition-colors">Skor Tertinggi</p>
+                    <p class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $labHistories->max('final_score') ?? 0 }}</p>
                 </div>
-                <div class="bg-slate-50 dark:bg-[#0a0e17] p-4 rounded-xl border border-slate-200 dark:border-white/5 transition-colors">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 transition-colors">Skor Terendah</p>
-                    <p class="text-2xl font-black text-red-500 dark:text-red-400 transition-colors">{{ $labHistories->min('final_score') ?? 0 }}</p>
+                <div class="bg-slate-50 dark:bg-[#1d1d1f] p-5 rounded-2xl transition-colors">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1 transition-colors">Skor Terendah</p>
+                    <p class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $labHistories->min('final_score') ?? 0 }}</p>
                 </div>
             </div>
 
-            <h4 class="text-xs font-bold text-slate-900 dark:text-white mb-3 transition-colors">Riwayat Semua Percobaan Lab</h4>
-            <div class="max-h-[35vh] overflow-y-auto custom-scrollbar pr-2 space-y-2">
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 transition-colors">Riwayat Percobaan</h4>
+            <div class="max-h-[35vh] overflow-y-auto custom-scrollbar pr-2 space-y-3">
                 @forelse($labHistories as $lab)
-                <div class="flex justify-between items-center p-3 text-xs bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-white/[0.04]">
+                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl transition-colors">
                     <div>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200 block">{{ $lab->lab->title ?? 'Lab #'.$lab->lab_id }}</span>
-                        <span class="text-[9px] text-slate-500 dark:text-slate-400 font-mono">{{ \Carbon\Carbon::parse($lab->created_at)->format('d M Y, H:i') }} WIB</span>
+                        <span class="font-semibold text-sm text-slate-900 dark:text-white block">{{ $lab->lab->title ?? 'Lab #'.$lab->lab_id }}</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">{{ \Carbon\Carbon::parse($lab->created_at)->format('d M Y') }}</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        @php
-                            $st = strtolower($lab->status ?? '');
-                            $lSec = isset($lab->lab->time_limit) ? $lab->lab->time_limit * 60 : (isset($lab->lab->duration) ? $lab->lab->duration * 60 : 0);
-                            $isLabTO = $st === 'timeout' || $st === 'waktu habis' || (isset($lab->is_timeout) && $lab->is_timeout == 1) || ($lSec > 0 && $lab->duration_seconds >= $lSec) || $lab->duration_seconds > 43200;
-                        @endphp
-                        <span class="text-[9px] font-bold px-2 py-0.5 rounded transition-colors {{ strtolower($lab->status) == 'passed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : ($isLabTO ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400' : 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400') }}">
-                            {{ $isLabTO ? 'TIMEOUT' : strtoupper($lab->status) }}
-                        </span>
-                        <span class="font-mono font-bold w-6 text-right transition-colors {{ $lab->final_score >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ $lab->final_score }}</span>
-                    </div>
+                    <span class="font-bold text-slate-900 dark:text-white transition-colors">{{ $lab->final_score }}</span>
                 </div>
                 @empty
-                <div class="text-center py-6 text-xs text-slate-500 dark:text-slate-400 italic">Belum ada percobaan lab dilakukan.</div>
+                <div class="text-center py-6 text-sm text-slate-500 dark:text-slate-400 italic">Belum ada percobaan dilakukan.</div>
                 @endforelse
             </div>
         </div>
@@ -1214,67 +1146,56 @@
 
     {{-- MODAL INFO AKADEMIK 5: AVG QUIZ --}}
     <div x-show="showAvgQuizModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showAvgQuizModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-amber-200 dark:border-amber-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showAvgQuizModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Analisis Rata-rata Kuis</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan evaluasi: <span class="font-bold text-amber-600 dark:text-amber-400">{{ count($quizAttempts) }} Kali</span></p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Analisis Evaluasi</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($quizAttempts) }} Kali</span></p>
                 </div>
-                <button @click="showAvgQuizModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showAvgQuizModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-slate-50 dark:bg-[#0a0e17] p-4 rounded-xl border border-slate-200 dark:border-white/5 transition-colors">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 transition-colors">Skor Tertinggi</p>
-                    <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $quizAttempts->max('score') ?? 0 }}</p>
+                <div class="bg-slate-50 dark:bg-[#1d1d1f] p-5 rounded-2xl transition-colors">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1 transition-colors">Skor Tertinggi</p>
+                    <p class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $quizAttempts->max('score') ?? 0 }}</p>
                 </div>
-                <div class="bg-slate-50 dark:bg-[#0a0e17] p-4 rounded-xl border border-slate-200 dark:border-white/5 transition-colors">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 transition-colors">Skor Terendah</p>
-                    <p class="text-2xl font-black text-red-500 dark:text-red-400 transition-colors">{{ $quizAttempts->min('score') ?? 0 }}</p>
+                <div class="bg-slate-50 dark:bg-[#1d1d1f] p-5 rounded-2xl transition-colors">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mb-1 transition-colors">Skor Terendah</p>
+                    <p class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $quizAttempts->min('score') ?? 0 }}</p>
                 </div>
             </div>
 
-            <h4 class="text-xs font-bold text-slate-900 dark:text-white mb-3 transition-colors">Riwayat Semua Percobaan Kuis</h4>
-            <div class="max-h-[35vh] overflow-y-auto custom-scrollbar pr-2 space-y-2">
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 transition-colors">Riwayat Percobaan</h4>
+            <div class="max-h-[35vh] overflow-y-auto custom-scrollbar pr-2 space-y-3">
                 @forelse($quizAttempts as $quiz)
-                <div class="flex justify-between items-center p-3 text-xs bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-white/[0.04]">
+                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl transition-colors">
                     <div>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200 block">{{ $quiz->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab '.$quiz->chapter_id }}</span>
-                        <span class="text-[9px] text-slate-500 dark:text-slate-400 font-mono">{{ \Carbon\Carbon::parse($quiz->created_at)->format('d M Y, H:i') }} WIB</span>
+                        <span class="font-semibold text-sm text-slate-900 dark:text-white block">{{ $quiz->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab '.$quiz->chapter_id }}</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">{{ \Carbon\Carbon::parse($quiz->created_at)->format('d M Y') }}</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        @php
-                            $stQ = strtolower($quiz->status ?? '');
-                            $qDur = $quiz->time_spent_seconds ?? 0;
-                            $qLim = isset($quiz->time_limit) ? $quiz->time_limit * 60 : 0;
-                            $isQTO = $stQ === 'timeout' || $stQ === 'waktu habis' || (isset($quiz->is_timeout) && $quiz->is_timeout == 1) || ($qLim > 0 && $qDur >= $qLim) || $qDur > 43200;
-                        @endphp
-                        <span class="text-[9px] font-bold px-2 py-0.5 rounded transition-colors {{ $quiz->score >= 70 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : ($isQTO ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400' : 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400') }}">
-                            {{ $isQTO ? 'TIMEOUT' : ($quiz->score >= 70 ? 'LULUS' : 'GAGAL') }}
-                        </span>
-                        <span class="font-mono font-bold w-6 text-right transition-colors {{ $quiz->score >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ $quiz->score }}</span>
-                    </div>
+                    <span class="font-bold text-slate-900 dark:text-white transition-colors">{{ $quiz->score }}</span>
                 </div>
                 @empty
-                <div class="text-center py-6 text-xs text-slate-500 dark:text-slate-400 italic">Belum ada percobaan kuis dilakukan.</div>
+                <div class="text-center py-6 text-sm text-slate-500 dark:text-slate-400 italic">Belum ada percobaan dilakukan.</div>
                 @endforelse
             </div>
         </div>
     </div>
 
-    {{-- MODAL INFO AKADEMIK 6: GLOBAL PROGRESS (CYAN HERO) --}}
+    {{-- MODAL INFO AKADEMIK 6: GLOBAL PROGRESS --}}
     <div x-show="showGlobalProgressModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showGlobalProgressModal = false"></div>
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/40 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showGlobalProgressModal = false"></div>
+        <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Kalkulasi Progres Global</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Transparansi perhitungan tingkat penyelesaian akhir siswa.</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Progres Global</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Kalkulasi tingkat penyelesaian akhir.</p>
                 </div>
-                <button @click="showGlobalProgressModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-full p-1.5" title="Tutup">
+                <button @click="showGlobalProgressModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -1293,148 +1214,119 @@
                 $calcTotalTarget = $calcLessonsTotal + $calcLabsTotal + $calcQuizzesTotal;
                 
                 $gProg = $globalProgress ?? 0;
-                $pLabel = $gProg >= 100 ? 'Sempurna' : ($gProg >= 80 ? 'Sangat Baik' : ($gProg >= 50 ? 'Berkembang' : 'Perlu Perhatian'));
             @endphp
 
-            <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-xl p-5 border border-slate-200 dark:border-white/5 mb-6 transition-colors relative overflow-hidden">
-                <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-cyan-500/10 to-transparent"></div>
-                <div class="flex justify-between items-center mb-4 relative z-10">
-                    <div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block transition-colors">Total Keseluruhan</span>
-                        <span class="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest">{{ $pLabel }}</span>
-                    </div>
-                    <span class="text-2xl font-black text-cyan-600 dark:text-cyan-400 transition-colors">{{ $gProg }}%</span>
+            <div class="bg-slate-50 dark:bg-[#1d1d1f] rounded-2xl p-6 mb-8 transition-colors">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-sm font-semibold text-slate-500 dark:text-slate-400 transition-colors">Penyelesaian</span>
+                    <span class="text-3xl font-bold text-slate-900 dark:text-white transition-colors">{{ $gProg }}%</span>
                 </div>
-                <div class="w-full bg-slate-200 dark:bg-[#020617] h-2 rounded-full overflow-hidden shadow-inner transition-colors relative z-10">
-                    <div class="h-full bg-cyan-500 rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(6,182,212,0.6)]" style="width: {{ $gProg }}%"></div>
-                </div>
-                <p class="text-[10px] text-center text-slate-500 dark:text-slate-400 font-mono mt-3 relative z-10 transition-colors">Rumus: (Materi + Lab + Kuis) / Total Target * 100%</p>
-            </div>
-
-            <h4 class="text-xs font-bold text-slate-900 dark:text-white mb-3 uppercase tracking-widest transition-colors">Rincian Komponen Penilaian</h4>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center p-3 text-xs bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-lg transition-colors hover:border-cyan-200 dark:hover:border-cyan-500/30" title="Setiap slide materi berkontribusi pada total">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-400 flex items-center justify-center shrink-0 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                        </div>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200 transition-colors">Materi Teori (Dibaca)</span>
-                    </div>
-                    <span class="font-mono font-bold text-slate-600 dark:text-slate-300 transition-colors">{{ $calcLessonsDone }} / {{ $calcLessonsTotal }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center p-3 text-xs bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-lg transition-colors hover:border-indigo-200 dark:hover:border-indigo-500/30" title="Hanya lab berstatus 'Lulus' yang dihitung">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 flex items-center justify-center shrink-0 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-                        </div>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200 transition-colors">Praktik Lab (Lulus KKM)</span>
-                    </div>
-                    <span class="font-mono font-bold text-slate-600 dark:text-slate-300 transition-colors">{{ $calcLabsDone }} / {{ $calcLabsTotal }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center p-3 text-xs bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-lg transition-colors hover:border-fuchsia-200 dark:hover:border-fuchsia-500/30" title="Hanya evaluasi dengan skor >= 70 yang dihitung">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-500/20 dark:text-fuchsia-400 flex items-center justify-center shrink-0 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                        </div>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200 transition-colors">Evaluasi Kuis (Skor >= 70)</span>
-                    </div>
-                    <span class="font-mono font-bold text-slate-600 dark:text-slate-300 transition-colors">{{ $calcQuizzesDone }} / {{ $calcQuizzesTotal }}</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 mt-2 text-xs bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 rounded-lg transition-colors">
-                    <span class="font-bold text-cyan-800 dark:text-cyan-200 uppercase tracking-widest transition-colors">Total Akumulasi</span>
-                    <span class="font-mono font-black text-cyan-600 dark:text-cyan-400 transition-colors">{{ $calcTotalDone }} / {{ $calcTotalTarget }} Elemen</span>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden transition-colors">
+                    <div class="h-full bg-blue-500 rounded-full transition-all duration-1000" style="width: {{ $gProg }}%"></div>
                 </div>
             </div>
-            <p class="text-[9px] text-slate-400 dark:text-slate-500 mt-4 italic text-center transition-colors">*Hanya aktivitas dengan status Selesai atau Lulus yang memberikan kontribusi pada rasio pencapaian.</p>
+
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 transition-colors">Rincian Komponen</h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center text-sm transition-colors">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Materi Teori</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{{ $calcLessonsDone }} / {{ $calcLessonsTotal }}</span>
+                </div>
+                <div class="w-full h-px bg-slate-200 dark:bg-white/5"></div>
+                <div class="flex justify-between items-center text-sm transition-colors">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Praktik Selesai</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{{ $calcLabsDone }} / {{ $calcLabsTotal }}</span>
+                </div>
+                <div class="w-full h-px bg-slate-200 dark:bg-white/5"></div>
+                <div class="flex justify-between items-center text-sm transition-colors">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Evaluasi Lulus</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{{ $calcQuizzesDone }} / {{ $calcQuizzesTotal }}</span>
+                </div>
+            </div>
         </div>
     </div>
 
     {{-- MODAL EDIT DATA SISWA (ADMIN) --}}
     <div x-show="showEdit" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;" x-cloak>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showEdit = false"></div>
-        <div class="relative w-full max-w-xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] p-6 md:p-8 transition-colors" @click.stop>
-            <div class="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-white/5 pb-4 transition-colors">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showEdit = false"></div>
+        <div class="relative w-full max-w-xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" @click.stop>
+            <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white transition-colors">Edit Data Siswa</h3>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Terdaftar sejak: {{ \Carbon\Carbon::parse($user->created_at)->format('d M Y, H:i') }}</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Edit Data Siswa</h3>
                 </div>
-                <button @click="showEdit = false" class="text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white transition bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 p-1.5 rounded-lg" title="Tutup">
+                <button @click="showEdit = false" class="text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white transition bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 p-2 rounded-full" title="Tutup">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             
-            <form action="{{ route('admin.student.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
+            <form action="{{ route('admin.student.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
                 @csrf 
                 @method('PUT')
                 
                 <div>
-                    <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Profile Photo <span class="text-slate-400 dark:text-white/30 lowercase font-normal ml-1">(Optional)</span></label>
-                    <input type="file" name="avatar" accept="image/*" class="w-full glass-input rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-50 dark:file:bg-indigo-500/20 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-500/30 cursor-pointer">
+                    <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Profile Photo <span class="text-slate-400 dark:text-slate-500 font-normal">(Opsional)</span></label>
+                    <input type="file" name="avatar" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-100 dark:file:bg-white/5 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-200 dark:hover:file:bg-white/10 cursor-pointer transition-colors">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Full Name</label>
-                        <input type="text" name="name" value="{{ $user->name }}" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1" required>
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Nama Lengkap</label>
+                        <input type="text" name="name" value="{{ $user->name }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors" required>
                     </div>
                     <div>
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Email Address</label>
-                        <input type="email" name="email" value="{{ $user->email }}" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1" required>
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Email Address</label>
+                        <input type="email" name="email" value="{{ $user->email }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors" required>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="relative">
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Class Group</label>
+                <div class="grid grid-cols-2 gap-5">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Grup Kelas</label>
                         <div class="relative">
-                            <select name="class_group" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1 appearance-none cursor-pointer">
-                                <option value="" class="bg-white dark:bg-[#0f141e] text-slate-400" {{ empty($user->class_group) ? 'selected' : '' }}>-- Pilih Kelas --</option>
+                            <select name="class_group" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none appearance-none transition-colors cursor-pointer">
+                                <option value="" class="text-slate-400" {{ empty($user->class_group) ? 'selected' : '' }}>-- Pilih Kelas --</option>
                                 @foreach($availableClasses ?? [] as $cls)
-                                    <option value="{{ $cls->name }}" class="bg-white dark:bg-[#0f141e] text-slate-900 dark:text-white" {{ trim($user->class_group) === trim($cls->name) ? 'selected' : '' }}>
+                                    <option value="{{ $cls->name }}" class="text-slate-900 dark:text-white" {{ trim($user->class_group) === trim($cls->name) ? 'selected' : '' }}>
                                         {{ $cls->name }} {{ $cls->major ? ' - '.$cls->major : '' }}
                                     </option>
                                 @endforeach
                             </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400 dark:text-slate-500 transition-colors"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Phone Number</label>
-                        <input type="text" name="phone" value="{{ $user->phone }}" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1">
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Phone Number</label>
+                        <input type="text" name="phone" value="{{ $user->phone }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Institution</label>
-                        <input type="text" name="institution" value="{{ $user->institution }}" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1">
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Institution</label>
+                        <input type="text" name="institution" value="{{ $user->institution }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors">
                     </div>
                     <div>
-                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Study Program</label>
-                        <input type="text" name="study_program" value="{{ $user->study_program }}" class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1">
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Study Program</label>
+                        <input type="text" name="study_program" value="{{ $user->study_program }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors">
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 block transition-colors">Reset Password <span class="text-slate-400 dark:text-white/30 lowercase font-normal ml-1">(Biarkan kosong jika tidak diubah)</span></label>
-                    <input type="password" name="password" placeholder="Masukkan password baru..." class="w-full glass-input rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 ring-indigo-500/20 transition-all duration-300 focus:ml-1">
+                    <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Reset Password <span class="text-slate-400 dark:text-slate-500 font-normal">(Kosongkan jika tidak diubah)</span></label>
+                    <input type="password" name="password" placeholder="Masukkan password baru..." class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors">
                 </div>
                 
-                <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-200 dark:border-white/5 transition-colors">
-                    <button type="button" @click="confirmDelete()" class="text-[11px] font-bold text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 transition flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        Delete Student
+                <div class="flex justify-between items-center mt-10 pt-6 border-t border-slate-200 dark:border-white/5 transition-colors">
+                    <button type="button" @click="confirmDelete()" class="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10">
+                        Hapus Akun
                     </button>
 
                     <div class="flex gap-3">
-                        <button type="button" @click="showEdit = false" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" :disabled="isSubmitting">Cancel</button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_4px_15px_rgba(79,70,229,0.4)] transition-all flex items-center gap-2" :class="isSubmitting ? 'opacity-70 cursor-wait' : 'active:scale-95'" :disabled="isSubmitting">
-                            <svg x-show="isSubmitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" x-cloak><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <svg x-show="!isSubmitting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span x-text="isSubmitting ? 'Processing...' : 'Save Changes'"></span>
+                        <button type="button" @click="showEdit = false" class="px-6 py-3 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" :disabled="isSubmitting">Batal</button>
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-md transition-colors flex items-center gap-2" :class="isSubmitting ? 'opacity-70 cursor-wait' : ''" :disabled="isSubmitting">
+                            <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'"></span>
                         </button>
                     </div>
                 </div>
@@ -1486,20 +1378,20 @@
             });
         });
 
-        // SCRIPT CHART (Beradaptasi dengan Tema & Kaya Detail Tooltip)
+        // SCRIPT CHART (Beradaptasi dengan Tema)
         let scoreChartInstance = null;
         
         function renderCharts() {
             const isDark = document.documentElement.classList.contains('dark');
             const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-            const textColor = isDark ? '#94a3b8' : '#64748b';
-            const pointBg = isDark ? '#0f141e' : '#ffffff';
+            const textColor = isDark ? '#64748b' : '#64748b';
+            const pointBg = isDark ? '#1d1d1f' : '#ffffff';
 
             const ctxScore = document.getElementById('scoreChart');
             if(ctxScore && {!! json_encode($chartScores ?? []) !!}.length > 0) {
                 if(scoreChartInstance) scoreChartInstance.destroy();
                 const gradient = ctxScore.getContext('2d').createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)'); gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)'); gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
                 scoreChartInstance = new Chart(ctxScore, { 
                     type: 'line', 
                     data: { 
@@ -1507,9 +1399,9 @@
                         datasets: [{ 
                             label: 'Nilai Praktik', 
                             data: {!! json_encode($chartScores ?? []) !!}, 
-                            borderColor: '#818cf8', backgroundColor: gradient, 
-                            borderWidth: 3, tension: 0.4, fill: true, 
-                            pointBackgroundColor: pointBg, pointBorderColor: '#a5b4fc', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7 
+                            borderColor: '#3b82f6', backgroundColor: gradient, 
+                            borderWidth: 2, tension: 0.3, fill: true, 
+                            pointBackgroundColor: pointBg, pointBorderColor: '#3b82f6', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 
                         }] 
                     }, 
                     options: { 
@@ -1517,23 +1409,15 @@
                         plugins: { 
                             legend: { display: false },
                             tooltip: {
-                                backgroundColor: isDark ? 'rgba(15, 20, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                                backgroundColor: isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                                 titleColor: isDark ? '#ffffff' : '#0f172a',
-                                bodyColor: isDark ? '#94a3b8' : '#64748b',
+                                bodyColor: isDark ? '#cbd5e1' : '#64748b',
                                 titleFont: { size: 13, family: 'Inter', weight: 'bold' },
-                                bodyFont: { size: 12, family: 'JetBrains Mono' },
+                                bodyFont: { size: 12, family: 'Inter' },
                                 borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
                                 borderWidth: 1,
                                 padding: 12,
-                                displayColors: false,
-                                callbacks: {
-                                    title: function(context) {
-                                        return context[0].label;
-                                    },
-                                    label: function(context) {
-                                        return ' Skor Capaian : ' + context.parsed.y + ' / 100';
-                                    }
-                                }
+                                displayColors: false
                             }
                         }, 
                         scales: { 
@@ -1546,7 +1430,7 @@
                             x: { 
                                 display: true,
                                 grid: { display: false },
-                                ticks: { color: textColor, font: { size: 10 }, maxRotation: 45, minRotation: 0 }
+                                ticks: { color: textColor, font: { size: 11 } }
                             } 
                         } 
                     } 

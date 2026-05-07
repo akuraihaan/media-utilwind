@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File; // 🔹 WAJIB DITAMBAHKAN
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UserLessonProgress;
@@ -124,7 +125,20 @@ class AdminDashboardController extends Controller
         // 6. AKTIVITAS TERBARU & DAFTAR SISWA (Direktori)
         $recentActivities = QuizAttempt::with('user')->latest()->take(5)->get();
         $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
+        
+        // 🔹 LOGIKA GAMBAR AVATAR (HOSTING FIXED)
         $users = User::orderByDesc('created_at')->limit(50)->get(); 
+        foreach ($users as $u) {
+            if (!empty($u->avatar)) {
+                if (Str::startsWith($u->avatar, ['http://', 'https://'])) {
+                    $u->avatar_url = $u->avatar;
+                } else {
+                    $u->avatar_url = asset('uploads/' . $u->avatar) . '?v=' . time(); 
+                }
+            } else {
+                $u->avatar_url = 'https://ui-avatars.com/api/?name=' . urlencode($u->name) . '&background=06b6d4&color=fff&size=256';
+            }
+        }
 
         return view('admin.dashboard', compact(
             'totalStudents', 'totalAttempts', 'globalAverage', 'remedialCount', 'totalLabsCompleted',
@@ -204,7 +218,7 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * UPDATE STUDENT PROFILE (FULL CRUD)
+     * UPDATE STUDENT PROFILE (FULL CRUD) - (Via Modal Halaman Detail)
      */
     public function updateStudent(Request $request, $id)
     {
@@ -222,33 +236,54 @@ class AdminDashboardController extends Controller
         ]);
 
         // Tangkap data lama
-        $beforeData = $user->only(['name', 'email', 'class_group', 'institution', 'phone']);
+        $beforeData = $user->only(['name', 'email', 'class_group', 'institution', 'phone', 'avatar']);
 
         if ($request->filled('password')) {
-            $validated['password'] = Hash::make($request->password);
-        } else {
-            unset($validated['password']); 
+            $user->password = Hash::make($request->password);
         }
 
+        // 🔹 LOGIKA UPLOAD GAMBAR KHUSUS HOSTING (Ke folder public/uploads)
         if ($request->hasFile('avatar')) {
-            if ($user->avatar && \Illuminate\Support\Facades\Storage::exists('public/' . $user->avatar)) {
-                \Illuminate\Support\Facades\Storage::delete('public/' . $user->avatar);
+            // Hapus gambar lama jika ada
+            if (!empty($user->avatar) && File::exists(public_path('uploads/' . $user->avatar))) {
+                File::delete(public_path('uploads/' . $user->avatar));
             }
-            $path = $request->file('avatar')->store('profile-photos', 'public');
-            $validated['avatar'] = $path;
+
+            $file = $request->file('avatar');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/profile-photos');
+
+            // Otomatis buat folder jika belum ada di hosting
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true, true);
+            }
+            
+            // Pindahkan file ke public/uploads/profile-photos
+            $file->move($destinationPath, $filename);
+            
+            // Tambahkan path avatar ke model
+            $user->avatar = 'profile-photos/' . $filename;
         }
 
-        $user->update($validated);
+        // Simpan field manual
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->class_group = $request->class_group;
+        $user->institution = $request->institution;
+        $user->study_program = $request->study_program;
+        $user->phone = $request->phone;
+        
+        $user->save();
 
         // Rekam Audit Log (Update Profile)
-        $afterData = $user->fresh()->only(['name', 'email', 'class_group', 'institution', 'phone']);
+        $afterData = $user->only(['name', 'email', 'class_group', 'institution', 'phone', 'avatar']);
         $this->logAudit('update_student_profile', 'User', $user->id, $beforeData, $afterData);
 
         return redirect()->back()->with('success', 'Profil siswa berhasil diperbarui!');
     }
 
     /**
-     * CRUD USER METHODS (AJAX)
+     * CRUD USER METHODS (AJAX - Untuk DataTables)
      */
     public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
@@ -283,18 +318,28 @@ class AdminDashboardController extends Controller
         $user = User::findOrFail($id);
         $beforeData = $user->only(['name', 'email', 'role', 'class_group']);
 
+        // Bersihkan file foto profil saat user dihapus
+        if (!empty($user->avatar) && File::exists(public_path('uploads/' . $user->avatar))) {
+            File::delete(public_path('uploads/' . $user->avatar));
+        }
+
         $user->delete();
 
         // Rekam Audit Log (Delete)
         $this->logAudit('delete_user', 'User', $id, $beforeData, null);
 
+        // Jika via AJAX Datatable vs Form biasa
+        if (request()->expectsJson()) {
+             return response()->json(['status' => 'success', 'message' => 'User berhasil dihapus']);
+        }
+        
         return redirect()->route('admin.dashboard')->with('success', 'Data siswa berhasil dihapus secara permanen!');
     }
     
     /**
      * STORE QUESTION
      */
-    public function storeQuestion(Request $request)
+    public function storeQuestionAdmin(Request $request)
     {
         $validated = $request->validate([
             'question_text'  => 'required|string',
