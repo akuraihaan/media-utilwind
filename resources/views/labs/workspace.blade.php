@@ -70,9 +70,9 @@
         .ace_gutter { background: #1e1e1e !important; color: #858585 !important; }
         
         /* Scrollbar ala VS Code */
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #424242; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
         
         .step-locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
@@ -92,53 +92,56 @@
       class="flex flex-col h-screen w-full antialiased text-sm">
 
     {{-- 1. HEADER (ACTIVITY BAR) --}}
-    <header class="h-12 bg-[#333333] flex items-center justify-between px-4 shrink-0 select-none border-b border-[#1e1e1e]">
-        <div class="flex items-center gap-4">
-            <button @click="goBack()" class="hover:text-white transition text-gray-400" title="Back to Dashboard">
+    <header class="h-12 bg-vscode-activity flex items-center justify-between px-2 sm:px-4 shrink-0 select-none border-b border-vscode-bg z-30">
+        <div class="flex items-center gap-2 sm:gap-4">
+            <button @click="goBack()" class="hover:text-white transition text-gray-400 p-1 sm:p-0" title="Back to Dashboard">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
-            <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-[#007acc]" viewBox="0 0 24 24" fill="currentColor"><path d="M14.6 2.6c-.6-.4-1.4-.4-2 0L2.1 8.8c-.6.4-.6 1.2 0 1.6l10.5 6.3c.6.4 1.4.4 2 0l10.5-6.3c.6-.4.6-1.2 0-1.6L14.6 2.6zM13.6 18l-8-4.8v3.2l8 4.8 8-4.8v-3.2l-8 4.8z"/></svg>
-                <span class="font-bold text-white tracking-wide text-xs uppercase">{{ $lab->title }}</span>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <svg class="w-4 h-4 text-vscode-accent hidden sm:block" viewBox="0 0 24 24" fill="currentColor"><path d="M14.6 2.6c-.6-.4-1.4-.4-2 0L2.1 8.8c-.6.4-.6 1.2 0 1.6l10.5 6.3c.6.4 1.4.4 2 0l10.5-6.3c.6-.4.6-1.2 0-1.6L14.6 2.6zM13.6 18l-8-4.8v3.2l8 4.8 8-4.8v-3.2l-8 4.8z"/></svg>
+                <span class="font-bold text-white tracking-wide text-xs sm:text-xs uppercase truncate max-w-[120px] sm:max-w-xs">{{ $lab->title }}</span>
             </div>
         </div>
 
-        {{-- Center Actions --}}
-        <div class="hidden md:flex items-center gap-2">
-            <button @click="manualSave()" class="flex items-center gap-2 px-3 py-1 bg-[#3e3e42] hover:bg-[#4e4e52] rounded text-xs text-white transition border border-white/5">
+        {{-- Center Actions (Only Desktop) --}}
+        <div class="hidden lg:flex items-center gap-2">
+            <button @click="manualSave()" class="flex items-center gap-2 px-3 py-1 bg-[#3e3e42] hover:bg-[#4e4e52] rounded text-xs text-white transition border border-white/5 shadow-sm">
                 <svg class="w-3 h-3 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Simpan & Run (Ctrl+S)
             </button>
         </div>
 
         {{-- Right Stats --}}
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2 px-3 py-1 bg-[#1e1e1e] rounded border border-[#3e3e42]">
-                <span class="text-xs text-gray-400">Score:</span>
-                <span class="font-mono font-bold text-[#007acc]" x-text="Math.round(score) + '%'">0%</span>
+        <div class="flex items-center gap-2 sm:gap-4">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-vscode-bg rounded border border-vscode-border">
+                <span class="text-[10px] sm:text-xs text-gray-400">Score:</span>
+                <span class="font-mono font-bold text-vscode-accent text-[10px] sm:text-xs" x-text="Math.round(score) + '%'">0%</span>
             </div>
             
-            <div class="font-mono font-bold text-xs" :class="timeCritical ? 'text-red-400 animate-pulse' : 'text-gray-300'">
+            <div class="font-mono font-bold text-[10px] sm:text-xs bg-vscode-bg sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded border border-vscode-border sm:border-transparent" :class="timeCritical ? 'text-red-400 animate-pulse' : 'text-gray-300'">
                 <span x-text="timer">--:--</span>
             </div>
 
             <button @click="confirmFinish()" 
-                class="px-4 py-1.5 rounded text-xs font-bold text-white transition border border-transparent shadow-lg"
-                :class="readOnly ? 'bg-gray-600 hover:bg-gray-500' : 'bg-[#007acc] hover:bg-[#0062a3]'">
-                <span x-text="readOnly ? 'Keluar' : 'Selesai & Kumpulkan'"></span>
+                class="px-2 sm:px-4 py-1.5 rounded text-[10px] sm:text-xs font-bold text-white transition border border-transparent shadow-lg"
+                :class="readOnly ? 'bg-gray-600 hover:bg-gray-500' : 'bg-vscode-accent hover:bg-[#0062a3]'">
+                <span x-text="readOnly ? 'Keluar' : 'Selesai'" class="sm:hidden"></span>
+                <span x-text="readOnly ? 'Keluar' : 'Selesai & Kumpulkan'" class="hidden sm:inline"></span>
             </button>
         </div>
     </header>
 
-    <div class="flex-1 flex overflow-hidden">
+    {{-- MAIN WORKSPACE --}}
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         
         {{-- 2. SIDEBAR (TASK LIST) --}}
-        <aside class="w-80 bg-vscode-sidebar border-r border-vscode-border flex flex-col z-20">
-            <div class="h-9 px-4 flex items-center justify-between text-[10px] font-bold text-gray-400 tracking-wider uppercase bg-[#252526]">
+        <aside class="w-full lg:w-[320px] bg-vscode-sidebar border-r border-vscode-border flex-col z-20 shrink-0"
+               :class="mobileTab === 'tasks' ? 'flex h-full' : 'hidden lg:flex'">
+            <div class="h-9 px-4 flex items-center justify-between text-[10px] font-bold text-gray-400 tracking-wider uppercase bg-[#252526] shrink-0 border-b border-vscode-border lg:border-none">
                 <span>DAFTAR TUGAS</span>
                 <span class="text-[9px] bg-[#3e3e42] px-1.5 rounded text-white" x-text="completed.length + '/' + stepsData.length"></span>
             </div>
             
-            <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <div class="flex-1 overflow-y-auto custom-scrollbar pb-16 lg:pb-0">
                 <template x-for="step in stepsData" :key="step.id">
                     <div class="border-b border-[#3e3e42]/50 group" :class="isLocked(step.id) ? 'step-locked' : ''">
                         
@@ -150,7 +153,7 @@
                             {{-- Icon Status --}}
                             <div class="shrink-0">
                                 <template x-if="isCompleted(step.id)">
-                                    <svg class="w-4 h-4 text-[#4ec9b0]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                    <svg class="w-4 h-4 text-vscode-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </template>
                                 <template x-if="!isCompleted(step.id)">
                                     <div class="w-4 h-4 rounded-sm border border-gray-500 flex items-center justify-center text-[9px] font-mono text-gray-400" x-text="step.index"></div>
@@ -165,7 +168,7 @@
                         </div>
 
                         {{-- Task Detail (Accordion) --}}
-                        <div x-show="expandedTask === step.id" x-collapse class="bg-[#1e1e1e] p-4 border-l border-[#007acc]/30">
+                        <div x-show="expandedTask === step.id" x-collapse class="bg-[#1e1e1e] p-4 border-l border-vscode-accent/30">
                             {{-- Instruksi --}}
                             <div class="p-3 rounded bg-[#252526] border border-[#3e3e42] mb-3">
                                 <p class="text-xs text-gray-300 leading-relaxed font-mono whitespace-pre-wrap" x-html="step.instruction"></p>
@@ -174,7 +177,7 @@
                             <div class="flex justify-between items-center mt-3">
                                 {{-- Tombol Reset Code --}}
                                 <button @click="forceLoadCode(step.id)" x-show="!isCompleted(step.id) && !readOnly" 
-                                        class="text-[10px] text-gray-500 hover:text-[#cca700] underline decoration-dashed transition">
+                                        class="text-[10px] text-gray-500 hover:text-vscode-warning underline decoration-dashed transition">
                                     Reset Code
                                 </button>
 
@@ -184,8 +187,8 @@
                                             :disabled="loadingId === step.id || isCompleted(step.id)"
                                             class="px-3 py-1.5 text-[10px] font-bold rounded border transition flex items-center gap-2 ml-auto shadow-lg"
                                             :class="isCompleted(step.id) 
-                                                ? 'bg-[#4ec9b0]/10 text-[#4ec9b0] border-[#4ec9b0]/30 cursor-default' 
-                                                : 'bg-[#007acc] text-white border-transparent hover:bg-[#0062a3]'">
+                                                ? 'bg-vscode-success/10 text-vscode-success border-vscode-success/30 cursor-default' 
+                                                : 'bg-vscode-accent text-white border-transparent hover:bg-[#0062a3]'">
                                         <span x-show="loadingId === step.id" class="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
                                         <span x-text="isCompleted(step.id) ? 'Selesai' : 'Verifikasi'"></span>
                                     </button>
@@ -198,33 +201,40 @@
         </aside>
 
         {{-- 3. EDITOR AREA --}}
-        <main class="flex-1 flex flex-col relative bg-[#1e1e1e]">
-            {{-- Tabs --}}
-            <div class="h-9 flex bg-[#252526] border-b border-[#252526]">
-                <div class="px-3 py-2 text-xs text-white bg-[#1e1e1e] border-t-2 border-[#007acc] flex items-center gap-2 pr-6 border-r border-[#252526]">
+        <main class="flex-1 flex-col relative bg-vscode-bg w-full lg:w-auto"
+              :class="mobileTab === 'editor' ? 'flex h-full' : 'hidden lg:flex'">
+            {{-- Tabs & Mobile Action --}}
+            <div class="h-9 flex items-center justify-between bg-[#252526] border-b border-[#252526] pr-2 shrink-0">
+                <div class="h-full px-3 py-2 text-xs text-white bg-vscode-bg border-t-2 border-vscode-accent flex items-center gap-2 pr-6 border-r border-[#252526]">
                     <svg class="w-3.5 h-3.5 text-[#e37933]" viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.325 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
                     <span>index.html</span>
                     <span x-show="unsaved" class="ml-2 w-2 h-2 rounded-full bg-white animate-pulse"></span>
                 </div>
+                
+                {{-- Run Button for Mobile --}}
+                <button @click="manualSave(); mobileTab = 'preview'" class="lg:hidden flex items-center gap-1 px-3 py-1 bg-vscode-accent rounded text-[10px] text-white font-bold shadow">
+                    <svg class="w-3 h-3 text-green-300" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Run
+                </button>
             </div>
 
             {{-- Editor Instance --}}
-            <div class="flex-1 relative group">
+            <div class="flex-1 relative group pb-14 lg:pb-0">
                 <div id="editor-container" class="absolute inset-0"></div>
                 
                 {{-- Read Only Overlay --}}
                 <div x-show="readOnly" class="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-[1px] pointer-events-none">
-                    <span class="bg-black px-4 py-2 rounded border border-[#4ec9b0] text-[#4ec9b0] font-mono text-xs shadow-xl">READ ONLY MODE</span>
+                    <span class="bg-black px-4 py-2 rounded border border-vscode-success text-vscode-success font-mono text-xs shadow-xl">READ ONLY MODE</span>
                 </div>
             </div>
         </main>
 
-        {{-- 4. RIGHT PANEL --}}
-        <div class="w-[45%] flex flex-col border-l border-vscode-border bg-[#1e1e1e]">
+        {{-- 4. RIGHT PANEL (PREVIEW & TERMINAL) --}}
+        <div class="w-full lg:w-[45%] flex-col border-l border-vscode-border bg-vscode-bg shrink-0"
+             :class="mobileTab === 'preview' ? 'flex h-full pb-14 lg:pb-0' : 'hidden lg:flex'">
             
             {{-- Live Preview --}}
             <div class="flex-1 flex flex-col relative bg-white transition-all">
-                <div class="h-9 px-3 flex items-center justify-between bg-[#f3f3f3] border-b border-[#e1e1e1]">
+                <div class="h-9 px-3 flex items-center justify-between bg-[#f3f3f3] border-b border-[#e1e1e1] shrink-0">
                     <span class="text-[10px] font-bold text-[#555] flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg> LOCALHOST:8000
                     </span>
@@ -234,8 +244,9 @@
             </div>
 
             {{-- Terminal --}}
-            <div class="bg-[#1e1e1e] border-t border-vscode-border flex flex-col transition-all duration-300" :style="terminalOpen ? 'height: 180px' : 'height: 30px'">
-                <div class="h-8 px-4 flex items-center justify-between bg-[#1e1e1e] border-b border-vscode-border cursor-pointer hover:bg-[#2a2d2e]" @click="terminalOpen = !terminalOpen">
+            <div class="bg-vscode-bg border-t border-vscode-border flex flex-col transition-all duration-300 shrink-0" 
+                 :class="terminalOpen ? 'h-48' : 'h-8'">
+                <div class="h-8 px-4 flex items-center justify-between bg-vscode-bg border-b border-vscode-border cursor-pointer hover:bg-[#2a2d2e] shrink-0" @click="terminalOpen = !terminalOpen">
                     <div class="flex gap-6 text-[10px] uppercase font-bold text-gray-400">
                         <span class="text-white border-b border-white pb-1">Terminal</span>
                         <span>Output</span>
@@ -250,8 +261,8 @@
                             <span :class="log.color" x-html="log.msg"></span>
                         </div>
                     </template>
-                    <div class="flex gap-2 mt-2">
-                        <span class="text-[#007acc]">➜</span>
+                    <div class="flex gap-2 mt-2 pb-2">
+                        <span class="text-vscode-accent">➜</span>
                         <span class="text-white">~</span>
                         <span class="text-gray-400 animate-pulse">_</span>
                     </div>
@@ -260,21 +271,42 @@
         </div>
     </div>
 
-    {{-- FOOTER --}}
-    <footer class="h-6 bg-[#007acc] text-white flex items-center justify-between px-3 text-[10px] select-none shrink-0 font-medium">
+    {{-- 5. MOBILE BOTTOM NAVIGATION BAR --}}
+    <div class="lg:hidden flex bg-vscode-sidebar border-t border-vscode-border shrink-0 h-14 w-full fixed bottom-0 z-40">
+        <button @click="mobileTab = 'tasks'" 
+                class="flex-1 flex flex-col justify-center items-center gap-1 font-bold text-[10px] uppercase transition-colors"
+                :class="mobileTab === 'tasks' ? 'text-vscode-accent border-t-2 border-vscode-accent bg-[#2a2d2e]' : 'text-gray-400 border-t-2 border-transparent'">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            Tugas
+        </button>
+        <button @click="mobileTab = 'editor'" 
+                class="flex-1 flex flex-col justify-center items-center gap-1 font-bold text-[10px] uppercase transition-colors"
+                :class="mobileTab === 'editor' ? 'text-vscode-accent border-t-2 border-vscode-accent bg-[#2a2d2e]' : 'text-gray-400 border-t-2 border-transparent'">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            Editor
+        </button>
+        <button @click="mobileTab = 'preview'" 
+                class="flex-1 flex flex-col justify-center items-center gap-1 font-bold text-[10px] uppercase transition-colors"
+                :class="mobileTab === 'preview' ? 'text-vscode-accent border-t-2 border-vscode-accent bg-[#2a2d2e]' : 'text-gray-400 border-t-2 border-transparent'">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            Preview
+        </button>
+    </div>
+
+    {{-- FOOTER (Only visible on Desktop) --}}
+    <footer class="hidden lg:flex h-6 bg-vscode-accent text-white items-center justify-between px-3 text-[10px] select-none shrink-0 font-medium z-30">
         <div class="flex gap-4">
             <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg> master*</span>
         </div>
         <div class="flex gap-4">
-            <span>Ln 1, Col 1</span>
             <span>UTF-8</span>
             <span>HTML</span>
         </div>
     </footer>
 
     {{-- TOAST NOTIFICATION --}}
-    <div x-show="showToast" x-transition:enter="toast-enter" class="fixed bottom-10 right-5 z-50 bg-[#252526] border border-[#3e3e42] shadow-2xl p-4 w-72 rounded flex gap-3 items-start">
-        <div :class="toastType === 'success' ? 'text-[#4ec9b0]' : (toastType === 'info' ? 'text-[#007acc]' : 'text-[#f14c4c]')">
+    <div x-show="showToast" x-transition:enter="toast-enter" class="fixed bottom-20 lg:bottom-10 right-5 z-50 bg-[#252526] border border-vscode-border shadow-2xl p-4 w-72 rounded flex gap-3 items-start">
+        <div :class="toastType === 'success' ? 'text-vscode-success' : (toastType === 'info' ? 'text-vscode-accent' : 'text-vscode-error')">
             <svg x-show="toastType === 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <svg x-show="toastType === 'error'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <svg x-show="toastType === 'info'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -299,7 +331,7 @@
             </div>
             <div class="p-4 flex gap-2 justify-center bg-[#2d2d2d] border-t border-[#454545]">
                 <button @click="modal.open = false" class="px-4 py-1.5 rounded text-white text-xs border border-gray-500 hover:bg-gray-700">Cancel</button>
-                <button x-show="modal.action" @click="handleModalAction()" class="px-4 py-1.5 rounded text-white text-xs bg-[#007acc] hover:bg-[#0062a3]">OK</button>
+                <button x-show="modal.action" @click="handleModalAction()" class="px-4 py-1.5 rounded text-white text-xs bg-vscode-accent hover:bg-[#0062a3]">OK</button>
             </div>
         </div>
     </div>
@@ -312,16 +344,17 @@
                 score: {{ $session->current_score ?? 0 }},
                 completed: @json(array_map('intval', $completedStepIds)),
                 
-                // Data Steps dari PHP (Server Side Transformed)
+                // Data Steps dari PHP
                 stepsData: @json($stepsData),
                 
                 code: @json($session->current_code ?? ''),
                 expiry: {{ $session->expires_at ? \Carbon\Carbon::parse($session->expires_at)->timestamp : 0 }},
                 
                 // --- UI CONTROL ---
+                mobileTab: 'editor', // Mobile View Switcher ('tasks', 'editor', 'preview')
                 terminalOpen: true, previewOpen: true, expandedTask: null, loadingId: null,
                 unsaved: false, showToast: false, toastTitle: '', toastMsg: '', toastType: 'info',
-                logs: [{time: 'INIT', msg: 'Environment loaded successfully.', color: 'text-[#4ec9b0]'}],
+                logs: [{time: 'INIT', msg: 'Environment loaded successfully.', color: 'text-vscode-success'}],
                 timer: 'LOADING', timeCritical: false,
                 modal: { open: false, title: '', msg: '', icon: '', action: null },
 
@@ -331,13 +364,12 @@
                     
                     // 1. Tentukan Task Aktif (Task pertama yang belum selesai)
                     const firstUnfinished = this.stepsData.find(s => !this.completed.includes(s.id));
-                    this.expandedTask = firstUnfinished ? firstUnfinished.id : this.stepsData[0].id;
+                    this.expandedTask = firstUnfinished ? firstUnfinished.id : (this.stepsData.length > 0 ? this.stepsData[0].id : null);
 
                     // 2. Setup Editor
                     this.initEditor();
 
                     // 3. Fallback Initial Code jika user baru masuk
-                    // Jika kode kosong, ambil initial_code dari task yang aktif
                     if(!this.code || this.code.trim() === '') {
                         const currentStep = this.stepsData.find(s => s.id === this.expandedTask);
                         if(currentStep && currentStep.initial_code) {
@@ -357,6 +389,13 @@
                     
                     // 5. Initial Run
                     this.$nextTick(() => this.runCode());
+
+                    // 6. Handle Editor Resize when switching tabs on mobile
+                    this.$watch('mobileTab', val => {
+                        if(val === 'editor') {
+                            setTimeout(() => { if(this.editor) this.editor.resize(); }, 50);
+                        }
+                    });
                 },
 
                 initEditor() {
@@ -425,7 +464,6 @@
                         this.expandedTask = nextStep.id;
 
                         // 2. Cek & Inject Initial Code (OTOMATIS)
-                        // Jika task selanjutnya punya initial code spesifik, timpa editor
                         if (nextStep.initial_code && nextStep.initial_code.trim() !== "") {
                             this.log('System', `Loading environment for Task: ${nextStep.title}...`, 'text-gray-400');
                             
@@ -437,6 +475,11 @@
                                 this.log('System', 'New boilerplate code injected.', 'text-[#cca700]');
                                 this.triggerToast('Environment Updated', 'Kode baru untuk task ini telah dimuat.', 'info');
                             }, 1000); 
+                        }
+                        
+                        // Opsional: Switch to Tasks tab on Mobile to show progress
+                        if (window.innerWidth < 1024) {
+                            this.mobileTab = 'tasks';
                         }
                     } else {
                         // Jika task habis
@@ -526,7 +569,7 @@
                 log(source, msg, color) { 
                     const t = new Date().toLocaleTimeString('en-GB', {hour12: false}); 
                     this.logs.push({time: t, msg: `<span class="font-bold text-gray-500">[${source}]</span> ${msg}`, color}); 
-                    this.$nextTick(() => { const el = document.getElementById('terminal-logs'); el.scrollTop = el.scrollHeight; }); 
+                    this.$nextTick(() => { const el = document.getElementById('terminal-logs'); if(el) el.scrollTop = el.scrollHeight; }); 
                 },
                 
                 triggerToast(title, msg, type) {

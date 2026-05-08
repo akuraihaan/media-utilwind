@@ -1230,12 +1230,9 @@
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <div class="relative w-24 h-24 mx-auto mb-6">
-            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-cyan-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
-            <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
-                <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
+        <div class="relative w-4 h-4 mx-auto mb-6">
+                
             </div>
-        </div>
         
         <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Analisis Soal</span></h3>
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Manajemen & Tinjauan Komprehensif</p>

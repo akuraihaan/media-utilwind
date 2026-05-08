@@ -168,3 +168,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/classes/{id}', [ClassManagementController::class, 'destroy'])->name('classes.destroy');
     Route::post('/classes/{id}/token', [ClassManagementController::class, 'regenerateToken'])->name('classes.token');
 });
+
+Route::get('/clear-time', function() {
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    return "Cache konfigurasi berhasil dibersihkan! Waktu sekarang: " . now();
+});
