@@ -1,59 +1,376 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Utilwind
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Utilwind adalah aplikasi media pembelajaran interaktif berbasis web untuk membantu siswa mempelajari dasar HTML, CSS, dan Tailwind CSS. Aplikasi ini dirancang sebagai platform belajar terstruktur yang menyediakan materi per bab, latihan praktik, quiz, progres belajar, manajemen kelas, serta dashboard admin untuk memantau aktivitas siswa.
 
-## About Laravel
+Proyek ini dibangun menggunakan Laravel dan Blade dengan dukungan Tailwind CSS serta Vite untuk proses pengembangan frontend.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Isi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Fitur Utama](#fitur-utama)
+- [Teknologi](#teknologi)
+- [Struktur Proyek](#struktur-proyek)
+- [Persyaratan Sistem](#persyaratan-sistem)
+- [Instalasi](#instalasi)
+- [Konfigurasi Environment](#konfigurasi-environment)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Database dan Seeder](#database-dan-seeder)
+- [Akun dan Hak Akses](#akun-dan-hak-akses)
+- [Modul Pembelajaran](#modul-pembelajaran)
+- [Ringkasan Route](#ringkasan-route)
+- [Pengujian](#pengujian)
+- [Catatan Pengembangan](#catatan-pengembangan)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fitur Utama
 
-## Learning Laravel
+### Siswa
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- Registrasi, login, logout, dan reset password.
+- Dashboard siswa untuk melihat ringkasan progres belajar.
+- Bergabung ke kelas menggunakan token kelas.
+- Akses materi pembelajaran setelah tergabung dalam kelas aktif.
+- Penyelesaian materi per subbab.
+- Quiz per bagian pembelajaran.
+- Penyimpanan progres quiz selama pengerjaan.
+- Lab praktik coding berbasis instruksi dan validasi jawaban.
+- Sandbox untuk latihan mandiri.
+- Pengelolaan profil pengguna.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Admin
 
-## Laravel Sponsors
+- Dashboard admin untuk melihat ringkasan data siswa dan pembelajaran.
+- Manajemen pengguna.
+- Import dan export data pengguna.
+- Detail progres masing-masing siswa.
+- Export laporan siswa dalam format CSV/PDF.
+- Manajemen kelas dan token kelas.
+- Aktivasi atau penonaktifan kelas.
+- Manajemen soal quiz.
+- Analitik soal quiz.
+- Konfigurasi lab praktik.
+- Analitik pengerjaan lab.
+- Audit log untuk aktivitas administratif.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Teknologi
 
-### Premium Partners
+- **Backend:** Laravel 12
+- **Bahasa:** PHP 8.2+
+- **Frontend:** Blade Template, Tailwind CSS 4
+- **Build Tool:** Vite
+- **Database:** MySQL
+- **Package Manager Backend:** Composer
+- **Package Manager Frontend:** npm
+- **Testing:** PHPUnit
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Dependency penting:
 
-## Contributing
+- `laravel/framework`
+- `laravel/tinker`
+- `phpoffice/phpword`
+- `tailwindcss`
+- `@tailwindcss/vite`
+- `laravel-vite-plugin`
+- `vite`
+- `axios`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Struktur Proyek
 
-## Code of Conduct
+```text
+app/
+  Console/Commands/        Command tambahan seperti import modul dan sinkronisasi data
+  Http/Controllers/        Controller utama aplikasi
+  Http/Middleware/         Middleware autentikasi, admin, dan akses kelas
+  Models/                  Model Eloquent
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+database/
+  migrations/              Struktur tabel database
+  seeders/                 Data awal untuk materi, quiz, lab, dan kelas
 
-## Security Vulnerabilities
+public/
+  images/                  Aset gambar publik
+  uploads/                 File upload seperti avatar dan foto profil
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+resources/
+  views/                   Halaman Blade untuk siswa, admin, quiz, lab, auth, dan materi
+  css/                     Entry CSS aplikasi
+  js/                      Entry JavaScript aplikasi
 
-## License
+routes/
+  web.php                  Route utama aplikasi web
+  api.php                  Route API
+  console.php              Route command console
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Persyaratan Sistem
+
+Pastikan perangkat sudah memiliki:
+
+- PHP 8.2 atau lebih baru
+- Composer
+- Node.js dan npm
+- MySQL atau MariaDB
+- Web server lokal seperti Laragon, XAMPP, Laravel Herd, atau Laravel Sail
+
+## Instalasi
+
+Clone atau salin proyek ke direktori lokal, lalu masuk ke folder proyek:
+
+```bash
+cd media-skripsi
+```
+
+Install dependency backend:
+
+```bash
+composer install
+```
+
+Install dependency frontend:
+
+```bash
+npm install
+```
+
+Salin file environment:
+
+```bash
+cp .env.example .env
+```
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+## Konfigurasi Environment
+
+Sesuaikan konfigurasi database pada file `.env`.
+
+Contoh konfigurasi lokal:
+
+```env
+APP_NAME="Utilwind"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=media_skripsi
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Buat database dengan nama yang sama seperti nilai `DB_DATABASE`, misalnya:
+
+```sql
+CREATE DATABASE media_skripsi;
+```
+
+## Menjalankan Aplikasi
+
+Jalankan migrasi database:
+
+```bash
+php artisan migrate
+```
+
+Jalankan server Laravel:
+
+```bash
+php artisan serve
+```
+
+Jalankan Vite untuk proses development frontend:
+
+```bash
+npm run dev
+```
+
+Aplikasi dapat dibuka melalui:
+
+```text
+http://127.0.0.1:8000
+```
+
+Untuk build asset produksi:
+
+```bash
+npm run build
+```
+
+## Database dan Seeder
+
+Folder `database/migrations` berisi struktur tabel untuk:
+
+- Users
+- Classes atau class groups
+- Course progress
+- Lessons
+- Course modules
+- Course lessons
+- Course activities
+- Quiz
+- Quiz questions
+- Quiz attempts
+- Lab
+- Lab sessions
+- Lab histories
+- Admin audit logs
+
+Seeder yang tersedia antara lain:
+
+- `TailwindCourseSeeder`
+- `QuizSeeder`
+- `FullCourseLabsSeeder`
+- `LabBab1RefactorSeeder`
+- `SyncClassSeeder`
+
+Seeder dapat dijalankan sesuai kebutuhan:
+
+```bash
+php artisan db:seed --class=TailwindCourseSeeder
+php artisan db:seed --class=QuizSeeder
+php artisan db:seed --class=FullCourseLabsSeeder
+```
+
+Atau jalankan seluruh seeder yang sudah didaftarkan:
+
+```bash
+php artisan db:seed
+```
+
+## Akun dan Hak Akses
+
+Aplikasi memiliki dua area utama:
+
+- **Siswa:** mengakses dashboard, materi, quiz, sandbox, lab, dan profil.
+- **Admin:** mengelola pengguna, kelas, soal, lab, laporan, dan analitik.
+
+Akses pembelajaran dibatasi oleh kelas aktif. Siswa harus memasukkan token kelas terlebih dahulu sebelum dapat membuka materi, quiz, dan lab.
+
+## Modul Pembelajaran
+
+Materi pembelajaran dibagi menjadi beberapa bagian:
+
+### Bab 1
+
+- HTML dan CSS
+- Dasar Tailwind CSS
+- Latar belakang penggunaan Tailwind CSS
+- Implementasi Tailwind CSS
+- Keunggulan Tailwind CSS
+- Instalasi Tailwind CSS
+
+### Bab 2
+
+- Flexbox
+- Grid
+- Manajemen layout
+
+### Bab 3
+
+- Typography
+- Background
+- Border
+- Effects
+
+Setiap bagian dapat memiliki progres penyelesaian, aktivitas belajar, serta keterkaitan dengan quiz atau lab.
+
+## Ringkasan Route
+
+Route utama aplikasi didefinisikan pada `routes/web.php`.
+
+### Public
+
+- `/` - Landing page
+- `/login` - Login
+- `/register` - Register
+- `/forgot-password` - Lupa password
+- `/reset-password/{token}` - Reset password
+
+### User Login
+
+- `/dashboard` - Dashboard siswa
+- `/student/join-class` - Bergabung ke kelas dengan token
+- `/profile` - Edit profil
+- `/developer-info` - Informasi pengembang
+- `/cheatsheet` - Cheatsheet
+- `/gallery` - Galeri komponen
+
+### Pembelajaran
+
+- `/learning-path` - Peta konsep atau kurikulum
+- `/courses/html-css`
+- `/courses/tailwind-basic`
+- `/courses/background-story`
+- `/courses/implementation`
+- `/courses/advantages`
+- `/courses/installation`
+- `/courses/flexbox`
+- `/courses/grid`
+- `/courses/layout-management`
+- `/courses/typography`
+- `/courses/backgrounds`
+- `/courses/borders`
+- `/courses/effects`
+
+### Quiz
+
+- `/quiz/intro/{chapterId}`
+- `/quiz/start`
+- `/quiz/attempt/{chapterId}`
+- `/quiz/save-progress`
+- `/quiz/submit`
+
+### Lab
+
+- `/labs/start/{id}`
+- `/labs/workspace/{id}`
+- `/labs/session/{id}/check`
+- `/labs/session/{id}/end`
+
+### Admin
+
+- `/admin`
+- `/admin/classes`
+- `/admin/analytics/questions`
+- `/admin/labs`
+- `/admin/analytics/lab/{labId?}`
+- `/admin/student/{id}`
+
+## Pengujian
+
+Jalankan test dengan:
+
+```bash
+php artisan test
+```
+
+Atau melalui script Composer:
+
+```bash
+composer test
+```
+
+## Catatan Pengembangan
+
+- Dokumentasi ini menjelaskan fitur aktif aplikasi pembelajaran Utilwind.
+- Pastikan database sudah dibuat sebelum menjalankan migrasi.
+- Jika terjadi masalah cache konfigurasi, jalankan:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+- Untuk development harian, biasanya diperlukan dua proses yang berjalan bersamaan: `php artisan serve` dan `npm run dev`.
+- Route pembelajaran dilindungi middleware autentikasi dan akses kelas aktif.
+- Area admin dilindungi middleware autentikasi dan role admin.
+
+## Lisensi
+
+Proyek ini dibuat untuk kebutuhan media pembelajaran dan pengembangan skripsi. Sesuaikan informasi lisensi dengan kebijakan pemilik proyek atau institusi.
