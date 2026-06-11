@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassGroup;
+use App\Models\CourseLesson;
+use App\Models\Lab;
 use Illuminate\Http\Request;
 use App\Models\User; // <--- WAJIB TAMBAHKAN INI
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ClassManagementController extends Controller
@@ -14,45 +17,71 @@ class ClassManagementController extends Controller
     {
         // 1. Ambil data kelas beserta relasi siswanya
         $classesRaw = \App\Models\ClassGroup::with('students')->orderBy('name', 'asc')->get();
+        $minimumQuizScore = 70;
+        $totalLessons = CourseLesson::count();
+        $totalLabs = Lab::where('is_active', 1)->count();
+        $totalQuizChapters = DB::table('quiz_questions')->select('chapter_id')->distinct()->pluck('chapter_id')->count();
+        $totalItemsEstimasi = max(1, $totalLessons + $totalLabs + $totalQuizChapters);
 
         // 2. Mapping data untuk menghitung Analitik Super Detail per Kelas & per Siswa
-        $classes = $classesRaw->map(function($class) {
+        $classes = $classesRaw->map(function($class) use ($totalItemsEstimasi, $minimumQuizScore) {
             $students = $class->students;
             $studentIds = $students->pluck('id');
             
             // Tarik semua data log aktivitas siswa di kelas ini secara massal (Optimalisasi Query)
-            $quizAttempts = \Illuminate\Support\Facades\DB::table('quiz_attempts')->whereIn('user_id', $studentIds)->get();
-            $labHistories = \Illuminate\Support\Facades\DB::table('lab_histories')->whereIn('user_id', $studentIds)->where('status', 'passed')->get();
-            $lessonProgress = \Illuminate\Support\Facades\DB::table('user_lesson_progress')->whereIn('user_id', $studentIds)->where('completed', true)->get();
-
-            // Total Estimasi Item Kurikulum (Misal: 65 Slide + 4 Lab + 4 Kuis = 73)
-            $totalItemsEstimasi = 73; 
+            $quizAttempts = DB::table('quiz_attempts')->whereIn('user_id', $studentIds)->get();
+            $labHistories = DB::table('lab_histories')->whereIn('user_id', $studentIds)->where('status', 'passed')->get();
+            $lessonProgress = DB::table('user_lesson_progress')->whereIn('user_id', $studentIds)->where('completed', true)->get();
 
             // Susun Detail Tiap Siswa
-            $studentsList = $students->map(function($s) use ($quizAttempts, $labHistories, $lessonProgress, $totalItemsEstimasi) {
+            $studentsList = $students->map(function($s) use ($quizAttempts, $labHistories, $lessonProgress, $totalItemsEstimasi, $minimumQuizScore) {
                 // A. Kuis
                 $userQuizzes = $quizAttempts->where('user_id', $s->id);
-                $avgScore = $userQuizzes->count() > 0 ? $userQuizzes->avg('score') : 0;
-                $passedQuizzesCount = $userQuizzes->groupBy('chapter_id')->map(fn($att) => $att->max('score'))->filter(fn($score) => $score >= 70)->count();
+                $quizAttemptsCount = $userQuizzes->count();
+                $avgScore = $quizAttemptsCount > 0 ? $userQuizzes->avg('score') : 0;
+                $passedQuizzesCount = $userQuizzes
+                    ->groupBy('chapter_id')
+                    ->map(fn($att) => $att->max('score'))
+                    ->filter(fn($score) => $score >= $minimumQuizScore)
+                    ->count();
+                $effectivePassedQuizzesCount = $avgScore >= $minimumQuizScore ? $passedQuizzesCount : 0;
 
                 // B. Lab & Materi
                 $userLabsCount = $labHistories->where('user_id', $s->id)->unique('lab_id')->count();
                 $userLessonsCount = $lessonProgress->where('user_id', $s->id)->count();
 
                 // C. Kalkulasi Global Progress
-                $totalDone = $userLessonsCount + $userLabsCount + $passedQuizzesCount;
+                $totalDone = $userLessonsCount + $userLabsCount + $effectivePassedQuizzesCount;
                 $progressPct = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
                 $progressPct = min($progressPct, 100); // Max 100%
+                $hasAnyProgress = ($userLessonsCount + $userLabsCount + $passedQuizzesCount + $quizAttemptsCount) > 0;
+
+                if ($quizAttemptsCount > 0 && $avgScore < $minimumQuizScore) {
+                    $statusLabel = 'Remedial Kuis';
+                    $statusTone = 'red';
+                } elseif ($progressPct >= 100) {
+                    $statusLabel = 'Tuntas';
+                    $statusTone = 'emerald';
+                } elseif ($hasAnyProgress) {
+                    $statusLabel = 'Dalam Proses';
+                    $statusTone = 'amber';
+                } else {
+                    $statusLabel = 'Belum Mulai';
+                    $statusTone = 'slate';
+                }
 
                 return [
                     'id' => $s->id,
                     'name' => $s->name,
                     'email' => $s->email,
                     'avg_score' => round($avgScore, 1),
+                    'quiz_attempts' => $quizAttemptsCount,
                     'lessons_done' => $userLessonsCount,
                     'labs_done' => $userLabsCount,
-                    'quizzes_passed' => $passedQuizzesCount,
-                    'progress_pct' => $progressPct
+                    'quizzes_passed' => $effectivePassedQuizzesCount,
+                    'progress_pct' => $progressPct,
+                    'status_label' => $statusLabel,
+                    'status_tone' => $statusTone,
                 ];
             })->sortByDesc('progress_pct')->values()->toArray(); // Diurutkan dari Progress Tertinggi
 

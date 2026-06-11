@@ -673,7 +673,7 @@
                                     <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                     <div class="tooltip-content">
                                         <span class="font-bold text-fuchsia-600 dark:text-fuchsia-400 block mb-1">Sumber Data:</span>
-                                        Total sesi praktikum (Lab History) yang tervalidasi dengan status 'passed' (Lulus) dari semua siswa.
+                                        Total sesi praktikum yang tervalidasi dengan status lulus dari semua siswa.
                                     </div>
                                 </div>
                             </h3>
@@ -694,7 +694,7 @@
                                 <div class="flex-1 mr-3 bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden shadow-inner border border-slate-300 dark:border-white/5 transition-colors" title="Rata-rata Skor: {{ round($avgLabScore, 1) }}">
                                     <div class="h-full bg-gradient-to-r from-fuchsia-400 to-fuchsia-600 dark:from-fuchsia-600 dark:to-fuchsia-400 transition-all duration-1000" style="width: {{ min(100, $avgLabScore) }}%"></div>
                                 </div>
-                                <p class="text-[9px] text-slate-500 dark:text-white/40 font-mono transition-colors">Skor Avg: <strong class="text-fuchsia-600 dark:text-fuchsia-400">{{ round($avgLabScore, 1) }}</strong></p>
+                                <p class="text-[9px] text-slate-500 dark:text-white/40 font-mono transition-colors">Rata-rata Skor: <strong class="text-fuchsia-600 dark:text-fuchsia-400">{{ round($avgLabScore, 1) }}</strong></p>
                             </div>
                         </div>
                     </div>
@@ -742,7 +742,7 @@
                                     <hr class="my-2 border-slate-200/20">
                                     <span class="text-emerald-400">Skor Tertinggi Global: {{ $highestGlobalScore }}</span><br>
                                     <span class="text-red-400">Skor Terendah Global: {{ $lowestGlobalScore }}</span><br>
-                                    <span class="text-slate-400">Avg Durasi: {{ gmdate("i:s", $avgQuizDuration) }} Menit</span>
+                                    <span class="text-slate-400">Rata-rata Durasi: {{ gmdate("i:s", $avgQuizDuration) }} Menit</span>
                                 </div>
                             </div>
                         </div>
@@ -915,7 +915,7 @@
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Top kelas dengan siswa terbanyak.</p>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[9px] font-black border border-cyan-100 dark:border-cyan-500/20">Class</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[9px] font-black border border-cyan-100 dark:border-cyan-500/20">Kelas</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
                         </div>
                         <div class="flex-1 min-h-[220px] relative">
@@ -938,7 +938,7 @@
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Performa kuis tiap bab.</p>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black border border-emerald-100 dark:border-emerald-500/20">Score</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black border border-emerald-100 dark:border-emerald-500/20">Skor</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
                         </div>
                         <div class="flex-1 min-h-[220px] relative">
@@ -961,7 +961,7 @@
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Volume kuis dan lab terbaru.</p>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 text-[9px] font-black border border-fuchsia-100 dark:border-fuchsia-500/20">Activity</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 text-[9px] font-black border border-fuchsia-100 dark:border-fuchsia-500/20">Aktivitas</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
                         </div>
                         <div class="flex-1 min-h-[220px] relative">
@@ -1566,7 +1566,7 @@
                     <p class="text-[10px] uppercase font-bold tracking-widest text-fuchsia-200 mb-1">Riwayat Praktikum Lab</p>
                     <h3 class="text-4xl font-black mb-1">{{ $realLabCount }} <span class="text-xl">Lulus</span></h3>
                     <p class="text-[10px] text-fuchsia-100 opacity-90 mt-1">
-                        Sesi Lab yang berhasil divalidasi dengan status 'Passed'. Rata-rata Skor Keseluruhan: <b>{{ round($avgLabScore, 1) }}</b>
+                        Sesi lab yang berhasil divalidasi dengan status lulus. Rata-rata skor keseluruhan: <b>{{ round($avgLabScore, 1) }}</b>
                     </p>
                 </div>
                 <button @click="showLabModal = false" class="text-fuchsia-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10 shrink-0">
@@ -1604,7 +1604,7 @@
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" @click="showImport = false"></div>
         <div class="relative w-full max-w-md bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] p-6 transition-colors duration-500" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors">Impor Data Siswa</h3>
-            <p class="text-[10px] text-slate-500 dark:text-white/50 mb-6 border-b border-slate-200 dark:border-white/5 pb-4 transition-colors">Header CSV yang Dibutuhkan: <code class="bg-slate-100 dark:bg-[#0a0e17] px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-300 font-mono font-bold mt-1 inline-block border border-slate-200 dark:border-white/5 transition-colors">Name, Email, Class, Institution, Password</code></p>
+            <p class="text-[10px] text-slate-500 dark:text-white/50 mb-6 border-b border-slate-200 dark:border-white/5 pb-4 transition-colors">Header CSV yang Dibutuhkan: <code class="bg-slate-100 dark:bg-[#0a0e17] px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-300 font-mono font-bold mt-1 inline-block border border-slate-200 dark:border-white/5 transition-colors">Nama, Email, Kelas, Institusi, Password</code></p>
             <form action="{{ route('admin.user.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="relative w-full h-32 border-2 border-dashed border-slate-300 dark:border-white/10 rounded-xl flex flex-col items-center justify-center hover:border-indigo-400 dark:hover:border-indigo-500/50 bg-slate-50 dark:bg-[#0a0e17] group cursor-pointer mb-5 shadow-inner transition-colors">

@@ -202,7 +202,7 @@
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Lab Analytics
+                        Analitik Lab
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -266,30 +266,30 @@
                                     </ol>
                                 </nav>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Class & Access Tokens</h2>
+                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Kelas & Token Akses</h2>
                                     
                                     {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                     <button @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Manajemen Kelas">
                                         ?
                                     </button>
                                 </div>
-                                <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Security Access Control</p>
+                                <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Manajemen kelas</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-3 sm:gap-6">
-                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Refresh">
+                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Muat ulang">
                             <svg class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         </button>
-                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Fullscreen">
+                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Layar penuh">
                             <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                         <div class="border-l border-slate-300 dark:border-white/10 pl-5 ml-1 transition-colors">
                             <button @click="showAddModal = true" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-500 dark:border-indigo-400">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> 
-                                <span class="hidden sm:inline">Add Class</span>
+                                <span class="hidden sm:inline">Tambah Kelas</span>
                             </button>
                         </div>
                         <div class="text-right hidden lg:block border-l border-slate-300 dark:border-white/10 pl-5 ml-1 transition-colors">
@@ -306,11 +306,11 @@
                     {{-- 3 STATS CARDS --}}
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 reveal">
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-indigo-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Total Classes</p>
+                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Total Kelas</p>
                             <h3 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalClasses ?? 0 }}</h3>
                         </div>
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-emerald-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Active Tokens</p>
+                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Token Aktif</p>
                             <h3 class="text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2 drop-shadow-sm dark:drop-shadow-[0_0_8px_#10b981] transition-colors">{{ $totalActive ?? 0 }}</h3>
                         </div>
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-cyan-500 transition-colors">
@@ -332,10 +332,10 @@
                                     <tr>
                                         <th class="px-6 py-4 transition-colors">Nama Kelas / Jurusan</th>
                                         <th class="px-6 py-4 text-center transition-colors">Siswa</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Avg Quiz</th>
+                                        <th class="px-6 py-4 text-center transition-colors">Nilai Rata-rata</th>
                                         <th class="px-6 py-4 text-center transition-colors w-48">Token Akses</th>
                                         <th class="px-6 py-4 text-center transition-colors">Status</th>
-                                        <th class="px-6 py-4 text-right transition-colors">Actions</th>
+                                        <th class="px-6 py-4 text-right transition-colors">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 dark:divide-white/5 bg-white/50 dark:bg-[#0a0e17]/30 transition-colors">
@@ -350,12 +350,12 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span class="font-bold transition-colors {{ ($class['avg_quiz'] ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                                                {{ $class['avg_quiz'] ?? 0 }} pts
+                                                {{ $class['avg_quiz'] ?? 0 }} 
                                             </span>
                                         </td>
                                         
                                         {{-- DETAIL IMPROVISASI TOKEN HOVER --}}
-                                        <td class="px-6 py-4 text-center relative group/tooltip" title="Hover to reveal">
+                                        <td class="px-6 py-4 text-center relative group/tooltip" title="Arahkan untuk melihat">
                                             <div class="group/token inline-flex flex-col items-center justify-center cursor-pointer transition-transform transform hover:scale-105" @click="copyToken('{{ $class['token'] ?? $class->token }}')">
                                                 <div class="relative flex items-center justify-center bg-indigo-50 dark:bg-[#020617] border border-indigo-200 dark:border-white/10 rounded-lg px-4 py-2 shadow-sm dark:shadow-inner group-hover/token:border-indigo-400 dark:group-hover/token:border-indigo-500/50 transition-colors overflow-hidden">
                                                     
@@ -372,25 +372,25 @@
                                                 
                                                 {{-- Helper Text Bawah Token --}}
                                                 <span class="text-[8px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest mt-1.5 opacity-0 group-hover/token:opacity-100 transition-opacity absolute -bottom-3 whitespace-nowrap">
-                                                    Click to Copy
+                                                    Klik untuk Menyalin
                                                 </span>
                                             </div>
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
                                             @if(($class['is_active'] ?? $class->is_active))
-                                                <span class="px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest border bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 transition-colors">Active</span>
+                                                <span class="px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest border bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 transition-colors">Aktif</span>
                                             @else
-                                                <span class="px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest border bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-700 transition-colors">Closed</span>
+                                                <span class="px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest border bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-700 transition-colors">Tutup</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end gap-2">
                                                 {{-- TOMBOL INSIGHT (DETAIL) --}}
-                                                <button @click="openInsight({{ is_array($class) ? json_encode($class) : collect($class)->toJson() }})" class="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 dark:hover:bg-cyan-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-transparent hover:border-cyan-400" title="Detail Insight"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></button>
+                                                <button @click="openInsight({{ is_array($class) ? json_encode($class) : collect($class)->toJson() }})" class="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 dark:hover:bg-cyan-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-transparent hover:border-cyan-400" title="Detail Analitik"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></button>
 
                                                 <form id="form-token-{{ $class['id'] ?? $class->id }}" action="{{ route('admin.classes.token', $class['id'] ?? $class->id) ?? '#' }}" method="POST">
-                                                    @csrf <button type="button" @click="confirmRegenerate({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-amber-500 dark:text-yellow-500 hover:bg-amber-500 dark:hover:bg-yellow-500 hover:text-white dark:hover:text-black transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-amber-400 dark:hover:border-yellow-400" title="Regenerate Token"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
+                                                    @csrf <button type="button" @click="confirmRegenerate({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-amber-500 dark:text-yellow-500 hover:bg-amber-500 dark:hover:bg-yellow-500 hover:text-white dark:hover:text-black transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-amber-400 dark:hover:border-yellow-400" title="Buat Ulang Token"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
                                                 </form>
                                                 <button @click="openEdit({{ is_array($class) ? collect($class)->only(['id','name','major','is_active'])->toJson() : collect($class)->only(['id','name','major','is_active'])->toJson() }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-indigo-400" title="Edit"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
                                                 <form id="form-delete-{{ $class['id'] ?? $class->id }}" action="{{ route('admin.classes.destroy', $class['id'] ?? $class->id) ?? '#' }}" method="POST">
@@ -437,7 +437,7 @@
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Kriptografi Token Akses</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Setiap entitas kelas dilindungi oleh parameter unik (token) sepanjang 6 karakter. Token ini berfungsi sebagai instrumen otentikasi eksklusif bagi siswa yang hendak bergabung ke kelas tersebut.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Setiap kelas dilindungi token unik sepanjang 6 karakter. Token ini digunakan siswa untuk bergabung ke kelas yang sesuai.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
@@ -451,7 +451,7 @@
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Kontrol Siklus Aktivitas</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kemampuan untuk memodifikasi status pendaftaran kelas ("Active" atau "Closed") serta regenerasi token secara *real-time* guna menjaga privasi dari pihak tidak berkepentingan.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Admin dapat mengubah status pendaftaran kelas ("Aktif" atau "Tutup") serta membuat ulang token untuk menjaga akses kelas tetap terkendali.</p>
                         </div>
                     </div>
                 </div>
@@ -517,11 +517,11 @@
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-100 dark:bg-white/[0.03] border-b border-slate-200 dark:border-white/10 transition-colors">
                                 <tr>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-16 text-center transition-colors">Rank</th>
+                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-16 text-center transition-colors">Peringkat</th>
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Profil Siswa</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-[25%] transition-colors">Global Progress</th>
+                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-[25%] transition-colors">Progres Keseluruhan</th>
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Detail Pencapaian</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold text-right transition-colors">Avg Quiz</th>
+                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold text-right transition-colors">Rata-rata Nilai Kuis</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200 dark:divide-white/5 transition-colors">
@@ -556,6 +556,9 @@
                                                     <div class="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
                                                         <div class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-2 rounded-full transition-all duration-1000 dark:shadow-[0_0_10px_rgba(99,102,241,0.5)]" :style="`width: ${student.progress_pct}%`"></div>
                                                     </div>
+                                                    <span class="inline-flex mt-2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest border transition-colors"
+                                                          :class="student.status_tone === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : (student.status_tone === 'red' ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20' : (student.status_tone === 'amber' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10'))"
+                                                          x-text="student.status_label"></span>
                                                 </div>
                                             </td>
 
@@ -578,7 +581,7 @@
                                             <td class="px-6 py-4 text-right align-middle">
                                                 <span class="px-3 py-1.5 rounded-lg text-sm font-black border transition-colors" 
                                                       :class="student.avg_score >= 70 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 dark:shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20'" 
-                                                      x-text="student.avg_score + ' pts'"></span>
+                                                      x-text="student.avg_score + ' '"></span>
                                             </td>
                                         </tr>
                                     </template>
@@ -623,8 +626,8 @@
                     <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-2 transition-colors">Status Pendaftaran</label>
                     <div class="relative">
                         <select name="is_active" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:ring-2 ring-indigo-500/20 cursor-pointer shadow-inner font-bold appearance-none transition-colors">
-                            <option value="1" class="bg-white dark:bg-[#0f141e] text-emerald-600 dark:text-emerald-400">Active (Menerima Siswa)</option>
-                            <option value="0" class="bg-white dark:bg-[#0f141e] text-red-600 dark:text-red-400">Closed (Terkunci)</option>
+                            <option value="1" class="bg-white dark:bg-[#0f141e] text-emerald-600 dark:text-emerald-400">Aktif (Menerima Siswa)</option>
+                            <option value="0" class="bg-white dark:bg-[#0f141e] text-red-600 dark:text-red-400">Tutup (Terkunci)</option>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 dark:text-white/40 transition-colors">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -673,8 +676,8 @@
                     <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-2 transition-colors">Status Pendaftaran</label>
                     <div class="relative">
                         <select name="is_active" x-model="editData.is_active" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:ring-2 ring-indigo-500/20 cursor-pointer shadow-inner font-bold appearance-none transition-colors">
-                            <option value="1" class="bg-white dark:bg-[#0f141e] text-emerald-600 dark:text-emerald-400">Active (Menerima Siswa)</option>
-                            <option value="0" class="bg-white dark:bg-[#0f141e] text-red-600 dark:text-red-400">Closed (Terkunci)</option>
+                            <option value="1" class="bg-white dark:bg-[#0f141e] text-emerald-600 dark:text-emerald-400">Aktif (Menerima Siswa)</option>
+                            <option value="0" class="bg-white dark:bg-[#0f141e] text-red-600 dark:text-red-400">Tutup (Terkunci)</option>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 dark:text-white/40 transition-colors">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -684,7 +687,7 @@
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-white/5 mt-6 transition-colors">
                     <button type="button" @click="showEditModal = false" class="px-5 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-xs transition border border-transparent hover:border-slate-300 dark:hover:border-white/10 transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">Update Kelas</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">Perbarui Kelas</button>
                 </div>
             </form>
         </div>

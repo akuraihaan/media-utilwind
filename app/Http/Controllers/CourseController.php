@@ -289,7 +289,8 @@ class CourseController extends Controller
             ->flip()
             ->toArray();
 
-        $totalSteps = 19; // 13 subbab + 3 lab + 3 kuis
+        $activeLabIds = Lab::where('is_active', 1)->pluck('id')->map(fn ($id) => (int) $id)->toArray();
+        $totalSteps = count($this->lessonMap) + count($activeLabIds) + 3;
 
         $completedSubchapters = count(array_filter(
             $statusMap,
@@ -297,7 +298,7 @@ class CourseController extends Controller
             ARRAY_FILTER_USE_BOTH
         ));
 
-        $completedLabs = count($passedLabsMap);
+        $completedLabs = count(array_intersect(array_keys($passedLabsMap), $activeLabIds));
 
         $completedQuizzes = count(array_filter(
             $statusMap,
@@ -306,7 +307,7 @@ class CourseController extends Controller
         ));
 
         $totalCompleted = $completedSubchapters + $completedLabs + $completedQuizzes;
-        $progressPercent = $totalSteps > 0 ? round(($totalCompleted / $totalSteps) * 100) : 0;
+        $progressPercent = $totalSteps > 0 ? min(100, round(($totalCompleted / $totalSteps) * 100)) : 0;
 
         return view('courses.curriculum', [
             'completedLessonsMap' => $statusMap,
