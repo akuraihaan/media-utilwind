@@ -9,21 +9,24 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   // di file migration baru
-public function up()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('avatar')->nullable()->after('email');
-    });
-}
+    public function up()
+    {
+        if (!Schema::hasColumn('users', 'avatar')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('avatar')->nullable()->after('email');
+            });
+        }
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('users', 'avatar')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('avatar');
+            });
+        }
     }
 };

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Class & Token Management</title>
+    <title>Manajemen Kelas & Token</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -148,7 +148,7 @@
     },
     confirmRegenerate(id) { 
         const t = this.getSwalTheme();
-        Swal.fire({ title: 'Regenerate Token?', text: 'Token yang lama akan tidak berlaku lagi.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#eab308', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-token-'+id).submit(); }) 
+        Swal.fire({ title: 'Perbarui Token?', text: 'Token yang lama tidak akan berlaku lagi.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#eab308', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-token-'+id).submit(); }) 
     },
     confirmDelete(id) { 
         const t = this.getSwalTheme();
@@ -180,25 +180,25 @@
 
         <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dashboard
+                        Dasbor
                     </a>
                 </div>
             </div>
 
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Quiz Management
+                        Manajemen Kuis
                     </a>
                     <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Configuration
+                        Konfigurasi Lab
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
@@ -206,7 +206,7 @@
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Class Management
+                        Manajemen Kelas
                     </a>
                 </div>
             </div>
@@ -261,8 +261,8 @@
                             <div>
                                 <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
                                     <ol class="inline-flex items-center space-x-1">
-                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
-                                        <li><div class="flex items-center"><svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg><span class="text-slate-900 dark:text-white transition-colors">Class Management</span></div></li>
+                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dasbor</a></li>
+                                        <li><div class="flex items-center"><svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg><span class="text-slate-900 dark:text-white transition-colors">Manajemen Kelas</span></div></li>
                                     </ol>
                                 </nav>
                                 <div class="flex items-center gap-2">
@@ -314,7 +314,7 @@
                             <h3 class="text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2 drop-shadow-sm dark:drop-shadow-[0_0_8px_#10b981] transition-colors">{{ $totalActive ?? 0 }}</h3>
                         </div>
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-cyan-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Students Connected</p>
+                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Siswa Terhubung</p>
                             <h3 class="text-3xl md:text-4xl font-black text-cyan-600 dark:text-cyan-400 mt-2 transition-colors">{{ $totalStudents ?? 0 }}</h3>
                         </div>
                     </div>
@@ -331,7 +331,7 @@
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold sticky top-0 z-20 shadow-sm dark:shadow-md transition-colors after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-slate-200 dark:after:border-white/5">
                                     <tr>
                                         <th class="px-6 py-4 transition-colors">Nama Kelas / Jurusan</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Students</th>
+                                        <th class="px-6 py-4 text-center transition-colors">Siswa</th>
                                         <th class="px-6 py-4 text-center transition-colors">Avg Quiz</th>
                                         <th class="px-6 py-4 text-center transition-colors w-48">Token Akses</th>
                                         <th class="px-6 py-4 text-center transition-colors">Status</th>

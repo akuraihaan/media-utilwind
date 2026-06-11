@@ -3,633 +3,831 @@
 @section('title', 'Utilwind')
 
 @section('content')
+@php
+    $safeRoute = function ($name, $fallback = '#') {
+        return \Illuminate\Support\Facades\Route::has($name) ? route($name) : $fallback;
+    };
 
-{{-- GOOGLE FONTS: PLUS JAKARTA SANS & FIRA CODE --}}
+    $primaryAction = auth()->check()
+        ? ['label' => 'Lanjutkan Belajar', 'href' => $safeRoute('courses.curriculum')]
+        : ['label' => 'Mulai Belajar Sekarang', 'href' => $safeRoute('register')];
+
+    $techStacks = [
+        'HTML',
+        'CSS',
+        'Tailwind CSS',
+        'Laravel',
+        'Live Sandbox',
+        'Mini Quiz',
+    ];
+
+    $stats = [
+        ['num' => 10, 'suffix' => '+', 'title' => 'Modul', 'text' => 'Materi terstruktur', 'color' => 'cyan'],
+        ['num' => 1, 'suffix' => '', 'title' => 'Live Editor', 'text' => 'Koding tanpa setup', 'color' => 'fuchsia'],
+        ['num' => 1, 'suffix' => '', 'title' => 'Mini Quiz', 'text' => 'Evaluasi pemahaman', 'color' => 'indigo'],
+        ['num' => 100, 'suffix' => '%', 'title' => 'Gratis', 'text' => 'Tanpa biaya tersembunyi', 'color' => 'emerald'],
+    ];
+
+    $features = [
+        [
+            'label' => 'Materi',
+            'title' => 'Materi Terstruktur',
+            'desc' => 'Tidak perlu bingung mulai dari mana. Materi disusun bertahap, mulai dari dasar HTML dan CSS sampai teknik layout responsif menggunakan Tailwind CSS.',
+            'href' => $safeRoute('courses.htmldancss'),
+            'button' => 'Lihat Silabus',
+            'tone' => 'indigo',
+        ],
+        [
+            'label' => 'Kamus',
+            'title' => 'Kamus Class',
+            'desc' => 'Kamus mini terintegrasi untuk mencari class Tailwind dengan mudah, cepat, dan efisien saat belajar.',
+            'href' => $safeRoute('cheatsheet.index'),
+            'button' => 'Buka Kamus',
+            'tone' => 'fuchsia',
+        ],
+        [
+            'label' => 'Editor',
+            'title' => 'Editor Native',
+            'desc' => 'Tidak perlu install ekstensi. Siswa dapat mencoba kode langsung di browser melalui ruang praktik yang sudah tersedia.',
+            'href' => $safeRoute('sandbox'),
+            'button' => 'Mulai Koding',
+            'tone' => 'cyan',
+        ],
+        [
+            'label' => 'Progres',
+            'title' => 'Pantau Progres Belajarmu',
+            'desc' => 'Mulai dari materi yang selesai, aktivitas praktik, sampai nilai kuis dapat dipantau melalui dashboard belajar.',
+            'href' => $safeRoute('dashboard'),
+            'button' => 'Lihat Dasbor',
+            'tone' => 'emerald',
+        ],
+    ];
+
+    $modules = [
+        [
+            'tab' => 'Dasar',
+            'title' => 'Mulai dari HTML, CSS, dan utility-first.',
+            'desc' => 'Bagian awal membantu siswa memahami fondasi halaman web sebelum masuk ke konsep Tailwind CSS.',
+            'items' => ['HTML dan CSS', 'Konsep utility-first', 'Dasar Tailwind CSS'],
+        ],
+        [
+            'tab' => 'Praktik',
+            'title' => 'Coba kode langsung di ruang praktik.',
+            'desc' => 'Siswa dapat menulis class, melihat perubahan tampilan, dan memperbaiki hasil secara langsung.',
+            'items' => ['Live Sandbox', 'Editor Native', 'Preview langsung'],
+        ],
+        [
+            'tab' => 'Evaluasi',
+            'title' => 'Ukur pemahaman dengan kuis dan progres.',
+            'desc' => 'Setelah belajar, siswa dapat mengerjakan mini quiz dan melihat perkembangan belajarnya.',
+            'items' => ['Mini Quiz', 'Riwayat belajar', 'Dashboard progres'],
+        ],
+    ];
+
+    $steps = [
+        ['title' => 'Pilih Materi', 'desc' => 'Tentukan kelas atau topik Tailwind CSS yang ingin dikuasai.'],
+        ['title' => 'Baca Teori Singkat', 'desc' => 'Pahami konsep utility-first dengan bahasa yang sederhana dan langsung ke inti.'],
+        ['title' => 'Langsung Praktik', 'desc' => 'Gunakan Live Sandbox untuk menulis dan melihat hasil kode secara instan.'],
+        ['title' => 'Kerjakan Quiz', 'desc' => 'Jawab kuis ringan di akhir materi untuk memastikan pemahaman.'],
+    ];
+
+    $audiences = [
+        ['title' => 'Pemula', 'desc' => 'Cocok untuk yang baru belajar HTML dan CSS lalu ingin mengenal framework modern.'],
+        ['title' => 'Frontend Developer', 'desc' => 'Cocok untuk yang ingin membuat UI cepat, rapi, dan responsif dengan utility class.'],
+        ['title' => 'Mahasiswa IT', 'desc' => 'Cocok sebagai bahan belajar, portofolio, atau pendukung tugas akhir.'],
+    ];
+
+    $faqs = [
+        ['q' => 'Apa itu Utilwind?', 'a' => 'Utilwind adalah media pembelajaran interaktif untuk belajar HTML, CSS, dan Tailwind CSS.'],
+        ['q' => 'Apa fitur utamanya?', 'a' => 'Fitur utamanya mencakup materi terstruktur, kamus class, Live Sandbox, mini quiz, dan dashboard progres.'],
+        ['q' => 'Apakah perlu instalasi tambahan?', 'a' => 'Tidak untuk belajar awal. Siswa dapat langsung mencoba kode melalui Live Sandbox di browser.'],
+        ['q' => 'Apakah cocok untuk pemula?', 'a' => 'Ya. Materinya dimulai dari dasar dan dilanjutkan secara bertahap menuju praktik Tailwind CSS.'],
+    ];
+@endphp
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-{{-- STYLE TAMBAHAN --}}
-<style>
-    /* OVERRIDE FONT DEFAULT */
-    body, .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .font-mono { font-family: 'Fira Code', monospace; font-variant-ligatures: normal; }
+<script>document.documentElement.classList.add('js-ready');</script>
 
-    /* PREMIUM LIQUID GLASS EFFECT */
-    .liquid-glass {
-        position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0,0,0,0.08);
-    }
-    .liquid-glass::before {
-        content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.05) 80%, rgba(255,255,255,0.2) 100%);
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
-    }
-    .liquid-glass:hover {
-        transform: translateY(-3px) scale(1.01);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 15px 40px rgba(0,0,0,0.15);
-    }
-
-    /* PREMIUM ICON WRAPPER (LUXURY) */
-    .icon-luxury {
-        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
-        box-shadow: inset 0px 2px 4px rgba(255,255,255,1), 0 8px 20px rgba(0,0,0,0.04);
-        border: 1px solid rgba(255,255,255,0.8);
-    }
-    .dark .icon-luxury {
-        background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.7));
-        box-shadow: inset 0px 2px 4px rgba(255,255,255,0.1), 0 8px 20px rgba(0,0,0,0.4);
-        border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    /* ANIMASI IDE CODE STREAM BACKGROUND */
-    .marquee-container { display: flex; width: max-content; gap: 2rem; }
-    @media (min-width: 768px) { .marquee-container { gap: 4rem; } }
-    .animate-ide-scroll-1 { animation: ide-scroll 75s linear infinite; }
-    .animate-ide-scroll-2 { animation: ide-scroll-reverse 90s linear infinite; }
-    .animate-ide-scroll-3 { animation: ide-scroll 110s linear infinite; }
-    @keyframes ide-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    @keyframes ide-scroll-reverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-
-    /* ANIMASI UTILWIND */
-    .animate-gradient-x { background-size: 200% 200%; animation: gradient-x 6s ease infinite; }
-    @keyframes gradient-x { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
-    .reveal.show { opacity: 1; transform: translateY(0); }
-    .preserve-3d { transform-style: preserve-3d; }
-    .perspective-1000 { perspective: 1000px; }
-
-    /* ANIMASI BACKGROUND MEWAH (LAYERED GLASS BLOBCAPES) */
-    .lux-blob-layer {
-        position: absolute; inset: 0;
-        mask-image: linear-gradient(to bottom, black 20%, transparent 95%);
-    }
-    .lux-blob {
-        position: absolute; border-radius: 50%; shadow: 2xl; blur: xl;
-        animation: float-blob infinite ease-in-out;
-    }
-    @keyframes float-blob {
-        0% { transform: translateY(0) rotate(0); }
-        50% { transform: translateY(-15px) rotate(5deg); }
-        100% { transform: translateY(0) rotate(0); }
-    }
-
-    /* LAYER 1 (BACK) */
-    .lux-blob-layer-1 { z-index: -30; opacity: 0.15; blur: 2xl; }
-    /* Fuchsia blobs */
-    .lux-blob-1-1 { width: 50vw; height: 50vw; background: conic-gradient(from 180deg at 50% 50%, #d946ef, #a21caf); left: -10vw; top: 10vh; animation-duration: 25s; animation-delay: 2s; }
-    .lux-blob-1-2 { width: 35vw; height: 35vw; background: conic-gradient(from 180deg at 50% 50%, #a21caf, #d946ef); right: -5vw; bottom: -5vh; animation-duration: 28s; animation-delay: 0s; }
-    
-    /* LAYER 2 (MIDDLE) */
-    .lux-blob-layer-2 { z-index: -20; opacity: 0.25; blur: xl; }
-    /* Cyan blobs */
-    .lux-blob-2-1 { width: 40vw; height: 40vw; background: conic-gradient(from 180deg at 50% 50%, #06b6d4, #0891b2); right: 20vw; top: 30vh; animation-duration: 22s; animation-delay: 4s; }
-    .lux-blob-2-2 { width: 30vw; height: 30vw; background: conic-gradient(from 180deg at 50% 50%, #0891b2, #06b6d4); left: 15vw; bottom: 20vh; animation-duration: 26s; animation-delay: 1s; }
-    
-    /* LAYER 3 (FRONT) */
-    .lux-blob-layer-3 { z-index: -10; opacity: 0.35; blur: lg; }
-    /* Indigo blobs */
-    .lux-blob-3-1 { width: 30vw; height: 30vw; background: conic-gradient(from 180deg at 50% 50%, #4338ca, #3730a3); left: 35vw; top: 50vh; animation-duration: 18s; animation-delay: 6s; }
-    .lux-blob-3-2 { width: 25vw; height: 25vw; background: conic-gradient(from 180deg at 50% 50%, #3730a3, #4338ca); right: 10vw; top: 10vh; animation-duration: 21s; animation-delay: 3s; }
-    .lux-blob-3-3 { width: 20vw; height: 20vw; background: conic-gradient(from 180deg at 50% 50%, #4338ca, #3730a3); left: 5vw; top: 70vh; animation-duration: 19s; animation-delay: 5s; }
-
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
-    .floating-element { animation: float 6s ease-in-out infinite; }
-</style>
-
-<div id="landingRoot" class="relative min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-600 dark:text-slate-300 overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-fuchsia-900 dark:selection:text-white transition-colors duration-500">
-
-    {{-- ATMOSPHERE LAYER (BACKGROUND ANIMASI MEWAH) --}}
-    <div class="fixed inset-0 -z-50 pointer-events-none lux-atmosphere-layer">
-        
-        {{-- Layered Glass Blobcapes --}}
-        <div class="lux-blob-layer lux-blob-layer-1">
-            <div class="lux-blob lux-blob-1-1"></div>
-            <div class="lux-blob lux-blob-1-2"></div>
-        </div>
-        <div class="lux-blob-layer lux-blob-layer-2">
-            <div class="lux-blob lux-blob-2-1"></div>
-            <div class="lux-blob lux-blob-2-2"></div>
-        </div>
-        <div class="lux-blob-layer lux-blob-layer-3">
-            <div class="lux-blob lux-blob-3-1"></div>
-            <div class="lux-blob lux-blob-3-2"></div>
-            <div class="lux-blob lux-blob-3-3"></div>
-        </div>
-        
-        <canvas id="starsCanvas" class="absolute inset-0 z-0 opacity-0 dark:opacity-40 transition-opacity duration-500"></canvas>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDE1MCwgMTUwLCAxNTAsIDAuMDUpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDQwaDQwVjBIMHoiLz48L2c+PC9zdmc+')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDMpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDQwaDQwVjBIMHoiLz48L2c+PC9zdmc+')] opacity-40 z-0"></div>
-    </div>
-
+<div id="landingExperience" class="min-h-screen overflow-hidden bg-slate-50 text-slate-950 dark:bg-[#020617] dark:text-white">
     @include('layouts.partials.navbar')
 
-    <div id="scrollProgress" class="fixed top-[60px] md:top-[80px] left-0 h-[3px] bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 z-[60] shadow-[0_0_15px_#d946ef] transition-all duration-100" style="width:0%"></div>
+    <style>
+        #landingExperience {
+            --event-shadow: 0 24px 70px rgba(15, 23, 42, 0.20);
+            --soft-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+            --hero-line: rgba(255, 255, 255, 0.10);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-    {{-- HERO SECTION --}}
-    <section id="hero" class="relative pt-24 pb-16 md:pt-36 md:pb-24 px-5 lg:px-8 min-h-[90vh] flex items-center z-20 overflow-hidden">
-        
-        {{-- Animated IDE Code Background --}}
-        <div class="absolute inset-0 z-0 h-full w-full pointer-events-none overflow-hidden flex flex-col justify-center gap-6 md:gap-10 opacity-40 dark:opacity-30 select-none font-mono text-sm md:text-xl lg:text-3xl whitespace-nowrap drop-shadow-sm">
-            <div class="marquee-container animate-ide-scroll-1">
-                @for($i=0; $i<3; $i++)
-                <div>
-                    <span class="text-pink-500 dark:text-pink-400">&lt;nav</span> <span class="text-sky-500 dark:text-sky-400">class=</span><span class="text-emerald-500 dark:text-emerald-300">"fixed w-full z-50 backdrop-blur-md bg-white/70"</span><span class="text-pink-500 dark:text-pink-400">&gt;</span> &nbsp; <span class="text-pink-500 dark:text-pink-400">&lt;ul</span> <span class="text-sky-500 dark:text-sky-400">class=</span><span class="text-emerald-500 dark:text-emerald-300">"flex items-center justify-between mx-auto px-6"</span><span class="text-pink-500 dark:text-pink-400">&gt;</span> &nbsp; <span class="text-slate-400 dark:text-slate-500 italic">&lt;!-- Nav --&gt;</span>
-                </div>
-                @endfor
-            </div>
-            <div class="marquee-container animate-ide-scroll-2 ml-[-30%]">
-                @for($i=0; $i<3; $i++)
-                <div>
-                    <span class="text-pink-500 dark:text-pink-400">&lt;button</span> <span class="text-sky-500 dark:text-sky-400">class=</span><span class="text-emerald-500 dark:text-emerald-300">"group relative px-8 py-4 bg-gradient-to-r rounded-full shadow-lg"</span><span class="text-pink-500 dark:text-pink-400">&gt;</span> <span class="text-slate-700 dark:text-white">Learn</span> <span class="text-pink-500 dark:text-pink-400">&lt;/button&gt;</span>
-                </div>
-                @endfor
-            </div>
-            <div class="marquee-container animate-ide-scroll-3">
-                @for($i=0; $i<3; $i++)
-                <div>
-                    <span class="text-slate-400 dark:text-slate-500 italic">&lt;!-- Container --&gt;</span> &nbsp; <span class="text-pink-500 dark:text-pink-400">&lt;section</span> <span class="text-sky-500 dark:text-sky-400">class=</span><span class="text-emerald-500 dark:text-emerald-300">"grid grid-cols-1 md:grid-cols-2 gap-6"</span><span class="text-pink-500 dark:text-pink-400">&gt;</span> &nbsp; <span class="text-pink-500 dark:text-pink-400">&lt;div</span> <span class="text-sky-500 dark:text-sky-400">class=</span><span class="text-emerald-500 dark:text-emerald-300">"rounded-3xl bg-white p-8"</span><span class="text-pink-500 dark:text-pink-400">&gt;</span>
-                </div>
-                @endfor
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-b from-slate-50/60 via-slate-50/90 to-slate-50 dark:from-[#020617]/70 dark:via-[#020617]/90 dark:to-[#020617]"></div>
-        </div>
+        #landingExperience .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
 
-        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
-            
-            {{-- Copywriting --}}
-            <div class="text-center lg:text-left relative z-10 mt-6 md:mt-0 px-2 sm:px-0">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 text-[10px] md:text-xs font-bold font-mono tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-5 md:mb-6 animate-fade-in-up backdrop-blur-md shadow-sm dark:shadow-lg floating-element">
-                    <span class="relative flex h-2.5 w-2.5 md:h-3 md:w-3">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 md:h-3 md:w-3 bg-fuchsia-500"></span>
-                    </span>
-                    Release 1.0 is Live
-                </div>
+        #landingExperience .landing-wrap {
+            width: min(100% - 2rem, 1200px);
+            margin-inline: auto;
+        }
 
-                <h1 class="text-[2.25rem] sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-black text-slate-900 dark:text-white leading-[1.2] sm:leading-[1.15] mb-4 md:mb-6 tracking-tight text-balance animate-fade-in-up" style="animation-delay: 0.1s;">
-                    Belajar <span class="font-mono font-light italic text-slate-500 dark:text-slate-400">Utility-First</span><br class="hidden lg:block">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-indigo-500 animate-gradient-x pb-1 md:pb-2">Tailwind CSS</span>
-                </h1>
+        #landingExperience .hero-scene {
+            background-image:
+                radial-gradient(circle at 18% 20%, rgba(6, 182, 212, 0.28), transparent 34%),
+                radial-gradient(circle at 82% 18%, rgba(217, 70, 239, 0.26), transparent 32%),
+                radial-gradient(circle at 55% 86%, rgba(79, 70, 229, 0.30), transparent 36%),
+                linear-gradient(rgba(2, 6, 23, 0.68), rgba(2, 6, 23, 0.82)),
+                url("{{ asset('image/event.jpeg') }}");
+            background-size: cover;
+            background-position: center;
+        }
 
-                <p class="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 leading-relaxed text-balance animate-fade-in-up max-w-[20rem] sm:max-w-2xl mx-auto lg:mx-0 mb-8 md:mb-10 font-medium" style="animation-delay: 0.2s;">
-                    Pelajari cara merancang antarmuka modern dengan cepat, terstruktur, dan coba langsung di fitur <strong class="text-cyan-600 dark:text-cyan-400 font-bold">Live Sandbox</strong>.
-                </p>
+        #landingExperience .hero-scene::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--hero-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--hero-line) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+            opacity: 0.55;
+        }
 
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up w-full max-w-[18rem] sm:max-w-none mx-auto lg:mx-0" style="animation-delay: 0.3s;">
-                    @auth
-                        <a href="{{ route('courses.curriculum') }}" class="liquid-glass w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold text-sm md:text-base flex items-center justify-center gap-2 shadow-lg shadow-fuchsia-500/25 active:scale-95 transition-transform">
-                            Lanjutkan Belajar <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                        </a>
-                    @else
-                        <a href="{{ route('register') }}" class="liquid-glass w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-base flex items-center justify-center shadow-xl active:scale-95 transition-transform">
-                            Mulai Belajar Sekarang
-                        </a>
-                    @endauth
-                    
-                    <a href="#fitur" class="w-full sm:w-auto px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-white/80 dark:bg-[#0f141e]/80 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white font-semibold text-sm md:text-base hover:bg-slate-50 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm group active:scale-95">
-                        <svg class="w-4 h-4 md:w-5 md:h-5 text-cyan-500 dark:text-cyan-400 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"/></svg>
-                        Lihat Fitur
-                    </a>
-                </div>
-            </div>
+        #landingExperience .hero-scene::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(2, 6, 23, 0.30) 62%, rgba(2, 6, 23, 0.92) 100%);
+            pointer-events: none;
+        }
 
-            {{-- 3D Editor Mockup --}}
-            <div class="relative w-full max-w-sm sm:max-w-md mx-auto lg:max-w-none animate-fade-in-up perspective-1000 mt-8 lg:mt-0" style="animation-delay: 0.4s;">
-                <div class="absolute -inset-1 bg-gradient-to-tr from-cyan-400 via-fuchsia-400 to-indigo-400 dark:from-cyan-500 dark:via-fuchsia-500 dark:to-indigo-500 rounded-2xl blur-2xl opacity-40 dark:opacity-30 animate-pulse"></div>
-                
-                <div id="tiltEditor" class="relative rounded-2xl bg-[#fafafa] dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden preserve-3d transition-transform duration-300 ease-out">
-                    <div class="flex items-center px-3 py-2.5 md:px-4 md:py-3 bg-slate-100 dark:bg-[#060a14] border-b border-slate-200 dark:border-white/5">
-                        <div class="flex gap-1.5 md:gap-2">
-                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-400"></div>
-                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-emerald-400"></div>
-                        </div>
-                        <div class="mx-auto flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-mono text-slate-500 font-bold bg-white dark:bg-white/5 px-2 py-1 md:px-3 md:py-1.5 rounded-md border border-slate-200 dark:border-white/10 shadow-sm">
-                            <svg class="w-2.5 h-2.5 md:w-3 md:h-3 text-cyan-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Live Preview
-                        </div>
-                    </div>
-                    
-                    <div class="p-4 md:p-6 font-mono text-[10px] sm:text-[11px] md:text-[13px] overflow-x-auto text-slate-700 dark:text-slate-300 leading-loose min-h-[180px] md:min-h-[220px]">
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">1</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;div</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"group hover:scale-105 transition-all"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">2</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;button</span> <span class="text-sky-600 dark:text-sky-400">class=</span><span class="text-emerald-600 dark:text-emerald-300">"<span id="autoType" class="text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-1 py-0.5 rounded"></span><span class="animate-pulse bg-slate-800 dark:bg-white/60 w-1 md:w-1.5 h-3 md:h-4 inline-block align-middle ml-1"></span>"</span><span class="text-pink-600 dark:text-pink-400">&gt;</span></span></div>
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">3</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;Submit</span></div>
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">4</span> <span>&nbsp;&nbsp;<span class="text-pink-600 dark:text-pink-400">&lt;/button&gt;</span></span></div>
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">5</span> <span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-slate-400 italic">&lt;!-- &rarr; --&gt;</span></span></div>
-                        <div class="flex"><span class="w-6 md:w-8 text-slate-400 select-none">6</span> <span><span class="text-pink-600 dark:text-pink-400">&lt;/div&gt;</span></span></div>
-                    </div>
-                </div>
-                
-                {{-- Decorative floating UI elements --}}
-                <div class="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-white/80 dark:bg-[#1e293b]/80 backdrop-blur-md p-3 md:p-4 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 floating-element z-20 hidden sm:block">
-                    <div class="flex gap-2.5 md:gap-3 items-center">
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 shadow-lg shadow-cyan-500/30"></div>
-                        <div>
-                            <div class="h-2 md:h-2.5 w-12 md:w-16 bg-slate-200 dark:bg-slate-600 rounded-full mb-1.5 md:mb-2"></div>
-                            <div class="h-1.5 md:h-2 w-8 md:w-10 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        #landingExperience .event-card,
+        #landingExperience .feature-card,
+        #landingExperience .module-card,
+        #landingExperience .faq-card,
+        #landingExperience .stat-card {
+            border-radius: 1.35rem;
+            box-shadow: var(--soft-shadow);
+        }
 
-    {{-- STATS BANNER SECTION --}}
-    <section class="py-6 md:py-8 border-y border-slate-200 dark:border-white/5 bg-white/40 dark:bg-[#060a14]/40 backdrop-blur-xl relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
-            <div class="grid grid-cols-2 md:flex md:flex-wrap justify-center md:justify-between items-center gap-6 sm:gap-8 md:gap-12 text-left">
-                @foreach([
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />', 'num' => '10+ Modul', 'text' => 'Materi Terstruktur', 'color' => 'text-fuchsia-600 dark:text-fuchsia-400'],
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />', 'num' => 'Live Editor', 'text' => 'Koding Tanpa Setup', 'color' => 'text-cyan-600 dark:text-cyan-400'],
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />', 'num' => 'Mini Quiz', 'text' => 'Evaluasi Pemahaman', 'color' => 'text-indigo-600 dark:text-indigo-400'],
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />', 'num' => '100% Gratis', 'text' => 'Tanpa Biaya Tersembunyi', 'color' => 'text-emerald-600 dark:text-emerald-400']
-                ] as $stat)
-                <div class="flex items-center gap-3 sm:gap-4 reveal">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl icon-luxury flex shrink-0 items-center justify-center {{ $stat['color'] }} transition-transform hover:scale-110">
-                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $stat['icon'] !!}</svg>
-                    </div>
-                    <div><h4 class="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight">{{ $stat['num'] }}</h4><p class="text-[10px] sm:text-xs font-medium text-slate-500">{{ $stat['text'] }}</p></div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
+        #landingExperience .glass-card {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
 
-    {{-- INTERACTIVE SHOWCASE (DENGAN LOGO UTILWIND MEWAH) --}}
-    <section class="py-16 md:py-24 relative overflow-hidden bg-slate-50 dark:bg-[#020617]">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8 wrapper-sihir-sandbox">
-            <div class="text-center mb-10 md:mb-16 reveal">
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-3 md:mb-4 text-balance leading-tight">Sihir <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500">Live Sandbox</span></h2>
-                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium text-balance">Ketik kodenya, dan lihat UI berubah secara <i class="font-semibold">real-time</i>. Tidak perlu refresh, tidak perlu instalasi.</p>
-            </div>
+        #landingExperience .feature-card,
+        #landingExperience .stat-card,
+        #landingExperience .step-card,
+        #landingExperience .audience-card {
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
 
-            <div class="grid lg:grid-cols-2 gap-6 md:gap-8 items-center bg-white/70 dark:bg-[#0a0e17]/70 rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-2xl reveal backdrop-blur-md relative z-10">
-                
-                {{-- Editor Side (Menyesuaikan dengan tag img logo) --}}
-                <div class="rounded-xl md:rounded-2xl overflow-hidden bg-[#0d1117] shadow-inner border border-white/5 w-full">
-                    <div class="px-3 py-2 md:px-4 md:py-3 bg-[#161b22] flex gap-1.5 md:gap-2 border-b border-white/5">
-                        <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-rose-500"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-amber-500"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-emerald-500"></div>
-                    </div>
-                    <div class="p-4 md:p-6 font-mono text-[10px] sm:text-[11px] md:text-[13px] text-slate-300 leading-[1.6] md:leading-[1.8] overflow-x-auto w-full">
-                        <div class="flex"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;div</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;img</span> <span class="text-sky-400">src=</span><span class="text-emerald-300">"utilwind.png"</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"w-8 h-8 sm:w-10 sm:h-10 hover:scale-110"</span><span class="text-pink-400">&gt;</span></div>
-                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
-                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;div&gt;</span></div>
-                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;h3</span> <span class="text-sky-400">class=</span><span class="text-emerald-300 break-all whitespace-normal md:whitespace-nowrap">"text-lg sm:text-xl font-bold text-slate-800"</span><span class="text-pink-400">&gt;</span>Utilwind<span class="text-pink-400">&lt;/h3&gt;</span></div>
-                        <div class="flex pl-4 sm:pl-8"><span class="text-pink-400">&lt;p</span> <span class="text-sky-400">class=</span><span class="text-emerald-300">"text-sm sm:text-base text-slate-500"</span><span class="text-pink-400">&gt;</span>Membuat UI itu mudah.<span class="text-pink-400">&lt;/p&gt;</span></div>
-                        <div class="flex pl-2 sm:pl-4"><span class="text-pink-400">&lt;/div&gt;</span></div>
-                        <div class="flex"><span class="text-pink-400">&lt;/div&gt;</span></div>
-                    </div>
-                </div>
+        #landingExperience .feature-card:hover,
+        #landingExperience .stat-card:hover,
+        #landingExperience .step-card:hover,
+        #landingExperience .audience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--event-shadow);
+        }
 
-                {{-- Result Side (Menampilkan Gambar Logo Asli) --}}
-                <div class="h-full min-h-[200px] md:min-h-[250px] rounded-xl md:rounded-2xl bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDIwMCwgMjAwLCAyMDAsIDAuNSkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDQwLCA0MCwgNDAsIDAuOCkiIGZpbGw9Im5vbmUiPjxwb2x5Z29uIHBvaW50cz0iMjAgMCAyMCAyMCAwIDIwIi8+PC9nPjwvc3ZnPg==')] border border-slate-200 dark:border-white/5 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden w-full">
-                    <div class="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-[2px]"></div>
-                    
-                    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover:-translate-y-2 transition-transform duration-300 w-full max-w-[280px] sm:max-w-sm border border-slate-100 dark:border-white/5">
+        #landingExperience .module-tab[aria-selected="true"] {
+            background: linear-gradient(135deg, #06b6d4, #d946ef, #4f46e5);
+            color: #ffffff;
+            box-shadow: 0 12px 26px rgba(217, 70, 239, 0.22);
+        }
+
+        /* Fallback aman:
+           Konten tetap terlihat jika JavaScript gagal dimuat.
+           Animasi reveal hanya aktif saat class js-ready berhasil dipasang. */
+        #landingExperience .reveal-item {
+            opacity: 1;
+            transform: none;
+        }
+
+        html.js-ready #landingExperience .reveal-item {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 520ms ease, transform 520ms ease;
+        }
+
+        html.js-ready #landingExperience .reveal-item.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #landingExperience .gradient-text {
+            background: linear-gradient(90deg, #06b6d4, #d946ef, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        #scrollProgress {
+            width: 0%;
+        }
+    </style>
+
+    <div id="scrollProgress" class="fixed left-0 top-16 z-[60] h-[3px] bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 shadow-[0_0_16px_rgba(217,70,239,0.85)]"></div>
+
+    <main class="pt-16">
+        <section id="hero" class="hero-scene relative min-h-[calc(100vh-4rem)] border-b border-white/10">
+            <div class="relative z-10 grid min-h-[calc(100vh-4rem)] px-4 py-14">
+                <div class="landing-wrap grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+                    <div class="reveal-item text-center lg:text-left">
                         
-                        {{-- Menggunakan Image Logo Utilwind --}}
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-slate-900 shrink-0 shadow-inner border border-slate-200/70 dark:border-white/10 flex items-center justify-center overflow-hidden">
-                            <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain hover:scale-110 transition-transform duration-500" onerror="this.style.display='none'">
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">Utilwind</h3>
-                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Membuat UI itu mudah.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            {{-- Background Animation khusus sihir sandbox (Floating Glass Blobs) --}}
-            <div class="absolute inset-0 -z-0 lux-blobscape lux-atmosphere-layer opacity-60 wrapper-sandbox-bg">
-                <div class="lux-blob-layer lux-blob-layer-1">
-                    <div class="lux-blob lux-blob-1-1" style="width: 30vw; height: 30vw; left: 10vw; top: 20vh;"></div>
-                    <div class="lux-blob lux-blob-1-2" style="width: 25vw; height: 25vw; right: 5vw; top: 10vh;"></div>
-                </div>
-                <div class="lux-blob-layer lux-blob-layer-2">
-                    <div class="lux-blob lux-blob-2-1" style="width: 20vw; height: 20vw; right: 30vw; top: 50vh;"></div>
-                </div>
-                <div class="lux-blob-layer lux-blob-layer-3">
-                    <div class="lux-blob lux-blob-3-1" style="width: 15vw; height: 15vw; left: 50vw; top: 60vh;"></div>
-                </div>
-                <div class="absolute inset-0 bg-slate-50/70 dark:bg-[#020617]/70 backdrop-blur-sm"></div>
-            </div>
-        </div>
-    </section>
 
-    {{-- BENTO GRID FEATURES --}}
-    <section id="fitur" class="py-16 md:py-24 relative border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617]">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <div class="text-center mb-12 md:mb-16 md:mb-24 reveal">
-                <div class="inline-block px-3 py-1.5 md:px-4 md:py-1.5 rounded-full border border-cyan-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400 text-[9px] md:text-[10px] font-bold tracking-widest uppercase mb-4 md:mb-6 bg-cyan-50 dark:bg-cyan-500/10 shadow-sm">Fasilitas Belajar</div>
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 md:mb-6 leading-tight text-balance">Apa saja yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600">akan didapat?</span></h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-                {{-- Feature 1 --}}
-                <div class="md:col-span-2 group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-indigo-400/50 transition-all duration-500 reveal flex flex-col justify-between overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none">
-                    <div class="absolute right-0 top-0 w-48 h-48 md:w-64 md:h-64 bg-indigo-100 dark:bg-indigo-500/10 rounded-full blur-[60px] md:blur-[80px] group-hover:bg-indigo-200 transition duration-700"></div>
-                    <div class="relative z-10 flex-1">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-indigo-600 dark:text-indigo-400 shrink-0">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                        </div>
-                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Materi Terstruktur</h3>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md mb-6 md:mb-8 font-medium">Tidak perlu bingung mulai dari mana. Materi disusun bertahap, mulai dari dasar Box Model hingga teknik layout yang responsif.</p>
-                        <a href="{{ route('courses.htmldancss') }}" class="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 font-bold text-xs md:text-sm hover:bg-indigo-600 hover:text-white transition-colors border border-indigo-200 dark:border-indigo-500/30 shadow-sm">Lihat Silabus &rarr;</a>
-                    </div>
-                </div>
+                        <h1 class="max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-7xl">
+                            Belajar <span class="font-mono font-light italic text-slate-300">Utility-First</span>
+                            <span class="block gradient-text">Tailwind CSS</span>
+                        </h1>
 
-                {{-- Feature 2 --}}
-                <div class="group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-fuchsia-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 100ms">
-                    <div class="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-fuchsia-100 dark:bg-fuchsia-500/10 rounded-full blur-[50px] md:blur-[60px] group-hover:bg-fuchsia-200 transition duration-700"></div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-fuchsia-600 dark:text-fuchsia-400 shrink-0">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
-                        </div>
-                        <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Kamus Class</h3>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Kamus mini terintegrasi untuk mencari class Tailwind dengan mudah dan efisien.</p>
-                        <a href="{{ route('cheatsheet.index') }}" class="text-[10px] md:text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Buka Kamus &rarr;</a>
-                    </div>
-                </div>
+                        <p class="mt-6 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg lg:mx-0">
+                            Pelajari cara merancang antarmuka modern dengan cepat, terstruktur, dan coba langsung di fitur <strong class="font-black text-cyan-300">Live Sandbox</strong>.
+                        </p>
 
-                {{-- Feature 3 --}}
-                <div class="group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-cyan-400/50 transition-all duration-500 reveal flex flex-col h-full relative overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 200ms">
-                    <div class="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-100 dark:bg-cyan-500/10 rounded-full blur-[50px] md:blur-[60px] group-hover:bg-cyan-200 transition duration-700"></div>
-                    <div class="relative z-10 flex-1 flex flex-col">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-cyan-600 dark:text-cyan-400 shrink-0">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
-                        </div>
-                        <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Editor Native</h3>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Tidak perlu install ekstensi. Rasakan pengalaman koding modern langsung di browser.</p>
-                        <a href="{{ route('sandbox') }}" class="text-[10px] md:text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto">Mulai Koding &rarr;</a>
-                    </div>
-                </div>
+                        <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+                            <a href="{{ $primaryAction['href'] }}" class="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-sm font-black text-slate-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-slate-100">
+                                {{ $primaryAction['label'] }}
+                            </a>
 
-                {{-- Feature 4: Analytics --}}
-                <div class="md:col-span-2 group p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/5 hover:border-emerald-400/50 transition-all duration-500 reveal flex flex-col md:flex-row items-center gap-6 md:gap-8 overflow-hidden relative shadow-lg hover:shadow-xl dark:shadow-none" style="transition-delay: 300ms">
-                    <div class="absolute bottom-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-emerald-100 dark:bg-emerald-500/10 rounded-full blur-[60px] md:blur-[80px] group-hover:bg-emerald-200 transition duration-700"></div>
-                    <div class="flex-1 relative z-10 w-full text-center md:text-left">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-5 md:mb-6 text-emerald-600 dark:text-emerald-400 mx-auto md:mx-0 shrink-0">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
-                        </div>
-                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3">Pantau Progres Belajarmu</h3>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm mb-5 md:mb-6 font-medium mx-auto md:mx-0">Mulai dari durasi belajar, materi yang diselesaikan, hingga nilai kuis tercatat rapi secara visual di Dasbor.</p>
-                        <a href="{{ route('dashboard') }}" class="text-[10px] md:text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center justify-center md:justify-start gap-2 group-hover:translate-x-2 transition-transform">Lihat Dasbor &rarr;</a>
-                    </div>
-                    <div class="relative z-10 w-full md:w-64 h-32 md:h-36 bg-slate-50 dark:bg-[#020617] rounded-xl md:rounded-2xl border border-slate-200 dark:border-white/5 flex items-end gap-2 md:gap-3 p-4 md:p-5 pt-8 md:pt-10 shadow-inner">
-                        <div class="w-full bg-slate-300 dark:bg-slate-700 rounded-t-lg bar-anim transition-all duration-1000" data-h="40%"></div>
-                        <div class="w-full bg-slate-400 dark:bg-slate-600 rounded-t-lg bar-anim transition-all duration-1000 delay-100" data-h="65%"></div>
-                        <div class="w-full bg-emerald-500 rounded-t-lg bar-anim shadow-[0_0_15px_rgba(16,185,129,0.5)] md:shadow-[0_0_20px_rgba(16,185,129,0.5)] relative flex justify-center transition-all duration-1000 delay-200" data-h="95%">
-                            <span class="absolute -top-6 md:-top-7 text-[10px] md:text-[11px] font-black text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity delay-500">95%</span>
+                            <a href="#fitur" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">
+                                Lihat Fitur
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0-5 5m5-5H6" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    {{-- ALUR BELAJAR --}}
-    <section class="py-16 md:py-24 relative bg-white dark:bg-[#060a14] border-t border-slate-200 dark:border-white/5 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-center text-slate-900 dark:text-white mb-12 md:mb-16 reveal">Alur <span class="font-mono text-fuchsia-600 dark:text-fuchsia-400">Belajar</span></h2>
-            <div class="relative max-w-4xl mx-auto">
-                <div class="absolute left-[23px] sm:left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-400/30 via-fuchsia-400/30 to-transparent md:-translate-x-1/2"></div>
-                <div class="space-y-8 md:space-y-12">
-                    @foreach([
-                        ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />', 'color' => 'text-cyan-500', 'title' => 'Pilih Materi', 'desc' => 'Tentukan kelas atau topik spesifik Tailwind CSS yang ingin kamu kuasai hari ini.'],
-                        ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />', 'color' => 'text-fuchsia-500', 'title' => 'Baca Teori Singkat', 'desc' => 'Pahami konsep utility-first dengan bahasa yang sederhana dan langsung ke intinya.'],
-                        ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />', 'color' => 'text-indigo-500', 'title' => 'Langsung Praktik', 'desc' => 'Gunakan Live Sandbox untuk menulis dan melihat hasil kodemu secara instan.'],
-                        ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />', 'color' => 'text-emerald-500', 'title' => 'Kumpulkan Poin', 'desc' => 'Jawab kuis ringan di akhir materi untuk memastikan kamu benar-benar paham.']
-                    ] as $i => $step)
-                    <div class="relative flex flex-row items-center md:items-start justify-normal md:even:flex-row-reverse group reveal">
-                        <div class="absolute left-0 md:left-1/2 w-12 h-12 sm:w-14 sm:h-14 icon-luxury rounded-full flex items-center justify-center shadow-lg z-10 group-hover:scale-110 transition duration-500 md:-translate-x-1/2 shrink-0 {{ $step['color'] }}">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $step['icon'] !!}</svg>
+                    <div class="event-card glass-card reveal-item overflow-hidden p-4 text-white sm:p-5">
+                        <div class="mb-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-black">Live Sandbox</p>
+                                <p class="text-xs text-slate-300">Ketik kode dan lihat hasilnya.</p>
+                            </div>
+                            
                         </div>
-                        <div class="w-full pl-16 sm:pl-20 md:pl-0 md:w-[45%]">
-                            <div class="p-5 md:p-8 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/5 rounded-2xl md:rounded-[1.5rem] group-hover:bg-white dark:group-hover:bg-slate-900/50 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-default">
-                                <span class="text-[9px] md:text-[10px] font-mono {{ $step['color'] }} mb-2 md:mb-3 block font-bold uppercase tracking-widest">Langkah 0{{ $i+1 }}</span>
-                                <h3 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2">{{ $step['title'] }}</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{{ $step['desc'] }}</p>
+
+                        <div class="grid gap-3 sm:grid-cols-[1fr_0.85fr]">
+                            <div id="tiltEditor" class="rounded-2xl bg-[#020617]/90 p-4 transition-transform duration-200">
+                                <div class="mb-4 flex gap-2">
+                                    <span class="h-3 w-3 rounded-full bg-red-400"></span>
+                                    <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+                                </div>
+
+                                <pre class="overflow-hidden text-xs leading-6 text-slate-200"><code>&lt;button class="<span id="autoType" class="text-cyan-300"></span>"&gt;
+  Mulai Belajar
+&lt;/button&gt;</code></pre>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                                    <p class="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Progres Materi</p>
+                                    <div class="mt-3 h-2 rounded-full bg-white/15">
+                                        <div class="progress-line h-2 rounded-full bg-cyan-400" data-progress="82%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                                    <p class="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Progres Lab</p>
+                                    <div class="mt-3 h-2 rounded-full bg-white/15">
+                                        <div class="progress-line h-2 rounded-full bg-fuchsia-400" data-progress="64%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                                    <p class="text-sm font-black">Nilai rata-rata kuis</p>
+                                    <p class="mt-1 text-4xl font-black text-white">95</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-200 bg-white px-4 py-10 dark:border-white/10 dark:bg-[#020617]">
+            <div class="landing-wrap reveal-item text-center">
+                <p class="mb-7 text-sm font-black uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                    Teknologi dan fasilitas yang digunakan
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    @foreach($techStacks as $tech)
+                        <span class="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-sm font-black text-slate-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                            {{ $tech }}
+                        </span>
                     @endforeach
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    {{-- TARGET AUDIENCE SECTION --}}
-    <section class="py-16 md:py-24 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-center text-slate-900 dark:text-white mb-10 md:mb-12 revealleading-tight text-balance">Siapa yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500 leading-tight">Cocok Belajar di Sini?</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 reveal">
-                @foreach([
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.434 4.434 0 002.946-2.946 4.493 4.493 0 004.306-1.758q-2.25-.001-4.501-4.5m0 0l-1.06-1.06" />', 'color' => 'text-cyan-600 dark:text-cyan-400', 'title' => 'Pemula (Beginner)', 'desc' => 'Yang baru belajar HTML & CSS dan ingin transisi ke framework modern.'],
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />', 'color' => 'text-fuchsia-600 dark:text-fuchsia-400', 'title' => 'Frontend Developer', 'desc' => 'Yang ingin membuat UI cepat dan responsif tanpa pusing memikirkan class CSS.'],
-                    ['icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />', 'color' => 'text-indigo-600 dark:text-indigo-400', 'title' => 'Mahasiswa IT', 'desc' => 'Sebagai bahan referensi tugas akhir, atau persiapan portofolio kerja.']
-                ] as $aud)
-                <div class="bg-white/90 dark:bg-[#0a0e17]/90 backdrop-blur-sm p-6 sm:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 dark:border-white/5 text-center hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-xl relative overflow-hidden">
-                    <div class="w-14 h-14 md:w-16 md:h-16 mx-auto rounded-xl md:rounded-2xl icon-luxury flex items-center justify-center mb-4 md:mb-6 {{ $aud['color'] }} relative z-10 shrink-0">
-                        <svg class="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">{!! $aud['icon'] !!}</svg>
-                    </div>
-                    <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-3 relative z-10">{{ $aud['title'] }}</h3>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed relative z-10">{{ $aud['desc'] }}</p>
-                    {{-- Subtle background blobcape --}}
-                    <div class="absolute -inset-2 wrapper-bento-audience-bg opacity-30">
-                        <div class="lux-blobascape" style="position: absolute; inset: 0; background: conic-gradient(from 180deg at 50% 50%, #d946ef22, #06b6d422); blur: 3xl; rounded: full;"></div>
-                    </div>
-                </div>
+        <section class="border-b border-slate-200 bg-slate-50 px-4 py-12 dark:border-white/10 dark:bg-[#020617]">
+            <div class="landing-wrap grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach($stats as $stat)
+                    @php
+                        $statTone = [
+                            'cyan' => 'text-cyan-500 dark:text-cyan-400',
+                            'fuchsia' => 'text-fuchsia-500 dark:text-fuchsia-400',
+                            'indigo' => 'text-indigo-500 dark:text-indigo-400',
+                            'emerald' => 'text-emerald-500 dark:text-emerald-400',
+                        ][$stat['color']];
+                    @endphp
+
+                    <article class="stat-card reveal-item border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-[#0f141e]">
+                        <p class="text-4xl font-black {{ $statTone }}">
+                            <span class="counter" data-target="{{ $stat['num'] }}">0</span>{{ $stat['suffix'] }}
+                        </p>
+                        <h3 class="mt-3 text-base font-black text-slate-900 dark:text-white">{{ $stat['title'] }}</h3>
+                        <p class="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">{{ $stat['text'] }}</p>
+                    </article>
                 @endforeach
             </div>
-        </div>
-        {{-- Background Animation Target Audience (Layered Glass Blobs) --}}
-        <div class="absolute inset-0 -z-0 lux-blobscape lux-atmosphere-layer opacity-40 wrapper-audience-bg">
-            <div class="lux-blob-layer lux-blob-layer-1">
-                <div class="lux-blob lux-blob-1-1" style="width: 25vw; height: 25vw; left: -5vw; top: 10vh; background: #06b6d433; animation-duration: 22s;"></div>
-            </div>
-            <div class="lux-blob-layer lux-blob-layer-3">
-                <div class="lux-blob lux-blob-3-1" style="width: 18vw; height: 18vw; right: 10vw; bottom: 5vh; background: #d946ef33; animation-duration: 18s;"></div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    {{-- CALL TO ACTION --}}
-    <section class="py-20 md:py-32 relative bg-white dark:bg-[#060a14] overflow-hidden border-t border-slate-200 dark:border-white/5">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-gradient-to-r from-cyan-400/20 via-fuchsia-400/20 to-indigo-400/20 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse"></div>
-        <div class="max-w-3xl mx-auto px-5 text-center relative z-10 reveal">
-            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4 md:mb-6 leading-[1.15] text-balance">Siap Menjadi <br class="hidden sm:block"> Tailwind Expert?</h2>
-            <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base md:text-lg mb-8 md:mb-10 max-w-xl mx-auto font-medium text-balance">Buat akun gratismu hari ini. Akses penuh ke materi, kamus class, dan live sandbox tanpa batasan.</p>
-            
-            @guest
-                <a href="{{ route('register') }}" class="liquid-glass inline-flex items-center justify-center gap-2 px-8 py-4 md:px-10 md:py-5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-lg shadow-xl hover:shadow-2xl w-full sm:w-auto">
-                    Daftar Sekarang - Gratis!
-                </a>
-            @else
-                <a href="{{ route('dashboard') }}" class="liquid-glass inline-flex items-center justify-center gap-2 px-8 py-4 md:px-10 md:py-5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm md:text-lg shadow-xl hover:shadow-2xl w-full sm:w-auto">
-                    Lanjutkan Belajar &rarr;
-                </a>
-            @endguest
-        </div>
-    </section>
+        <section id="sandbox" class="border-b border-slate-200 bg-white px-4 py-16 dark:border-white/10 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap">
+                <div class="reveal-item mx-auto mb-10 max-w-3xl text-center">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-fuchsia-600 dark:text-fuchsia-400">Live Sandbox</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Ketik kodenya, lihat hasilnya.
+                    </h2>
+                    <p class="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
+                        Tidak perlu refresh dan tidak perlu instalasi. Pembelajar bisa mencoba komponen sederhana secara langsung.
+                    </p>
+                </div>
 
-    {{-- FOOTER --}}
-    <footer class="bg-slate-50 dark:bg-[#020617] border-t border-slate-200 dark:border-white/10 pt-12 pb-8 md:pt-16 md:pb-8">
-        <div class="max-w-7xl mx-auto px-5 lg:px-8">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-8 mb-10 md:mb-12">
+                <div class="event-card reveal-item grid overflow-hidden border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#0f141e] lg:grid-cols-2 lg:p-6">
+                    <div class="rounded-2xl bg-[#020617] p-5">
+                        <div class="mb-4 flex gap-2">
+                            <span class="h-3 w-3 rounded-full bg-red-400"></span>
+                            <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                            <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+                        </div>
+
+                        <pre class="overflow-x-auto text-xs leading-7 text-slate-200"><code>&lt;div class="bg-white rounded-2xl shadow-xl p-6 flex items-center gap-5"&gt;
+  &lt;img src="utilwind.png" class="w-10 h-10"&gt;
+  &lt;div&gt;
+    &lt;h3 class="text-xl font-bold"&gt;Utilwind&lt;/h3&gt;
+    &lt;p class="text-sm text-slate-500"&gt;Membuat UI itu mudah.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+
+                    <div class="grid min-h-[260px] place-items-center rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-[#020617]">
+                        <div class="flex w-full max-w-sm items-center gap-5 rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#0f141e]">
+                            <div class="grid h-16 w-16 shrink-0 place-items-center rounded-full border border-slate-200 bg-white dark:border-white/10 dark:bg-[#020617]">
+                                <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-950 dark:text-white">Utilwind</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Membuat UI itu mudah.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fitur" class="border-b border-slate-200 bg-slate-50 px-4 py-16 dark:border-white/10 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap">
+                <div class="reveal-item mb-12 text-center">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400">Fasilitas Belajar</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Apa saja yang akan didapat?
+                    </h2>
+                </div>
+
+                <div class="grid gap-5 md:grid-cols-2">
+                    @foreach($features as $feature)
+                        @php
+                            $tone = [
+                                'cyan' => 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-500/10 dark:text-cyan-300 dark:border-cyan-500/20',
+                                'fuchsia' => 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-500/10 dark:text-fuchsia-300 dark:border-fuchsia-500/20',
+                                'indigo' => 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/20',
+                                'emerald' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20',
+                            ][$feature['tone']];
+                        @endphp
+
+                        <article class="feature-card reveal-item border border-slate-200 bg-white p-7 dark:border-white/10 dark:bg-[#0f141e]">
+                            <span class="inline-flex rounded-full border px-3 py-1 text-xs font-black {{ $tone }}">
+                                {{ $feature['label'] }}
+                            </span>
+
+                            <h3 class="mt-6 text-2xl font-black text-slate-950 dark:text-white">
+                                {{ $feature['title'] }}
+                            </h3>
+
+                            <p class="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                                {{ $feature['desc'] }}
+                            </p>
+
+                            <a href="{{ $feature['href'] }}" class="mt-7 inline-flex rounded-full bg-slate-950 px-5 py-2.5 text-sm font-black text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200">
+                                {{ $feature['button'] }}
+                            </a>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section id="materi" class="border-b border-slate-200 bg-white px-4 py-16 dark:border-white/10 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+                <div class="reveal-item">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-fuchsia-600 dark:text-fuchsia-400">Ruang Belajar</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Baca. Coba. Evaluasi.
+                    </h2>
+                    <p class="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                        Alur belajar dibuat sederhana agar siswa langsung paham bagian yang harus dibuka berikutnya.
+                    </p>
+                </div>
+
+                <div class="module-card reveal-item border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#0f141e] sm:p-5">
+                    <div class="flex gap-2 rounded-2xl bg-white p-2 dark:bg-[#020617]" role="tablist" aria-label="Alur belajar Utilwind">
+                        @foreach($modules as $module)
+                            <button type="button" class="module-tab flex-1 rounded-xl px-4 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10" data-module-tab="{{ $loop->index }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">
+                                {{ $module['tab'] }}
+                            </button>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-5">
+                        @foreach($modules as $module)
+                            <article class="{{ $loop->first ? '' : 'hidden' }}" data-module-panel="{{ $loop->index }}">
+                                <h3 class="text-2xl font-black text-slate-950 dark:text-white">
+                                    {{ $module['title'] }}
+                                </h3>
+
+                                <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                                    {{ $module['desc'] }}
+                                </p>
+
+                                <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                                    @foreach($module['items'] as $item)
+                                        <div class="rounded-2xl border border-slate-200 bg-white p-4 text-sm font-black text-slate-700 dark:border-white/10 dark:bg-[#020617] dark:text-slate-200">
+                                            {{ $item }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="alur" class="border-b border-slate-200 bg-slate-50 px-4 py-16 dark:border-white/10 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap">
+                <div class="reveal-item mx-auto mb-12 max-w-3xl text-center">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">Alur Belajar</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Dari memilih materi sampai mengukur pemahaman.
+                    </h2>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    @foreach($steps as $index => $step)
+                        <article class="step-card reveal-item rounded-[1.35rem] border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-[#0f141e]">
+                            <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 via-fuchsia-500 to-indigo-500 text-sm font-black text-white">
+                                {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                            </span>
+
+                            <h3 class="mt-5 text-xl font-black text-slate-950 dark:text-white">
+                                {{ $step['title'] }}
+                            </h3>
+
+                            <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                                {{ $step['desc'] }}
+                            </p>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section id="target" class="border-b border-slate-200 bg-white px-4 py-16 dark:border-white/10 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap">
+                <div class="reveal-item mx-auto mb-12 max-w-3xl text-center">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400">Target Pengguna</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Siapa yang cocok belajar di sini?
+                    </h2>
+                </div>
+
+                <div class="grid gap-5 md:grid-cols-3">
+                    @foreach($audiences as $audience)
+                        <article class="audience-card reveal-item rounded-[1.35rem] border border-slate-200 bg-slate-50 p-7 text-center dark:border-white/10 dark:bg-[#0f141e]">
+                            <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-cyan-400 via-fuchsia-500 to-indigo-500 text-lg font-black text-white">
+                                {{ substr($audience['title'], 0, 1) }}
+                            </div>
+
+                            <h3 class="mt-5 text-xl font-black text-slate-950 dark:text-white">
+                                {{ $audience['title'] }}
+                            </h3>
+
+                            <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                                {{ $audience['desc'] }}
+                            </p>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="bg-slate-50 px-4 py-16 dark:bg-[#020617] lg:py-24">
+            <div class="landing-wrap max-w-4xl">
+                <div class="reveal-item text-center">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-fuchsia-600 dark:text-fuchsia-400">Tanya Jawab</p>
+                    <h2 class="mt-3 text-3xl font-black text-slate-950 dark:text-white sm:text-5xl">
+                        Pertanyaan singkat.
+                    </h2>
+                </div>
+
+                <div class="faq-card reveal-item mt-10 divide-y divide-slate-200 border border-slate-200 bg-white dark:divide-white/10 dark:border-white/10 dark:bg-[#0f141e]">
+                    @foreach($faqs as $faq)
+                        <article>
+                            <button type="button" class="faq-toggle flex w-full items-center justify-between gap-4 px-6 py-5 text-left" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">
+                                <span class="text-base font-black text-slate-950 dark:text-white">
+                                    {{ $faq['q'] }}
+                                </span>
+
+                                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-700 dark:bg-[#020617] dark:text-slate-200">
+                                    <svg class="h-4 w-4 transition-transform {{ $loop->first ? 'rotate-45' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
+                                    </svg>
+                                </span>
+                            </button>
+
+                            <div class="faq-panel {{ $loop->first ? '' : 'hidden' }} px-6 pb-6">
+                                <p class="text-sm leading-7 text-slate-600 dark:text-slate-400">
+                                    {{ $faq['a'] }}
+                                </p>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-[#020617] px-4 py-14 text-white">
+            <div class="landing-wrap reveal-item flex flex-col gap-5 text-center lg:flex-row lg:items-center lg:justify-between lg:text-left">
+                <div>
+                    <h2 class="text-3xl font-black sm:text-4xl">
+                        Siap menjadi Tailwind Expert?
+                    </h2>
+
+                    <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+                        Buat akun gratis, akses materi, buka kamus class, dan coba Live Sandbox langsung di browser.
+                    </p>
+                </div>
+
+                <a href="{{ $primaryAction['href'] }}" class="inline-flex justify-center rounded-full bg-white px-7 py-3 text-sm font-black text-slate-950 transition hover:bg-slate-100">
+                    {{ auth()->check() ? 'Lanjutkan Belajar' : 'Daftar Sekarang - Gratis!' }}
+                </a>
+            </div>
+        </section>
+
+        <footer class="border-t border-slate-200 bg-white px-4 py-10 dark:border-white/10 dark:bg-[#020617]">
+            <div class="landing-wrap flex flex-col gap-6 text-sm text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center lg:justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind" class="h-6 md:h-8 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500" onerror="this.style.display='none'">
-                    <span class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Utilwind</span>
+                    <img src="{{ asset('images/logo.png') }}" alt="Utilwind" class="h-8 w-auto" onerror="this.style.display='none'">
+                    <p>
+                        <strong class="text-slate-900 dark:text-white">Utilwind</strong>
+                        - media pembelajaran interaktif berbasis web.
+                    </p>
                 </div>
-                <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400">
-                    <a href="{{ route('courses.htmldancss') }}" class="hover:text-cyan-600 transition-colors">Course</a>
-                    <a href="{{ route('sandbox') }}" class="hover:text-cyan-600 transition-colors">Sandbox</a>
-                    <a href="{{ route('cheatsheet.index') }}" class="hover:text-fuchsia-600 transition-colors">Cheat Sheet</a>
-                    <a href="{{ route('gallery.index') }}" class="hover:text-emerald-600 transition-colors">Gallery</a>
-                </div>
-                <div class="flex flex-wrap justify-center gap-3 md:gap-4 text-xs md:text-sm font-bold">
-                    @guest
-                        <a href="{{ route('login') }}" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-2 md:px-4 md:py-2">Masuk</a>
-                        <a href="{{ route('register') }}" class="text-white dark:text-[#020617] bg-slate-900 dark:bg-white hover:bg-slate-800 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-xl shadow-sm">Daftar</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/30 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-xl border border-indigo-200 dark:border-indigo-500/30">Ke Dasbor &rarr;</a>
-                    @endguest
+
+                <div class="flex flex-wrap gap-5">
+                    <a href="{{ $safeRoute('courses.htmldancss') }}" class="hover:text-slate-950 dark:hover:text-white">Course</a>
+                    <a href="{{ $safeRoute('sandbox') }}" class="hover:text-slate-950 dark:hover:text-white">Sandbox</a>
+                    <a href="{{ $safeRoute('cheatsheet.index') }}" class="hover:text-slate-950 dark:hover:text-white">Cheat Sheet</a>
+                    <a href="{{ $safeRoute('gallery.index') }}" class="hover:text-slate-950 dark:hover:text-white">Gallery</a>
                 </div>
             </div>
-            
-        </div>
-    </footer>
-
+        </footer>
+    </main>
 </div>
 
-{{-- SCRIPT JQUERY & LOGIC ANIMASI --}}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-// THEME SWITCHER
-const htmlEl = document.documentElement;
-const themeToggleBtn = document.getElementById('themeToggle');
-function initTheme() {
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        htmlEl.classList.add('dark');
-    } else { htmlEl.classList.remove('dark'); }
-}
-initTheme();
-if(themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', function() {
-        htmlEl.classList.toggle('dark');
-        localStorage.setItem('color-theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
-    });
-}
+    document.addEventListener('DOMContentLoaded', function () {
+        const root = document.getElementById('landingExperience');
+        const scrollProgress = document.getElementById('scrollProgress');
 
-$(document).ready(function() {
-    // Scroll Progress
-    $(window).scroll(function() {
-        let winScroll = $(this).scrollTop();
-        let height = $(document).height() - $(window).height();
-        $("#scrollProgress").css("width", (winScroll / height) * 100 + "%");
-    });
-
-    // Mouse Parallax Glow
-    if(window.innerWidth > 768) {
-        $(document).mousemove(function(e) { 
-            let x = e.clientX / window.innerWidth, y = e.clientY / window.innerHeight;
-            
-            // Atmosfera glows
-            $('#glow-1').css('transform', `translate(${x * 40}px, ${y * 40}px)`);
-            $('#glow-2').css('transform', `translate(-${x * 30}px, -${y * 30}px)`);
-            
-            // Sihir Sandbox blobcscape parallax
-            $('.wrapper-sandbox-bg').css('transform', `translate(${x * -20}px, ${y * -20}px)`);
-            
-            // Audience blobcscape parallax
-            $('.wrapper-audience-bg').css('transform', `translate(${x * 20}px, ${y * 20}px)`);
-        });
-    }
-
-    // 3D Tilt Effect
-    if(window.innerWidth > 1024) {
-        $('.perspective-1000').on('mousemove', function(e) {
-            let el = $('#tiltEditor');
-            let offset = $(this).offset(), w = $(this).width(), h = $(this).height();
-            let mouseX = e.pageX - offset.left - w / 2, mouseY = e.pageY - offset.top - h / 2;
-            let rotateX = (mouseY / h) * 12, rotateY = (mouseX / w) * -12;
-            el.css('transform', `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`);
-        });
-        $('.perspective-1000').on('mouseleave', function() {
-            $('#tiltEditor').css({ 'transform': 'perspective(1000px) rotateY(-3deg) rotateX(3deg) scale3d(1, 1, 1)' });
-        });
-    }
-
-    // Advanced Auto Typing
-    const classesToType = [
-        "bg-gradient-to-r from-cyan-500", 
-        "hover:scale-110 shadow-lg", 
-        "px-6 py-3 rounded-full text-white",
-    ];
-    let typeIndex = 0, charIndex = 0, isDeleting = false, typeElement = $('#autoType');
-
-    function typeEffect() {
-        let currentString = classesToType[typeIndex];
-        if (isDeleting) {
-            typeElement.text(currentString.substring(0, charIndex - 1)); charIndex--;
-        } else {
-            typeElement.text(currentString.substring(0, charIndex + 1)); charIndex++;
+        function setAllVisible() {
+            document.querySelectorAll('.reveal-item').forEach(function (item) {
+                item.classList.add('is-visible');
+            });
         }
-        let typeSpeed = isDeleting ? 25 : 70;
-        if (!isDeleting && charIndex === currentString.length) {
-            typeSpeed = 2500; isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false; typeIndex = (typeIndex + 1) % classesToType.length; typeSpeed = 500; 
-        }
-        setTimeout(typeEffect, typeSpeed);
-    }
-    setTimeout(typeEffect, 1000); 
 
-    // Intersection Observer
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                $(entry.target).addClass('show');
-                $(entry.target).find('.bar-anim').each(function() {
-                    $(this).css('height', $(this).data('h'));
+        try {
+            window.addEventListener('scroll', function () {
+                if (!scrollProgress) return;
+
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = height > 0 ? (scrollTop / height) * 100 : 0;
+
+                scrollProgress.style.width = progress + '%';
+            }, { passive: true });
+
+            document.querySelectorAll('.progress-line').forEach(function (line) {
+                const target = line.getAttribute('data-progress') || '70%';
+
+                line.style.width = '0%';
+
+                requestAnimationFrame(function () {
+                    line.style.transition = 'width 850ms ease';
+                    line.style.width = target;
                 });
-                observer.unobserve(entry.target); 
-            }
-        });
-    }, { threshold: 0.15 });
-    $('.reveal').each(function() { observer.observe(this); });
+            });
 
-    // Canvas Particles
-    if(window.innerWidth > 768) {
-        const canvas = document.getElementById('starsCanvas');
-        if(canvas) {
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            $(window).on('resize', resize); resize();
-            for(let i=0; i<50; i++) {
-                particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, vx: Math.random() * 0.3 - 0.15, vy: Math.random() * 0.3 - 0.15 });
+            const typeList = [
+                'rounded-full bg-white px-6 py-3',
+                'hover:scale-105 transition shadow-xl',
+                'font-black text-slate-950'
+            ];
+
+            let typeIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const autoType = document.getElementById('autoType');
+
+            function typingEffect() {
+                if (!autoType) return;
+
+                const currentText = typeList[typeIndex];
+
+                charIndex = isDeleting ? charIndex - 1 : charIndex + 1;
+                autoType.textContent = currentText.substring(0, charIndex);
+
+                let speed = isDeleting ? 32 : 58;
+
+                if (!isDeleting && charIndex === currentText.length) {
+                    speed = 1400;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    typeIndex = (typeIndex + 1) % typeList.length;
+                    speed = 350;
+                }
+
+                window.setTimeout(typingEffect, speed);
             }
-            function drawParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = htmlEl.classList.contains('dark') ? 'rgba(255, 255, 255, 0.3)' : 'rgba(15, 23, 42, 0.1)';
-                ctx.beginPath();
-                particles.forEach(p => {
-                    ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    p.x += p.vx; p.y += p.vy;
-                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            typingEffect();
+
+            if (window.innerWidth > 1024) {
+                document.querySelectorAll('.event-card').forEach(function (eventCard) {
+                    eventCard.addEventListener('mousemove', function (event) {
+                        const tiltEditor = document.getElementById('tiltEditor');
+                        if (!tiltEditor) return;
+
+                        const rect = eventCard.getBoundingClientRect();
+                        const mouseX = event.clientX - rect.left - rect.width / 2;
+                        const mouseY = event.clientY - rect.top - rect.height / 2;
+                        const rotateX = (mouseY / rect.height) * -5;
+                        const rotateY = (mouseX / rect.width) * 5;
+
+                        tiltEditor.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    });
+
+                    eventCard.addEventListener('mouseleave', function () {
+                        const tiltEditor = document.getElementById('tiltEditor');
+                        if (tiltEditor) {
+                            tiltEditor.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+                        }
+                    });
                 });
-                ctx.fill(); requestAnimationFrame(drawParticles);
             }
-            drawParticles();
+
+            document.querySelectorAll('[data-module-tab]').forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    const target = String(tab.getAttribute('data-module-tab'));
+
+                    document.querySelectorAll('[data-module-tab]').forEach(function (item) {
+                        item.setAttribute('aria-selected', 'false');
+                    });
+
+                    tab.setAttribute('aria-selected', 'true');
+
+                    document.querySelectorAll('[data-module-panel]').forEach(function (panel) {
+                        panel.classList.add('hidden');
+                    });
+
+                    const activePanel = document.querySelector('[data-module-panel="' + target + '"]');
+                    if (activePanel) {
+                        activePanel.classList.remove('hidden');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.faq-toggle').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const article = button.closest('article');
+                    if (!article) return;
+
+                    const panel = article.querySelector('.faq-panel');
+                    const icon = button.querySelector('svg');
+                    const isOpen = button.getAttribute('aria-expanded') === 'true';
+
+                    button.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+
+                    if (icon) {
+                        icon.classList.toggle('rotate-45', !isOpen);
+                    }
+
+                    if (panel) {
+                        panel.classList.toggle('hidden', isOpen);
+                    }
+                });
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+                anchor.addEventListener('click', function (event) {
+                    const href = anchor.getAttribute('href');
+                    if (!href || href === '#') return;
+
+                    const target = document.querySelector(href);
+                    if (!target) return;
+
+                    event.preventDefault();
+
+                    const top = target.getBoundingClientRect().top + window.scrollY - 86;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                });
+            });
+
+            if ('IntersectionObserver' in window) {
+                const revealObserver = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            revealObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.16 });
+
+                document.querySelectorAll('.reveal-item').forEach(function (item) {
+                    revealObserver.observe(item);
+                });
+
+                const counterObserver = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (!entry.isIntersecting) return;
+
+                        const counter = entry.target;
+                        const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
+                        const duration = 850;
+                        const startTime = performance.now();
+
+                        function animateCounter(currentTime) {
+                            const progress = Math.min((currentTime - startTime) / duration, 1);
+                            const value = Math.floor(progress * target);
+
+                            counter.textContent = value;
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animateCounter);
+                            } else {
+                                counter.textContent = target;
+                            }
+                        }
+
+                        requestAnimationFrame(animateCounter);
+                        counterObserver.unobserve(counter);
+                    });
+                }, { threshold: 0.5 });
+
+                document.querySelectorAll('.counter').forEach(function (counter) {
+                    counterObserver.observe(counter);
+                });
+            } else {
+                setAllVisible();
+
+                document.querySelectorAll('.counter').forEach(function (counter) {
+                    counter.textContent = counter.getAttribute('data-target') || '0';
+                });
+            }
+
+            window.setTimeout(function () {
+                setAllVisible();
+            }, 1200);
+        } catch (error) {
+            console.error('Landing page script error:', error);
+            setAllVisible();
         }
-    }
-});
+    });
 </script>
 @endsection

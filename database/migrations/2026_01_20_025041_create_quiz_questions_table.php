@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quiz_questions', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('quiz_id')->constrained()->cascadeOnDelete();
-    $table->text('question');
-    $table->json('options');
-    $table->integer('correct_index');
-    $table->timestamps();
-});
+        if (!Schema::hasTable('quiz_questions')) {
+            Schema::create('quiz_questions', function (Blueprint $table) {
+                $table->id();
+                $table->integer('chapter_id');
+                $table->text('question_text');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -17,7 +17,16 @@ class QuizAttemptAnswer extends Model
         'quiz_question_id',
         'quiz_option_id',  // Pastikan ejaannya sama persis dengan di database
         'is_flagged',
-        'is_correct'       // Tambahkan ini agar analisis jawaban benar/salah tersimpan
+        'is_correct',       // Tambahkan ini agar analisis jawaban benar/salah tersimpan
+        'answer_change_count',
+        'client_elapsed_seconds',
+        'first_answered_at',
+        'last_answered_at'
+    ];
+
+    protected $casts = [
+        'first_answered_at' => 'datetime',
+        'last_answered_at' => 'datetime',
     ];
 
     // Relasi (Opsional tapi berguna nanti)

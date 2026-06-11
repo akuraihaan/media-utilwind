@@ -43,11 +43,6 @@
     </style>
 </head>
 
-{{-- 
-    PERHATIAN DI SINI:
-    Jangan gunakan bg-[#020617] atau text-white secara langsung.
-    Gunakan format adaptif: bg-slate-50 dark:bg-[#020617] 
---}}
 <body class="font-sans antialiased bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500 min-h-screen flex flex-col">
 
     {{-- Konten dari halaman lain akan dimuat di sini --}}

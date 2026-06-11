@@ -191,13 +191,19 @@ class AdminDashboardController extends Controller
         DB::beginTransaction();
         try {
             $count = 0;
+            $skipped = 0;
             while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+                if (count($row) < 2 || empty($row[0]) || empty($row[1]) || !filter_var($row[1], FILTER_VALIDATE_EMAIL)) {
+                    $skipped++;
+                    continue;
+                }
+
                 User::updateOrCreate(
-                    ['email' => $row[1]], 
+                    ['email' => trim($row[1])], 
                     [
-                        'name' => $row[0],
-                        'class_group' => $row[2] ?? null,
-                        'institution' => $row[3] ?? null,
+                        'name' => trim($row[0]),
+                        'class_group' => isset($row[2]) ? trim($row[2]) : null,
+                        'institution' => isset($row[3]) ? trim($row[3]) : null,
                         'password' => Hash::make($row[4] ?? 'password123'),
                         'role' => 'student',
                         'email_verified_at' => now(),
@@ -208,9 +214,14 @@ class AdminDashboardController extends Controller
             DB::commit();
 
             // Rekam Audit Log (Batch Import)
-            $this->logAudit('import_users_csv', 'System', 0, null, ['total_imported' => $count]);
+            $this->logAudit('import_users_csv', 'System', 0, null, ['total_imported' => $count, 'total_skipped' => $skipped]);
 
-            return redirect()->back()->with('success', 'Import berhasil!');
+            $message = "Import berhasil! {$count} data siswa diproses.";
+            if ($skipped > 0) {
+                $message .= " {$skipped} baris dilewati karena format tidak lengkap atau email tidak valid.";
+            }
+
+            return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Gagal import: ' . $e->getMessage());
@@ -287,9 +298,15 @@ class AdminDashboardController extends Controller
      */
     public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|in:admin,student',
+        ]);
         
         $beforeData = $user->only(['name', 'email', 'role']); 
-        $user->update($request->only('name', 'email', 'role'));
+        $user->update($validated);
         $afterData = $user->fresh()->only(['name', 'email', 'role']);
         
         // Rekam Audit Log
@@ -339,6 +356,16 @@ class AdminDashboardController extends Controller
     /**
      * STORE QUESTION
      */
+    public function createQuestion()
+    {
+        return view('admin.quiz.create');
+    }
+
+    public function storeQuestion(Request $request)
+    {
+        return $this->storeQuestionAdmin($request);
+    }
+
     public function storeQuestionAdmin(Request $request)
     {
         $validated = $request->validate([
@@ -641,7 +668,11 @@ class AdminDashboardController extends Controller
             'avg_score' => $labsCompleted > 0 ? round($labHistories->where('status', 'passed')->avg('final_score'), 1) : 0
         ];
 
-        $quizAttempts = \App\Models\QuizAttempt::select('id', 'user_id', 'chapter_id', 'score', 'time_spent_seconds', 'created_at')
+        $quizAttempts = \App\Models\QuizAttempt::select(
+                'id', 'user_id', 'chapter_id', 'score', 'time_spent_seconds',
+                'answered_count', 'unanswered_count', 'flagged_count', 'focus_lost_count',
+                'feedback_level', 'feedback_message', 'reflection_note', 'completed_at', 'created_at'
+            )
             ->where('user_id', $id)
             ->whereNotNull('completed_at')
             ->latest('created_at')
@@ -689,7 +720,7 @@ class AdminDashboardController extends Controller
 
         $mappedQuizzes = $quizAttempts->take(15)->map(fn ($item) => [
             'id' => 'quiz-' . $item->id,
-            'name' => $item->chapter_id == 99 ? 'Final Evaluation' : 'Evaluasi Bab ' . $item->chapter_id,
+            'name' => $item->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab ' . $item->chapter_id,
             'type' => 'quiz',
             'score' => $item->score,
             'date' => $item->created_at,

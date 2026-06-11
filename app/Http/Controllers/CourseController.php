@@ -17,115 +17,136 @@ use App\Models\LabSession;
 class CourseController extends Controller
 {
     /**
-     * Helper: Menentukan Status Kunci/Buka Setiap Bab
-     * Syarat Buka Bab Selanjutnya: Kuis Bab sebelumnya harus LULUS (Score >= 70).
+     * Mapping ini mengikuti isi tabel course_lessons.
+     * Setiap subbab terdiri dari 5 lesson: 4 materi + 1 aktivitas.
+     * Aktivitas tidak dianggap selesai hanya karena halaman discroll.
      */
-    private function getChapterStatus($userId) {
-        $completedLessons = UserLessonProgress::where('user_id', $userId)->where('completed', true)->pluck('course_lesson_id')->toArray();
-        $completedActivities = UserActivityProgress::where('user_id', $userId)->where('completed', true)->pluck('course_activity_id')->toArray();
-        
-        // Ambil ID Chapter yang Kuisnya LULUS (Score >= 70)
+    private array $lessonMap = [
+        '1.1' => ['range' => [1, 5],   'activity' => 1,  'view' => 'courses.htmldancss',     'required' => null],
+        '1.2' => ['range' => [6, 10],  'activity' => 2,  'view' => 'courses.tailwindcss',    'required' => '1.1'],
+        '1.3' => ['range' => [11, 15], 'activity' => 3,  'view' => 'courses.latarbelakang',  'required' => '1.2'],
+        '1.4' => ['range' => [16, 20], 'activity' => 4,  'view' => 'courses.implementasi',   'required' => '1.3'],
+        '1.5' => ['range' => [21, 25], 'activity' => 5,  'view' => 'courses.keunggulan',     'required' => '1.4'],
+
+        '2.1' => ['range' => [26, 30], 'activity' => 6,  'view' => 'courses.layout-mgmt',    'required' => 'quiz_1'],
+        '2.2' => ['range' => [31, 35], 'activity' => 7,  'view' => 'courses.flexbox',        'required' => '2.1'],
+        '2.3' => ['range' => [36, 40], 'activity' => 8,  'view' => 'courses.grid',           'required' => '2.2'],
+        '2.4' => ['range' => [41, 45], 'activity' => 9,  'view' => 'courses.responsive',     'required' => '2.3'],
+
+        '3.1' => ['range' => [46, 50], 'activity' => 10, 'view' => 'courses.typography',     'required' => 'quiz_2'],
+        '3.2' => ['range' => [51, 55], 'activity' => 11, 'view' => 'courses.backgrounds',    'required' => '3.1'],
+        '3.3' => ['range' => [56, 60], 'activity' => 12, 'view' => 'courses.borders',        'required' => '3.2'],
+        '3.4' => ['range' => [61, 65], 'activity' => 13, 'view' => 'courses.effects',        'required' => '3.3'],
+    ];
+
+    /**
+     * Helper: status subbab, kuis, dan unlock bab.
+     * Subbab dinilai selesai dari UserActivityProgress, bukan dari scroll lesson terakhir.
+     */
+    private function getChapterStatus($userId): array
+    {
+        $completedActivities = UserActivityProgress::where('user_id', $userId)
+            ->where('completed', true)
+            ->pluck('course_activity_id')
+            ->map(fn ($id) => (int) $id)
+            ->toArray();
+
         $passedChapters = QuizAttempt::where('user_id', $userId)
             ->whereNotNull('completed_at')
             ->select('chapter_id', 'score')
             ->get()
             ->groupBy('chapter_id')
-            ->map(fn($rows) => $rows->max('score')) // Ambil skor tertinggi
-            ->filter(fn($score) => $score >= 70)   // Filter hanya yang lulus
+            ->map(fn ($rows) => $rows->max('score'))
+            ->filter(fn ($score) => $score >= 70)
             ->keys()
-            ->map(fn($id) => (string)$id)
+            ->map(fn ($id) => (string) $id)
             ->toArray();
 
-        // Helper Check Range Lesson
-        $check = function($range, $actId) use ($completedLessons, $completedActivities) {
-            if (in_array($actId, $completedActivities)) return true;
-            $lastId = is_array($range) && count($range) == 2 ? $range[1] : (is_array($range) ? end($range) : $range);
-            return in_array($lastId, $completedLessons);
-        };
+        $status = [];
+        foreach ($this->lessonMap as $key => $meta) {
+            $status[$key] = in_array((int) $meta['activity'], $completedActivities, true);
+        }
 
-        // --- BAB 1 ---
-        $status['1.1'] = $check([1, 6], 1);
-        $status['1.2'] = $check([7, 11], 2);
-        $status['1.3'] = $check([12, 15], 3);
-        $status['1.4'] = $check([16, 19], 4);
-        $status['1.5'] = $check([20, 23], 5);
-        $status['1.6'] = $check([24, 28], 6);
-        $status['quiz_1'] = in_array('1', $passedChapters); // Syarat Buka Bab 2
-
-        // --- BAB 2 ---
-        $status['2.1'] = $check([29, 33], 7);
-        $status['2.2'] = $check([34, 40], 8);
-        $status['2.3'] = $check([41, 45], 9);
-        $status['quiz_2'] = in_array('2', $passedChapters); // Syarat Buka Bab 3
-
-        // --- BAB 3 ---
-        $status['3.1'] = $check([46, 51], 10);
-        $status['3.2'] = $check([52, 55], 11);
-        $status['3.3'] = $check([56, 59], 12);
-        $status['3.4'] = $check([60, 65], 13);
+        $status['quiz_1'] = in_array('1', $passedChapters, true);
+        $status['quiz_2'] = in_array('2', $passedChapters, true);
+        $status['quiz_3'] = in_array('3', $passedChapters, true);
 
         return $status;
     }
 
     /**
-     * Main View Loader
+     * Loader utama setiap subbab.
      */
-    private function loadView($view, $currentKey, $lessonRange, $activityId, $requiredKey = null)
+    private function loadView(string $view, string $currentKey, array $lessonRange, int $activityId, ?string $requiredKey = null)
     {
         $user = Auth::user();
         $userId = $user->id;
-        $isAdmin = $user->role === 'admin'; // DETEKSI ADMIN
-        
-        $course = Course::where('slug', 'tailwind-css')->firstOrFail(); 
+        $isAdmin = $user->role === 'admin';
+
+        $course = Course::where('slug', 'tailwind-css')->first()
+            ?? Course::where('slug', 'tailwind-foundation')->first()
+            ?? Course::find(1)
+            ?? Course::firstOrFail();
+
         $statusMap = $this->getChapterStatus($userId);
 
-        // PENGECEKAN BLOKIR (BYPASS UNTUK ADMIN)
-        // Admin akan langsung lolos dari blokir ini, siswa biasa akan dicek status materinya.
         if (!$isAdmin && $requiredKey && empty($statusMap[$requiredKey])) {
-            return redirect()->route('dashboard')->with('error', 'Selesaikan materi/kuis sebelumnya untuk mengakses halaman ini!');
+            return redirect()
+                ->route('dashboard')
+                ->with('error', 'Selesaikan materi/kuis sebelumnya untuk mengakses halaman ini!');
         }
 
-        // Logic Progress Bar
-        $targetIds = (is_array($lessonRange) && count($lessonRange) == 2) ? range($lessonRange[0], $lessonRange[1]) : $lessonRange;
-        $completedIds = UserLessonProgress::where('user_id', $userId)->where('completed', true)->pluck('course_lesson_id')->toArray();
+        $targetIds = range($lessonRange[0], $lessonRange[1]);
+
+        $completedIds = UserLessonProgress::where('user_id', $userId)
+            ->where('completed', true)
+            ->pluck('course_lesson_id')
+            ->map(fn ($id) => (int) $id)
+            ->toArray();
+
+        $activityDone = UserActivityProgress::where('user_id', $userId)
+            ->where('course_activity_id', $activityId)
+            ->where('completed', true)
+            ->exists();
+
+        /**
+         * Progress subbab:
+         * - 4 lesson materi tersimpan lewat scroll.
+         * - 1 lesson aktivitas hanya tersimpan setelah aktivitas valid.
+         * - Jika aktivitas sudah valid, subbab langsung 100%.
+         */
         $doneCount = count(array_intersect($targetIds, $completedIds));
-        $percent = count($targetIds) > 0 ? round(($doneCount / count($targetIds)) * 100) : 0;
-        
-        $actDone = UserActivityProgress::where('user_id', $userId)->where('course_activity_id', $activityId)->where('completed', true)->exists();
-        if ($actDone) $percent = 100;
+        $progressPercent = count($targetIds) > 0 ? round(($doneCount / count($targetIds)) * 100) : 0;
+        if ($activityDone) {
+            $progressPercent = 100;
+        }
 
-        $lessons = CourseLesson::whereIn('id', $targetIds)->orderBy('order')->get();
+        $lessons = CourseLesson::whereIn('id', $targetIds)
+            ->orderBy('order')
+            ->get();
 
-        // -----------------------------------------------------------
-        // 1. DATA KUIS (Resume & Score Logic)
-        // -----------------------------------------------------------
         $allLabs = Lab::where('is_active', 1)->get();
         $labsByChapter = $allLabs->groupBy('chapter_id');
-        // A. Skor Tertinggi (Hanya yang sudah submit)
+
         $quizScores = QuizAttempt::where('user_id', $userId)
-            ->whereNotNull('completed_at') 
+            ->whereNotNull('completed_at')
             ->select('chapter_id', 'score')
             ->get()
             ->groupBy('chapter_id')
-            ->map(fn($rows) => $rows->max('score')) 
+            ->map(fn ($rows) => $rows->max('score'))
             ->toArray();
 
-        // B. Sesi Aktif (Untuk tombol RESUME)
-        // Cari attempt yang completed_at masih NULL
         $activeQuizSessions = QuizAttempt::where('user_id', $userId)
-            ->whereNull('completed_at') 
-            ->pluck('id', 'chapter_id') 
+            ->whereNull('completed_at')
+            ->pluck('id', 'chapter_id')
             ->toArray();
 
-        // -----------------------------------------------------------
-        // 2. DATA LAB
-        // -----------------------------------------------------------
         $completedLabs = LabHistory::where('user_id', $userId)
             ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
             ->select('labs.slug', 'lab_histories.final_score')
             ->get()
             ->groupBy('slug')
-            ->map(fn($rows) => $rows->max('final_score'))
+            ->map(fn ($rows) => $rows->max('final_score'))
             ->toArray();
 
         $activeLabSessions = LabSession::where('user_id', $userId)
@@ -133,115 +154,164 @@ class CourseController extends Controller
             ->where('expires_at', '>', now())
             ->with('lab')
             ->get()
-            ->mapWithKeys(fn($s) => [$s->lab->slug => $s->id])
+            ->mapWithKeys(fn ($s) => [$s->lab->slug => $s->id])
             ->toArray();
 
         return view($view, [
-            'course' => $course, 
-            'lessons' => $lessons, 
-            'progressPercent' => $percent,
-            'isCurrentCompleted' => ($percent == 100), 
+            'course' => $course,
+            'lessons' => $lessons,
+            'progressPercent' => $progressPercent,
+            'isCurrentCompleted' => ($progressPercent === 100),
             'completedLessonIds' => $completedIds,
-            'currentLessonIds' => $targetIds, 
-            'activityCompleted' => $actDone,
-            'completedLessonsMap' => $statusMap, 
-            
-            // Lab Data
+            'currentLessonIds' => $targetIds,
+            'activityCompleted' => $activityDone,
+            'completedLessonsMap' => $statusMap,
+            'currentKey' => $currentKey,
+            'currentActivityId' => $activityId,
+
             'labsByChapter' => $labsByChapter,
             'completedLabs' => $completedLabs,
             'activeSessions' => $activeLabSessions,
 
-            // Quiz Data
             'quizScores' => $quizScores,
-            'activeQuizSessions' => $activeQuizSessions 
+            'activeQuizSessions' => $activeQuizSessions,
         ]);
     }
 
-    // --- Route Handlers ---
-    public function tailwind() { return $this->loadView('courses.htmldancss', '1.1', [1, 6], 1, null); }
-    public function subbabTailwindCss() { return $this->loadView('courses.tailwindcss', '1.2', [7, 11], 2, '1.1'); }
-    public function background() { return $this->loadView('courses.latarbelakang', '1.3', [12, 15], 3, '1.2'); }
-    public function implementation() { return $this->loadView('courses.implementasi', '1.4', [16, 19], 4, '1.3'); }
-    public function advantages() { return $this->loadView('courses.keunggulan', '1.5', [20, 23], 5, '1.4'); }
-    public function installation() { return $this->loadView('courses.instalasi', '1.6', [24, 28], 6, '1.5'); }
-    public function flexbox() { return $this->loadView('courses.flexbox', '2.1', [29, 32], 7, 'quiz_1'); }
-    public function grid() { return $this->loadView('courses.grid', '2.2', [34, 40], 8, '2.1'); }
-    public function layoutMgmt() { return $this->loadView('courses.layout-mgmt', '2.3', [41, 45], 9, '2.2'); }
-    public function typography() { return $this->loadView('courses.typography', '3.1', [46, 51], 10, 'quiz_2'); }
-    public function backgrounds() { return $this->loadView('courses.background', '3.2', [52, 55], 11, '3.1'); }
-    public function borders() { return $this->loadView('courses.borders', '3.3', [56, 59], 12, '3.2'); }
-    public function effects() { return $this->loadView('courses.effects', '3.4', [60, 65], 13, '3.3'); }
-    
     /**
-     * Menyimpan progress bacaan materi / lesson
+     * Shortcut pemanggil subbab berdasarkan mapping.
      */
-    public function completeLesson(Request $request) 
+    private function loadSubchapter(string $key)
     {
-        // 1. Validasi input dari AJAX Frontend
+        $meta = $this->lessonMap[$key];
+        return $this->loadView($meta['view'], $key, $meta['range'], $meta['activity'], $meta['required']);
+    }
+
+    // --- Route Handlers Bab 1 ---
+    public function tailwind() { return $this->loadSubchapter('1.1'); }
+    public function subbabTailwindCss() { return $this->loadSubchapter('1.2'); }
+    public function background() { return $this->loadSubchapter('1.3'); }
+    public function implementation() { return $this->loadSubchapter('1.4'); }
+    public function advantages() { return $this->loadSubchapter('1.5'); }
+    public function installation() { return redirect()->route('courses.implementation'); }
+
+    // --- Route Handlers Bab 2 ---
+    public function layoutBasics() { return $this->loadSubchapter('2.1'); }
+    public function layoutSpacing() { return $this->loadSubchapter('2.1'); }
+    public function flexbox() { return $this->loadSubchapter('2.2'); }
+    public function grid() { return $this->loadSubchapter('2.3'); }
+    public function layoutMgmt() { return redirect()->route('courses.grid'); }
+    public function responsive() { return $this->loadSubchapter('2.4'); }
+
+    // --- Route Handlers Bab 3 ---
+    public function typography() { return $this->loadSubchapter('3.1'); }
+    public function backgrounds() { return $this->loadSubchapter('3.2'); }
+    public function borders() { return $this->loadSubchapter('3.3'); }
+    public function effects() { return $this->loadSubchapter('3.4'); }
+
+    private function activityIdForLesson(int $lessonId): ?int
+    {
+        return [
+            5 => 1,
+            10 => 2,
+            15 => 3,
+            20 => 4,
+            25 => 5,
+            30 => 6,
+            35 => 7,
+            40 => 8,
+            45 => 9,
+            50 => 10,
+            55 => 11,
+            60 => 12,
+            65 => 13,
+        ][$lessonId] ?? null;
+    }
+
+    /**
+     * Menyimpan progress bacaan materi dan progress aktivitas.
+     * Catatan: activity lesson ID hanya dikirim oleh frontend setelah aktivitas valid,
+     * karena section aktivitas tidak disimpan oleh observer scroll.
+     */
+    public function completeLesson(Request $request)
+    {
         $data = $request->validate([
-            'lesson_id' => 'required|integer'
+            'lesson_id' => 'required|integer|exists:course_lessons,id',
         ]);
 
         $userId = Auth::id();
+        $lessonId = (int) $data['lesson_id'];
 
-        // 2. Simpan LANGSUNG ke TABEL 'user_lesson_progress' menggunakan DB facade
-        // updateOrInsert akan mengecek: jika user_id & course_lesson_id sudah ada, maka update 'completed'
-        // Jika belum ada, maka buat baris baru.
         DB::table('user_lesson_progress')->updateOrInsert(
             [
-                'user_id' => $userId, 
-                'course_lesson_id' => $data['lesson_id']
-            ], 
+                'user_id' => $userId,
+                'course_lesson_id' => $lessonId,
+            ],
             [
-                'completed' => 1, // Pastikan menggunakan angka 1, bukan true (karena hosting Linux/MySQL kadang rewel)
-                'updated_at' => now() // Karena pakai DB facade, kita harus manual set waktu update
+                'completed' => 1,
+                'updated_at' => now(),
             ]
         );
 
-        // 3. Kembalikan response sukses
+        if ($activityId = $this->activityIdForLesson($lessonId)) {
+            UserActivityProgress::updateOrCreate(
+                [
+                    'user_id' => $userId,
+                    'course_activity_id' => $activityId,
+                ],
+                [
+                    'completed' => true,
+                    'score' => 100,
+                    'completed_at' => now(),
+                ]
+            );
+        }
+
         return response()->json([
-            'status' => 'ok', 
-            'message' => 'Progress saved directly to table'
+            'status' => 'ok',
+            'message' => 'Progress berhasil disimpan.',
+            'lesson_id' => $lessonId,
+            'activity_id' => $this->activityIdForLesson($lessonId),
         ]);
     }
 
     /**
-     * Menampilkan Halaman Kurikulum / Peta Konsep
+     * Menampilkan halaman kurikulum.
      */
     public function showSyllabus()
     {
         $userId = Auth::id();
-
-        // 1. Status Materi & Kuis (Logika Lama)
         $statusMap = $this->getChapterStatus($userId);
 
-        // 2. Status Lab (BARU: Ambil Lab yang sudah LULUS)
-        // Mengambil daftar ID Lab yang statusnya 'passed' untuk user ini
-        $passedLabsMap = \App\Models\LabHistory::where('user_id', $userId)
+        $passedLabsMap = LabHistory::where('user_id', $userId)
             ->where('status', 'passed')
-            ->pluck('lab_id') // Misal: [1, 2] artinya Lab ID 1 dan 2 sudah lulus
-            ->flip() // Ubah jadi key: [1 => true, 2 => true] agar mudah dicek di Blade
+            ->pluck('lab_id')
+            ->flip()
             ->toArray();
 
-        // 3. Hitung Progress Global (Opsional, penyempurnaan)
-        $totalSteps = 19; // 13 Materi + 3 Lab + 3 Kuis
-        
-        // Hitung item materi selesai
-        $completedLessons = count(array_filter($statusMap, fn($val, $key) => $val === true && !str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
-        
-        // Hitung lab selesai
-        $completedLabs = count($passedLabsMap);
-        
-        // Hitung kuis selesai
-        $completedQuizzes = count(array_filter($statusMap, fn($val, $key) => $val === true && str_contains($key, 'quiz'), ARRAY_FILTER_USE_BOTH));
+        $totalSteps = 19; // 13 subbab + 3 lab + 3 kuis
 
-        $totalCompleted = $completedLessons + $completedLabs + $completedQuizzes;
+        $completedSubchapters = count(array_filter(
+            $statusMap,
+            fn ($value, $key) => $value === true && !str_starts_with($key, 'quiz_'),
+            ARRAY_FILTER_USE_BOTH
+        ));
+
+        $completedLabs = count($passedLabsMap);
+
+        $completedQuizzes = count(array_filter(
+            $statusMap,
+            fn ($value, $key) => $value === true && str_starts_with($key, 'quiz_'),
+            ARRAY_FILTER_USE_BOTH
+        ));
+
+        $totalCompleted = $completedSubchapters + $completedLabs + $completedQuizzes;
         $progressPercent = $totalSteps > 0 ? round(($totalCompleted / $totalSteps) * 100) : 0;
 
         return view('courses.curriculum', [
             'completedLessonsMap' => $statusMap,
-            'passedLabsMap'       => $passedLabsMap, // Kirim data lab ke view
-            'progressPercent'     => $progressPercent
+            'passedLabsMap' => $passedLabsMap,
+            'progressPercent' => $progressPercent,
         ]);
     }
 }

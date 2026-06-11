@@ -129,7 +129,7 @@
                         ['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)],
                         ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)],
                         ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)],
-                        ['name' => '3.4 Effects & Filters', 'ids' => range(60, 65)],
+                        ['name' => '3.4 Effects & Filters', 'ids' => range(60, 64)],
                     ]
                 ]
             ];

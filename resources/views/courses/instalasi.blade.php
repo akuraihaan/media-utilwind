@@ -918,6 +918,9 @@
                 completedSet.add(lessonId);
                 updateProgressUI(true);
                 markSidebarDone(lessonId);
+                if (lessonId === ACTIVITY_LESSON_ID) {
+                    window.markActiveCourseItemCompleted?.();
+                }
             }
         } catch(e) {
             console.error('Koneksi terputus', e);
@@ -1435,7 +1438,7 @@
             formData.append('score', 100);
             formData.append('_token', '{{ csrf_token() }}');
 
-            await fetch('/activity/complete', { 
+            await fetch('{{ route("activity.complete") }}', { 
                 method: 'POST', 
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded',

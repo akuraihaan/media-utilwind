@@ -9,65 +9,412 @@
      ============================================================================== --}}
 @php
     $userId = Auth::id();
-    
-    // Kalkulasi Progress Total
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATA VALID DASHBOARD AKADEMIK
+    |--------------------------------------------------------------------------
+    | Variabel tetap menerima data dari controller. Jika controller belum mengirimkan
+    | data, Blade ini mengambil fallback langsung dari model/database yang digunakan
+    | pada project Utilwind.
+    */
+
+    $totalLessons = $totalLessons ?? 0;
+    $lessonsCompleted = $lessonsCompleted ?? 0;
+    $totalLabs = $totalLabs ?? 0;
+    $labsCompleted = $labsCompleted ?? 0;
+    $quizzesCompleted = $quizzesCompleted ?? 0;
+    $quizAverage = $quizAverage ?? 0;
+    $chaptersPassed = $chaptersPassed ?? 0;
+    $chartData = $chartData ?? ['labels' => [], 'scores' => []];
+    $activeSession = $activeSession ?? null;
+
+    $allQuizzes = collect();
+    $allLabs = collect();
+    $allLessons = collect();
+
+    // Total materi dari tabel lessons jika controller belum mengirimkan.
+    try {
+        if ((!isset($totalLessons) || (int) $totalLessons === 0) && class_exists(\App\Models\Lesson::class)) {
+            $totalLessons = \App\Models\Lesson::count();
+        }
+    } catch (\Throwable $e) {
+        $totalLessons = $totalLessons ?? 0;
+    }
+
+    // Total lab dari tabel labs jika controller belum mengirimkan.
+    try {
+        if ((!isset($totalLabs) || (int) $totalLabs === 0) && class_exists(\App\Models\Lab::class)) {
+            $totalLabs = \App\Models\Lab::count();
+        }
+    } catch (\Throwable $e) {
+        $totalLabs = $totalLabs ?? 0;
+    }
+
+    // Materi selesai.
+    try {
+        if (class_exists(\App\Models\UserLessonProgress::class)) {
+            $lessonProgressQuery = \App\Models\UserLessonProgress::where('user_id', $userId)
+                ->where('completed', true);
+
+            if ((!isset($lessonsCompleted) || (int) $lessonsCompleted === 0)) {
+                $lessonsCompleted = (clone $lessonProgressQuery)->count();
+            }
+
+            $allLessons = (clone $lessonProgressQuery)
+                ->with('lesson')
+                ->get()
+                ->sortBy(fn($m) => $m->lesson->order ?? $m->lesson_id)
+                ->values()
+                ->map(function ($m) {
+                    $urutan = $m->lesson->order ?? $m->lesson_id;
+
+                    return [
+                        'name' => 'Materi Bacaan: ' . ($m->lesson->title ?? 'Modul ' . $urutan),
+                        'type' => 'materi',
+                        'score' => null,
+                        'date' => $m->updated_at,
+                        'full_date' => \Carbon\Carbon::parse($m->updated_at)->format('d M Y, H:i'),
+                        'time' => \Carbon\Carbon::parse($m->updated_at)->diffForHumans(),
+                        'status' => 'Tuntas',
+                        'badge_number' => str_pad($urutan, 2, '0', STR_PAD_LEFT),
+                        'raw_order' => $urutan,
+                    ];
+                });
+        }
+    } catch (\Throwable $e) {
+        $allLessons = collect();
+    }
+
+    // Data kuis valid.
+    try {
+        if (class_exists(\App\Models\QuizAttempt::class)) {
+            $quizQuery = \App\Models\QuizAttempt::where('user_id', $userId)
+                ->whereNotNull('completed_at');
+
+            if ((!isset($quizzesCompleted) || (int) $quizzesCompleted === 0)) {
+                $quizzesCompleted = (clone $quizQuery)->count();
+            }
+
+            if ((!isset($quizAverage) || (float) $quizAverage === 0.0)) {
+                $quizAverage = round((clone $quizQuery)->avg('score') ?? 0, 1);
+            }
+
+            if ((!isset($chaptersPassed) || (int) $chaptersPassed === 0)) {
+                $chaptersPassed = (clone $quizQuery)
+                    ->where('score', '>=', 70)
+                    ->distinct('chapter_id')
+                    ->count('chapter_id');
+            }
+
+            $allQuizzes = (clone $quizQuery)
+                ->latest('completed_at')
+                ->get()
+                ->map(fn($q) => [
+                    'id' => $q->id,
+                    'name' => $q->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Teori: Bab ' . $q->chapter_id,
+                    'type' => 'kuis',
+                    'score' => $q->score,
+                    'chapter_id' => $q->chapter_id,
+                    'date' => $q->completed_at,
+                    'full_date' => \Carbon\Carbon::parse($q->completed_at)->format('d M Y, H:i'),
+                    'time' => \Carbon\Carbon::parse($q->completed_at)->diffForHumans(),
+                    'status' => $q->score >= 70 ? 'Lulus' : 'Remedial',
+                    'duration' => (int) ($q->time_spent_seconds ?? 0),
+                    'duration_text' => gmdate(((int) ($q->time_spent_seconds ?? 0)) >= 3600 ? 'H:i:s' : 'i:s', max(0, (int) ($q->time_spent_seconds ?? 0))),
+                    'answered_count' => (int) ($q->answered_count ?? 0),
+                    'unanswered_count' => (int) ($q->unanswered_count ?? 0),
+                    'flagged_count' => (int) ($q->flagged_count ?? 0),
+                    'focus_lost_count' => (int) ($q->focus_lost_count ?? 0),
+                    'feedback_level' => $q->feedback_level ?? ($q->score >= 70 ? 'Lulus' : 'Perlu Penguatan'),
+                    'feedback_message' => $q->feedback_message ?? ($q->score >= 70 ? 'Evaluasi sudah memenuhi KKM. Tinjau kembali soal yang salah untuk memperkuat pemahaman.' : 'Skor belum mencapai KKM. Pelajari kembali materi dan ulangi evaluasi setelah latihan.'),
+                    'reflection_note' => $q->reflection_note ?? null,
+                    'review_url' => route('quiz.result', $q->id),
+                ]);
+
+            // Chart mengambil nilai terbaik per bab agar data tidak bias karena percobaan ulang.
+            if (empty($chartData['scores'])) {
+                $bestByChapter = (clone $quizQuery)
+                    ->select('chapter_id', \Illuminate\Support\Facades\DB::raw('MAX(score) as best_score'), \Illuminate\Support\Facades\DB::raw('MAX(completed_at) as last_completed_at'))
+                    ->groupBy('chapter_id')
+                    ->orderBy('chapter_id')
+                    ->get();
+
+                $chartData = [
+                    'labels' => $bestByChapter
+                        ->map(fn($row) => $row->chapter_id == 99 ? 'Evaluasi' : 'Bab ' . $row->chapter_id)
+                        ->values()
+                        ->toArray(),
+                    'scores' => $bestByChapter
+                        ->pluck('best_score')
+                        ->map(fn($score) => round($score, 1))
+                        ->values()
+                        ->toArray(),
+                    'dates' => $bestByChapter
+                        ->map(fn($row) => $row->last_completed_at ? \Carbon\Carbon::parse($row->last_completed_at)->format('d M Y, H:i') : '-')
+                        ->values()
+                        ->toArray(),
+                ];
+            }
+        }
+    } catch (\Throwable $e) {
+        $allQuizzes = collect();
+        $chartData = $chartData ?? ['labels' => [], 'scores' => []];
+    }
+
+    // Data lab valid.
+    try {
+        if (class_exists(\App\Models\LabHistory::class)) {
+            $labHistoryQuery = \App\Models\LabHistory::where('user_id', $userId)
+                ->whereIn('status', ['passed', 'failed', 'completed']);
+
+            if ((!isset($labsCompleted) || (int) $labsCompleted === 0)) {
+                $labsCompleted = (clone $labHistoryQuery)
+                    ->where(function ($query) {
+                        $query->where('status', 'passed')
+                              ->orWhere('final_score', '>=', 70);
+                    })
+                    ->distinct('lab_id')
+                    ->count('lab_id');
+            }
+
+            $allLabs = (clone $labHistoryQuery)
+                ->with('lab')
+                ->latest('updated_at')
+                ->get()
+                ->map(fn($l) => [
+                    'name' => 'Praktik Lab: ' . ($l->lab->title ?? 'Modul ' . $l->lab_id),
+                    'type' => 'lab',
+                    'score' => $l->final_score,
+                    'lab_id' => $l->lab_id,
+                    'date' => $l->updated_at,
+                    'full_date' => \Carbon\Carbon::parse($l->updated_at)->format('d M Y, H:i'),
+                    'time' => \Carbon\Carbon::parse($l->updated_at)->diffForHumans(),
+                    'status' => ($l->status === 'passed' || $l->final_score >= 70) ? 'Lulus' : 'Remedial',
+                ]);
+        }
+    } catch (\Throwable $e) {
+        $allLabs = collect();
+    }
+
     $totalTasks = ($totalLessons ?? 0) + ($totalLabs ?? 0);
     $completedTasks = ($lessonsCompleted ?? 0) + ($labsCompleted ?? 0);
     $overallProgress = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
 
-    $pctLesson = ($totalLessons > 0) ? round(($lessonsCompleted / $totalLessons) * 100) : 0; 
+    $pctLesson = ($totalLessons > 0) ? round(($lessonsCompleted / $totalLessons) * 100) : 0;
     $pctLab = ($totalLabs > 0) ? round(($labsCompleted / $totalLabs) * 100) : 0;
 
-    // 1. DATA KUIS
-    $allQuizzes = \App\Models\QuizAttempt::where('user_id', $userId)->whereNotNull('completed_at')->latest('completed_at')->get()
-        ->map(fn($q) => [
-            'name' => 'Evaluasi Teori: Bab ' . $q->chapter_id, 
-            'type' => 'kuis', 
-            'score' => $q->score, 
-            'date' => $q->completed_at, 
-            'full_date' => \Carbon\Carbon::parse($q->completed_at)->format('d M Y, H:i'), // Format presisi
-            'time' => \Carbon\Carbon::parse($q->completed_at)->diffForHumans(), // Format relatif
-            'status' => $q->score >= 70 ? 'Lulus' : 'Remedial'
+    $historyCombined = collect($allQuizzes)->merge($allLabs)->sortByDesc('date')->values();
+    $liveLogData = collect($allLessons)->merge($allQuizzes)->merge($allLabs)->sortByDesc('date')->values()->take(30);
+
+    $chartScores = collect($chartData['scores'] ?? []);
+    $chartLabels = collect($chartData['labels'] ?? []);
+
+    $chartSummary = [
+        'attempts' => $allQuizzes->count(),
+        'best' => $chartScores->count() ? $chartScores->max() : 0,
+        'average' => $chartScores->count() ? round($chartScores->avg(), 1) : round($quizAverage ?? 0, 1),
+        'passed' => $allQuizzes->where('score', '>=', 70)->count(),
+        'remedial' => $allQuizzes->where('score', '<', 70)->count(),
+    ];
+
+    $latestQuiz = $allQuizzes->sortByDesc('date')->first();
+    $latestLab = $allLabs->sortByDesc('date')->first();
+    $learningRecommendations = collect();
+    $riskScore = 0;
+
+    if ($latestQuiz && ($latestQuiz['score'] ?? 0) < 70) {
+        $riskScore += 2;
+        $learningRecommendations->push([
+            'title' => 'Perkuat evaluasi terakhir',
+            'body' => 'Nilai evaluasi terakhir belum mencapai KKM. Buka tinjauan hasil, pelajari bagian yang salah, lalu ulangi setelah latihan singkat.',
+            'tone' => 'red',
+            'action' => 'Tinjau Hasil',
+            'url' => $latestQuiz['review_url'] ?? null,
         ]);
-    
-    // 2. DATA LAB (Menarik Judul Lab)
-    $allLabs = \App\Models\LabHistory::where('user_id', $userId)->whereIn('status', ['passed', 'failed', 'completed'])->with('lab')->latest('updated_at')->get()
-        ->map(fn($l) => [
-            'name' => 'Praktik Lab: ' . ($l->lab->title ?? 'Modul ' . $l->lab_id), 
-            'type' => 'lab', 
-            'score' => $l->final_score, 
-            'date' => $l->updated_at, 
-            'full_date' => \Carbon\Carbon::parse($l->updated_at)->format('d M Y, H:i'),
-            'time' => \Carbon\Carbon::parse($l->updated_at)->diffForHumans(),
-            'status' => $l->final_score >= 70 ? 'Lulus' : 'Remedial'
+    }
+
+    if ($latestQuiz && (($latestQuiz['flagged_count'] ?? 0) > 0)) {
+        $riskScore += 1;
+        $learningRecommendations->push([
+            'title' => 'Tinjau soal ragu-ragu',
+            'body' => 'Masih ada soal yang ditandai ragu-ragu. Gunakan daftar tinjauan untuk memastikan konsepnya benar-benar dipahami.',
+            'tone' => 'amber',
+            'action' => 'Buka Detail',
+            'url' => $latestQuiz['review_url'] ?? null,
         ]);
-    
-   // 3. DATA MATERI (Diurutkan berdasarkan kolom 'order' asli dari database)
-    $allLessons = \App\Models\UserLessonProgress::where('user_id', $userId)
-        ->where('completed', true)
-        ->with('lesson')
-        ->get()
-        ->sortBy(fn($m) => $m->lesson->order ?? $m->lesson_id) // Sortir berdasarkan kolom order
-        ->values() 
-        ->map(function($m) {
-            // Tarik nilai urutan asli
-            $urutan = $m->lesson->order ?? $m->lesson_id;
-            
+    }
+
+    if (($pctLesson ?? 0) < 75) {
+        $learningRecommendations->push([
+            'title' => 'Lanjutkan materi bacaan',
+            'body' => 'Progress materi belum penuh. Selesaikan materi berikutnya sebelum mengejar evaluasi baru agar dasar konsep lebih stabil.',
+            'tone' => 'cyan',
+            'action' => 'Buka Kurikulum',
+            'url' => route('courses.curriculum'),
+        ]);
+    }
+
+    if (($totalLabs ?? 0) > 0 && ($labsCompleted ?? 0) < ($totalLabs ?? 0)) {
+        $learningRecommendations->push([
+            'title' => 'Lengkapi praktik lab',
+            'body' => 'Masih ada lab yang belum lulus. Praktik akan membantu menguatkan pemahaman dari materi dan evaluasi teori.',
+            'tone' => 'blue',
+            'action' => 'Lihat Kurikulum',
+            'url' => route('courses.curriculum'),
+        ]);
+    }
+
+    if ($allQuizzes->isEmpty() && ($lessonsCompleted ?? 0) > 0) {
+        $learningRecommendations->push([
+            'title' => 'Mulai evaluasi pertama',
+            'body' => 'Anda sudah memiliki progress materi. Ambil evaluasi bab yang sudah terbuka untuk mengukur pemahaman.',
+            'tone' => 'fuchsia',
+            'action' => 'Buka Kurikulum',
+            'url' => route('courses.curriculum'),
+        ]);
+    }
+
+    if ($learningRecommendations->isEmpty()) {
+        $learningRecommendations->push([
+            'title' => 'Pertahankan ritme belajar',
+            'body' => 'Progress dan hasil evaluasi terlihat stabil. Lanjutkan materi berikutnya dan gunakan riwayat evaluasi untuk menjaga konsistensi.',
+            'tone' => 'emerald',
+            'action' => 'Lanjut Belajar',
+            'url' => route('courses.curriculum'),
+        ]);
+    }
+
+    if (($chartSummary['remedial'] ?? 0) >= 2 || ($quizAverage ?? 0) < 70) {
+        $riskScore += 1;
+    }
+
+    $learningRisk = $riskScore >= 3
+        ? ['label' => 'Perlu Perhatian', 'class' => 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20']
+        : ($riskScore >= 1
+            ? ['label' => 'Perlu Penguatan', 'class' => 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20']
+            : ['label' => 'Stabil', 'class' => 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20']);
+
+    $learningRecommendations = $learningRecommendations->take(3)->values();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATA GRAFIK VALID: NILAI KUIS + NILAI LAB
+    |--------------------------------------------------------------------------
+    | - Kuis memakai skor terbaik per chapter_id.
+    | - Lab memakai skor terbaik per chapter_id jika tersedia; jika tidak, fallback ke lab_id.
+    | - Data kosong memakai null, bukan 0, supaya grafik tidak menampilkan nilai palsu.
+    */
+    $quizRawForAssessmentChart = collect();
+    $labRawForAssessmentChart = collect();
+
+    try {
+        if (class_exists(\App\Models\QuizAttempt::class)) {
+            $quizRawForAssessmentChart = \App\Models\QuizAttempt::where('user_id', $userId)
+                ->whereNotNull('score')
+                ->whereNotNull('completed_at')
+                ->get();
+        }
+    } catch (\Throwable $e) {
+        $quizRawForAssessmentChart = collect();
+    }
+
+    try {
+        if (class_exists(\App\Models\LabHistory::class)) {
+            $labRawForAssessmentChart = \App\Models\LabHistory::where('user_id', $userId)
+                ->whereNotNull('final_score')
+                ->whereIn('status', ['passed', 'failed', 'completed'])
+                ->with('lab')
+                ->get();
+        }
+    } catch (\Throwable $e) {
+        $labRawForAssessmentChart = collect();
+    }
+
+    $quizBestByChapter = $quizRawForAssessmentChart
+        ->filter(fn ($item) => $item->chapter_id !== null)
+        ->groupBy('chapter_id')
+        ->map(function ($items) {
+            $best = $items
+                ->sortByDesc('score')
+                ->sortByDesc('completed_at')
+                ->first();
+
             return [
-                'name' => 'Materi Bacaan: ' . ($m->lesson->title ?? 'Modul ' . $urutan), 
-                'type' => 'materi', 
-                'date' => $m->updated_at, 
-                'full_date' => \Carbon\Carbon::parse($m->updated_at)->format('d M Y, H:i'),
-                'time' => \Carbon\Carbon::parse($m->updated_at)->diffForHumans(),
-                'status' => 'Tuntas',
-                'badge_number' => str_pad($urutan, 2, '0', STR_PAD_LEFT), // Format jadi 01, 09, 38, 40
-                'raw_order' => $urutan
+                'score' => $best ? round((float) $best->score, 1) : null,
+                'date' => $best?->completed_at,
+                'label' => ($best?->chapter_id == 99) ? 'Evaluasi' : 'Bab ' . $best?->chapter_id,
             ];
         });
 
-    // Data Gabungan
-    $historyCombined = collect($allQuizzes)->merge($allLabs)->sortByDesc('date')->values();
-    $liveLogData = collect($allLessons)->merge($allQuizzes)->merge($allLabs)->sortByDesc('date')->values()->take(25); // Ambil 25 Log Terakhir
+    $labBestByChapter = $labRawForAssessmentChart
+        ->filter(fn ($item) => $item->lab_id !== null)
+        ->groupBy(function ($item) {
+            return $item->lab->chapter_id ?? $item->lab_id;
+        })
+        ->map(function ($items) {
+            $best = $items
+                ->sortByDesc('final_score')
+                ->sortByDesc('updated_at')
+                ->first();
+
+            $chapterKey = $best->lab->chapter_id ?? $best->lab_id;
+
+            return [
+                'score' => $best ? round((float) $best->final_score, 1) : null,
+                'date' => $best?->updated_at,
+                'label' => is_numeric($chapterKey) ? 'Bab ' . $chapterKey : 'Lab',
+                'title' => $best->lab->title ?? 'Lab Praktik',
+            ];
+        });
+
+    $assessmentKeys = collect($quizBestByChapter->keys())
+        ->merge($labBestByChapter->keys())
+        ->filter(fn ($key) => $key !== null && $key !== '')
+        ->unique()
+        ->sortBy(fn ($key) => is_numeric($key) ? (int) $key : 999)
+        ->values();
+
+    $performanceLabels = $assessmentKeys
+        ->map(function ($key) use ($quizBestByChapter, $labBestByChapter) {
+            if (isset($quizBestByChapter[$key]['label'])) {
+                return $quizBestByChapter[$key]['label'];
+            }
+
+            if (isset($labBestByChapter[$key]['label'])) {
+                return $labBestByChapter[$key]['label'];
+            }
+
+            return is_numeric($key) ? 'Bab ' . $key : (string) $key;
+        })
+        ->values();
+
+    $quizScoreSeries = $assessmentKeys
+        ->map(fn ($key) => $quizBestByChapter[$key]['score'] ?? null)
+        ->values();
+
+    $labScoreSeries = $assessmentKeys
+        ->map(fn ($key) => $labBestByChapter[$key]['score'] ?? null)
+        ->values();
+
+    $validQuizScores = $quizScoreSeries->filter(fn ($score) => $score !== null);
+    $validLabScores = $labScoreSeries->filter(fn ($score) => $score !== null);
+
+    $quizChartAverage = $validQuizScores->count() > 0 ? round($validQuizScores->avg(), 1) : null;
+    $labChartAverage = $validLabScores->count() > 0 ? round($validLabScores->avg(), 1) : null;
+    $quizChartHighest = $validQuizScores->count() > 0 ? round($validQuizScores->max(), 1) : null;
+    $labChartHighest = $validLabScores->count() > 0 ? round($validLabScores->max(), 1) : null;
+    $quizChartLatest = $validQuizScores->count() > 0 ? $validQuizScores->last() : null;
+    $labChartLatest = $validLabScores->count() > 0 ? $validLabScores->last() : null;
+
+    $hasAssessmentChartData = $validQuizScores->count() > 0 || $validLabScores->count() > 0;
+
+    if (!$hasAssessmentChartData) {
+        $performanceLabels = collect(['Belum Ada Data']);
+        $quizScoreSeries = collect([null]);
+        $labScoreSeries = collect([null]);
+    }
 @endphp
 
 <div id="appRoot" class="relative h-screen bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 selection:text-cyan-900 dark:selection:text-white transition-colors duration-500 pt-[76px] md:pt-[88px]">
@@ -89,9 +436,11 @@
          x-data="{ 
             sidebarOpen: false, showJoinModal: false, showLessonModal: false,
             showLabModal: false, showQuizModal: false, showChapterModal: false,
-            showDashboardInfoModal: false
+            showDashboardInfoModal: false,
+            showQuizReviewModal: false,
+            selectedQuizReview: null
          }"
-         @keydown.escape.window="sidebarOpen = false; showJoinModal = false; showLessonModal = false; showLabModal = false; showQuizModal = false; showChapterModal = false; showDashboardInfoModal = false;">
+         @keydown.escape.window="sidebarOpen = false; showJoinModal = false; showLessonModal = false; showLabModal = false; showQuizModal = false; showChapterModal = false; showDashboardInfoModal = false; showQuizReviewModal = false;">
 
         {{-- Overlay Mobile --}}
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] lg:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
@@ -391,23 +740,162 @@
                     {{-- KIRI: GRAFIK & TABEL (2 Kolom) --}}
                     <div class="lg:col-span-2 space-y-6 md:space-y-8">
                         
-                        {{-- GRAFIK KUIS --}}
-                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500">
-                            <div class="flex justify-between items-start mb-6">
-                                <div>
-                                    <h3 class="text-[15px] md:text-[16px] font-bold text-slate-900 dark:text-white transition-colors">Grafik Perkembangan Nilai Kuis</h3>
-                                    <p class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 transition-colors font-medium">Visualisasi nilai tertinggi yang dicapai pada evaluasi bab.</p>
+                        {{-- GRAFIK PERKEMBANGAN NILAI KUIS DAN LAB - Data Valid + Adaptasi Chart ZIP --}}
+                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] overflow-hidden shadow-sm dark:shadow-none transition-colors duration-500"
+                             x-data="{ chartView: 'all', chartType: 'line' }">
+
+                            {{-- Header chart mengikuti adaptasi template ZIP/Notus, warna tetap desain Utilwind --}}
+                            <div class="relative px-5 md:px-6 py-5 border-b border-slate-100 dark:border-white/[0.05] bg-gradient-to-br from-slate-50 via-white to-cyan-50/60 dark:from-[#0f141e] dark:via-[#0a0e17] dark:to-cyan-950/20 overflow-hidden">
+                                <div class="absolute -right-16 -top-16 w-52 h-52 bg-cyan-300/20 dark:bg-cyan-500/10 rounded-full blur-[70px] pointer-events-none"></div>
+                                <div class="absolute -left-14 -bottom-20 w-48 h-48 bg-indigo-300/20 dark:bg-indigo-500/10 rounded-full blur-[70px] pointer-events-none"></div>
+
+                                <div class="relative z-10 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+                                                Academic Performance
+                                            </span>
+
+                                            <div class="tooltip-container tooltip-cyan tooltip-down">
+                                                <div class="tooltip-trigger">
+                                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="tooltip-content">
+                                                    Grafik membandingkan nilai terbaik kuis dan lab pada setiap bab. Data kosong ditampilkan sebagai jeda, bukan angka 0.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <h3 class="text-[17px] md:text-xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">
+                                            Grafik Perkembangan Nilai Kuis dan Lab
+                                        </h3>
+
+                                        <p class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-1 transition-colors font-medium max-w-xl">
+                                            Nilai diambil dari skor terbaik tiap bab agar perkembangan belajar lebih valid.
+                                        </p>
+                                    </div>
+
+                                    <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                                        {{-- Toggle seri data --}}
+                                        <div class="flex p-1 bg-white/80 dark:bg-[#020617]/80 rounded-xl border border-slate-200/70 dark:border-white/5 shadow-sm transition-colors">
+                                            <button
+                                                type="button"
+                                                @click="chartView = 'all'; updateAssessmentChartView('all')"
+                                                :class="chartView === 'all'
+                                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                                class="px-3.5 py-2 rounded-lg text-[10px] font-black transition focus:outline-none">
+                                                Semua
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                @click="chartView = 'quiz'; updateAssessmentChartView('quiz')"
+                                                :class="chartView === 'quiz'
+                                                    ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/20'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                                class="px-3.5 py-2 rounded-lg text-[10px] font-black transition focus:outline-none">
+                                                Kuis
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                @click="chartView = 'lab'; updateAssessmentChartView('lab')"
+                                                :class="chartView === 'lab'
+                                                    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                                class="px-3.5 py-2 rounded-lg text-[10px] font-black transition focus:outline-none">
+                                                Lab
+                                            </button>
+                                        </div>
+
+                                        {{-- Toggle tipe chart --}}
+                                        <div class="flex p-1 bg-white/80 dark:bg-[#020617]/80 rounded-xl border border-slate-200/70 dark:border-white/5 shadow-sm transition-colors">
+                                            <button
+                                                type="button"
+                                                @click="chartType = 'line'; updateAssessmentChartType('line')"
+                                                :class="chartType === 'line'
+                                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-[#020617] shadow-md'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                                class="px-3.5 py-2 rounded-lg text-[10px] font-black transition focus:outline-none">
+                                                Line
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                @click="chartType = 'bar'; updateAssessmentChartType('bar')"
+                                                :class="chartType === 'bar'
+                                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-[#020617] shadow-md'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                                class="px-3.5 py-2 rounded-lg text-[10px] font-black transition focus:outline-none">
+                                                Bar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="relative h-[200px] md:h-[240px] w-full">
-                                @if(isset($chartData['scores']) && count($chartData['scores']) > 0)
-                                    <canvas id="quizChart"></canvas>
-                                @else
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-white/[0.02] transition-colors">
-                                        <svg class="w-6 h-6 text-slate-300 dark:text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                                        <p class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">Belum Ada Data Kuis</p>
+
+                            <div class="relative p-5 md:p-6">
+                                <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                                    <div class="absolute top-8 right-10 w-44 h-44 bg-cyan-200/20 dark:bg-cyan-500/10 rounded-full blur-[70px]"></div>
+                                    <div class="absolute bottom-0 left-6 w-48 h-48 bg-indigo-200/20 dark:bg-indigo-500/10 rounded-full blur-[70px]"></div>
+                                </div>
+
+                                {{-- Ringkasan valid: null tidak dihitung sebagai 0 --}}
+                                <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                                    <div class="rounded-2xl bg-slate-50/80 dark:bg-[#020617]/70 border border-slate-200/70 dark:border-white/5 px-4 py-3">
+                                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">Avg Kuis</p>
+                                        <p class="mt-1 text-lg font-black text-cyan-600 dark:text-cyan-400">{{ $quizChartAverage !== null ? $quizChartAverage : '-' }}</p>
                                     </div>
-                                @endif
+
+                                    <div class="rounded-2xl bg-slate-50/80 dark:bg-[#020617]/70 border border-slate-200/70 dark:border-white/5 px-4 py-3">
+                                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">Avg Lab</p>
+                                        <p class="mt-1 text-lg font-black text-blue-600 dark:text-blue-400">{{ $labChartAverage !== null ? $labChartAverage : '-' }}</p>
+                                    </div>
+
+                                    <div class="rounded-2xl bg-slate-50/80 dark:bg-[#020617]/70 border border-slate-200/70 dark:border-white/5 px-4 py-3">
+                                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">Best Kuis</p>
+                                        <p class="mt-1 text-lg font-black text-emerald-600 dark:text-emerald-400">{{ $quizChartHighest !== null ? $quizChartHighest : '-' }}</p>
+                                    </div>
+
+                                    <div class="rounded-2xl bg-slate-50/80 dark:bg-[#020617]/70 border border-slate-200/70 dark:border-white/5 px-4 py-3">
+                                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">Best Lab</p>
+                                        <p class="mt-1 text-lg font-black text-indigo-600 dark:text-indigo-400">{{ $labChartHighest !== null ? $labChartHighest : '-' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="relative z-10 h-[260px] md:h-[320px] w-full">
+                                    @if($hasAssessmentChartData)
+                                        <canvas id="assessmentProgressChart"></canvas>
+                                    @else
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-white/10 rounded-2xl bg-slate-50/80 dark:bg-[#020617]/70 transition-colors">
+                                            <svg class="w-7 h-7 text-slate-300 dark:text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                                            </svg>
+                                            <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500">Belum Ada Data Kuis atau Lab</p>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-600 mt-1">Grafik muncul setelah evaluasi atau lab diselesaikan.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="relative z-10 mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-[10px] font-bold text-slate-500 dark:text-slate-500">
+                                    <div class="flex items-center gap-4">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                                            Nilai Kuis
+                                        </span>
+
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                                            Nilai Lab
+                                        </span>
+                                    </div>
+
+                                    <p>Data kosong tidak dianggap 0.</p>
+                                </div>
                             </div>
                         </div>
 
@@ -458,6 +946,28 @@
                                                         $icon = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>';
                                                     }
                                                 @endphp
+                                                @php
+                                                    $quizReviewPayload = null;
+                                                    if ($typeLower == 'kuis' || $typeLower == 'quiz') {
+                                                        $quizReviewPayload = [
+                                                            'title' => $item['name'] ?? 'Evaluasi Teori',
+                                                            'score' => $item['score'] ?? 0,
+                                                            'status' => $item['status'] ?? (($item['score'] ?? 0) >= 70 ? 'Lulus' : 'Remedial'),
+                                                            'chapter' => $item['chapter_id'] ?? null,
+                                                            'date' => $item['full_date'] ?? '-',
+                                                            'time' => $item['time'] ?? '-',
+                                                            'duration' => $item['duration_text'] ?? '-',
+                                                            'answered' => $item['answered_count'] ?? 0,
+                                                            'unanswered' => $item['unanswered_count'] ?? 0,
+                                                            'flagged' => $item['flagged_count'] ?? 0,
+                                                            'focusLost' => $item['focus_lost_count'] ?? 0,
+                                                            'feedbackLevel' => $item['feedback_level'] ?? (($item['score'] ?? 0) >= 70 ? 'Lulus' : 'Perlu Penguatan'),
+                                                            'feedbackMessage' => $item['feedback_message'] ?? '',
+                                                            'reflectionNote' => $item['reflection_note'] ?? '',
+                                                            'reviewUrl' => $item['review_url'] ?? null,
+                                                        ];
+                                                    }
+                                                @endphp
                                                 <tr x-show="filterTable === 'all' || filterTable === '{{ $typeLower === 'quiz' ? 'kuis' : $typeLower }}'" class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors border-b border-slate-100/50 dark:border-white/[0.02] last:border-0" x-transition>
                                                     <td class="py-3 pl-2 font-medium text-slate-800 dark:text-white flex items-center gap-3 transition-colors">
                                                         <div class="w-7 h-7 rounded-md flex items-center justify-center shrink-0 border {{ $iconBg }} transition-colors">
@@ -480,6 +990,14 @@
                                                         @if(isset($item['score']))
                                                             <span class="px-2.5 py-1 rounded-md text-[11px] font-bold border transition-colors {{ $item['score'] >= 70 ? 'text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/10' : 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-500/10 border-red-200 dark:border-red-500/10' }}">{{ $item['score'] }} pts</span>
                                                         @endif
+                                                        @if($quizReviewPayload)
+                                                            <button type="button"
+                                                                    @click.stop="selectedQuizReview = {{ \Illuminate\Support\Js::from($quizReviewPayload) }}; showQuizReviewModal = true"
+                                                                    class="mt-1 inline-flex items-center justify-end gap-1 text-[10px] font-bold text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 dark:hover:text-fuchsia-300 transition-colors focus:outline-none">
+                                                                Tinjau
+                                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                            </button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @empty
@@ -494,6 +1012,54 @@
 
                     {{-- KANAN: AKTIVITAS PIE CHART & LIVE LOG (1 Kolom) --}}
                     <div class="lg:col-span-1 space-y-6 md:space-y-8">
+
+                        {{-- Rekomendasi Belajar Otomatis --}}
+                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500">
+                            <div class="flex items-start justify-between gap-3 mb-5">
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Arahan Belajar</p>
+                                    <h3 class="text-[15px] md:text-[16px] font-bold text-slate-900 dark:text-white transition-colors">
+                                        Rekomendasi Berikutnya
+                                    </h3>
+                                </div>
+                                <span class="px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest {{ $learningRisk['class'] }}">
+                                    {{ $learningRisk['label'] }}
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                @foreach($learningRecommendations as $index => $rec)
+                                    @php
+                                        $tone = $rec['tone'] ?? 'cyan';
+                                        $toneClass = match($tone) {
+                                            'red' => 'border-red-200 dark:border-red-500/20 bg-red-50/70 dark:bg-red-500/[0.06] text-red-600 dark:text-red-400',
+                                            'amber' => 'border-amber-200 dark:border-amber-500/20 bg-amber-50/70 dark:bg-amber-500/[0.06] text-amber-600 dark:text-amber-400',
+                                            'blue' => 'border-blue-200 dark:border-blue-500/20 bg-blue-50/70 dark:bg-blue-500/[0.06] text-blue-600 dark:text-blue-400',
+                                            'fuchsia' => 'border-fuchsia-200 dark:border-fuchsia-500/20 bg-fuchsia-50/70 dark:bg-fuchsia-500/[0.06] text-fuchsia-600 dark:text-fuchsia-400',
+                                            'emerald' => 'border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/70 dark:bg-emerald-500/[0.06] text-emerald-600 dark:text-emerald-400',
+                                            default => 'border-cyan-200 dark:border-cyan-500/20 bg-cyan-50/70 dark:bg-cyan-500/[0.06] text-cyan-600 dark:text-cyan-400',
+                                        };
+                                    @endphp
+                                    <div class="rounded-2xl border {{ $toneClass }} p-4 transition-colors">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-7 h-7 rounded-lg bg-white/70 dark:bg-white/10 flex items-center justify-center text-[11px] font-black shrink-0">
+                                                {{ $index + 1 }}
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <h4 class="text-sm font-black text-slate-900 dark:text-white">{{ $rec['title'] }}</h4>
+                                                <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mt-1">{{ $rec['body'] }}</p>
+                                                @if(!empty($rec['url']))
+                                                    <a href="{{ $rec['url'] }}" class="inline-flex items-center gap-1.5 mt-3 text-[10px] font-black uppercase tracking-widest hover:opacity-80 transition">
+                                                        {{ $rec['action'] ?? 'Buka' }}
+                                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                         
                         {{-- Komposisi Aktivitas --}}
                         <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500 relative">
@@ -668,6 +1234,66 @@
                     <div class="bg-slate-50 dark:bg-[#020617] rounded-2xl p-5 md:p-6 border border-slate-100 dark:border-white/5 text-center transition-colors">
                         <span class="text-4xl md:text-5xl font-black text-emerald-600 dark:text-emerald-400 transition-colors counter-modal">{{ $chaptersPassed ?? 0 }}</span>
                         <p class="text-[10px] text-slate-500 dark:text-slate-500 uppercase tracking-widest font-bold mt-2 transition-colors">Bab Diselesaikan</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Modal Hero Tinjauan Kuis --}}
+            <div x-show="showQuizReviewModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+                <div class="absolute inset-0 bg-slate-900/55 dark:bg-[#020617]/85 backdrop-blur-md transition-colors" @click="showQuizReviewModal = false" x-transition.opacity></div>
+                <div class="relative w-full max-w-3xl overflow-hidden rounded-[2rem] bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/20 shadow-2xl transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+                    <div class="relative p-6 md:p-8 bg-gradient-to-br from-fuchsia-600 via-purple-600 to-cyan-600 text-white">
+                        <div class="absolute inset-0 bg-black/10"></div>
+                        <button @click="showQuizReviewModal = false" class="absolute top-5 right-5 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition focus:outline-none" title="Tutup">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                        <div class="relative z-10 max-w-xl">
+                            <p class="text-[10px] uppercase tracking-[0.26em] font-black text-white/65 mb-2">Tinjauan Evaluasi</p>
+                            <h3 class="text-2xl md:text-3xl font-black leading-tight" x-text="selectedQuizReview?.title || 'Evaluasi Teori'"></h3>
+                            <p class="text-sm text-white/75 mt-3" x-text="selectedQuizReview?.feedbackMessage || 'Ringkasan pengerjaan tersedia untuk ditinjau ulang.'"></p>
+                        </div>
+                        <div class="absolute right-8 bottom-[-22px] z-10 hidden md:block text-right">
+                            <div class="text-7xl font-black leading-none" x-text="selectedQuizReview?.score ?? 0"></div>
+                            <div class="text-[10px] uppercase tracking-widest font-bold text-white/70">Skor Akhir</div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 md:p-8">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                            <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4">
+                                <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Status</p>
+                                <p class="text-lg font-black mt-1" :class="(selectedQuizReview?.score ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'" x-text="selectedQuizReview?.status || '-'"></p>
+                            </div>
+                            <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4">
+                                <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Durasi</p>
+                                <p class="text-lg font-black mt-1 text-slate-900 dark:text-white font-mono" x-text="selectedQuizReview?.duration || '-'"></p>
+                            </div>
+                            <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4">
+                                <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Terjawab</p>
+                                <p class="text-lg font-black mt-1 text-slate-900 dark:text-white"><span x-text="selectedQuizReview?.answered ?? 0"></span> Soal</p>
+                            </div>
+                            <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4">
+                                <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Ragu-ragu</p>
+                                <p class="text-lg font-black mt-1 text-amber-600 dark:text-amber-400"><span x-text="selectedQuizReview?.flagged ?? 0"></span> Soal</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-2xl bg-slate-50 dark:bg-[#020617]/60 border border-slate-200 dark:border-white/10 p-4">
+                            <div>
+                                <p class="text-xs font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.feedbackLevel || 'Ringkasan'"></p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Dikumpulkan: <span x-text="selectedQuizReview?.date || '-'"></span></p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Soal kosong: <span x-text="selectedQuizReview?.unanswered ?? 0"></span> • Fokus terganggu: <span x-text="selectedQuizReview?.focusLost ?? 0"></span></p>
+                                <template x-if="selectedQuizReview?.reflectionNote">
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-2 italic">"<span x-text="selectedQuizReview.reflectionNote"></span>"</p>
+                                </template>
+                            </div>
+                            <template x-if="selectedQuizReview?.reviewUrl">
+                                <a :href="selectedQuizReview.reviewUrl" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-widest hover:opacity-90 transition">
+                                    Buka Detail
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </template>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -871,60 +1497,230 @@
         @if(session('error')) Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: "{{ session('error') }}", showConfirmButton: false, timer: 4000, background: swalBg, color: swalColor, iconColor: '#ef4444' }); @endif
         @if(session('info')) Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: "{{ session('info') }}", showConfirmButton: false, timer: 3500, background: swalBg, color: swalColor, iconColor: '#3b82f6' }); @endif
 
-        // --- 3. CHART JS (LINE CHART KUIS) ---
-        const ctx = document.getElementById('quizChart')?.getContext('2d');
-        if(ctx && {!! json_encode($chartData['scores'] ?? []) !!}.length > 0) {
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(6, 182, 212, 0.3)'); 
-            gradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
-            
-            new Chart(ctx, { 
-                type: 'line', 
-                data: { 
-                    labels: {!! json_encode($chartData['labels'] ?? []) !!}, 
-                    datasets: [{ 
-                        label: 'Nilai Evaluasi', 
-                        data: {!! json_encode($chartData['scores'] ?? []) !!}, 
-                        borderColor: '#06b6d4', 
-                        backgroundColor: gradient, 
-                        borderWidth: 2.5, 
-                        pointBackgroundColor: isDark ? '#020617' : '#ffffff', 
-                        pointBorderColor: '#06b6d4', 
-                        pointBorderWidth: 2, 
-                        pointRadius: 4, 
-                        pointHoverRadius: 6, 
-                        fill: true, 
-                        tension: 0.4 
-                    }] 
-                }, 
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { display: false }, 
-                        tooltip: { 
-                            backgroundColor: isDark ? 'rgba(15, 20, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
-                            titleColor: isDark ? '#fff' : '#0f141e',
-                            bodyColor: isDark ? '#cbd5e1' : '#475569',
-                            titleFont: { family: 'Inter', size: 12, weight: 'bold' }, 
-                            bodyFont: { family: 'Inter', size: 11 }, 
-                            padding: 10, 
-                            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', 
-                            borderWidth: 1, 
-                            displayColors: false 
-                        } 
-                    }, 
-                    scales: { 
-                        x: { grid: { display: false }, ticks: { color: 'rgba(150, 150, 150, 0.5)', font: { family: 'monospace', size: 10 } } }, 
-                        y: { beginAtZero: true, max: 100, grid: { color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }, ticks: { color: 'rgba(150, 150, 150, 0.5)', font: { size: 10 } } } 
-                    } 
-                } 
+        // --- 3. CHART JS (NILAI KUIS + NILAI LAB, DATA VALID) ---
+        const assessmentCanvas = document.getElementById('assessmentProgressChart');
+        let assessmentProgressChart = null;
+        let activeAssessmentChartView = 'all';
+        let activeAssessmentChartType = 'line';
+
+        const assessmentLabels = {!! json_encode($performanceLabels->values()) !!};
+        const assessmentQuizScores = {!! json_encode($quizScoreSeries->values()) !!};
+        const assessmentLabScores = {!! json_encode($labScoreSeries->values()) !!};
+
+        function getChartTheme() {
+            const dark = document.documentElement.classList.contains('dark');
+
+            return {
+                isDark: dark,
+                gridColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)',
+                textColor: dark ? '#94a3b8' : '#64748b',
+                tooltipBg: dark ? 'rgba(15, 20, 30, 0.96)' : 'rgba(255, 255, 255, 0.96)',
+                tooltipTitle: dark ? '#ffffff' : '#0f172a',
+                tooltipBody: dark ? '#cbd5e1' : '#475569',
+                pointBg: dark ? '#0f141e' : '#ffffff'
+            };
+        }
+
+        function buildAssessmentDataset(ctx, type, label, scores, color, gradientColor, hidden = false) {
+            if (type === 'bar') {
+                return {
+                    label: label,
+                    data: scores,
+                    backgroundColor: color.replace('1)', '0.72)'),
+                    borderColor: color,
+                    borderWidth: 0,
+                    borderRadius: 9,
+                    borderSkipped: false,
+                    maxBarThickness: 38,
+                    hidden: hidden
+                };
+            }
+
+            const theme = getChartTheme();
+            const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+            gradient.addColorStop(0, gradientColor.replace('0.34', '0.34'));
+            gradient.addColorStop(0.55, gradientColor.replace('0.34', '0.11'));
+            gradient.addColorStop(1, gradientColor.replace('0.34', '0'));
+
+            return {
+                label: label,
+                data: scores,
+                borderColor: color,
+                backgroundColor: gradient,
+                borderWidth: 3,
+                pointBackgroundColor: theme.pointBg,
+                pointBorderColor: color,
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: color,
+                pointHoverBorderColor: '#ffffff',
+                fill: true,
+                tension: 0.42,
+                spanGaps: false,
+                hidden: hidden
+            };
+        }
+
+        function buildAssessmentOptions(type) {
+            const theme = getChartTheme();
+
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 850,
+                    easing: 'easeOutQuart'
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: theme.tooltipBg,
+                        titleColor: theme.tooltipTitle,
+                        bodyColor: theme.tooltipBody,
+                        borderColor: theme.gridColor,
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        usePointStyle: true,
+                        titleFont: {
+                            family: 'Inter',
+                            size: 12,
+                            weight: '800'
+                        },
+                        bodyFont: {
+                            family: 'Inter',
+                            size: 11,
+                            weight: '600'
+                        },
+                        callbacks: {
+                            title: function (items) {
+                                return items[0]?.label || 'Performa Akademik';
+                            },
+                            label: function (context) {
+                                if (context.raw === null || context.raw === undefined) {
+                                    return context.dataset.label + ': belum ada data';
+                                }
+
+                                return context.dataset.label + ': ' + context.raw + ' poin';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: theme.textColor,
+                            font: {
+                                family: 'JetBrains Mono',
+                                size: 10,
+                                weight: '600'
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: theme.gridColor,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: theme.textColor,
+                            stepSize: 20,
+                            callback: function (value) {
+                                return value + ' pts';
+                            },
+                            font: {
+                                family: 'JetBrains Mono',
+                                size: 10,
+                                weight: '600'
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    }
+                }
+            };
+        }
+
+        function renderAssessmentChart(view = 'all', type = 'line') {
+            if (!assessmentCanvas || assessmentLabels.length === 0) {
+                return;
+            }
+
+            const ctx = assessmentCanvas.getContext('2d');
+
+            if (assessmentProgressChart) {
+                assessmentProgressChart.destroy();
+            }
+
+            assessmentProgressChart = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: assessmentLabels,
+                    datasets: [
+                        buildAssessmentDataset(
+                            ctx,
+                            type,
+                            'Nilai Kuis',
+                            assessmentQuizScores,
+                            'rgba(6, 182, 212, 1)',
+                            'rgba(6, 182, 212, 0.34)',
+                            view === 'lab'
+                        ),
+                        buildAssessmentDataset(
+                            ctx,
+                            type,
+                            'Nilai Lab',
+                            assessmentLabScores,
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(59, 130, 246, 0.34)',
+                            view === 'quiz'
+                        )
+                    ]
+                },
+                options: buildAssessmentOptions(type)
             });
         }
-        
+
+        window.updateAssessmentChartView = function (view) {
+            activeAssessmentChartView = view;
+
+            if (!assessmentProgressChart) {
+                return;
+            }
+
+            assessmentProgressChart.data.datasets[0].hidden = view === 'lab';
+            assessmentProgressChart.data.datasets[1].hidden = view === 'quiz';
+            assessmentProgressChart.update();
+        };
+
+        window.updateAssessmentChartType = function (type) {
+            activeAssessmentChartType = type;
+            renderAssessmentChart(activeAssessmentChartView, activeAssessmentChartType);
+        };
+
+        renderAssessmentChart(activeAssessmentChartView, activeAssessmentChartType);
+
         // --- 4. PIE CHART ACTIVITY COMPOSITION ---
         const pieCtx = document.getElementById('activityPieChart')?.getContext('2d');
         if(pieCtx && ({{ $lessonsCompleted ?? 0 }} > 0 || {{ $labsCompleted ?? 0 }} > 0 || {{ $quizzesCompleted ?? 0 }} > 0)) {
+            const pieTheme = getChartTheme();
+
             new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
@@ -932,33 +1728,32 @@
                     datasets: [{
                         data: [{{ $lessonsCompleted ?? 0 }}, {{ $labsCompleted ?? 0 }}, {{ $quizzesCompleted ?? 0 }}],
                         backgroundColor: [
-                            'rgba(217, 70, 239, 0.85)', // Fuchsia
-                            'rgba(59, 130, 246, 0.85)', // Blue
-                            'rgba(6, 182, 212, 0.85)'   // Cyan
+                            'rgba(217, 70, 239, 0.86)',
+                            'rgba(59, 130, 246, 0.86)',
+                            'rgba(6, 182, 212, 0.86)'
                         ],
-                        borderColor: isDark ? '#0f141e' : '#ffffff',
+                        borderColor: pieTheme.isDark ? '#0f141e' : '#ffffff',
                         borderWidth: 2,
-                        hoverOffset: 4
+                        hoverOffset: 5
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '75%',
+                    cutout: '74%',
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: isDark ? 'rgba(15, 20, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                            titleColor: isDark ? '#fff' : '#0f141e',
-                            bodyColor: isDark ? '#cbd5e1' : '#475569',
-                            bodyFont: { family: 'Inter', size: 11, weight: '600' },
+                            backgroundColor: pieTheme.tooltipBg,
+                            titleColor: pieTheme.tooltipTitle,
+                            bodyColor: pieTheme.tooltipBody,
+                            bodyFont: { family: 'Inter', size: 11, weight: '700' },
                             padding: 10,
-                            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                            borderColor: pieTheme.gridColor,
                             borderWidth: 1,
-                            displayColors: true,
                             callbacks: {
                                 label: function(context) {
-                                    return ' ' + context.label + ': ' + context.raw + ' Selesai';
+                                    return ' ' + context.label + ': ' + context.raw + ' selesai';
                                 }
                             }
                         }

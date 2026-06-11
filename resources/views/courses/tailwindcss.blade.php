@@ -3,7 +3,6 @@
 
 @section('content')
 
-{{-- KONFIGURASI TEMA AWAL UNTUK MENCEGAH FOUC --}}
 <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -13,564 +12,557 @@
 </script>
 
 <style>
-    /* --- THEME CONFIG (DYNAMIC GLASSMORPHISM) --- */
-    :root { 
+    :root {
         --bg-main: #f8fafc;
         --text-main: #0f172a;
-        --glass-bg: rgba(255, 255, 255, 0.85); 
-        --glass-border: rgba(0, 0, 0, 0.05);
-        --glass-header: rgba(255, 255, 255, 0.85);
+        --glass-bg: rgba(255, 255, 255, 0.86);
+        --glass-border: rgba(15, 23, 42, 0.08);
+        --glass-header: rgba(255, 255, 255, 0.84);
         --card-bg: #ffffff;
-        --card-hover: rgba(0, 0, 0, 0.02);
-        --border-color: rgba(0, 0, 0, 0.1);
+        --card-hover: rgba(15, 23, 42, 0.03);
+        --border-color: rgba(15, 23, 42, 0.10);
         --text-muted: #64748b;
         --text-heading: #0f172a;
         --code-bg: #f1f5f9;
         --simulator-bg: #ffffff;
-        --accent: #06b6d4; /* Cyan 500 */
-        --accent-glow: rgba(6, 182, 212, 0.3);
+        --accent: #6366f1;
+        --accent-glow: rgba(99, 102, 241, 0.32);
     }
 
     .dark {
         --bg-main: #020617;
         --text-main: #e2e8f0;
-        --glass-bg: rgba(10, 14, 23, 0.85); 
-        --glass-border: rgba(255, 255, 255, 0.05);
-        --glass-header: rgba(2, 6, 23, 0.80);
-        --card-bg: #1e1e1e;
-        --card-hover: rgba(255, 255, 255, 0.02);
-        --border-color: rgba(255, 255, 255, 0.1);
-        --text-muted: rgba(255, 255, 255, 0.5);
+        --glass-bg: rgba(10, 14, 23, 0.88);
+        --glass-border: rgba(255, 255, 255, 0.06);
+        --glass-header: rgba(2, 6, 23, 0.82);
+        --card-bg: #0f172a;
+        --card-hover: rgba(255, 255, 255, 0.04);
+        --border-color: rgba(255, 255, 255, 0.10);
+        --text-muted: rgba(226, 232, 240, 0.62);
         --text-heading: #ffffff;
-        --code-bg: #252525;
-        --simulator-bg: #0b0f19;
-        --accent-glow: rgba(6, 182, 212, 0.5);
+        --code-bg: #111827;
+        --simulator-bg: #0b1120;
+        --accent-glow: rgba(99, 102, 241, 0.48);
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s, color 0.4s; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color .4s, color .4s; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-    /* UTILITIES ADAPTIF */
     .bg-adaptive { background-color: var(--bg-main); }
     .text-adaptive { color: var(--text-main); }
     .text-heading { color: var(--text-heading); }
     .text-muted { color: var(--text-muted); }
     .border-adaptive { border-color: var(--border-color); }
-    .card-adaptive { background-color: var(--card-bg); border-color: var(--glass-border); transition: all 0.3s; }
-    .card-adaptive:hover { border-color: var(--accent-glow); }
+    .card-adaptive { background-color: var(--card-bg); border-color: var(--glass-border); transition: all .3s; }
+    .card-adaptive:hover { border-color: var(--accent-glow); transform: translateY(-1px); }
     .sim-bg-adaptive { background-color: var(--simulator-bg); }
     .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); }
 
-    /* HIGHLIGHT TERM UTILITY */
     .hl-term {
-        background-color: rgba(6, 182, 212, 0.15); /* Cyan tint */
-        color: #0891b2; /* Cyan 600 */
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.375rem;
-        font-weight: 600;
-        font-style: normal;
+        background-color: rgba(99, 102, 241, 0.14);
+        color: #4f46e5;
+        padding: .125rem .375rem;
+        border-radius: .375rem;
+        font-weight: 700;
+        border: 1px solid rgba(99, 102, 241, .26);
         white-space: nowrap;
     }
-    .dark .hl-term {
-        background-color: rgba(34, 211, 238, 0.2);
-        color: #67e8f9; /* Cyan 300 */
-    }
+    .dark .hl-term { color: #a5b4fc; background-color: rgba(99,102,241,.20); border-color: rgba(99,102,241,.38); }
 
-    /* SCROLLBAR */
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-    
-    /* ANIMATIONS & EFFECTS */
-    #animated-bg { 
-        background: radial-gradient(800px circle at 20% 20%, rgba(34,211,238,.10), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(14,165,233,.10), transparent 40%); 
-        animation: bgMove 20s ease-in-out infinite alternate; 
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148,163,184,.38); border-radius: 999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+
+    #animated-bg {
+        background:
+            radial-gradient(600px circle at 18% 16%, rgba(99,102,241,.12), transparent 40%),
+            radial-gradient(700px circle at 85% 25%, rgba(14,165,233,.10), transparent 42%),
+            radial-gradient(800px circle at 48% 88%, rgba(168,85,247,.10), transparent 44%);
+        animation: bgMove 20s ease-in-out infinite alternate;
     }
     .dark #animated-bg {
-        background: radial-gradient(800px circle at 20% 20%, rgba(34,211,238,.15), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(14,165,233,.15), transparent 40%); 
+        background:
+            radial-gradient(600px circle at 18% 16%, rgba(99,102,241,.18), transparent 40%),
+            radial-gradient(700px circle at 85% 25%, rgba(14,165,233,.14), transparent 42%),
+            radial-gradient(800px circle at 48% 88%, rgba(168,85,247,.16), transparent 44%);
     }
-    @keyframes bgMove{to{transform:scale(1.15)}}
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .shake { animation: shake 0.4s ease-in-out; }
-    
-    /* SCROLLSPY SIDEBAR ACTIVE */
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: var(--text-main); background: var(--card-hover); }
-    .nav-item.active { color: #06b6d4; background: rgba(6, 182, 212, 0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; transition: all 0.3s; }
-    .dark .dot { background: #334155; }
-    .nav-item.active .dot { background: #06b6d4; box-shadow: 0 0 8px #06b6d4; transform: scale(1.2); }
+    @keyframes bgMove { to { transform: scale(1.12); } }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+    .shake { animation: shake .4s ease-in-out; }
+
+    .nav-item { display:flex; width:100%; text-align:left; align-items:center; gap:12px; padding:10px 14px; font-size:.85rem; color:var(--text-muted); border-radius:8px; transition:all .2s; }
+    .nav-item:hover { color:var(--text-main); background:var(--card-hover); }
+    .nav-item.active { color:#6366f1; background:rgba(99,102,241,.08); font-weight:700; }
+    .dot { width:6px; height:6px; border-radius:50%; background:#94a3b8; transition:all .3s; }
+    .dark .dot { background:#475569; }
+    .nav-item.active .dot { background:#6366f1; box-shadow:0 0 8px #6366f1; transform:scale(1.2); }
+
+    .code-line { display:block; min-width:max-content; }
+    .tag { color:#7c3aed; font-weight:700; }
+    .attr { color:#d97706; }
+    .str { color:#059669; }
+    .prop { color:#2563eb; }
+    .comment { color:#94a3b8; font-style:italic; }
+    .dark .tag { color:#c084fc; }
+    .dark .attr { color:#fbbf24; }
+    .dark .str { color:#34d399; }
+    .dark .prop { color:#60a5fa; }
+
+    .activity-option.correct { border-color:#10b981 !important; background:rgba(16,185,129,.10) !important; }
+    .activity-option.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
-<div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
+<div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
-    {{-- BACKGROUND EFFECTS --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-50 transition-opacity"></div>
-        <div class="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-cyan-500/5 dark:bg-cyan-900/10 rounded-full blur-[120px] animate-pulse transition-colors"></div>
-        <div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-sky-500/5 dark:bg-sky-900/10 rounded-full blur-[100px] transition-colors"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.02] dark:opacity-[0.03]"></div>
-        <div id="cursor-glow"></div>
     </div>
 
     @include('layouts.partials.navbar')
 
-    <div class="flex flex-1 overflow-hidden relative z-20">
-
+    <div class="flex flex-1 overflow-hidden relative z-20 h-full">
         @include('layouts.partials.course-sidebar')
 
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
-            
-            {{-- STICKY HEADER & PROGRESS BAR --}}
+
             <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-4 md:px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
-                <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 transition-colors shrink-0">1.2</div>
-                    <div>
-                        <h1 class="text-sm font-bold text-heading transition-colors line-clamp-1">Konsep Dasar Tailwind</h1>
-                        <p class="text-[10px] text-muted transition-colors line-clamp-1">Core Utilities & Workflow</p>
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-600 dark:text-indigo-400 shrink-0">1.2</div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm font-bold text-heading line-clamp-1">Konsep Dasar Tailwind CSS</h1>
+                        <p class="text-[10px] text-muted line-clamp-1">Utility class, utility-first, dan cara membaca class</p>
                     </div>
                 </div>
-                
-                {{-- DYNAMIC PROGRESS BAR UI --}}
+
                 <div class="flex items-center gap-3 shrink-0">
-                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
+                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
                     </div>
-                    <span id="progressLabelTop" class="text-cyan-600 dark:text-cyan-400 font-bold text-xs transition-colors">0%</span>
+                    <span id="progressLabelTop" class="text-indigo-600 dark:text-indigo-400 font-bold text-xs">0%</span>
                 </div>
             </div>
 
             <div class="p-4 sm:p-6 lg:p-16 max-w-5xl mx-auto pb-40">
-                
-                {{-- TUJUAN PEMBELAJARAN --}}
+
                 <div class="mb-16 md:mb-24">
-                    <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2 transition-colors">
-                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <div class="card-adaptive rounded-3xl border p-6 md:p-8 overflow-hidden relative">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                        <p class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[.25em] mb-3">Subbab 1.2</p>
+                        <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight mb-4">Konsep Dasar Tailwind CSS</h2>
+                        <p class="text-sm md:text-base text-muted leading-relaxed max-w-3xl text-justify">
+                            Pada subbab ini, pembelajar mempelajari konsep dasar Tailwind CSS sebagai framework CSS berbasis utility-first. Materi berfokus pada cara kerja utility class, cara membaca nama class, dan cara menyusun tampilan sederhana dari beberapa class kecil tanpa membahas CDN, instalasi, atau konfigurasi.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-heading mt-10 mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Tujuan Pembelajaran
                     </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
-                            <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">1</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Filosofi Utility</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Mendekonstruksi pendekatan desain konvensional dan beralih ke arsitektur utility-first.</p></div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold mb-4">1</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menjelaskan Tailwind</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Menjelaskan Tailwind CSS sebagai framework yang menyediakan class siap pakai untuk mengatur tampilan.</p>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-sky-500/30 transition group h-full">
-                            <div class="w-8 h-8 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">2</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Design Tokens</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Menguasai palet warna bawaan dan hierarki tipografi Tailwind.</p></div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold mb-4">2</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Membaca Utility</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Menghubungkan class seperti <code>p-4</code>, <code>bg-blue-600</code>, dan <code>rounded-lg</code> dengan efek tampilannya.</p>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-teal-500/30 transition group h-full">
-                            <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">3</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Sistem Grid Terukur</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Memahami mekanika <span class="hl-term">4-Point Grid</span> untuk penetapan margin, padding, dan dimensi.</p></div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4">3</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menyusun Tampilan</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Menganalisis gabungan beberapa class utility pada satu elemen HTML.</p>
                         </div>
-                        <div class="card-adaptive p-5 rounded-xl flex items-start gap-4 hover:border-blue-500/30 transition group h-full">
-                            <div class="w-8 h-8 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold text-xs transition-colors">4</div>
-                            <div><h4 class="text-sm font-bold text-heading mb-1 transition-colors">Styling Visual UI</h4><p class="text-[11px] text-muted leading-relaxed transition-colors">Memoles antarmuka dengan kedalaman bayangan (shadow) dan sudut (border-radius).</p></div>
-                        </div>
-                        <div class="bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/40 dark:to-blue-900/40 border border-cyan-200 dark:border-cyan-500/30 p-5 rounded-xl flex items-start gap-4 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition group h-full col-span-1 sm:col-span-2 md:col-span-2 cursor-default">
-                            <div class="w-8 h-8 rounded bg-white/50 dark:bg-white/10 text-cyan-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-sm dark:shadow-none">🏁</div>
-                            <div><h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-1 transition-colors">Final Mission</h4><p class="text-[11px] text-cyan-800 dark:text-white/70 leading-relaxed transition-colors">Menyusun arsitektur komponen Notification Card secara langsung untuk melatih penulisan kelas Tailwind.</p></div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold mb-4">4</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Membedakan Pendekatan</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Membedakan penulisan CSS biasa dengan pendekatan utility-first secara sederhana.</p>
                         </div>
                     </div>
                 </div>
 
                 <article class="space-y-32 md:space-y-40">
-                    
-                    {{-- LESSON 1 --}}
+
+                    <section id="section-6" class="lesson-section scroll-mt-32" data-lesson-id="6">
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.1</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Apa itu <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Tailwind CSS?</span></h2>
+                            </div>
+
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Tailwind CSS adalah framework CSS yang menyediakan kumpulan class kecil untuk mengatur tampilan halaman web. Class tersebut dapat langsung ditulis pada atribut <code>class</code> di elemen HTML.</p>
+                                <p>Jika pada CSS biasa pembelajar membuat selector sendiri, misalnya <code>.tombol-utama</code>, pada Tailwind pembelajar memakai class yang sudah tersedia, seperti <span class="hl-term">bg-blue-600</span>, <span class="hl-term">text-white</span>, <span class="hl-term">px-4</span>, dan <span class="hl-term">rounded-lg</span>. Setiap class memiliki tugas tampilan yang spesifik.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-muted">CSS biasa</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-indigo-500 font-bold">selector sendiri</span>
+                                    </div>
+                                    <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="code-line"><span class="tag">.tombol-utama</span> {</span>
+<span class="code-line">  <span class="prop">background-color</span>: <span class="str">blue</span>;</span>
+<span class="code-line">  <span class="prop">color</span>: <span class="str">white</span>;</span>
+<span class="code-line">  <span class="prop">padding</span>: <span class="str">12px 16px</span>;</span>
+<span class="code-line">  <span class="prop">border-radius</span>: <span class="str">8px</span>;</span>
+<span class="code-line">}</span>
+
+<span class="code-line"><span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="str">"tombol-utama"</span><span class="tag">&gt;</span>Simpan<span class="tag">&lt;/button&gt;</span></span></code></pre>
+                                </div>
+
+                                <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-muted">Tailwind CSS</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-purple-500 font-bold">utility class</span>
+                                    </div>
+                                    <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="code-line"><span class="tag">&lt;button</span></span>
+<span class="code-line">  <span class="attr">class</span>=<span class="str">"bg-blue-600 text-white px-4 py-3 rounded-lg"</span></span>
+<span class="code-line"><span class="tag">&gt;</span></span>
+<span class="code-line">  Simpan</span>
+<span class="code-line"><span class="tag">&lt;/button&gt;</span></span></code></pre>
+                                </div>
+                            </div>
+
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-indigo-600/95 dark:bg-indigo-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-indigo-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 1 — Bandingkan Cara Penulisan</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih pendekatan penulisan untuk melihat perbedaan antara CSS biasa dan utility class Tailwind.</p>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[360px]">
+                                    <div class="code-adaptive border-b lg:border-b-0 lg:border-r border-adaptive flex flex-col">
+                                        <div class="p-4 flex flex-wrap gap-2 border-b border-adaptive">
+                                            <button onclick="setCompareMode('css', this)" class="compare-btn px-3 py-2 rounded-lg bg-indigo-600 text-white border border-indigo-500 text-xs font-bold transition">CSS biasa</button>
+                                            <button onclick="setCompareMode('tailwind', this)" class="compare-btn px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">Tailwind</button>
+                                        </div>
+                                        <pre id="compare-code" class="p-5 text-xs md:text-sm font-mono leading-relaxed overflow-auto custom-scrollbar flex-1"></pre>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-950 flex flex-col">
+                                        <div class="px-4 py-3 border-b border-adaptive bg-slate-50 dark:bg-black/20">
+                                            <span class="text-[10px] font-mono font-bold text-muted uppercase tracking-widest">Hasil Tampilan</span>
+                                        </div>
+                                        <div class="flex-1 p-6 md:p-8 flex items-center justify-center">
+                                            <button id="compare-preview" class="font-bold shadow-lg transition-all duration-300">Simpan Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent border-l-4 border-indigo-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Tailwind tidak menghilangkan CSS. Tailwind menyediakan cara lain untuk memakai aturan CSS melalui class kecil yang langsung dibaca pada HTML.</p>
+                            </div>
+                        </div>
+                    </section>
+
                     <section id="section-7" class="lesson-section scroll-mt-32" data-lesson-id="7">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.1</span>
-                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Filosofi <br> 
-                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Utility-First</span>
-                                </h2>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Separation of Concerns vs Utility-First</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Dalam CSS konvensional, praktik standar adalah memisahkan file struktur (HTML) dan gaya (CSS) atau yang dikenal sebagai <span class="hl-term">Separation of Concerns</span>. Proses ini mengharuskan Anda membuat nama kelas abstrak (misal: <code>.card-profile</code>) di HTML, lalu berpindah ke file CSS untuk mendefinisikan gaya warna dan ukurannya. Pendekatan ini rentan memperlambat proses pengembangan karena mengharuskan Anda melakukan <em>context switching</em> (berpindah antar-file).</p>
-                                    <p><strong>Tailwind CSS menggunakan arsitektur Utility-First.</strong> Anda tidak lagi menulis CSS di file terpisah, melainkan menyusun kelas fungsional bermakna tunggal secara langsung di dalam elemen HTML. Contohnya: kelas <code>flex</code> akan mengaktifkan Flexbox; <code>pt-4</code> memberikan <em>padding-top</em>; dan <code>text-center</code> meratakan teks ke tengah. Pendekatan ini menghilangkan kebutuhan untuk mencari nama kelas yang tepat dan secara signifikan mempercepat proses pembuatan UI (<em>prototyping</em>).</p>
-                                </div>
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.2</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Utility Class dan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Utility-First</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Efisiensi Skalabilitas & Kompilator JIT</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Salah satu masalah utama CSS konvensional adalah ukuran filenya yang terus membengkak. Setiap kali fitur baru ditambahkan, kode CSS baru ditulis. Hal ini sering menyisakan kode yang tidak lagi terpakai (<em>Dead Code</em>) karena tidak ada yang berani menghapusnya demi menghindari kerusakan tata letak di halaman lain.</p>
-                                    <p>Tailwind menyelesaikan masalah skalabilitas ini. Kelas utilitasnya bersifat global dan dapat digunakan berulang kali di seluruh proyek, sehingga ukuran CSS tidak tumbuh secara eksponensial. Ditambah dengan kompilator <strong>JIT (Just-In-Time) Engine</strong>, Tailwind hanya akan membundel kelas-kelas CSS yang benar-benar Anda tulis di file HTML, menjadikan ukuran file akhir (<em>production build</em>) sangat kecil dan efisien.</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Utility class adalah class yang mewakili satu aturan tampilan tertentu. Contohnya, <code>text-center</code> digunakan untuk meratakan teks ke tengah, <code>p-4</code> digunakan untuk memberi padding, dan <code>bg-slate-100</code> digunakan untuk memberi warna latar.</p>
+                                <p>Disebut utility-first karena tampilan dibangun dari kumpulan utility class terlebih dahulu. Pembelajar tidak perlu langsung membuat nama class baru untuk setiap komponen. Cukup susun utility sesuai kebutuhan tampilan.</p>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl flex flex-col md:flex-row min-h-[420px] transition-colors mt-8 relative">
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 1 --}}
-                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
-                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        PANDUAN SIMULASI 1
+                            <div class="card-adaptive border rounded-2xl p-5 md:p-6">
+                                <h3 class="font-bold text-heading mb-4">Contoh membaca utility class</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div class="bg-slate-100 dark:bg-black/30 rounded-xl p-4 border border-adaptive">
+                                        <div class="text-xs font-bold text-heading mb-2"><code>bg-white</code></div>
+                                        <p class="text-xs text-muted leading-relaxed">Memberi latar belakang putih pada elemen.</p>
                                     </div>
-                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Tekan tombol opsi untuk melihat perbandingan penulisan sintaks antara pendekatan <strong>CSS Biasa (Konvensional)</strong> dan metode <strong>Tailwind (Utility-First)</strong>.</p>
+                                    <div class="bg-slate-100 dark:bg-black/30 rounded-xl p-4 border border-adaptive">
+                                        <div class="text-xs font-bold text-heading mb-2"><code>p-6</code></div>
+                                        <p class="text-xs text-muted leading-relaxed">Memberi ruang dalam sebesar skala 6.</p>
+                                    </div>
+                                    <div class="bg-slate-100 dark:bg-black/30 rounded-xl p-4 border border-adaptive">
+                                        <div class="text-xs font-bold text-heading mb-2"><code>rounded-xl</code></div>
+                                        <p class="text-xs text-muted leading-relaxed">Membuat sudut elemen lebih melengkung.</p>
+                                    </div>
+                                    <div class="bg-slate-100 dark:bg-black/30 rounded-xl p-4 border border-adaptive">
+                                        <div class="text-xs font-bold text-heading mb-2"><code>shadow-md</code></div>
+                                        <p class="text-xs text-muted leading-relaxed">Menambahkan bayangan sedang pada elemen.</p>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="w-full md:w-1/2 code-adaptive p-4 sm:p-6 pt-24 sm:pt-20 font-mono text-xs flex flex-col transition-colors relative z-10 min-h-[250px]">
-                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 pb-2 border-b border-adaptive transition-colors">
-                                        <span class="text-muted font-bold uppercase text-[10px] transition-colors">Code Editor</span>
-                                        <div class="flex gap-2">
-                                            <button onclick="setSim1('css')" class="flex-1 sm:flex-none px-3 py-1.5 bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white transition text-[10px] font-bold">CSS Biasa</button>
-                                            <button onclick="setSim1('tw')" class="flex-1 sm:flex-none px-3 py-1.5 bg-cyan-100 dark:bg-cyan-600/20 border border-cyan-300 dark:border-cyan-500/50 text-cyan-700 dark:text-cyan-400 rounded transition text-[10px] font-bold">Tailwind</button>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-purple-600/95 dark:bg-purple-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-purple-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 2 — Terjemahkan Utility Class</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih utility class untuk melihat arti tampilannya secara langsung.</p>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[360px]">
+                                    <div class="code-adaptive border-b lg:border-b-0 lg:border-r border-adaptive p-5">
+                                        <div class="grid grid-cols-2 gap-2 mb-5">
+                                            <button onclick="explainUtility('bg-blue-600')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">bg-blue-600</button>
+                                            <button onclick="explainUtility('text-white')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">text-white</button>
+                                            <button onclick="explainUtility('p-6')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">p-6</button>
+                                            <button onclick="explainUtility('rounded-xl')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">rounded-xl</button>
+                                            <button onclick="explainUtility('shadow-md')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">shadow-md</button>
+                                            <button onclick="explainUtility('text-center')" class="px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">text-center</button>
+                                        </div>
+                                        <pre id="utility-explain-code" class="bg-white dark:bg-black/30 border border-adaptive rounded-xl p-4 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"></pre>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-950 flex flex-col">
+                                        <div class="px-4 py-3 border-b border-adaptive bg-slate-50 dark:bg-black/20">
+                                            <span class="text-[10px] font-mono font-bold text-muted uppercase tracking-widest">Penjelasan</span>
+                                        </div>
+                                        <div class="flex-1 flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/40">
+                                            <div id="utility-explain-box" class="max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm transition-all duration-300">
+                                                <h3 class="font-black text-slate-900 dark:text-white mb-2">Pilih Utility</h3>
+                                                <p class="text-sm text-slate-600 dark:text-slate-300">Tekan salah satu class di sebelah kiri untuk melihat arti dan efeknya.</p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div id="sim1-code" class="flex-1 overflow-x-auto text-blue-600 dark:text-blue-300 leading-relaxed whitespace-pre font-mono bg-white dark:bg-black/20 p-4 rounded border border-adaptive shadow-inner dark:shadow-none transition-colors text-[11px] sm:text-xs custom-scrollbar"></div>
-                                </div>
-                                <div class="w-full md:w-1/2 bg-slate-100 dark:bg-[#111] flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-adaptive relative transition-colors z-10 min-h-[200px] p-6">
-                                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-                                    <button class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-transform transform z-10 text-sm">
-                                        Beli Sekarang
-                                    </button>
                                 </div>
                             </div>
-                            
-                            {{-- KESIMPULAN SIMULASI 1 --}}
-                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
-                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                    Kesimpulan Pendekatan
-                                </h5>
-                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                    Meskipun hasil akhirnya terlihat identik secara visual, metode penulisan Tailwind memungkinkan pengembang merancang antarmuka langsung di dalam file HTML. Hal ini menghemat waktu secara dramatis karena menghilangkan kebutuhan untuk menulis blok gaya (style block) yang terpisah-pisah.
-                                </p>
+
+                            <div class="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-900/20 dark:to-transparent border-l-4 border-purple-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-purple-700 dark:text-purple-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Utility class membuat aturan tampilan lebih mudah dibaca karena nama class menunjukkan fungsi tampilannya secara langsung.</p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 2 --}}
                     <section id="section-8" class="lesson-section scroll-mt-32" data-lesson-id="8">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.2</span>
-                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Warna & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Tipografi</span>
-                                </h2>
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.3</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Menyusun Tampilan dari <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Beberapa Class</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Design Tokens (Sistem Palet Warna)</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Tailwind menyediakan sistem warna terkurasi (Design Tokens) untuk menjaga konsistensi visual di seluruh aplikasi. Daripada menggunakan nilai heksadesimal acak, Anda dapat memanfaatkan palet bawaan yang telah disusun berdasarkan tingkat kecerahan, mulai dari <code>50</code> (paling terang) hingga <code>950</code> (paling gelap/pekat).</p>
-                                    <p>Contohnya, kelas <code>bg-slate-900</code> akan memberikan latar warna abu-abu gelap. Tailwind juga mendukung kontrol tingkat transparansi (opacity) secara langsung dengan menggunakan sintaks pecahan, seperti <code>bg-slate-900/50</code> untuk memberikan transparansi 50%, yang sangat berguna untuk membuat efek overlay atau glassmorphism.</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Satu utility class biasanya hanya mengatur satu bagian tampilan. Karena itu, komponen Tailwind dibangun dengan menggabungkan beberapa utility class dalam satu atribut <code>class</code>.</p>
+                                <p>Contohnya, sebuah kartu dapat memiliki latar putih, padding, border, sudut melengkung, dan bayangan. Masing-masing bagian tampilan tersebut ditulis sebagai class yang berbeda agar mudah dibaca dan diubah.</p>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Sistem Ukuran Tipografi Relatif</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Kelas utilitas tipografi Tailwind dirancang untuk menjaga hierarki teks yang proporsional. Skala ukuran yang disediakan berkisar dari <code>text-xs</code> hingga ukuran raksasa <code>text-9xl</code>. Selain itu, utilitas pengaturan seperti <code>leading-tight</code> (untuk line-height/spasi baris) dan <code>tracking-wide</code> (untuk letter-spacing/jarak antar huruf) tersedia untuk mengoptimalkan kenyamanan membaca (<em>readability</em>).</p>
-                                    <p>Sistem tipografi ini menggunakan satuan relatif <code>rem</code> secara otomatis. Ini memastikan ukuran teks di situs web Anda akan beradaptasi secara fleksibel dengan pengaturan prasetel perbesaran layar (zoom) pada perangkat pengguna.</p>
-                                </div>
-                            </div>
-
-                            <div class="sim-bg-adaptive rounded-xl border border-adaptive p-4 sm:p-6 flex flex-col lg:flex-row gap-6 lg:gap-8 shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors mt-8">
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 2 --}}
-                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
-                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        PANDUAN SIMULASI 2
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-muted">Komponen kartu</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-indigo-500 font-bold">class gabungan</span>
                                     </div>
-                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Tekan tombol opsi besaran teks (SIZE) dan palet (COLOR) untuk melihat bagaimana properti CSS dikendalikan menggunakan kelas utilitas Tailwind.</p>
+                                    <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="code-line"><span class="tag">&lt;article</span></span>
+<span class="code-line">  <span class="attr">class</span>=<span class="str">"bg-white border border-slate-300 rounded-xl p-6 shadow-md"</span></span>
+<span class="code-line"><span class="tag">&gt;</span></span>
+<span class="code-line">  <span class="tag">&lt;h3&gt;</span>Produk Pilihan<span class="tag">&lt;/h3&gt;</span></span>
+<span class="code-line">  <span class="tag">&lt;p&gt;</span>Sepatu ringan untuk harian.<span class="tag">&lt;/p&gt;</span></span>
+<span class="code-line"><span class="tag">&lt;/article&gt;</span></span></code></pre>
                                 </div>
 
-                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
-                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors hidden sm:block">Tipografi & Warna</h4>
-                                    <div>
-                                        <label class="text-[10px] text-cyan-600 dark:text-cyan-400 block mb-2 font-bold transition-colors">SIZE (Ukuran Teks)</label>
-                                        <div class="flex gap-2">
-                                            <button onclick="updateSim2('size', 'text-sm')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-sm</button>
-                                            <button onclick="updateSim2('size', 'text-2xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-2xl</button>
-                                            <button onclick="updateSim2('size', 'text-5xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 transition text-slate-600 dark:text-gray-300 font-medium">text-5xl</button>
+                                <div class="card-adaptive border rounded-2xl p-5 flex flex-col justify-center">
+                                    <h3 class="font-bold text-heading mb-4">Cara membaca dari kiri ke kanan</h3>
+                                    <div class="space-y-3 text-sm">
+                                        <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shrink-0">1</div><p class="text-muted leading-relaxed"><code>bg-white</code> mengatur warna latar kartu.</p></div>
+                                        <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold shrink-0">2</div><p class="text-muted leading-relaxed"><code>border border-slate-300</code> memberi garis tepi.</p></div>
+                                        <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">3</div><p class="text-muted leading-relaxed"><code>rounded-xl p-6 shadow-md</code> mengatur sudut, ruang dalam, dan bayangan.</p></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-indigo-600/95 dark:bg-indigo-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-indigo-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 3 — Bangun Kartu dengan Utility</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Aktifkan atau matikan class untuk melihat pengaruhnya pada kartu.</p>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[420px]">
+                                    <div class="code-adaptive border-b lg:border-b-0 lg:border-r border-adaptive p-5">
+                                        <div class="grid grid-cols-2 gap-2 mb-5">
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="bg-white" checked> bg-white</label>
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="border" checked> border</label>
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="rounded-xl" checked> rounded-xl</label>
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="p-6" checked> p-6</label>
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="shadow-md" checked> shadow-md</label>
+                                            <label class="flex items-center gap-2 bg-white dark:bg-black/30 border border-adaptive rounded-lg p-3 text-xs font-bold"><input type="checkbox" class="accent-indigo-600" onchange="updateCardBuilder()" data-class="text-center"> text-center</label>
+                                        </div>
+                                        <pre id="card-builder-code" class="bg-white dark:bg-black/30 border border-adaptive rounded-xl p-4 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"></pre>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-950 flex flex-col">
+                                        <div class="px-4 py-3 border-b border-adaptive bg-slate-50 dark:bg-black/20">
+                                            <span class="text-[10px] font-mono font-bold text-muted uppercase tracking-widest">Browser Preview</span>
+                                        </div>
+                                        <div class="flex-1 flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/40">
+                                            <article id="card-builder-preview" class="transition-all duration-300 max-w-xs">
+                                                <h3 class="font-black text-slate-900 dark:text-white mb-2">Produk Pilihan</h3>
+                                                <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Sepatu ringan untuk kegiatan harian.</p>
+                                                <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-bold">Lihat Produk</button>
+                                            </article>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="text-[10px] text-pink-600 dark:text-pink-400 block mb-2 font-bold transition-colors">COLOR (Palet Terkurasi)</label>
-                                        <div class="flex gap-2">
-                                            <button onclick="updateSim2('color', 'text-slate-500 dark:text-slate-300')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-slate-200 dark:hover:bg-slate-600/20 transition text-slate-600 dark:text-gray-300 font-medium">Slate</button>
-                                            <button onclick="updateSim2('color', 'text-cyan-600 dark:text-cyan-400')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-100 dark:hover:bg-cyan-600/20 transition text-cyan-600 dark:text-cyan-400 font-medium">Cyan</button>
-                                            <button onclick="updateSim2('color', 'text-rose-600 dark:text-rose-500')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-rose-100 dark:hover:bg-rose-600/20 transition text-rose-600 dark:text-rose-500 font-medium">Rose</button>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors break-all">
-                                        &lt;h1 class="<span id="sim2-code" class="text-cyan-600 dark:text-cyan-300">font-bold text-base text-white</span>"&gt;...&lt;/h1&gt;
-                                    </div>
                                 </div>
-                                <div class="w-full lg:w-1/2 bg-slate-800 dark:bg-black/40 rounded-xl flex items-center justify-center border border-slate-700 dark:border-white/5 min-h-[200px] lg:min-h-[250px] relative z-10 transition-colors shadow-inner mt-4 lg:mt-0 p-4 overflow-hidden text-center">
-                                    <h1 id="sim2-target" class="text-base text-white transition-all duration-300 font-bold break-words w-full">Hello Tailwind</h1>
-                                </div>
-                            </div>
-                            
-                            {{-- KESIMPULAN SIMULASI 2 --}}
-                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
-                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                    Kesimpulan Sistem Visual
-                                </h5>
-                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                    Dengan membatasi penggunaan warna dan ukuran menggunakan token bawaan, Tailwind memastikan desain Anda tetap seragam dan sesuai dengan pedoman estetika tanpa harus menebak kode heksadesimal secara acak.
-                                </p>
                             </div>
 
+                            <div class="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent border-l-4 border-indigo-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Kekuatan Tailwind terletak pada penyusunan class kecil. Setiap class memberi satu perubahan tampilan sehingga komponen dapat dibaca dari daftar class-nya.</p>
+                            </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 3 --}}
                     <section id="section-9" class="lesson-section scroll-mt-32" data-lesson-id="9">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.3</span>
-                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Spacing & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Sizing</span>
-                                </h2>
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
+                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 1.2.4</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Kapan Utility-First <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Digunakan?</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Sistem Grid 4-Titik (4-Point Grid System)</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Proporsi jarak antar elemen (spacing) sangat memengaruhi kualitas tata letak antarmuka. Tailwind menggunakan kalkulasi matematis <strong>4-Point Grid System</strong>. Dalam sistem ini, 1 unit jarak Tailwind sama dengan <code>0.25rem</code> (sekitar 4px pada pengaturan browser standar). Oleh karena itu, perintah <code>p-4</code> akan menghasilkan padding sebesar 16px (4 unit * 4px), sedangkan <code>m-8</code> menghasilkan margin 32px.</p>
-                                    <p>Pendekatan ini mencegah Anda menggunakan jarak ganjil atau tidak beraturan (seperti 17px atau 21px) yang sering merusak ritme visual layar. Ruang kosong (Whitespace) sangat penting untuk menjaga elemen UI agar tidak terlihat menumpuk.</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Pendekatan utility-first cocok digunakan ketika pembelajar ingin membuat tampilan secara cepat dan tetap konsisten. Nama class Tailwind sudah mengikuti pola tertentu sehingga lebih mudah ditebak setelah memahami dasarnya.</p>
+                                <p>Walaupun begitu, Tailwind tetap perlu digunakan secara teratur. Daftar class yang terlalu panjang dapat membuat kode sulit dibaca jika tidak dirapikan. Pada proyek yang lebih besar, komponen yang sering digunakan dapat dipisahkan menjadi komponen Blade agar tidak ditulis berulang-ulang.</p>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Sizing & Fluid Constraints</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Untuk mengendalikan proporsi elemen pada berbagai layar, Tailwind memiliki utilitas penetapan lebar (<code>width</code> / <code>w-</code>) dan tinggi (<code>height</code> / <code>h-</code>). Kelas ukuran tersedia dalam bentuk absolut (seperti <code>w-64</code> untuk 16rem) maupun persentase fraksional relatif (seperti <code>w-1/2</code> untuk 50% atau <code>w-full</code> untuk 100% lebar kontainer parent).</p>
-                                    <p>Gunakan kelas batas maksimum seperti <code>max-w-md</code> untuk menjaga elemen konten tidak meregang terlalu panjang pada resolusi monitor besar. Anda juga bisa mengombinasikannya dengan <code>mx-auto</code> (margin horizontal otomatis) untuk membuat elemen tersebut simetris dan selalu berada di tengah layar.</p>
-                                </div>
-                            </div>
-
-                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-4 sm:p-8 relative shadow-xl dark:shadow-2xl overflow-hidden flex flex-col lg:flex-row items-center transition-colors mt-8 gap-6 lg:gap-10">
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 3 --}}
-                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
-                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        PANDUAN SIMULASI 3
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="card-adaptive border rounded-2xl p-5">
+                                    <h3 class="font-bold text-heading mb-4">Kelebihan dasar</h3>
+                                    <div class="space-y-3 text-sm text-muted leading-relaxed">
+                                        <p><span class="hl-term">Cepat</span> karena class langsung ditulis pada elemen yang sedang dibuat.</p>
+                                        <p><span class="hl-term">Konsisten</span> karena nilai ukuran, warna, dan jarak mengikuti skala Tailwind.</p>
+                                        <p><span class="hl-term">Mudah dilihat</span> karena tampilan elemen dapat dipahami dari atribut class.</p>
                                     </div>
-                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Geser tuas <span class="hl-term">Slider</span> pada pengaturan <span class="hl-term">Padding</span> dan <span class="hl-term">Width</span> untuk melihat bagaimana sistem skala jarak 4-Piksel bekerja dalam mendimensikan elemen.</p>
                                 </div>
+                                <div class="card-adaptive border rounded-2xl p-5">
+                                    <h3 class="font-bold text-heading mb-4">Hal yang perlu diperhatikan</h3>
+                                    <div class="space-y-3 text-sm text-muted leading-relaxed">
+                                        <p>Jangan menulis class secara sembarangan tanpa memahami fungsi class tersebut.</p>
+                                        <p>Gunakan urutan class yang rapi agar mudah dibaca kembali.</p>
+                                        <p>Komponen yang sering dipakai sebaiknya dibuat menjadi komponen terpisah pada tahap lanjutan.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <label class="text-[10px] sm:text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase transition-colors">Padding (p-)</label>
-                                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-white/50 font-mono transition-colors bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded" id="sim3-label-p">class="p-4"</span>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-orange-600/95 dark:bg-orange-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-orange-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 4 — Pilih Pendekatan yang Tepat</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih situasi untuk melihat apakah utility-first cocok digunakan.</p>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[360px]">
+                                    <div class="code-adaptive border-b lg:border-b-0 lg:border-r border-adaptive p-5">
+                                        <div class="space-y-2">
+                                            <button onclick="setScenario('prototype')" class="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">Membuat tampilan kartu produk sederhana</button>
+                                            <button onclick="setScenario('repeat')" class="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">Membuat tombol sama pada banyak halaman</button>
+                                            <button onclick="setScenario('random')" class="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-indigo-500 transition">Menulis banyak class tanpa memahami fungsinya</button>
                                         </div>
-                                        <input type="range" min="0" max="12" value="4" oninput="updateSim3('p', this.value)" class="w-full accent-cyan-500 h-1.5 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
                                     </div>
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <label class="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 font-bold uppercase transition-colors">Width (w-)</label>
-                                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-white/50 font-mono transition-colors bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded" id="sim3-label-w">class="w-32"</span>
+                                    <div class="bg-white dark:bg-slate-950 flex flex-col">
+                                        <div class="px-4 py-3 border-b border-adaptive bg-slate-50 dark:bg-black/20">
+                                            <span class="text-[10px] font-mono font-bold text-muted uppercase tracking-widest">Rekomendasi</span>
                                         </div>
-                                        <input type="range" min="16" max="64" value="32" oninput="updateSim3('w', this.value)" class="w-full accent-blue-500 h-1.5 bg-slate-200 dark:bg-white/10 rounded cursor-pointer">
-                                    </div>
-                                </div>
-                                
-                                <div class="code-adaptive p-4 sm:p-10 rounded-xl border border-adaptive w-full lg:w-1/2 flex justify-center h-[200px] sm:h-64 items-center relative z-10 shadow-inner transition-colors">
-                                    <div id="sim3-target" class="bg-cyan-600 text-white font-bold text-center transition-all duration-300 shadow-xl overflow-hidden p-4 w-32 rounded-lg flex items-center justify-center border border-white/20 text-xs sm:text-base break-words">
-                                        KONTEN
+                                        <div class="flex-1 flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/40">
+                                            <div id="scenario-box" class="max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+                                                <h3 class="font-black text-slate-900 dark:text-white mb-2">Pilih situasi</h3>
+                                                <p class="text-sm text-slate-600 dark:text-slate-300">Gunakan tombol di sebelah kiri untuk melihat penjelasan.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            {{-- KESIMPULAN SIMULASI 3 --}}
-                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
-                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                    Kesimpulan Sistem Tata Letak Proporsional
-                                </h5>
-                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                    Penggunaan sistem grid yang dikalkulasi secara presisi (kelipatan 0.25rem) menghilangkan inkonsistensi pengukuran visual, menjamin bahwa ruang bernapas antar elemen selalu terdistribusi secara proporsional.
-                                </p>
+
+                            <div class="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-900/20 dark:to-transparent border-l-4 border-orange-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-orange-700 dark:text-orange-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Tailwind membantu mempercepat penyusunan tampilan, tetapi tetap membutuhkan pemahaman fungsi class dan kerapian struktur kode.</p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 4 --}}
-                    <section id="section-10" class="lesson-section scroll-mt-32" data-lesson-id="10">
-                        <div class="space-y-8 md:space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.2.4</span>
-                                <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Borders & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500">Effects</span>
-                                </h2>
+                    <section id="section-10" class="lesson-section scroll-mt-32" data-lesson-id="10" data-type="activity">
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
+                                <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest">Aktivitas 1.2</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Analisis Utility <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600">Tailwind CSS</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white shrink-0">A</span> Estetika Geometri Visual (Border Radius)</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Dalam standar desain web modern, elemen antarmuka yang memiliki sudut lancip 90 derajat sering kali dihindari karena dinilai kaku dan tidak organik. Tailwind menyelesaikan kebutuhan ini dengan utilitas pembulatan sudut menggunakan kelompok kelas <code>rounded</code>.</p>
-                                    <p>Anda dapat menerapkan <code>rounded-md</code> untuk melembutkan sudut kotak input atau tombol (Button). Tersedia pula skala yang lebih drastis seperti <code>rounded-2xl</code> untuk membingkai kontainer panel, hingga <code>rounded-full</code> yang secara sempurna membulatkan elemen, sangat cocok digunakan untuk mencetak tampilan bingkai foto profil atau notifikasi lencana.</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
+                                <p>Aktivitas ini menguji pemahaman tentang konsep dasar Tailwind CSS, fungsi utility class, dan cara membaca gabungan class pada elemen HTML. Pilih jawaban yang paling tepat.</p>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-lg md:text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0">B</span> Elevasi Antarmuka (Box Shadow)</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-base md:text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Bayangan (Drop Shadow) bukan sekadar dekorasi, melainkan instrumen esensial untuk mengomunikasikan kedalaman layar (Z-Index). Elemen yang terlihat memiliki bayangan lebih kuat akan dipersepsikan lebih dekat ke pengguna, memfokuskan perhatian pada komponen tersebut.</p>
-                                    <p>Gunakan kelas bayangan tipis seperti <code>shadow-md</code> untuk batang navigasi (Navbar), dan bayangan tebal seperti <code>shadow-xl</code> atau <code>shadow-2xl</code> untuk pop-up modal (Dialog Windows). Kelas-kelas bayangan ini dapat dengan mudah dikombinasikan dengan efek transisi (seperti <code>hover:-translate-y-1 hover:shadow-2xl transition</code>) untuk menciptakan sensasi traksi dan komponen yang terasa interaktif merespons kursor mouse.</p>
-                                </div>
-                            </div>
-
-                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl p-4 sm:p-8 flex flex-col lg:flex-row gap-6 lg:gap-10 items-center shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors mt-8">
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 4 --}}
-                                <div class="absolute top-0 left-0 w-full bg-cyan-600/95 dark:bg-cyan-900/95 backdrop-blur text-white p-3 z-20 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center shadow-md gap-2 sm:gap-0">
-                                    <div class="flex items-center gap-2 text-xs font-bold shrink-0">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        PANDUAN SIMULASI 4
+                            <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
+                                <div id="lockOverlay" class="hidden absolute inset-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm items-center justify-center p-6">
+                                    <div class="max-w-md text-center">
+                                        <div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
+                                        <h3 class="font-black text-heading mb-2">Aktivitas Sudah Selesai</h3>
+                                        <p class="text-sm text-muted leading-relaxed">Jawaban aktivitas telah tersimpan. Anda dapat melanjutkan ke subbab berikutnya.</p>
                                     </div>
-                                    <p class="text-[10px] opacity-90 sm:max-w-xs md:max-w-md sm:text-right leading-tight">Terapkan konfigurasi utilitas pada tingkat sudut (Border Radius) dan elevasi bayangan (Box Shadow) untuk menganalisa pembentukan ruang visual desain 3D.</p>
                                 </div>
 
-                                <div class="w-full lg:w-1/2 space-y-6 relative z-10 pt-24 sm:pt-20 lg:pt-16">
-                                    <h4 class="text-xs font-bold text-muted uppercase transition-colors hidden sm:block">Visual Effects UI</h4>
-                                    
-                                    <div class="space-y-2">
-                                        <p class="text-[10px] sm:text-xs text-cyan-600 dark:text-cyan-400 font-bold transition-colors">BORDER RADIUS (Sudut Lengkung)</p>
-                                        <div class="flex gap-2">
-                                            <button onclick="updateSim4('rad', 'rounded-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Flat</button>
-                                            <button onclick="updateSim4('rad', 'rounded-xl')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">XL Curve</button>
-                                            <button onclick="updateSim4('rad', 'rounded-full')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Pill Full</button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="space-y-2">
-                                        <p class="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 font-bold transition-colors">BOX SHADOW (Efek Bayangan)</p>
-                                        <div class="flex gap-2">
-                                            <button onclick="updateSim4('shadow', 'shadow-none')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">No Drop</button>
-                                            <button onclick="updateSim4('shadow', 'shadow-lg')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Large Gap</button>
-                                            <button onclick="updateSim4('shadow', 'shadow-cyan-500/50')" class="flex-1 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-[11px] sm:text-xs hover:bg-cyan-50 dark:hover:bg-cyan-600/20 text-slate-600 dark:text-gray-400 font-medium transition-colors">Cyan Glow</button>
+                                <div class="bg-purple-600/95 dark:bg-purple-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                </div>
+
+                                <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
+                                    <div class="activity-question card-adaptive border rounded-xl p-5" data-answer="b">
+                                        <p class="text-sm font-bold text-heading mb-4">1. Tailwind CSS disebut berbasis utility-first karena ....</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="chooseActivity(this, 'q1', 'a')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">A. Semua tampilan harus dibuat dari file gambar</button>
+                                            <button onclick="chooseActivity(this, 'q1', 'b')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">B. Tampilan dibangun dari class kecil yang memiliki fungsi tertentu</button>
+                                            <button onclick="chooseActivity(this, 'q1', 'c')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">C. Semua CSS harus ditulis di dalam tag <code>&lt;style&gt;</code></button>
+                                            <button onclick="chooseActivity(this, 'q1', 'd')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">D. Tailwind hanya digunakan untuk membuat struktur HTML</button>
                                         </div>
                                     </div>
 
-                                    <div class="bg-white dark:bg-black/40 p-3 rounded border border-adaptive font-mono text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 mt-4 shadow-inner dark:shadow-none transition-colors break-all">
-                                        class="<span id="sim4-code" class="text-cyan-600 dark:text-cyan-300 font-bold">rounded-none shadow-none</span>"
-                                    </div>
-                                </div>
-                                <div class="w-full lg:w-1/2 flex justify-center code-adaptive p-4 sm:p-10 rounded-xl border border-adaptive relative z-10 shadow-inner transition-colors min-h-[250px] items-center">
-                                    <div id="sim4-target" class="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 transition-all duration-500 border border-white/20"></div>
-                                </div>
-                            </div>
-                            
-                            {{-- KESIMPULAN SIMULASI 4 --}}
-                            <div class="mt-4 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl relative z-10 transition-colors">
-                                <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                    Kesimpulan Modifikasi Estetika
-                                </h5>
-                                <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                    Penggunaan utilitas kelengkungan sudut dan elevasi bayangan yang tepat merupakan protokol wajib dalam material design masa kini. Elemen yang memiliki bayangan tegas akan mengarahkan fokus interaktif pandangan pengguna terhadap antarmuka.
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {{-- LESSON 5: ACTIVITY FINAL --}}
-                    <section id="section-11" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="11" data-type="activity">
-                        <div class="relative rounded-[1.5rem] md:rounded-[2rem] sim-bg-adaptive border border-adaptive p-4 sm:p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
-                            
-                            <div class="absolute -top-24 -right-24 w-40 h-40 md:w-64 md:h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
-
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 relative z-10">
-                                <div class="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white shadow-lg shadow-cyan-500/30 shrink-0">
-                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-xl md:text-2xl font-bold text-heading transition-colors">Coding Challenge: Notification Card</h2>
-                                    <p class="text-cyan-700 dark:text-cyan-300 text-xs md:text-sm font-medium transition-colors mt-1 leading-relaxed text-justify">Rangkai pemahaman Anda mengenai Tag Semantik, properti kelonggaran internal (Padding), dan modifikator gaya tata letak untuk membangun kerangka Notification Card menggunakan Utility-First CSS secara interaktif di panel editor bawah.</p>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col lg:grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto relative z-10">
-                                
-                                {{-- LEFT: EDITOR --}}
-                                <div class="code-adaptive rounded-xl border border-adaptive flex flex-col overflow-hidden relative shadow-inner transition-colors min-h-[500px] lg:min-h-0 lg:h-[650px]">
-                                    
-                                    {{-- LOCK OVERLAY --}}
-                                    <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 border-4 border-emerald-500/20 m-1 rounded-lg transition-colors">
-                                        <div class="w-16 h-16 md:w-24 md:h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 md:mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] dark:shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-bounce transition-colors">
-                                            <svg class="w-8 h-8 md:w-12 md:h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                    <div class="activity-question card-adaptive border rounded-xl p-5" data-answer="c">
+                                        <p class="text-sm font-bold text-heading mb-4">2. Class <code>p-6</code> pada Tailwind CSS digunakan untuk ....</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="chooseActivity(this, 'q2', 'a')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">A. Mengatur warna latar elemen</button>
+                                            <button onclick="chooseActivity(this, 'q2', 'b')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">B. Mengatur ukuran huruf elemen</button>
+                                            <button onclick="chooseActivity(this, 'q2', 'c')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">C. Memberi ruang dalam pada elemen</button>
+                                            <button onclick="chooseActivity(this, 'q2', 'd')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">D. Menghapus garis tepi elemen</button>
                                         </div>
-                                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">MISSION COMPLETED!</h3>
-                                        <p class="text-sm md:text-base font-bold text-slate-500 dark:text-white/60 mb-6 md:mb-8 max-w-xs transition-colors">Subbab Konsep Dasar berhasil dieksekusi. Data pencapaian telah tersimpan dalam rekam kemajuan.</p>
-                                        <button disabled class="px-6 py-2.5 md:px-8 md:py-3 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-500 dark:text-white/30 text-[10px] md:text-xs font-bold cursor-not-allowed uppercase tracking-widest transition-colors">Review Mode Only</button>
                                     </div>
 
-                                    <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
-                                        <span class="text-[10px] md:text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Component.blade.php</span>
-                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset Kerangka</button>
+                                    <div class="activity-question card-adaptive border rounded-xl p-5" data-answer="a">
+                                        <p class="text-sm font-bold text-heading mb-4">3. Gabungan class <code>bg-blue-600 text-white rounded-lg</code> paling tepat menghasilkan tampilan ....</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="chooseActivity(this, 'q3', 'a')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">A. Latar biru, teks putih, dan sudut melengkung</button>
+                                            <button onclick="chooseActivity(this, 'q3', 'b')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">B. Latar putih, teks biru, dan sudut tajam</button>
+                                            <button onclick="chooseActivity(this, 'q3', 'c')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">C. Teks besar, jarak luar, dan garis bawah</button>
+                                            <button onclick="chooseActivity(this, 'q3', 'd')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">D. Gambar bulat, tombol merah, dan margin otomatis</button>
+                                        </div>
                                     </div>
-                                    
-                                    <div id="codeEditor" class="h-[250px] lg:flex-1 w-full border-b border-adaptive transition-colors"></div>
 
-                                    {{-- CLUES AREA DENGAN INSTRUKSI KONTEKSTUAL --}}
-                                    <div class="p-4 md:p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col h-[350px] lg:h-[300px]">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <span class="text-[10px] uppercase font-bold text-muted transition-colors">Requirements Checklist</span>
-                                            <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors bg-cyan-100 dark:bg-cyan-900/30 px-2 py-0.5 rounded">0/4 Terpenuhi</span>
+                                    <div class="activity-question card-adaptive border rounded-xl p-5" data-answer="d">
+                                        <p class="text-sm font-bold text-heading mb-4">4. Dibanding membuat class <code>.kartu-produk</code> sendiri, pendekatan Tailwind pada tahap dasar lebih menekankan ....</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="chooseActivity(this, 'q4', 'a')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">A. Menghapus seluruh atribut HTML</button>
+                                            <button onclick="chooseActivity(this, 'q4', 'b')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">B. Menulis selector baru untuk semua elemen</button>
+                                            <button onclick="chooseActivity(this, 'q4', 'c')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">C. Mengganti HTML dengan file CSS</button>
+                                            <button onclick="chooseActivity(this, 'q4', 'd')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">D. Menyusun tampilan dari class utility yang sudah tersedia</button>
                                         </div>
-                                        
-                                        <div class="space-y-4 text-[10px] md:text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
-                                            <div id="check-bg" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Warna Latar Belakang</strong>
-                                                    <span class="opacity-80">Ubah gaya div terluar agar memiliki tema gelap menggunakan kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">bg-slate-800</code>.</span>
-                                                </div>
-                                            </div>
-                                            <div id="check-pad" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Padding Interior</strong>
-                                                    <span class="opacity-80">Berikan kelonggaran ruang bernapas (padding) di sekeliling komponen sebesar 24px menggunakan utilitas 4-Point Grid, yaitu <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">p-6</code>.</span>
-                                                </div>
-                                            </div>
-                                            <div id="check-flex" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Orientasi Flexbox Baris</strong>
-                                                    <span class="opacity-80">Cegah ikon dan tulisan menumpuk ke bawah dengan memposisikannya secara horizontal menggunakan <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">flex</code>, disertai penyekat celah antar elemen <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">gap-4</code>.</span>
-                                                </div>
-                                            </div>
-                                            <div id="check-round" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5">Modifikasi Radius Sudut</strong>
-                                                    <span class="opacity-80">Lembutkan patahan sudut kotak yang tajam dengan menyisipkan lekukan sudut yang besar melalui kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold hl-term">rounded-xl</code>.</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
 
-                                        <button id="submitExerciseBtn" onclick="checkSolution()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-[11px] md:text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
-                                            <span>Validasi Kode Sistem</span>
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        </button>
+                                    <div class="activity-question card-adaptive border rounded-xl p-5" data-answer="b">
+                                        <p class="text-sm font-bold text-heading mb-4">5. Sebuah kartu memiliki class <code>bg-white border rounded-xl p-6 shadow-md</code>. Bagian yang menunjukkan kartu memiliki bayangan adalah ....</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="chooseActivity(this, 'q5', 'a')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">A. <code>border</code></button>
+                                            <button onclick="chooseActivity(this, 'q5', 'b')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">B. <code>shadow-md</code></button>
+                                            <button onclick="chooseActivity(this, 'q5', 'c')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">C. <code>bg-white</code></button>
+                                            <button onclick="chooseActivity(this, 'q5', 'd')" class="activity-option text-left border border-adaptive rounded-lg p-3 text-xs hover:border-indigo-500 transition">D. <code>p-6</code></button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {{-- RIGHT: BROWSER PREVIEW --}}
-                                <div class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-adaptive flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors min-h-[350px] lg:min-h-0 lg:h-[650px]">
-                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors shrink-0">
-                                        <span class="text-[10px] md:text-xs text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Canvas Rendering (Preview)</span>
-                                        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Reloading</span>
+                                <div class="border-t border-adaptive p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <p id="activity-status" class="text-xs font-bold text-muted">Belum diperiksa.</p>
+                                        <p id="activity-score" class="text-sm font-black text-heading mt-1">Skor: -</p>
                                     </div>
-                                    <div class="flex-1 bg-slate-50 dark:bg-gray-900 p-2 sm:p-6 lg:p-8 flex items-center justify-center relative overflow-hidden transition-colors w-full h-full">
-                                        <iframe id="previewFrame" class="w-full h-full border-0 bg-transparent transition-colors"></iframe>
+                                    <button id="submitBtn" onclick="checkActivity()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-lg hover:shadow-indigo-500/30 transition">Periksa Jawaban</button>
+                                </div>
+
+                                <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
+                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <div class="space-y-2 text-xs text-muted leading-relaxed">
+                                        <p><strong>1.</strong> Utility-first berarti tampilan dibangun dari class kecil yang masing-masing memiliki fungsi spesifik.</p>
+                                        <p><strong>2.</strong> <code>p-6</code> digunakan untuk memberi padding atau ruang bagian dalam pada elemen.</p>
+                                        <p><strong>3.</strong> <code>bg-blue-600</code> memberi latar biru, <code>text-white</code> memberi teks putih, dan <code>rounded-lg</code> membuat sudut melengkung.</p>
+                                        <p><strong>4.</strong> Pada pendekatan Tailwind, tampilan disusun dari utility class yang sudah tersedia.</p>
+                                        <p><strong>5.</strong> <code>shadow-md</code> menunjukkan elemen memiliki bayangan tingkat sedang.</p>
                                     </div>
                                 </div>
                             </div>
@@ -579,25 +571,24 @@
 
                 </article>
 
-                {{-- FOOTER NAVIGATION --}}
-                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 transition-colors">
+                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4">
                     <a href="{{ route('courses.htmldancss') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
                         <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shrink-0">
                             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
                         <div class="text-left">
-                            <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Kembali ke Indeks</div>
-                            <div class="font-black text-xs md:text-sm line-clamp-1">Konsep Dasar HTML & CSS</div>
+                            <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Sebelumnya</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Konsep Dasar HTML dan CSS</div>
                         </div>
                     </a>
-                    
+
                     <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end">
                         <div class="text-right">
-                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Akses Modul Terkunci</div>
-                            <div class="font-black text-xs md:text-sm line-clamp-1">Latar Belakang Tailwind CSS</div>
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Berikutnya</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Tailwind CSS melalui CDN</div>
                         </div>
                         <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shrink-0">
-                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
                 </div>
@@ -607,66 +598,50 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-
 <script>
-    /* --- CONFIGURATION AJAX & PROGRESS --- */
-    window.LESSON_IDS = [7, 8, 9, 10, 11]; 
-    
+    window.LESSON_IDS = [6, 7, 8, 9, 10];
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
-    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
+    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id));
     let completedSet = new Set(window.COMPLETED_IDS);
-    
-    const ACTIVITY_LESSON_ID = 11; 
-    let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
+    const ACTIVITY_LESSON_ID = 10;
+    let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
+
+    const activityAnswers = {};
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
-        initSidebarScroll();
         initVisualEffects();
-        
-        // Render Progress Bar awal
-        updateProgressUI(false); 
-        
-        // Inisialisasi Monaco Editor
-        initMonaco();
-        setSim1('css');
-        
+        initLessonObserver();
+        updateProgressUI(false);
+        setCompareMode('css');
+        explainUtility('bg-blue-600');
+        updateCardBuilder();
+
         if (activityCompleted) {
             lockActivityUI();
             unlockNextChapter();
         }
 
-        // Inisialisasi observer scroll
-        initLessonObserver();
-        
-        // Tandai sidebar jika sudah komplit
         document.querySelectorAll('.nav-item').forEach(item => {
-            const targetId = parseInt(item.getAttribute('data-target').replace('#section-', ''));
-            if(completedSet.has(targetId)) {
-                markSidebarDone(targetId);
-            }
+            const target = item.getAttribute('data-target');
+            if (!target) return;
+            const targetId = parseInt(target.replace('#section-', ''));
+            if (completedSet.has(targetId)) markSidebarDone(targetId);
         });
     });
 
-    // ==========================================
-    // LOGIKA UPDATE PROGRESS BAR DINAMIS
-    // ==========================================
     function updateProgressUI(animate = true) {
-        const total = window.LESSON_IDS.length; 
-        const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length; 
+        const total = window.LESSON_IDS.length;
+        const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length;
         const percent = Math.round((done / total) * 100);
-        
         const bar = document.getElementById('topProgressBar');
         const label = document.getElementById('progressLabelTop');
-        
+        if (!bar || !label) return;
         if(!animate) bar.style.transition = 'none';
-        bar.style.width = percent + '%'; 
-        if(!animate) setTimeout(() => bar.style.transition = 'all 0.5s', 50);
-        
+        bar.style.width = percent + '%';
+        if(!animate) setTimeout(() => bar.style.transition = 'all .5s', 50);
         label.innerText = percent + '%';
-        if(percent === 100 && activityCompleted) unlockNextChapter();
+        if (percent === 100 && activityCompleted) unlockNextChapter();
     }
 
     function markSidebarDone(lessonId) {
@@ -674,366 +649,264 @@
         if(navItem) {
             const dot = navItem.querySelector('.dot');
             if(dot) {
-                const isActivity = navItem.querySelector('.sidebar-anchor')?.dataset.type === 'activity';
-                if (isActivity) {
-                    dot.outerHTML = `<svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
-                } else {
-                    dot.outerHTML = `<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
-                }
+                dot.outerHTML = `<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
             }
         }
     }
 
-    // ==========================================
-    // AJAX POST REQUEST KE DATABASE
-    // ==========================================
-    async function saveLessonToDB(lessonId) { 
+    async function saveLessonToDB(lessonId) {
         lessonId = Number(lessonId);
-        if(completedSet.has(lessonId)) return; 
+        if (completedSet.has(lessonId) && !(lessonId === ACTIVITY_LESSON_ID && !activityCompleted)) return true;
 
         try {
             const formData = new FormData();
             formData.append('lesson_id', lessonId);
 
-            const response = await fetch('{{ route("lesson.complete") }}', { 
-                method: 'POST', 
-                headers: { 
+            const response = await fetch('{{ route("lesson.complete") }}', {
+                method: 'POST',
+                headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json' 
-                }, 
-                body: formData 
+                    'Accept': 'application/json'
+                },
+                body: formData
             });
 
             if (response.ok) {
                 completedSet.add(lessonId);
                 updateProgressUI(true);
                 markSidebarDone(lessonId);
+                if (lessonId === ACTIVITY_LESSON_ID) {
+                    window.markActiveCourseItemCompleted?.();
+                }
             }
         } catch(e) {
             console.error('Network Error:', e);
         }
     }
 
-    // ==========================================
-    // OBSERVER SCROLL (DENGAN THRESHOLD 0.1)
-    // ==========================================
     function initLessonObserver() {
+        const root = document.getElementById('mainScroll');
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const id = Number(entry.target.dataset.lessonId);
                     if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
-                        saveLessonToDB(id); 
+                        saveLessonToDB(id);
                     }
                 }
             });
-        }, { 
-            threshold: 0.1, 
-            rootMargin: "0px 0px -100px 0px", 
-            root: document.getElementById('mainScroll') 
-        });
-        
+        }, { threshold: 0.12, rootMargin: "0px 0px -50px 0px", root });
         document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
     }
 
+    function setCompareMode(mode, btn = null) {
+        document.querySelectorAll('.compare-btn').forEach(b => {
+            b.classList.remove('bg-indigo-600','text-white','border-indigo-500');
+            b.classList.add('bg-white','dark:bg-white/5','border-adaptive');
+        });
+        if (btn) {
+            btn.classList.add('bg-indigo-600','text-white','border-indigo-500');
+            btn.classList.remove('bg-white','dark:bg-white/5','border-adaptive');
+        }
 
-    /* ==========================================
-       SIMULATORS 1-4 (Visual)
-       ========================================== */
-    function setSim1(mode) {
-        const codeBox = document.getElementById('sim1-code');
+        const code = document.getElementById('compare-code');
+        const preview = document.getElementById('compare-preview');
+        if (!code || !preview) return;
+
+        preview.style.backgroundColor = '#2563eb';
+        preview.style.color = '#ffffff';
+        preview.style.padding = '12px 18px';
+        preview.style.borderRadius = '10px';
+
         if (mode === 'css') {
-            codeBox.innerHTML = `.btn {\n  <span class="text-blue-400">background-color</span>: <span class="text-pink-400">blue</span>;\n  <span class="text-blue-400">color</span>: <span class="text-pink-400">white</span>;\n  <span class="text-blue-400">padding</span>: <span class="text-pink-400">10px 20px</span>;\n  <span class="text-blue-400">border-radius</span>: <span class="text-pink-400">5px</span>;\n}`;
+            code.innerHTML = `<code><span class="tag">.tombol-utama</span> {
+  <span class="prop">background-color</span>: <span class="str">#2563eb</span>;
+  <span class="prop">color</span>: <span class="str">white</span>;
+  <span class="prop">padding</span>: <span class="str">12px 18px</span>;
+  <span class="prop">border-radius</span>: <span class="str">10px</span>;
+}
+
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="str">"tombol-utama"</span><span class="tag">&gt;</span>Simpan Data<span class="tag">&lt;/button&gt;</span></code>`;
         } else {
-            codeBox.innerHTML = `&lt;<span class="text-pink-500">button</span> <span class="text-emerald-400">class</span>="<span class="hl-term text-blue-500">bg-blue-600 text-white px-4 py-2 rounded</span>"&gt;\n  Beli Sekarang\n&lt;/<span class="text-pink-500">button</span>&gt;`;
+            code.innerHTML = `<code><span class="tag">&lt;button</span>
+  <span class="attr">class</span>=<span class="str">"bg-blue-600 text-white px-4 py-3 rounded-lg"</span>
+<span class="tag">&gt;</span>
+  Simpan Data
+<span class="tag">&lt;/button&gt;</span></code>`;
         }
     }
 
-    let typeState = { size: 'text-base', color: 'text-white', weight: 'font-normal' };
-    function updateSim2(cat, val) {
-        const isDark = document.documentElement.classList.contains('dark');
-        const target = document.getElementById('sim2-target');
-        const code = document.getElementById('sim2-code');
-        
-        if(cat === 'color') {
-            target.classList.remove('text-slate-300', 'text-slate-500', 'text-cyan-400', 'text-cyan-600', 'text-rose-500', 'text-rose-600', 'text-white', 'text-slate-800');
-            typeState.color = val;
-        }
-        if(cat === 'size') {
-            target.classList.remove('text-sm', 'text-base', 'text-2xl', 'text-5xl');
-            typeState.size = val;
-        }
-        
-        target.classList.add(typeState.size);
-        const colorClasses = typeState.color.split(' ');
-        colorClasses.forEach(c => target.classList.add(c));
-        
-        const finalColorClass = colorClasses.length > 1 ? (isDark ? colorClasses[1].replace('dark:', '') : colorClasses[0]) : colorClasses[0];
-        code.innerText = `font-bold ${typeState.size} ${finalColorClass}`;
+    function explainUtility(cls) {
+        const code = document.getElementById('utility-explain-code');
+        const box = document.getElementById('utility-explain-box');
+        if (!code || !box) return;
+
+        const map = {
+            'bg-blue-600': ['background-color', 'Memberi warna latar biru yang kuat pada elemen.', 'bg-blue-600', 'bg-blue-600 text-white'],
+            'text-white': ['color', 'Mengubah warna teks menjadi putih.', 'text-white', 'bg-slate-800 text-white'],
+            'p-6': ['padding', 'Memberi ruang dalam pada semua sisi elemen.', 'p-6', 'p-6 border border-slate-300'],
+            'rounded-xl': ['border-radius', 'Membuat sudut elemen melengkung lebih besar.', 'rounded-xl', 'rounded-xl border border-slate-300 p-4'],
+            'shadow-md': ['box-shadow', 'Memberi bayangan sedang agar elemen tampak terangkat.', 'shadow-md', 'shadow-md border border-slate-200 p-4'],
+            'text-center': ['text-align', 'Membuat isi teks berada di tengah.', 'text-center', 'text-center border border-slate-300 p-4']
+        };
+
+        const item = map[cls];
+        code.innerHTML = `<code><span class="comment">/* Utility class */</span>
+<span class="tag">${item[2]}</span>
+
+<span class="comment">/* Makna sederhana */</span>
+<span class="prop">${item[0]}</span>: <span class="str">sesuai skala Tailwind</span>;</code>`;
+
+        box.className = `max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl transition-all duration-300 ${item[3]}`;
+        box.innerHTML = `<h3 class="font-black mb-2">${cls}</h3><p class="text-sm opacity-80">${item[1]}</p>`;
     }
 
-    function updateSim3(cat, val) {
-        const target = document.getElementById('sim3-target');
-        if(cat === 'p') { document.getElementById('sim3-label-p').innerText = `class="p-${val}"`; target.style.padding = `${val * 4}px`; }
-        if(cat === 'w') { document.getElementById('sim3-label-w').innerText = `class="w-${val}"`; target.style.width = `${val * 4}px`; }
-    }
+    function updateCardBuilder() {
+        const preview = document.getElementById('card-builder-preview');
+        const code = document.getElementById('card-builder-code');
+        if (!preview || !code) return;
 
-    let effectState = { rad: 'rounded-none', shadow: 'shadow-none' };
-    function updateSim4(cat, val) {
-        const target = document.getElementById('sim4-target');
-        const code = document.getElementById('sim4-code');
-        if(cat === 'rad') { target.classList.remove('rounded-none', 'rounded-xl', 'rounded-full'); target.classList.add(val); effectState.rad = val; }
-        if(cat === 'shadow') { target.classList.remove('shadow-none', 'shadow-lg', 'shadow-2xl', 'shadow-cyan-500/50'); target.classList.add(val); effectState.shadow = val; }
-        code.innerText = `${effectState.rad} ${effectState.shadow}`;
-    }
-
-
-    /* ==========================================
-       REALTIME CODING & ACTIVITY LOGIC (Lesson 11)
-       ========================================== */
-    let editor;
-    const starterCode = `<div class="">
-  
-  <div class="p-3 bg-cyan-500/20 rounded-full shrink-0 h-fit">
-    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-  </div>
-
-  <div>
-    <h4 class="font-bold text-lg text-white">Notifikasi Sistem Data</h4>
-    <p class="text-slate-400 text-sm mt-1">Sistem antarmuka web berhasil diperbarui ke versi stabil.</p>
-  </div>
-
-</div>`;
-
-    function initMonaco() {
-        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
-        require(['vs/editor/editor.main'], function () {
-            
-            const isDark = document.documentElement.classList.contains('dark');
-            
-            editor = monaco.editor.create(document.getElementById('codeEditor'), {
-                value: starterCode, 
-                language: 'html', 
-                theme: isDark ? 'vs-dark' : 'vs', 
-                fontSize: window.innerWidth < 768 ? 11 : 13,
-                minimap: { enabled: false }, 
-                automaticLayout: true, 
-                padding: { top: 16 }, 
-                lineNumbers: 'off',
-                scrollBeyondLastLine: false,
-                wordWrap: 'on'
-            });
-            updatePreview(starterCode);
-            
-            editor.onDidChangeModelContent(() => {
-                if(activityCompleted) return;
-                const code = editor.getValue();
-                updatePreview(code);
-                validateCode(code);
-            });
-            
-            window.addEventListener('theme-toggled', () => {
-                const newIsDark = document.documentElement.classList.contains('dark');
-                monaco.editor.setTheme(newIsDark ? 'vs-dark' : 'vs');
-            });
+        const checked = Array.from(document.querySelectorAll('[data-class]')).filter(i => i.checked).map(i => i.dataset.class);
+        const classes = [];
+        checked.forEach(c => {
+            if (c === 'bg-white') classes.push('bg-white', 'dark:bg-slate-900');
+            if (c === 'border') classes.push('border', 'border-slate-300', 'dark:border-white/10');
+            if (c === 'rounded-xl') classes.push('rounded-xl');
+            if (c === 'p-6') classes.push('p-6');
+            if (c === 'shadow-md') classes.push('shadow-md');
+            if (c === 'text-center') classes.push('text-center');
         });
+        preview.className = `transition-all duration-300 max-w-xs ${classes.join(' ')}`;
+        code.innerHTML = `<code><span class="tag">&lt;article</span> <span class="attr">class</span>=<span class="str">"${checked.join(' ')}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>Produk Pilihan<span class="tag">&lt;/h3&gt;</span>
+  <span class="tag">&lt;p&gt;</span>Sepatu ringan untuk harian.<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/article&gt;</span></code>`;
     }
 
-    function updatePreview(code) {
-        const frame = document.getElementById('previewFrame');
-        const isDark = document.documentElement.classList.contains('dark');
-        const bgColor = isDark ? '#111827' : '#f8fafc'; 
-        
-        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 1rem; font-family: sans-serif; transition: background-color 0.3s; box-sizing: border-box; overflow: hidden; }</style></head><body>${code}</body></html>`;
-        frame.srcdoc = content;
+    function setScenario(type) {
+        const box = document.getElementById('scenario-box');
+        const data = {
+            prototype: ['Cocok digunakan', 'Utility class cocok untuk menyusun tampilan kartu produk sederhana karena perubahan dapat dilakukan langsung pada elemen yang sedang dibuat.', 'border-emerald-300 dark:border-emerald-500/40'],
+            repeat: ['Perlu dirapikan', 'Jika tombol yang sama dipakai berulang pada banyak halaman, class dapat dipindahkan ke komponen Blade agar tidak ditulis berkali-kali.', 'border-orange-300 dark:border-orange-500/40'],
+            random: ['Tidak disarankan', 'Menulis banyak class tanpa memahami fungsinya membuat kode sulit dibaca. Utility class tetap harus dipilih sesuai kebutuhan tampilan.', 'border-red-300 dark:border-red-500/40']
+        }[type];
+        box.className = `max-w-sm bg-white dark:bg-slate-900 border ${data[2]} rounded-2xl p-6 shadow-sm transition-all duration-300`;
+        box.innerHTML = `<h3 class="font-black text-slate-900 dark:text-white mb-2">${data[0]}</h3><p class="text-sm text-slate-600 dark:text-slate-300">${data[1]}</p>`;
     }
 
-    function validateCode(code) {
-        const checks = [
-            { id: 'check-bg', regex: /bg-slate-800/, valid: false },
-            { id: 'check-pad', regex: /p-6/, valid: false },
-            { id: 'check-flex', regex: /flex.*gap-4|gap-4.*flex/, valid: false },
-            { id: 'check-round', regex: /rounded-xl/, valid: false }
-        ];
-        let passedCount = 0;
-        const isDark = document.documentElement.classList.contains('dark');
-
-        checks.forEach(check => {
-            const el = document.getElementById(check.id);
-            if(!el) return;
-            const dot = el.querySelector('span'); 
-            const textContainer = el.querySelector('div'); 
-
-            if (check.regex.test(code)) {
-                textContainer.classList.remove('opacity-80');
-                textContainer.classList.add(isDark ? 'text-green-400' : 'text-emerald-600');
-                
-                dot.innerHTML = '✓'; 
-                dot.classList.remove('border-slate-300', 'border-white/20');
-                dot.classList.add('bg-emerald-500', 'border-transparent', 'text-white');
-                passedCount++;
-            } else {
-                textContainer.classList.add('opacity-80');
-                textContainer.classList.remove('text-green-400', 'text-emerald-600');
-                
-                dot.innerHTML = ''; 
-                dot.classList.remove('bg-emerald-500', 'border-transparent', 'text-white');
-                dot.classList.add(isDark ? 'border-white/20' : 'border-slate-300');
-            }
+    function chooseActivity(btn, q, ans) {
+        if (activityCompleted) return;
+        activityAnswers[q] = ans;
+        const group = btn.closest('.activity-question');
+        group.querySelectorAll('.activity-option').forEach(b => {
+            b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
         });
-        
-        document.getElementById('progressText').innerText = `${passedCount}/4 Terpenuhi`;
-        const btn = document.getElementById('submitExerciseBtn');
-        if (passedCount === 4) {
-            btn.disabled = false; btn.classList.remove('cursor-not-allowed', 'opacity-50');
-            btn.innerHTML = `<span>Validasi Kode Sistem</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+        btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
+    }
+
+    async function checkActivity() {
+        if (activityCompleted) return;
+        const correct = { q1:'b', q2:'c', q3:'a', q4:'d', q5:'b' };
+        const total = Object.keys(correct).length;
+        const answered = Object.keys(activityAnswers).length;
+        const status = document.getElementById('activity-status');
+        const scoreLabel = document.getElementById('activity-score');
+        const submit = document.getElementById('submitBtn');
+
+        if (answered < total) {
+            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
+            status.className = 'text-xs font-bold text-red-500';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
+            return;
+        }
+
+        let score = 0;
+        Object.keys(correct).forEach((q, idx) => {
+            const question = document.querySelectorAll('.activity-question')[idx];
+            const options = question.querySelectorAll('.activity-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+                const clickAttr = opt.getAttribute('onclick') || '';
+                if (clickAttr.includes(`'${correct[q]}'`)) opt.classList.add('correct');
+                if (clickAttr.includes(`'${activityAnswers[q]}'`) && activityAnswers[q] !== correct[q]) opt.classList.add('wrong');
+            });
+            if (activityAnswers[q] === correct[q]) score++;
+        });
+
+        const percent = Math.round((score / total) * 100);
+        scoreLabel.innerText = `Skor: ${score}/${total} (${percent}%)`;
+        document.getElementById('activity-analysis').classList.remove('hidden');
+
+        if (percent >= 80) {
+            status.innerText = 'Aktivitas berhasil. Pemahaman dasar Tailwind CSS sudah sesuai.';
+            status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
+            await saveLessonToDB(ACTIVITY_LESSON_ID);
+            activityCompleted = true;
+            lockActivityUI(false);
+            unlockNextChapter();
         } else {
-            btn.disabled = true; btn.classList.add('cursor-not-allowed', 'opacity-50');
-            btn.innerHTML = `<span>Menunggu Persyaratan Terpenuhi</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            status.innerText = 'Skor belum cukup. Baca pembahasan, lalu perbaiki jawaban yang salah.';
+            status.className = 'text-xs font-bold text-orange-600 dark:text-orange-400';
         }
     }
 
-    function resetEditor() { if(editor && !activityCompleted) { editor.setValue(starterCode); validateCode(starterCode); } }
-
-    async function checkSolution() {
-        if(activityCompleted) return;
-        const btn = document.getElementById('submitExerciseBtn');
-        
-        btn.innerHTML = '<span class="animate-pulse">Memverifikasi kode...</span>'; 
-        btn.disabled = true;
-        
-        try {
-            await saveLessonToDB(ACTIVITY_LESSON_ID); 
-            
-            activityCompleted = true; 
-            lockActivityUI(); 
-            unlockNextChapter(); 
-        } catch(e) { 
-            console.error(e); 
-            btn.innerHTML = "Gagal memvalidasi. Silakan coba kembali."; 
-            btn.disabled = false; 
+    function lockActivityUI(showOverlay = true) {
+        if (showOverlay) {
+            const overlay = document.getElementById('lockOverlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
         }
-    }
 
-    function lockActivityUI() {
-        document.getElementById('lockOverlay').classList.remove('hidden');
-        if(editor) editor.updateOptions({ readOnly: true });
-        
-        const btn = document.getElementById('submitExerciseBtn'); 
-        btn.innerText = "Panel Eksekusi Terkunci (Selesai)"; 
-        btn.disabled = true;
-        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
-        btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
+        const submit = document.getElementById('submitBtn');
+        submit.innerText = 'Aktivitas Selesai';
+        submit.disabled = true;
+        submit.classList.remove('from-indigo-600', 'to-purple-600');
+        submit.classList.add('bg-slate-400', 'dark:bg-slate-700', 'cursor-not-allowed', 'shadow-none');
 
-        if(editor && activityCompleted) {
-            editor.setValue(`<div class="bg-slate-800 p-6 flex gap-4 rounded-xl">\n  \n  <div class="p-3 bg-cyan-500/20 rounded-full shrink-0 h-fit">\n    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>\n  </div>\n\n  <div>\n    <h4 class="font-bold text-lg text-white">Notifikasi Sistem Data</h4>\n    <p class="text-slate-400 text-sm mt-1">Sistem antarmuka web berhasil diperbarui ke versi stabil.</p>\n  </div>\n\n</div>`);
-            validateCode(editor.getValue());
-        }
+        document.querySelectorAll('#activityForm button').forEach(b => {
+            b.disabled = true;
+            b.classList.add('cursor-not-allowed');
+        });
     }
 
     function unlockNextChapter() {
         const btn = document.getElementById('nextChapterBtn');
         if(btn) {
             btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
-            btn.classList.add('text-cyan-600', 'dark:text-cyan-400', 'cursor-pointer');
-            
-            document.getElementById('nextLabel').innerText = "Akses Navigasi Terbuka";
-            document.getElementById('nextLabel').classList.remove('opacity-60');
-            document.getElementById('nextLabel').classList.add('text-cyan-600', 'dark:text-cyan-400', 'opacity-100');
-            
+            btn.classList.add('text-indigo-600', 'dark:text-indigo-400', 'cursor-pointer');
+
+            const nextLabel = document.getElementById('nextLabel');
+            nextLabel.innerText = 'Berikutnya';
+            nextLabel.classList.remove('opacity-60');
+            nextLabel.classList.add('text-indigo-600', 'dark:text-indigo-400', 'opacity-100');
+
             const icon = document.getElementById('nextIcon');
             icon.innerHTML = `<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
-            icon.classList.add('bg-cyan-100', 'dark:bg-cyan-500/20', 'border-cyan-300', 'dark:border-cyan-500/50', 'text-cyan-600', 'dark:text-cyan-400', 'shadow-lg');
-            
-            btn.onclick = () => window.location.href = "{{ route('courses.latarbelakang') ?? '#' }}"; 
-        }
-    }
+            icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/50', 'text-indigo-600', 'dark:text-indigo-400', 'shadow-lg');
 
-    /* ==========================================
-       7. SCROLL SPY & SIDEBAR LOGIC
-       ========================================== */
-    function highlightAnchor(id) {
-        const isDark = document.documentElement.classList.contains('dark');
-        const anchors = document.querySelectorAll('.sidebar-anchor');
-
-        anchors.forEach(a => {
-            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-cyan-500', 'border-amber-500');
-            a.classList.add('border-transparent');
-            
-            const dot = a.querySelector('.anchor-dot');
-            const isActivity = a.dataset.type === 'activity';
-
-            dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#22d3ee]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
-            
-            if (isActivity) {
-                dot.classList.remove('bg-amber-500', 'dark:bg-amber-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
-            } else {
-                dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400');
-                dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); 
-            }
-
-            const text = a.querySelector('.anchor-text');
-            text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold');
-            text.classList.add('text-slate-500');
-        });
-
-        const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
-        if (activeAnchor) {
-            const isActivity = activeAnchor.dataset.type === 'activity';
-            
-            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100');
-            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-cyan-500');
-            activeAnchor.classList.remove('border-transparent');
-            
-            const dot = activeAnchor.querySelector('.anchor-dot');
-            dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-            
-            if (isActivity) {
-                dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
-            } else {
-                dot.classList.add(isDark ? 'dark:bg-cyan-400' : 'bg-cyan-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#22d3ee]' : 'shadow-sm');
-            }
-            
-            const text = activeAnchor.querySelector('.anchor-text');
-            text.classList.remove('text-slate-500');
-            text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold');
+            btn.onclick = () => window.location.href = "{{ route('courses.latarbelakang') ?? '#' }}";
         }
     }
 
     function initScrollSpy() {
-        const mainScroll = document.getElementById('mainScroll'); 
+        const main = document.getElementById('mainScroll');
+        if (!main) return;
         const sections = document.querySelectorAll('.lesson-section');
 
-        if (mainScroll && sections.length > 0) {
-            const observerOptions = { root: mainScroll, threshold: 0.5 };
-            const observer = new IntersectionObserver((entries) => {
-                let intersectingEntries = entries.filter(e => e.isIntersecting);
-                if(intersectingEntries.length > 0) {
-                    if (typeof highlightAnchor === 'function') {
-                        highlightAnchor(intersectingEntries[0].target.id);
-                    }
-                }
-            }, observerOptions);
-
-            sections.forEach(section => observer.observe(section));
-        }
-    }
-
-    function initSidebarScroll(){
-        const m = document.getElementById('mainScroll');
-        const l = document.querySelectorAll('.accordion-content .nav-item');
-        m.addEventListener('scroll', () => {
-            let c = '';
-            document.querySelectorAll('.lesson-section').forEach(s => {
-                if (m.scrollTop >= s.offsetTop - 250) c = '#' + s.id;
+        main.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(sec => {
+                const top = sec.getBoundingClientRect().top;
+                if (top < 240) current = '#' + sec.id;
             });
-            l.forEach(k => {
-                k.classList.remove('active');
-                if (k.getAttribute('data-target') === c) k.classList.add('active');
-            })
-        });
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-target') === current) item.classList.add('active');
+            });
+        }, { passive: true });
     }
 
     function initVisualEffects(){
@@ -1044,7 +917,7 @@
         r(); window.addEventListener('resize', r);
         let s=[];
         for(let i=0; i<100; i++) s.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.2, v:Math.random()*0.2+.1});
-        
+
         function drawStars() {
             x.clearRect(0,0,c.width,c.height);
             x.fillStyle='rgba(255,255,255,.3)';

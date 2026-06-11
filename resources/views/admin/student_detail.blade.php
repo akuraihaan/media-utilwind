@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student · {{ $user->name ?? 'Student' }}</title>
+    <title>Siswa · {{ $user->name ?? 'Profil Siswa' }}</title>
     
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -154,13 +154,15 @@
           showAvgLabModal: false,
           showAvgQuizModal: false,
           showGlobalProgressModal: false,
+          showQuizReviewModal: false,
+          selectedQuizReview: null,
 
           confirmDelete() {
               Swal.fire({ title: 'Hapus Siswa?', text: 'Tindakan ini tidak dapat dibatalkan. Semua data riwayat akan terhapus.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Hapus Permanen', cancelButtonText: 'Batal', reverseButtons: true })
               .then((result) => { if (result.isConfirmed) document.getElementById('delete-student-form').submit(); })
           }
       }"
-      @keydown.escape.window="showLessonModal = false; showLabModal = false; showQuizModal = false; showAvgLabModal = false; showAvgQuizModal = false; showGlobalProgressModal = false; showEdit = false;"
+      @keydown.escape.window="showLessonModal = false; showLabModal = false; showQuizModal = false; showAvgLabModal = false; showAvgQuizModal = false; showGlobalProgressModal = false; showQuizReviewModal = false; showEdit = false;"
       x-init="setTimeout(() => showProgress = true, 200); $watch('activeTab', value => { if(value === 'overview') { showProgress = false; setTimeout(() => showProgress = true, 50); } });">
 
     {{-- HELPER DATA BLADE (Real Database Collections & Logical Duration Formatter) --}}
@@ -201,7 +203,7 @@
             ],
             [
                 'id' => 3, 'number' => '03', 'title' => 'STYLING', 'color' => 'fuchsia', 'lab_id' => 3, 'lab_name' => 'Styling Components', 'quiz_key' => '3',
-                'topics' => [['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)], ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)], ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)], ['name' => '3.4 Effects & Filters', 'ids' => range(60, 65)]]
+                'topics' => [['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)], ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)], ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)], ['name' => '3.4 Effects & Filters', 'ids' => range(60, 64)]]
             ]
         ];
 
@@ -223,6 +225,71 @@
                 ? $user->avatar 
                 : asset($pathPrefix . $user->avatar) . '?v=' . time();
         }
+
+        $latestQuizForAdvice = $quizAttempts->sortByDesc('completed_at')->first() ?? $quizAttempts->sortByDesc('created_at')->first();
+        $failedQuizCount = $quizAttempts->where('score', '<', 70)->count();
+        $failedLabCount = $labHistories->filter(fn($lab) => ($lab->status ?? '') !== 'passed' && ($lab->final_score ?? 0) < 70)->count();
+        $adminAdviceScore = 0;
+        $adminRecommendations = collect();
+
+        if ($latestQuizForAdvice && ($latestQuizForAdvice->score ?? 0) < 70) {
+            $adminAdviceScore += 2;
+            $adminRecommendations->push([
+                'title' => 'Jadwalkan penguatan evaluasi terakhir',
+                'body' => 'Nilai terakhir belum mencapai KKM. Arahkan siswa meninjau feedback evaluasi dan mengulang materi bab terkait.',
+                'tone' => 'red',
+            ]);
+        }
+
+        if ($latestQuizForAdvice && (($latestQuizForAdvice->flagged_count ?? 0) > 0)) {
+            $adminAdviceScore += 1;
+            $adminRecommendations->push([
+                'title' => 'Bahas soal yang ditandai ragu-ragu',
+                'body' => 'Siswa masih ragu pada beberapa soal. Gunakan sesi singkat untuk menguatkan konsep yang belum mantap.',
+                'tone' => 'amber',
+            ]);
+        }
+
+        if ($failedQuizCount >= 2) {
+            $adminAdviceScore += 1;
+            $adminRecommendations->push([
+                'title' => 'Pantau pola remedial',
+                'body' => 'Ada beberapa percobaan kuis di bawah KKM. Prioritaskan siswa ini dalam pendampingan kelas.',
+                'tone' => 'red',
+            ]);
+        }
+
+        if (($totalLessons ?? 0) > 0 && $lessonsCompleted < ceil(($totalLessons ?? 0) * 0.75)) {
+            $adminRecommendations->push([
+                'title' => 'Dorong penyelesaian materi',
+                'body' => 'Progress bacaan belum tinggi. Minta siswa menyelesaikan materi prasyarat sebelum evaluasi berikutnya.',
+                'tone' => 'cyan',
+            ]);
+        }
+
+        if ($failedLabCount > 0 || (($totalLabs ?? 0) > 0 && $labsCompleted < ($totalLabs ?? 0))) {
+            $adminRecommendations->push([
+                'title' => 'Lengkapi praktik lab',
+                'body' => 'Praktik lab masih perlu diperkuat agar pemahaman teori tersambung dengan implementasi.',
+                'tone' => 'blue',
+            ]);
+        }
+
+        if ($adminRecommendations->isEmpty()) {
+            $adminRecommendations->push([
+                'title' => 'Pertahankan ritme belajar',
+                'body' => 'Siswa berada pada jalur yang stabil. Dorong untuk melanjutkan bab berikutnya dan tetap meninjau riwayat evaluasi.',
+                'tone' => 'emerald',
+            ]);
+        }
+
+        $adminRisk = $adminAdviceScore >= 3
+            ? ['label' => 'Risiko Tinggi', 'class' => 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20']
+            : ($adminAdviceScore >= 1
+                ? ['label' => 'Perlu Perhatian', 'class' => 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20']
+                : ['label' => 'Stabil', 'class' => 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20']);
+
+        $adminRecommendations = $adminRecommendations->take(4)->values();
     @endphp
 
      {{-- ==================== 1. SIDEBAR ==================== --}}
@@ -247,33 +314,33 @@
 
         <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dashboard
+                        Dasbor
                     </a>
                 </div>
             </div>
 
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Quiz Management
+                        Manajemen Kuis
                     </a>
                     <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Configuration
+                        Konfigurasi Lab
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Lab Analytics
+                        Analitik Lab
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Class Management
+                        Manajemen Kelas
                     </a>
                 </div>
             </div>
@@ -331,11 +398,11 @@
                         <div>
                             <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors">
                                 <ol class="inline-flex items-center space-x-1">
-                                    <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Dashboard</a></li>
+                                    <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Dasbor</a></li>
                                     <li><div class="flex items-center"><svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg><span class="text-slate-900 dark:text-white transition-colors">{{ $user->name ?? 'Detail Siswa' }}</span></div></li>
                                 </ol>
                             </nav>
-                            <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight flex items-center gap-2 leading-none transition-colors">{{ $user->name ?? 'Student Profile' }}</h2>
+                            <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight flex items-center gap-2 leading-none transition-colors">{{ $user->name ?? 'Profil Siswa' }}</h2>
                             <div class="flex items-center gap-2 mt-1.5">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 font-mono transition-colors">{{ $user->email ?? 'No email recorded' }}</p>
@@ -365,15 +432,15 @@
                         <div class="flex items-center gap-1.5">
                             <button @click="exportOpen = !exportOpen" @click.away="exportOpen = false" class="p-2.5 sm:px-4 sm:py-2.5 rounded-full sm:rounded-xl bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-transparent dark:border-white/10 text-slate-700 dark:text-white text-xs font-bold transition flex items-center gap-2 shadow-sm dark:shadow-lg">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                <span class="hidden sm:inline">Export</span>
+                                <span class="hidden sm:inline">Ekspor</span>
                             </button>
                             
                         </div>
 
                         <div x-show="exportOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-xl shadow-lg dark:shadow-[0_15px_50px_rgba(0,0,0,0.9)] z-[9999] overflow-hidden transition-colors" style="display: none;" x-transition>
                             <div class="px-4 py-2 border-b border-slate-100 dark:border-white/5 text-[9px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest bg-slate-50 dark:bg-[#0a0e17] transition-colors">Pilih Format</div>
-                            <a href="{{ route('admin.student.export.csv', $user->id) }}" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition border-b border-slate-100 dark:border-white/5"><svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Export CSV</a>
-                            <a href="{{ route('admin.student.export.pdf', $user->id) }}" target="_blank" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition"><svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> Print PDF</a>
+                            <a href="{{ route('admin.student.export.csv', $user->id) }}" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition border-b border-slate-100 dark:border-white/5"><svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Ekspor CSV</a>
+                            <a href="{{ route('admin.student.export.pdf', $user->id) }}" target="_blank" class="flex items-center gap-3 px-4 py-3.5 text-[11px] font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition"><svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> Cetak PDF</a>
                         </div>
                     </div>
 
@@ -389,7 +456,7 @@
             {{-- Tabs --}}
             <div class="flex gap-6 md:gap-8 mt-2 overflow-x-auto custom-scrollbar w-full relative z-10 items-center pb-2">
                 <button @click="activeTab = 'overview'" :class="activeTab === 'overview' ? 'active text-slate-900 dark:text-white' : 'text-slate-500'" class="tab-btn pb-3 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg> Overview
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg> Ikhtisar
                 </button>
                 <button @click="activeTab = 'curriculum'" :class="activeTab === 'curriculum' ? 'active text-slate-900 dark:text-white' : 'text-slate-500'" class="tab-btn pb-3 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Curriculum Tracker
@@ -422,7 +489,7 @@
                     <div class="animate-fade-in-up mb-8">
                         <div class="glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm dark:shadow-lg border border-slate-200 dark:border-white/5 transition-colors">
                             
-                            {{-- Student Basic Info --}}
+                            {{-- Informasi Dasar Siswa --}}
                             <div class="flex items-center gap-5 w-full md:w-auto">
                                 <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-black border border-indigo-200 dark:border-indigo-500/30 shrink-0 transition-colors shadow-inner overflow-hidden relative">
                                     <img src="{{ $studentAvatarUrl }}" alt="Avatar" class="w-full h-full object-cover">
@@ -485,7 +552,7 @@
                     <div class="flex items-center gap-4 py-4">
                         <div class="h-px bg-slate-200 dark:bg-white/10 flex-1 transition-colors"></div>
                         <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] bg-white dark:bg-[#020617] px-3 py-1 border border-slate-200 dark:border-white/5 rounded-full transition-colors">Academic Analytics</span>
+                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] bg-white dark:bg-[#020617] px-3 py-1 border border-slate-200 dark:border-white/5 rounded-full transition-colors">Analitik Akademik</span>
                             <div class="insight-tooltip insight-right">
                                 <span class="insight-trigger">?</span>
                                 <div class="insight-content">Kartu-kartu di bawah ini dapat diklik untuk memunculkan modal detail berisi rincian data metrik akademik.</div>
@@ -590,6 +657,46 @@
                             <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
                                 <div class="h-full bg-amber-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ $quizAverage ?? ($quizStats['avg_score'] ?? 0) }}%' : 'width: 0%'"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    {{-- REKOMENDASI OTOMATIS ADMIN --}}
+                    <div class="glass-card rounded-2xl p-5 md:p-6 transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Arahan Tindak Lanjut</p>
+                                <h3 class="text-base font-black text-slate-900 dark:text-white transition-colors">Rekomendasi untuk {{ $user->name }}</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dibuat dari progress materi, kuis, lab, dan ringkasan pengerjaan terakhir.</p>
+                            </div>
+                            <span class="px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest {{ $adminRisk['class'] }}">
+                                {{ $adminRisk['label'] }}
+                            </span>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-3">
+                            @foreach($adminRecommendations as $idx => $rec)
+                                @php
+                                    $tone = $rec['tone'] ?? 'cyan';
+                                    $toneClass = match($tone) {
+                                        'red' => 'border-red-200 dark:border-red-500/20 bg-red-50/70 dark:bg-red-500/[0.06] text-red-600 dark:text-red-400',
+                                        'amber' => 'border-amber-200 dark:border-amber-500/20 bg-amber-50/70 dark:bg-amber-500/[0.06] text-amber-600 dark:text-amber-400',
+                                        'blue' => 'border-blue-200 dark:border-blue-500/20 bg-blue-50/70 dark:bg-blue-500/[0.06] text-blue-600 dark:text-blue-400',
+                                        'emerald' => 'border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/70 dark:bg-emerald-500/[0.06] text-emerald-600 dark:text-emerald-400',
+                                        default => 'border-cyan-200 dark:border-cyan-500/20 bg-cyan-50/70 dark:bg-cyan-500/[0.06] text-cyan-600 dark:text-cyan-400',
+                                    };
+                                @endphp
+                                <div class="rounded-2xl border {{ $toneClass }} p-4 transition-colors">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-7 h-7 rounded-lg bg-white/70 dark:bg-white/10 flex items-center justify-center text-[11px] font-black shrink-0">
+                                            {{ $idx + 1 }}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-black text-slate-900 dark:text-white">{{ $rec['title'] }}</h4>
+                                            <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mt-1">{{ $rec['body'] }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -1009,6 +1116,22 @@
                                         } else {
                                             $qStatClass = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
                                         }
+
+                                        $quizReviewPayload = [
+                                            'student' => $user->name,
+                                            'title' => $qName,
+                                            'score' => $q->score ?? 0,
+                                            'status' => $isQuizPassed ? 'Lulus' : ($isQuizTimeout ? 'Waktu Habis' : 'Remedial'),
+                                            'date' => \Carbon\Carbon::parse($q->completed_at ?? $q->created_at)->format('d M Y, H:i'),
+                                            'duration' => formatTime($qDuration),
+                                            'answered' => (int) ($q->answered_count ?? 0),
+                                            'unanswered' => (int) ($q->unanswered_count ?? 0),
+                                            'flagged' => (int) ($q->flagged_count ?? 0),
+                                            'focusLost' => (int) ($q->focus_lost_count ?? 0),
+                                            'feedbackLevel' => $q->feedback_level ?? ($isQuizPassed ? 'Lulus' : 'Perlu Penguatan'),
+                                            'feedbackMessage' => $q->feedback_message ?? ($isQuizPassed ? 'Siswa sudah mencapai KKM. Tinjauan ulang tetap dapat membantu memperkuat bagian yang masih salah.' : 'Siswa belum mencapai KKM. Perlu penguatan materi dan percobaan ulang.'),
+                                            'reflectionNote' => $q->reflection_note ?? '',
+                                        ];
                                     @endphp
                                     <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group table-row" x-show="searchQuiz === '' || '{{ addslashes(strtolower($qName)) }}'.includes(searchQuiz.toLowerCase())">
                                         <td class="px-6 py-4 text-center text-slate-400 font-mono text-xs">{{ $idx + 1 }}</td>
@@ -1022,6 +1145,11 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span class="text-slate-900 dark:text-white font-black transition-colors" title="Skor Tertinggi Evaluasi">{{ $q->score }}</span>
+                                            <button type="button"
+                                                    @click="selectedQuizReview = {{ \Illuminate\Support\Js::from($quizReviewPayload) }}; showQuizReviewModal = true"
+                                                    class="block mx-auto mt-1 text-[9px] font-black uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 dark:hover:text-fuchsia-300 transition-colors focus:outline-none">
+                                                Tinjau
+                                            </button>
                                         </td>
                                         <td class="px-6 py-4 text-right text-slate-500 dark:text-slate-400 text-xs font-mono transition-colors">
                                             <span class="block text-[11px] text-slate-700 dark:text-slate-300" title="{{ \Carbon\Carbon::parse($q->created_at)->diffForHumans() }}">
@@ -1263,6 +1391,65 @@
         </div>
     </div>
 
+    {{-- MODAL HERO TINJAUAN KUIS SISWA --}}
+    <div x-show="showQuizReviewModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
+        <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" @click="showQuizReviewModal = false"></div>
+        <div class="relative w-full max-w-3xl overflow-hidden bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/20 rounded-3xl shadow-2xl transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+            <div class="relative p-6 md:p-8 bg-gradient-to-br from-fuchsia-600 via-purple-600 to-cyan-600 text-white">
+                <div class="absolute inset-0 bg-black/10"></div>
+                <button @click="showQuizReviewModal = false" class="absolute top-5 right-5 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition focus:outline-none" title="Tutup">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <div class="relative z-10 max-w-xl">
+                    <p class="text-[10px] uppercase tracking-[0.26em] font-black text-white/65 mb-2">Tinjauan Hasil Siswa</p>
+                    <h3 class="text-2xl md:text-3xl font-black leading-tight" x-text="selectedQuizReview?.title || 'Evaluasi'"></h3>
+                    <p class="text-sm text-white/75 mt-2">Siswa: <span class="font-bold" x-text="selectedQuizReview?.student || '-'"></span></p>
+                    <p class="text-sm text-white/75 mt-3" x-text="selectedQuizReview?.feedbackMessage || 'Ringkasan pengerjaan siswa tersedia untuk ditinjau.'"></p>
+                </div>
+                <div class="absolute right-8 bottom-[-22px] z-10 hidden md:block text-right">
+                    <div class="text-7xl font-black leading-none" x-text="selectedQuizReview?.score ?? 0"></div>
+                    <div class="text-[10px] uppercase tracking-widest font-bold text-white/70">Skor Akhir</div>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4 transition-colors">
+                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Status</p>
+                        <p class="text-lg font-black mt-1" :class="(selectedQuizReview?.score ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'" x-text="selectedQuizReview?.status || '-'"></p>
+                    </div>
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4 transition-colors">
+                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Durasi</p>
+                        <p class="text-lg font-black mt-1 text-slate-900 dark:text-white font-mono" x-text="selectedQuizReview?.duration || '-'"></p>
+                    </div>
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4 transition-colors">
+                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Terjawab</p>
+                        <p class="text-lg font-black mt-1 text-slate-900 dark:text-white"><span x-text="selectedQuizReview?.answered ?? 0"></span> Soal</p>
+                    </div>
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 p-4 transition-colors">
+                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Ragu-ragu</p>
+                        <p class="text-lg font-black mt-1 text-amber-600 dark:text-amber-400"><span x-text="selectedQuizReview?.flagged ?? 0"></span> Soal</p>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/60 border border-slate-200 dark:border-white/10 p-5 transition-colors">
+                    <p class="text-sm font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.feedbackLevel || 'Ringkasan'"></p>
+                    <div class="grid sm:grid-cols-3 gap-3 mt-4 text-xs">
+                        <div class="text-slate-500 dark:text-slate-400">Dikumpulkan<br><span class="font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.date || '-'"></span></div>
+                        <div class="text-slate-500 dark:text-slate-400">Soal Kosong<br><span class="font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.unanswered ?? 0"></span></div>
+                        <div class="text-slate-500 dark:text-slate-400">Fokus Terganggu<br><span class="font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.focusLost ?? 0"></span></div>
+                    </div>
+                    <template x-if="selectedQuizReview?.reflectionNote">
+                        <div class="mt-5 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] p-4">
+                            <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-2">Catatan Siswa</p>
+                            <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300 italic">"<span x-text="selectedQuizReview.reflectionNote"></span>"</p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- MODAL INFO AKADEMIK 6: GLOBAL PROGRESS --}}
     <div x-show="showGlobalProgressModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/80 backdrop-blur-sm transition-colors" @click="showGlobalProgressModal = false"></div>
@@ -1351,7 +1538,7 @@
                         <input type="text" name="name" value="{{ $user->name }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors" required>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Email Address</label>
+                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Alamat Email</label>
                         <input type="email" name="email" value="{{ $user->email }}" class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors" required>
                     </div>
                 </div>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Lab Configuration & Management · Utilwind</title>
+    <title>Konfigurasi Lab · Utilwind</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -131,25 +131,25 @@
 
             <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
                 <div>
-                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                     <div class="space-y-1">
                         <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                            Dashboard
+                            Dasbor
                         </a>
                     </div>
                 </div>
 
                 <div>
-                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                     <div class="space-y-1">
                         <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                            Quiz Management
+                            Manajemen Kuis
                         </a>
                         <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                            Lab Configuration
+                            Konfigurasi Lab
                         </a>
                         <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
@@ -157,7 +157,7 @@
                         </a>
                         <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            Class Management
+                            Manajemen Kelas
                         </a>
                     </div>
                 </div>
@@ -214,17 +214,17 @@
                             <div>
                                 <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
                                     <ol class="inline-flex items-center space-x-1">
-                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
+                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dasbor</a></li>
                                         <li>
                                             <div class="flex items-center transition-colors">
                                                 <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                                <span class="text-slate-700 dark:text-white transition-colors">Lab Configuration</span>
+                                                <span class="text-slate-700 dark:text-white transition-colors">Konfigurasi Lab</span>
                                             </div>
                                         </li>
                                     </ol>
                                 </nav>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Lab Configuration</h2>
+                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Konfigurasi Lab</h2>
                                     
                                     {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                     <button @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Modul Praktik">
@@ -249,11 +249,7 @@
                             <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
 
-                        <div class="border-l border-slate-300 dark:border-white/10 pl-5 ml-1 hidden lg:block transition-colors">
-                            <button onclick="openLabModal()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Module
-                            </button>
-                        </div>
+                        
                         
                         <div class="text-right hidden lg:block border-l border-slate-300 dark:border-white/10 pl-5 ml-1 transition-colors">
                             <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">{{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}</p>
@@ -306,7 +302,7 @@
                                 </h3>
                             </div>
                             <div class="relative w-full sm:w-64 group">
-                                <input id="searchLab" type="text" placeholder="Search by title or slug..." 
+                                <input id="searchLab" type="text" placeholder="Cari berdasarkan judul atau slug..." 
                                     class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition-colors shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
                                 <div class="absolute left-3 top-2.5 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -357,10 +353,7 @@
                                                 <button onclick="openTaskManager({{ $lab->id }}, '{{ addslashes($lab->title) }}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition flex items-center gap-1.5 border border-indigo-500 dark:border-indigo-400">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Steps
                                                 </button>
-                                                <button onclick="openLabModal('edit', {{ htmlspecialchars(json_encode($lab), ENT_QUOTES, 'UTF-8') }})" class="p-1.5 rounded-lg bg-white dark:bg-[#020617] hover:bg-amber-100 hover:text-amber-700 dark:hover:bg-amber-500 text-slate-500 dark:text-white/50 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-400 shadow-sm dark:shadow-inner" title="Edit">
-                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                                </button>
-                                                <button onclick="deleteLab({{ $lab->id }})" class="p-1.5 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-500 text-slate-500 dark:text-white/50 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Delete">
+                                                <button onclick="deleteLab({{ $lab->id }})" class="p-1.5 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-500 text-slate-500 dark:text-white/50 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Hapus">
                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                 </button>
                                             </div>
@@ -436,19 +429,18 @@
 
     {{-- ==================== MODALS ==================== --}}
 
-    {{-- 1. LAB MODAL (CREATE/EDIT) --}}
+    {{-- 1. LAB MODAL (CREATE ONLY) --}}
     <div id="labModal" class="fixed inset-0 z-[999999] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" onclick="closeLabModal()"></div>
         <div id="labModalContent" class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col">
             <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-[#0a0e17] rounded-t-3xl transition-colors">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-700 dark:text-indigo-400 text-[9px] border border-indigo-200 dark:border-indigo-500/30 transition-colors shadow-inner">MODULE</span> <span id="modalTitle">New Lab</span></h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-700 dark:text-indigo-400 text-[9px] border border-indigo-200 dark:border-indigo-500/30 transition-colors shadow-inner">MODULE</span> <span id="modalTitle">New Module</span></h3>
                 <button onclick="closeLabModal()" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition-colors bg-slate-200 dark:bg-white/5 p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-500/20 border border-transparent hover:border-red-200 dark:hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="p-5 md:p-6 space-y-5 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] relative">
                 <div class="absolute inset-0 bg-white/95 dark:bg-[#0f141e]/95 mix-blend-overlay pointer-events-none transition-colors"></div>
                 <form id="labForm" class="relative z-10">
                     @csrf
-                    <input type="hidden" id="labId" name="id">
                     <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Lab Title</label><input type="text" id="labTitle" name="title" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="e.g. Advanced CSS Layout" required></div>
                     <div class="mt-4"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Description</label><textarea id="labDesc" name="description" rows="3" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" placeholder="Brief objectives..."></textarea></div>
                     <div class="grid grid-cols-2 gap-4 mt-4">
@@ -458,8 +450,8 @@
                 </form>
             </div>
             <div class="p-5 md:p-6 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#0a0e17] flex justify-end gap-3 rounded-b-3xl transition-colors">
-                <button onclick="closeLabModal()" class="px-5 py-2.5 rounded-xl text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 font-bold text-xs transition border border-transparent dark:hover:border-white/10">Cancel</button>
-                <button onclick="saveLab()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-500 dark:border-indigo-400 transition transform hover:-translate-y-0.5">Save Module</button>
+                <button onclick="closeLabModal()" class="px-5 py-2.5 rounded-xl text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 font-bold text-xs transition border border-transparent dark:hover:border-white/10">Batal</button>
+                <button onclick="saveLab()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-500 dark:border-indigo-400 transition transform hover:-translate-y-0.5">Simpan Modul</button>
             </div>
         </div>
     </div>
@@ -515,7 +507,7 @@
                             {{-- BUTTON GROUP --}}
                             <div class="p-4 border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0a0e17] flex justify-between items-center mt-6 rounded-xl shadow-sm dark:shadow-inner transition-colors">
                                 <button type="button" onclick="resetTaskForm()" class="text-[10px] font-bold text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-2 hover:bg-slate-200 dark:hover:bg-white/5 rounded-lg border border-transparent dark:hover:border-white/10">Clear / New Step</button>
-                                <button type="button" onclick="submitTask()" id="btnSaveTask" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">Save Step Configuration</button>
+                                <button type="button" onclick="submitTask()" id="btnSaveTask" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">Simpan Konfigurasi Langkah</button>
                             </div>
                         </form>
                     </div>
@@ -575,51 +567,72 @@
         $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 
         // --- 1. LAB CRUD ---
-        function openLabModal(mode = 'create', data = null) {
+        function openLabModal() {
             const modal = document.getElementById('labModal');
             const content = document.getElementById('labModalContent');
             const title = document.getElementById('modalTitle');
-            document.getElementById('labForm').reset();
 
-            if (mode === 'edit' && data) {
-                title.innerText = 'Edit Module';
-                $('#labId').val(data.id);
-                $('#labTitle').val(data.title);
-                $('#labDesc').val(data.description);
-                $('#labDuration').val(data.duration_minutes);
-                $('#labGrade').val(data.passing_grade);
-            } else { title.innerText = 'New Module'; $('#labId').val(''); }
+            document.getElementById('labForm').reset();
+            if (title) title.innerText = 'New Module';
 
             modal.classList.remove('hidden');
-            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
         }
         function closeLabModal() {
             const modal = document.getElementById('labModal');
             const content = document.getElementById('labModalContent');
-            content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
         function saveLab() {
             const form = $('#labForm');
-            const id = $('#labId').val();
-            let url = "{{ route('admin.labs.store') ?? '#' }}";
-            let formData = form.serialize();
-            if (id) { url = `/admin/labs/${id}`; formData += "&_method=PUT"; }
+            const url = "{{ route('admin.labs.store') ?? '#' }}";
+            const formData = form.serialize();
 
             const theme = getSwalTheme();
-            Swal.fire({ title: 'Processing...', didOpen: () => { Swal.showLoading() }, background: theme.bg, color: theme.color });
+            Swal.fire({
+                title: 'Processing...',
+                didOpen: () => { Swal.showLoading() },
+                background: theme.bg,
+                color: theme.color
+            });
             
             $.ajax({
-                url: url, type: "POST", data: formData, 
+                url: url,
+                type: "POST",
+                data: formData,
                 success: function(res) {
-                    Swal.fire({ title: 'Success!', text: 'Module saved successfully.', icon: 'success', background: theme.bg, color: theme.color, confirmButtonColor: '#6366f1' }).then(() => { closeLabModal(); location.reload(); });
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Modul baru berhasil ditambahkan.',
+                        icon: 'success',
+                        background: theme.bg,
+                        color: theme.color,
+                        confirmButtonColor: '#6366f1'
+                    }).then(() => {
+                        closeLabModal();
+                        location.reload();
+                    });
                 },
-                error: function() { Swal.fire({ title: 'Error!', text: 'Failed to save module.', icon: 'error', background: theme.bg, color: theme.color, confirmButtonColor: '#ef4444' }); }
+                error: function() {
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: 'Modul gagal ditambahkan.',
+                        icon: 'error',
+                        background: theme.bg,
+                        color: theme.color,
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
             });
         }
         function deleteLab(id) {
             const theme = getSwalTheme();
-            Swal.fire({ title: 'Delete Module?', text: "This cannot be undone!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: theme.cancelBg, confirmButtonText: 'Yes, Delete!', cancelButtonText: 'Cancel', background: theme.bg, color: theme.color }).then((result) => {
+            Swal.fire({ title: 'Hapus Modul?', text: "Tindakan ini tidak dapat dibatalkan.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: theme.cancelBg, confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal', background: theme.bg, color: theme.color }).then((result) => {
                 if (result.isConfirmed) { $.ajax({ url: `/admin/labs/${id}`, type: 'DELETE', success: function() { location.reload(); } }); }
             });
         }
@@ -657,11 +670,11 @@
                         <div>
                             <span class="text-[9px] font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/20 transition-colors">Step ${task.order_index}</span>
                             <h5 class="text-xs font-bold text-slate-900 dark:text-white mt-1.5 line-clamp-1 transition-colors">${task.title}</h5>
-                            <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">${task.points} Pts</p>
+                            <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">${task.points} Poin</p>
                         </div>
                         <div class="flex gap-1 md:opacity-0 group-hover:opacity-100 transition duration-300">
                             <button onclick="editTask(${taskJson})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-amber-100 dark:hover:bg-amber-500 text-slate-400 dark:text-white/40 hover:text-amber-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-400 shadow-sm dark:shadow-inner" title="Edit"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                            <button onclick="deleteTask(${task.id})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-red-100 dark:hover:bg-red-500 text-slate-400 dark:text-white/40 hover:text-red-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Delete"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                            <button onclick="deleteTask(${task.id})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-red-100 dark:hover:bg-red-500 text-slate-400 dark:text-white/40 hover:text-red-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Hapus"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                         </div>
                     </div>`;
                 });
@@ -682,7 +695,7 @@
             if (typeof rules !== 'string') { rules = JSON.parse(rules).join(', '); } 
             $('[name="validation_rules"]').val(rules.replace(/[\[\]"]/g, ''));
 
-            $('#btnSaveTask').text('Update Step').removeClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]').addClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]');
+            $('#btnSaveTask').text('Perbarui Langkah').removeClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]').addClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]');
         }
 
         function resetTaskForm() {
@@ -690,7 +703,7 @@
             $('#taskForm')[0].reset();
             $('#taskId').val(''); 
             $('#taskLabId').val(labId); 
-            $('#btnSaveTask').text('Save Step Configuration').removeClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]').addClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]');
+            $('#btnSaveTask').text('Simpan Konfigurasi Langkah').removeClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]').addClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]');
             loadTasks(labId); 
         }
 
@@ -713,13 +726,13 @@
                     Toast.fire({ icon: 'success', title: id ? "Step updated successfully" : "Step added successfully" });
                     resetTaskForm();
                 },
-                error: function() { Swal.fire({ title: 'Error!', text: 'Failed to save task.', icon: 'error', background: theme.bg, color: theme.color, confirmButtonColor: '#ef4444' }); }
+                error: function() { Swal.fire({ title: 'Gagal!', text: 'Konfigurasi langkah gagal disimpan.', icon: 'error', background: theme.bg, color: theme.color, confirmButtonColor: '#ef4444' }); }
             });
         }
 
         function deleteTask(id) {
             const theme = getSwalTheme();
-            Swal.fire({ title: 'Delete Step?', text: "Permanent deletion!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: theme.cancelBg, confirmButtonText: 'Yes, Delete', background: theme.bg, color: theme.color }).then((result) => {
+            Swal.fire({ title: 'Hapus Langkah?', text: "Data langkah akan dihapus permanen.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: theme.cancelBg, confirmButtonText: 'Ya, Hapus', background: theme.bg, color: theme.color }).then((result) => {
                 if (result.isConfirmed) { $.ajax({ url: `/admin/labs/tasks/${id}`, type: 'DELETE', success: function() { loadTasks(currentLabId); } }); }
             });
         }

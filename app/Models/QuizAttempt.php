@@ -12,12 +12,21 @@ class QuizAttempt extends Model
     protected $fillable = [
         'user_id',
         'chapter_id',
+        'started_at',
         'score',
         'time_spent_seconds',
+        'answered_count',
+        'unanswered_count',
+        'flagged_count',
+        'focus_lost_count',
+        'feedback_level',
+        'feedback_message',
+        'reflection_note',
         'completed_at'
     ];
 
     protected $casts = [
+        'started_at' => 'datetime',
         'completed_at' => 'datetime', // Agar bisa dimanipulasi Carbon
     ];
 

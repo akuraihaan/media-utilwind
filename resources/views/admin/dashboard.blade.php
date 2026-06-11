@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Dasbor Admin</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -143,6 +143,13 @@
         .dark .tooltip-blue .tooltip-trigger { background-color: #3b82f6; color: white; border-color: transparent; box-shadow: 0 0 10px rgba(59,130,246,0.5); }
 
         .modal-open { overflow: hidden; padding-right: 5px; } 
+
+        .chart-zoom-card { cursor: pointer; }
+        .chart-zoom-card .chart-zoom-button { opacity: 0; transform: translateY(-4px); transition: all .2s ease; }
+        .chart-zoom-card:hover .chart-zoom-button { opacity: 1; transform: translateY(0); }
+        .chart-hero-backdrop { background: radial-gradient(circle at 20% 10%, rgba(99,102,241,.25), transparent 32%), radial-gradient(circle at 80% 20%, rgba(217,70,239,.18), transparent 32%), rgba(2,6,23,.78); }
+        .delete-instant-btn { transition: all .2s ease; }
+        .delete-instant-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(239,68,68,.20); }
     </style>
 </head>
 <body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{ 
@@ -319,6 +326,75 @@
                     });
             } catch (\Exception $e) {}
         }
+
+        // 7. DATA GRAF TAMBAHAN TANPA MENGUBAH FITUR LAMA
+        $userRoleChartLabels = [];
+        $userRoleChartData = [];
+        $studentClassChartLabels = [];
+        $studentClassChartData = [];
+        $chapterAverageLabels = [];
+        $chapterAverageScores = [];
+        $chapterAttemptTotals = [];
+        $activityTrendLabels = [];
+        $activityQuizCounts = [];
+        $activityLabCounts = [];
+
+        try {
+            $roleDistribution = DB::table('users')
+                ->select('role', DB::raw('COUNT(*) as total'))
+                ->groupBy('role')
+                ->orderByDesc('total')
+                ->get();
+
+            $userRoleChartLabels = $roleDistribution->pluck('role')->map(function ($role) {
+                return ucfirst($role ?? 'unknown');
+            })->toArray();
+
+            $userRoleChartData = $roleDistribution->pluck('total')->map(fn($total) => (int) $total)->toArray();
+        } catch (\Exception $e) {}
+
+        try {
+            $classDistribution = DB::table('users')
+                ->where('role', 'student')
+                ->select(DB::raw("COALESCE(NULLIF(class_group, ''), 'Tanpa Kelas') as class_name"), DB::raw('COUNT(*) as total'))
+                ->groupBy('class_name')
+                ->orderByDesc('total')
+                ->limit(8)
+                ->get();
+
+            $studentClassChartLabels = $classDistribution->pluck('class_name')->toArray();
+            $studentClassChartData = $classDistribution->pluck('total')->map(fn($total) => (int) $total)->toArray();
+        } catch (\Exception $e) {}
+
+        try {
+            $chapterAverageLabels = $chapterAverages->map(function ($item) {
+                return $item->chapter_id == 99 ? 'Evaluasi Akhir' : 'Bab ' . $item->chapter_id;
+            })->toArray();
+
+            $chapterAverageScores = $chapterAverages->pluck('avg_score')->map(fn($score) => (float) $score)->toArray();
+            $chapterAttemptTotals = $chapterAverages->pluck('total')->map(fn($total) => (int) $total)->toArray();
+        } catch (\Exception $e) {}
+
+        try {
+            for ($i = 6; $i >= 0; $i--) {
+                $date = now()->subDays($i)->toDateString();
+
+                $activityTrendLabels[] = now()->subDays($i)->translatedFormat('d M');
+
+                $activityQuizCounts[] = (int) DB::table('quiz_attempts')
+                    ->whereDate('created_at', $date)
+                    ->count();
+
+                $activityLabCounts[] = (int) DB::table('lab_histories')
+                    ->whereDate('created_at', $date)
+                    ->count();
+            }
+        } catch (\Exception $e) {
+            $activityTrendLabels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+            $activityQuizCounts = [0, 0, 0, 0, 0, 0, 0];
+            $activityLabCounts = [0, 0, 0, 0, 0, 0, 0];
+        }
+
     @endphp
 
     {{-- ==================== 1. SIDEBAR ==================== --}}
@@ -343,25 +419,25 @@
 
         <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dashboard
+                        Dasbor
                     </a>
                 </div>
             </div>
 
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Quiz Management
+                        Manajemen Kuis
                     </a>
                     <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Configuration
+                        Konfigurasi Lab
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
@@ -369,7 +445,7 @@
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Class Management
+                        Manajemen Kelas
                     </a>
                 </div>
             </div>
@@ -426,11 +502,11 @@
                         <div>
                             <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
                                 <ol class="inline-flex items-center space-x-1">
-                                    <li class="inline-flex items-center"><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard </a></li>
+                                    <li class="inline-flex items-center"><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dasbor </a></li>
                                 </ol>
                             </nav>
                             <div class="flex items-center gap-2">
-                                <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Analytics Overview</h2>
+                                <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Ringkasan Analitik</h2>
                                 
                                 {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                 <button @click="showDashboardInfoModal = true" class="w-5 h-5 md:w-6 md:h-6 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none" title="Panduan Dasbor">
@@ -457,7 +533,7 @@
 
                     <div class="border-l border-slate-200 dark:border-white/10 pl-3 md:pl-5 ml-1 hidden lg:block transition-colors">
                         <button @click="showAdd = true" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-500 dark:border-indigo-400">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Enroll Student
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Tambah Siswa
                         </button>
                     </div>
 
@@ -629,7 +705,7 @@
                      ======================================================= --}}
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 reveal" style="animation-delay: 0.2s;">
                     
-                    {{-- Total Students --}}
+                    {{-- Total Siswa --}}
                     <div class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all overflow-visible" @click="showStudentModal = true">
                         <div class="flex justify-between items-start">
                             <p class="text-[10px] uppercase font-bold text-slate-500 dark:text-white/40 tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Siswa</p>
@@ -794,13 +870,113 @@
                     </div>
                 </div>
 
+
+                {{-- =======================================================
+                     3B. GRAF INSIGHT TAMBAHAN
+                     Tidak mengubah fitur lama, hanya menambah visual data.
+                     ======================================================= --}}
+                <div class="grid grid-cols-1 xl:grid-cols-4 gap-6 reveal" style="animation-delay: 0.35s;">
+
+                    {{-- Distribusi Peran Pengguna --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('role', 'Distribusi Peran Pengguna', 'Komposisi akun berdasarkan peran pengguna di dalam sistem.')">
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
+                                    Distribusi Peran
+                                    <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
+                                        <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
+                                        <div class="tooltip-content">
+                                            Perbandingan jumlah akun berdasarkan peran pengguna, seperti siswa dan admin.
+                                        </div>
+                                    </div>
+                                </h3>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Komposisi akun sistem.</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">User</span>
+                            <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
+                        </div>
+                        <div class="flex-1 min-h-[220px] relative">
+                            <canvas id="roleDistributionChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Distribusi Kelas Siswa --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('class', 'Distribusi Siswa per Kelas', 'Sebaran jumlah siswa pada tiap kelas untuk melihat komposisi rombongan belajar.')">
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
+                                    Siswa per Kelas
+                                    <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
+                                        <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
+                                        <div class="tooltip-content">
+                                            Menampilkan sebaran jumlah siswa pada setiap kelas. Data diambil dari kolom class_group pada akun siswa.
+                                        </div>
+                                    </div>
+                                </h3>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Top kelas dengan siswa terbanyak.</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[9px] font-black border border-cyan-100 dark:border-cyan-500/20">Class</span>
+                            <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
+                        </div>
+                        <div class="flex-1 min-h-[220px] relative">
+                            <canvas id="classDistributionChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Rata-rata Kuis per Bab --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('chapter', 'Rata-rata Kuis per Bab', 'Rata-rata nilai kuis tiap bab untuk memantau materi yang perlu penguatan.')">
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
+                                    Rata-rata per Bab
+                                    <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
+                                        <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
+                                        <div class="tooltip-content">
+                                            Rata-rata nilai kuis dikelompokkan berdasarkan chapter_id. Grafik ini membantu melihat bab yang perlu penguatan materi.
+                                        </div>
+                                    </div>
+                                </h3>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Performa kuis tiap bab.</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black border border-emerald-100 dark:border-emerald-500/20">Score</span>
+                            <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
+                        </div>
+                        <div class="flex-1 min-h-[220px] relative">
+                            <canvas id="chapterAverageChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Aktivitas Kuis dan Lab --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('activity', 'Aktivitas Kuis dan Lab 7 Hari', 'Perbandingan volume pengerjaan kuis dan lab dalam tujuh hari terakhir.')">
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
+                                    Aktivitas 7 Hari
+                                    <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left">
+                                        <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
+                                        <div class="tooltip-content">
+                                            Membandingkan jumlah pengerjaan kuis dan lab dalam tujuh hari terakhir tanpa mengubah grafik tren nilai utama.
+                                        </div>
+                                    </div>
+                                </h3>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Volume kuis dan lab terbaru.</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 text-[9px] font-black border border-fuchsia-100 dark:border-fuchsia-500/20">Activity</span>
+                            <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
+                        </div>
+                        <div class="flex-1 min-h-[220px] relative">
+                            <canvas id="activityVolumeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- =======================================================
                      4. QUESTION ANALYSIS & RECENT ACTIVITIES
                      ======================================================= --}}
                 <div class="grid lg:grid-cols-3 gap-8 reveal" style="animation-delay: 0.4s;">
                     
                     {{-- QUESTION ANALYSIS --}}
-                    <div class="lg:col-span-2 glass-card rounded-2xl p-6 relative z-10 flex flex-col h-full">
+                    <div class="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-6 relative z-10 flex flex-col min-h-[560px]">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-4">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
@@ -821,7 +997,7 @@
                             </a>
                         </div>
                         
-                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-white/5 rounded-xl shadow-inner bg-slate-50/50 dark:bg-[#0a0e17]/50 transition-colors duration-500 flex-1">
+                        <div class="max-h-[460px] lg:max-h-[520px] overflow-auto custom-scrollbar border border-slate-200 dark:border-white/5 rounded-xl shadow-inner bg-slate-50/50 dark:bg-[#0a0e17]/50 transition-colors duration-500 flex-1">
                             <table class="w-full text-sm text-left whitespace-nowrap md:whitespace-normal h-full">
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 transition-colors sticky top-0">
                                     <tr>
@@ -970,8 +1146,7 @@
                                     class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition-colors shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/20">
                                 <svg class="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </div>
-                            
-                            <div class="flex gap-2 w-full sm:w-auto relative z-50">
+<div class="flex gap-2 w-full sm:w-auto relative z-50">
                                 <div class="relative flex-1 sm:flex-none" x-data="{ exportOpen: false }">
                                     <button @click="exportOpen = !exportOpen" @click.away="exportOpen = false" class="w-full justify-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white text-[11px] font-bold transition-colors shadow-sm dark:shadow-none">
                                         Ekspor <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -986,6 +1161,7 @@
                                         </a>
                                     </div>
                                 </div>
+
                                 <button @click="showImport = true" class="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white transition-colors text-xs shadow-sm dark:shadow-none" title="Impor Data">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                                 </button>
@@ -995,11 +1171,11 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="overflow-x-auto relative p-0 sm:p-6 pt-0 border-t border-slate-200 dark:border-white/5 sm:border-none transition-colors">
+<div class="max-h-[520px] overflow-auto custom-scrollbar relative p-0 sm:p-6 pt-0 border-t border-slate-200 dark:border-white/5 sm:border-none transition-colors">
                         <table class="w-full text-sm text-left whitespace-nowrap sm:whitespace-normal border border-slate-200 dark:border-white/5 rounded-xl shadow-inner bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors duration-500">
                             <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-20 transition-colors">
                                 <tr>
+
                                     <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Profil Siswa (Aktif)</th> 
                                     <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Grup Kelas</th>
                                     <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Waktu Bergabung</th>
@@ -1011,6 +1187,7 @@
                                 @if($user->role == 'student')
                                 <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group table-row" 
                                     x-show="searchQuery === '' || '{{ strtolower($user->name) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower($user->email) }}'.includes(searchQuery.toLowerCase())">
+
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-4">
                                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow-md dark:shadow-inner border border-transparent dark:border-white/10 relative group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition">
@@ -1036,10 +1213,27 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('admin.student.detail', $user->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-[#020617] hover:bg-indigo-600 border border-slate-200 dark:border-white/10 hover:border-indigo-500 text-slate-700 hover:text-white dark:text-white text-[10px] font-bold transition-all shadow-sm dark:shadow-inner hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] group/btn relative z-30">
-                                            <svg class="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 group-hover/btn:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            Lihat Insight
-                                        </a>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('admin.student.detail', $user->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-[#020617] hover:bg-indigo-600 border border-slate-200 dark:border-white/10 hover:border-indigo-500 text-slate-700 hover:text-white dark:text-white text-[10px] font-bold transition-all shadow-sm dark:shadow-inner hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] group/btn relative z-30">
+                                                <svg class="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 group-hover/btn:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                Lihat Insight
+                                            </a>
+                                            @php
+                                                $deleteUserRoute = \Illuminate\Support\Facades\Route::has('admin.users.delete')
+                                                    ? route('admin.users.delete', $user->id)
+                                                    : (\Illuminate\Support\Facades\Route::has('admin.users.destroy')
+                                                        ? route('admin.users.destroy', $user->id)
+                                                        : (\Illuminate\Support\Facades\Route::has('admin.user.destroy') ? route('admin.user.destroy', $user->id) : '#'));
+                                            @endphp
+                                            <form action="{{ $deleteUserRoute }}" method="POST" class="delete-directory-form inline-flex" data-user-name="{{ $user->name }}" data-user-email="{{ $user->email }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="delete-instant-btn inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-red-50 dark:bg-red-500/10 hover:bg-red-600 border border-red-200 dark:border-red-500/20 hover:border-red-500 text-red-600 hover:text-white dark:text-red-400 dark:hover:text-white text-[10px] font-bold transition-all shadow-sm" title="Hapus user secara instan">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-8 0h10"/></svg>
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endif
@@ -1054,6 +1248,35 @@
             </div>
         </div>
     </main>
+
+    {{-- ==================== HERO MODAL CHART PREVIEW ==================== --}}
+    <div id="chartHeroModal" class="fixed inset-0 z-[999999] hidden items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 chart-hero-backdrop backdrop-blur-md cursor-pointer" onclick="closeHeroChart()"></div>
+        <div class="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[2rem] bg-white/95 dark:bg-[#0f141e]/95 border border-slate-200 dark:border-white/10 shadow-2xl dark:shadow-[0_30px_120px_rgba(0,0,0,.75)]">
+            <div class="relative overflow-hidden border-b border-slate-200 dark:border-white/10 bg-slate-50/90 dark:bg-[#020617]/70 px-6 md:px-8 py-6">
+                <div class="absolute right-0 top-0 w-72 h-72 bg-indigo-500/10 dark:bg-indigo-500/20 blur-[90px] rounded-full pointer-events-none"></div>
+                <div class="relative z-10 flex items-start justify-between gap-5">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-600 dark:text-indigo-400 mb-2">Expanded analytics view</p>
+                        <h3 id="chartHeroTitle" class="text-2xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">Preview Grafik</h3>
+                        <p id="chartHeroDescription" class="mt-2 text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-3xl leading-relaxed">Tampilan grafik diperbesar untuk pembacaan data yang lebih nyaman.</p>
+                    </div>
+                    <button type="button" onclick="closeHeroChart()" class="shrink-0 p-3 rounded-2xl bg-white dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-500/10 border border-slate-200 dark:border-white/10 text-slate-500 hover:text-red-600 dark:text-slate-300 dark:hover:text-red-300 transition-all shadow-sm">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-4 md:p-8 bg-white dark:bg-[#0a0e17]">
+                <div class="h-[62vh] min-h-[360px] rounded-[1.5rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#020617] p-4 md:p-6 shadow-inner">
+                    <canvas id="heroChartCanvas"></canvas>
+                </div>
+                <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] text-slate-500 dark:text-slate-400">
+                    <p>Tip: gunakan tampilan besar ini untuk membaca distribusi data ketika label atau nilai pada kartu kecil terasa padat.</p>
+                    <button type="button" onclick="closeHeroChart()" class="px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px]">Tutup Tampilan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- ==================== HERO MODAL PANDUAN DASBOR ==================== --}}
     <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
@@ -1123,7 +1346,7 @@
                 <div class="relative z-10">
                     <p class="text-[10px] uppercase font-bold tracking-widest text-indigo-100 mb-1">Daftar Pengguna Aktif</p>
                     <h3 class="text-3xl font-black mb-1">{{ number_format($totalStudents ?? 0) }} Siswa Aktif</h3>
-                    <p class="text-xs text-indigo-100 opacity-90">Total akun dengan wewenang "Student" di seluruh kelas.</p>
+                    <p class="text-xs text-indigo-100 opacity-90">Total akun siswa di seluruh kelas.</p>
                 </div>
                 <button @click="showStudentModal = false" class="text-indigo-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -1202,7 +1425,7 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div class="relative z-10">
                     <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-100 mb-1">Rata-Rata Global Seluruh Kuis</p>
-                    <h3 class="text-4xl font-black mb-1">{{ $globalAverage ?? 0 }} <span class="text-lg font-bold text-emerald-200">Pts</span></h3>
+                    <h3 class="text-4xl font-black mb-1">{{ $globalAverage ?? 0 }} <span class="text-lg font-bold text-emerald-200">Poin</span></h3>
                     <p class="text-[10px] text-emerald-100 opacity-90 mt-1">
                         Skor gabungan total dari <b>{{ $totalAttempts }}</b> seluruh percobaan kuis dibagi rata.
                     </p>
@@ -1270,7 +1493,7 @@
                         </p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $act->score }} Pts</span>
+                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $act->score }} Poin</span>
                         <span class="text-[9px] text-slate-400 dark:text-white/30 hidden sm:inline-block font-mono mt-1 transition-colors">{{ \Carbon\Carbon::parse($act->created_at)->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
@@ -1297,7 +1520,7 @@
                     <p class="text-xs text-red-100 opacity-90">Siswa di bawah ini mendapatkan skor < 70 dan belum pernah mencapai KKM di evaluasi tersebut.</p>
                     @if($remedialRate > 0)
                         <div class="mt-3 inline-block px-3 py-1 bg-red-900/30 rounded-lg border border-red-100/20">
-                            <span class="text-[10px] font-bold text-red-100">Menjangkiti {{ $remedialRate }}% dari total {{ $totalStudents }} Siswa Aktif</span>
+                            <span class="text-[10px] font-bold text-red-100">Mencakup {{ $remedialRate }}% dari total {{ $totalStudents }} siswa aktif</span>
                         </div>
                     @endif
                 </div>
@@ -1317,7 +1540,7 @@
                         </p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-red-600 dark:text-red-500 transition-colors">{{ $act->score }} Pts</span>
+                        <span class="block text-sm font-black text-red-600 dark:text-red-500 transition-colors">{{ $act->score }} Poin</span>
                         <span class="text-[9px] text-red-700 dark:text-red-300 font-bold bg-red-100 dark:bg-red-500/10 px-2 py-0.5 rounded mt-1 hidden sm:inline-block transition-colors">Kurang {{ 70 - $act->score }} Poin</span>
                     </div>
                 </div>
@@ -1362,7 +1585,7 @@
                         <p class="text-[10px] text-slate-500 dark:text-white/50 mt-0.5 transition-colors line-clamp-1" title="{{ $lab->lab_title }}">{{ $lab->lab_title }}</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $lab->final_score }} Pts</span>
+                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $lab->final_score }} Poin</span>
                         <span class="text-[9px] text-slate-400 dark:text-white/30 hidden sm:inline-block font-mono mt-1 transition-colors">{{ \Carbon\Carbon::parse($lab->created_at)->diffForHumans() }}</span>
                     </div>
                 </div>
@@ -1487,6 +1710,11 @@
 {{-- SCRIPT JS UNTUK CHART & SWAL --}}
 <script>
     let myChart = null;
+    let roleDistributionChart = null;
+    let classDistributionChart = null;
+    let chapterAverageChart = null;
+    let activityVolumeChart = null;
+    let heroChartInstance = null;
 
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('quizChart');
@@ -1494,12 +1722,17 @@
             initChart();
         }
 
+        initDashboardGraphCharts();
+
         // Listener jika tema diubah, render ulang chart
         window.addEventListener('theme-toggled', () => {
             if(myChart) {
                 myChart.destroy();
                 initChart();
             }
+
+            destroyDashboardGraphCharts();
+            initDashboardGraphCharts();
         });
 
         function initChart() {
@@ -1559,6 +1792,242 @@
                 }
             });
         }
+
+        function destroyDashboardGraphCharts() {
+            [roleDistributionChart, classDistributionChart, chapterAverageChart, activityVolumeChart].forEach(chart => {
+                if (chart) chart.destroy();
+            });
+
+            roleDistributionChart = null;
+            classDistributionChart = null;
+            chapterAverageChart = null;
+            activityVolumeChart = null;
+        }
+
+        function getChartThemeConfig() {
+            const isDark = document.documentElement.classList.contains('dark');
+
+            return {
+                isDark,
+                gridColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)',
+                textColor: isDark ? '#94a3b8' : '#64748b',
+                tooltipBg: isDark ? 'rgba(15, 20, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                tooltipText: isDark ? '#fff' : '#1e293b',
+                borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)',
+                palette: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#d946ef', '#8b5cf6', '#14b8a6']
+            };
+        }
+
+        function emptyDataset(labels, data, fallbackLabel = 'Belum Ada Data') {
+            if (!Array.isArray(labels) || labels.length === 0 || !Array.isArray(data) || data.length === 0) {
+                return {
+                    labels: [fallbackLabel],
+                    data: [0]
+                };
+            }
+
+            return { labels, data };
+        }
+
+        function initDashboardGraphCharts() {
+            const theme = getChartThemeConfig();
+            const defaultPlugins = {
+                legend: {
+                    labels: {
+                        color: theme.textColor,
+                        boxWidth: 10,
+                        boxHeight: 10,
+                        font: { size: 10, family: 'Inter', weight: '700' }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: theme.tooltipBg,
+                    titleColor: theme.tooltipText,
+                    bodyColor: theme.tooltipText,
+                    borderColor: theme.borderColor,
+                    borderWidth: 1,
+                    padding: 12,
+                    titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                    bodyFont: { family: 'Inter', size: 11 }
+                }
+            };
+
+            const roleCanvas = document.getElementById('roleDistributionChart');
+            if (roleCanvas) {
+                const raw = emptyDataset(
+                    {!! json_encode($userRoleChartLabels ?? []) !!},
+                    {!! json_encode($userRoleChartData ?? []) !!}
+                );
+
+                roleDistributionChart = new Chart(roleCanvas.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: raw.labels,
+                        datasets: [{
+                            data: raw.data,
+                            backgroundColor: theme.palette,
+                            borderColor: theme.isDark ? '#0f141e' : '#ffffff',
+                            borderWidth: 3,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '68%',
+                        plugins: defaultPlugins
+                    }
+                });
+            }
+
+            const classCanvas = document.getElementById('classDistributionChart');
+            if (classCanvas) {
+                const raw = emptyDataset(
+                    {!! json_encode($studentClassChartLabels ?? []) !!},
+                    {!! json_encode($studentClassChartData ?? []) !!}
+                );
+
+                classDistributionChart = new Chart(classCanvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: raw.labels,
+                        datasets: [{
+                            label: 'Jumlah Siswa',
+                            data: raw.data,
+                            backgroundColor: '#06b6d4',
+                            borderRadius: 10,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...defaultPlugins,
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: { color: theme.gridColor },
+                                ticks: { color: theme.textColor, precision: 0, font: { size: 10, family: 'JetBrains Mono' } }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: { color: theme.textColor, font: { size: 10, family: 'Inter', weight: '700' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const chapterCanvas = document.getElementById('chapterAverageChart');
+            if (chapterCanvas) {
+                const raw = emptyDataset(
+                    {!! json_encode($chapterAverageLabels ?? []) !!},
+                    {!! json_encode($chapterAverageScores ?? []) !!}
+                );
+
+                chapterAverageChart = new Chart(chapterCanvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: raw.labels,
+                        datasets: [{
+                            label: 'Rata-rata Nilai',
+                            data: raw.data,
+                            backgroundColor: '#10b981',
+                            borderRadius: 10,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...defaultPlugins,
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: theme.textColor, font: { size: 10, family: 'Inter', weight: '700' } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: { color: theme.gridColor },
+                                ticks: { color: theme.textColor, font: { size: 10, family: 'JetBrains Mono' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const activityCanvas = document.getElementById('activityVolumeChart');
+            if (activityCanvas) {
+                let activityLabels = {!! json_encode($activityTrendLabels ?? []) !!};
+                let quizCounts = {!! json_encode($activityQuizCounts ?? []) !!};
+                let labCounts = {!! json_encode($activityLabCounts ?? []) !!};
+
+                if (!Array.isArray(activityLabels) || activityLabels.length === 0) {
+                    activityLabels = ['Belum Ada Data'];
+                    quizCounts = [0];
+                    labCounts = [0];
+                }
+
+                activityVolumeChart = new Chart(activityCanvas.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: activityLabels,
+                        datasets: [
+                            {
+                                label: 'Kuis',
+                                data: quizCounts,
+                                borderColor: '#6366f1',
+                                backgroundColor: 'rgba(99,102,241,0.12)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: theme.isDark ? '#0f141e' : '#ffffff',
+                                pointBorderColor: '#6366f1',
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Lab',
+                                data: labCounts,
+                                borderColor: '#d946ef',
+                                backgroundColor: 'rgba(217,70,239,0.10)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: theme.isDark ? '#0f141e' : '#ffffff',
+                                pointBorderColor: '#d946ef',
+                                fill: true,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: defaultPlugins,
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: theme.textColor, font: { size: 10, family: 'JetBrains Mono' } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: theme.gridColor },
+                                ticks: { color: theme.textColor, precision: 0, font: { size: 10, family: 'JetBrains Mono' } }
+                            }
+                        },
+                        interaction: { mode: 'index', intersect: false }
+                    }
+                });
+            }
+        }
+
     });
 
     function updateChartType(type) {
@@ -1575,6 +2044,150 @@
         }
     }
 
+    function getSwalTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+            background: isDark ? '#0f141e' : '#ffffff',
+            color: isDark ? '#fff' : '#1e293b'
+        };
+    }
+
+    function getChartInstanceByKey(key) {
+        return {
+            role: roleDistributionChart,
+            class: classDistributionChart,
+            chapter: chapterAverageChart,
+            activity: activityVolumeChart,
+            trend: myChart
+        }[key] || null;
+    }
+
+    function cloneChartData(chart) {
+        return {
+            labels: [...(chart.data.labels || [])],
+            datasets: (chart.data.datasets || []).map(dataset => ({
+                ...dataset,
+                data: Array.isArray(dataset.data) ? [...dataset.data] : dataset.data,
+                backgroundColor: Array.isArray(dataset.backgroundColor) ? [...dataset.backgroundColor] : dataset.backgroundColor,
+                borderColor: Array.isArray(dataset.borderColor) ? [...dataset.borderColor] : dataset.borderColor
+            }))
+        };
+    }
+
+    function buildHeroChartOptions(sourceChart) {
+        const isDark = document.documentElement.classList.contains('dark');
+        const theme = {
+            isDark,
+            gridColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)',
+            textColor: isDark ? '#94a3b8' : '#64748b',
+            tooltipBg: isDark ? 'rgba(15, 20, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            tooltipText: isDark ? '#fff' : '#1e293b',
+            borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)'
+        };
+        const type = sourceChart.config.type;
+        const isHorizontalBar = sourceChart.config.options?.indexAxis === 'y';
+
+        const basePlugins = {
+            legend: {
+                display: type === 'doughnut' || (sourceChart.data.datasets || []).length > 1,
+                position: 'bottom',
+                labels: {
+                    color: theme.textColor,
+                    boxWidth: 12,
+                    boxHeight: 12,
+                    padding: 18,
+                    font: { family: 'Inter', size: 12, weight: '800' }
+                }
+            },
+            tooltip: {
+                backgroundColor: theme.tooltipBg,
+                titleColor: theme.tooltipText,
+                bodyColor: theme.tooltipText,
+                borderColor: theme.borderColor,
+                borderWidth: 1,
+                padding: 14,
+                titleFont: { family: 'Inter', size: 13, weight: 'bold' },
+                bodyFont: { family: 'Inter', size: 12 }
+            }
+        };
+
+        if (type === 'doughnut' || type === 'pie') {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: type === 'doughnut' ? '58%' : undefined,
+                plugins: basePlugins
+            };
+        }
+
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: isHorizontalBar ? 'y' : 'x',
+            plugins: basePlugins,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: isHorizontalBar ? theme.gridColor : 'transparent' },
+                    ticks: { color: theme.textColor, precision: 0, font: { family: 'Inter', size: 11, weight: '700' } }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: sourceChart.config.options?.scales?.y?.max || undefined,
+                    grid: { color: isHorizontalBar ? 'transparent' : theme.gridColor },
+                    ticks: { color: theme.textColor, precision: 0, font: { family: 'JetBrains Mono', size: 11 } }
+                }
+            },
+            interaction: { mode: 'index', intersect: false }
+        };
+    }
+
+    function openHeroChart(key, title, description) {
+        const sourceChart = getChartInstanceByKey(key);
+        const modal = document.getElementById('chartHeroModal');
+        const titleEl = document.getElementById('chartHeroTitle');
+        const descEl = document.getElementById('chartHeroDescription');
+        const canvas = document.getElementById('heroChartCanvas');
+
+        if (!sourceChart || !modal || !canvas) return;
+
+        titleEl.textContent = title || 'Preview Grafik';
+        descEl.textContent = description || 'Tampilan grafik diperbesar untuk pembacaan data yang lebih nyaman.';
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('modal-open');
+
+        if (heroChartInstance) {
+            heroChartInstance.destroy();
+            heroChartInstance = null;
+        }
+
+        heroChartInstance = new Chart(canvas.getContext('2d'), {
+            type: sourceChart.config.type,
+            data: cloneChartData(sourceChart),
+            options: buildHeroChartOptions(sourceChart)
+        });
+    }
+
+    function closeHeroChart() {
+        const modal = document.getElementById('chartHeroModal');
+        if (!modal) return;
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('modal-open');
+
+        if (heroChartInstance) {
+            heroChartInstance.destroy();
+            heroChartInstance = null;
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeHeroChart();
+    });
+
     // SWAL ALERTS THEME RESPONSIVE
     document.addEventListener('DOMContentLoaded', () => {
         const isDark = document.documentElement.classList.contains('dark');
@@ -1582,7 +2195,50 @@
         const swalColor = isDark ? '#fff' : '#1e293b';
 
         @if(session('success')) Swal.fire({ title: 'Berhasil!', text: "{{ session('success') }}", icon: 'success', background: swalBg, color: swalColor, confirmButtonColor: '#6366f1', customClass: { popup: 'rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
-        @if(session('error')) Swal.fire({ title: 'Error!', text: "{{ session('error') }}", icon: 'error', background: swalBg, color: swalColor, confirmButtonColor: '#ef4444', customClass: { popup: 'rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
+        @if(session('error')) Swal.fire({ title: 'Gagal!', text: "{{ session('error') }}", icon: 'error', background: swalBg, color: swalColor, confirmButtonColor: '#ef4444', customClass: { popup: 'rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.8)]' } }); @endif
+
+        document.querySelectorAll('.delete-directory-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const theme = getSwalTheme();
+                const userName = this.dataset.userName || 'pengguna ini';
+                const userEmail = this.dataset.userEmail || '';
+                const action = this.getAttribute('action') || '#';
+
+                if (action === '#') {
+                    Swal.fire({
+                        title: 'Route hapus belum tersedia',
+                        text: 'Tambahkan route admin.users.delete, admin.users.destroy, atau admin.user.destroy agar fitur hapus dapat berjalan.',
+                        icon: 'warning',
+                        background: theme.background,
+                        color: theme.color,
+                        confirmButtonColor: '#6366f1',
+                        customClass: { popup: 'rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.8)]' }
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Hapus user ini?',
+                    html: `<div class="text-sm leading-6">Data akun <b>${userName}</b><br><span class="text-xs opacity-70">${userEmail}</span><br><br>Tindakan ini akan menghapus akun siswa dan data insight yang terkait dari dashboard.</div>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus sekarang',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    background: theme.background,
+                    color: theme.color,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    customClass: { popup: 'rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.8)]' }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
     });
 </script>
 

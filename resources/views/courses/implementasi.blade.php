@@ -1,9 +1,8 @@
 @extends('layouts.landing')
-@section('title','Implementasi Utility Classes')
+@section('title','Instalasi Tailwind CSS')
 
 @section('content')
 
-{{-- KONFIGURASI TEMA AWAL UNTUK MENCEGAH FOUC --}}
 <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -13,500 +12,539 @@
 </script>
 
 <style>
-    /* --- THEME CONFIG (DYNAMIC GLASSMORPHISM) --- */
-    :root { 
+    :root {
         --bg-main: #f8fafc;
         --text-main: #0f172a;
-        --glass-bg: rgba(255, 255, 255, 0.85); 
-        --glass-border: rgba(0, 0, 0, 0.05);
-        --glass-header: rgba(255, 255, 255, 0.85);
+        --glass-bg: rgba(255, 255, 255, 0.86);
+        --glass-border: rgba(15, 23, 42, 0.08);
+        --glass-header: rgba(255, 255, 255, 0.84);
         --card-bg: #ffffff;
-        --card-hover: rgba(0, 0, 0, 0.02);
-        --border-color: rgba(0, 0, 0, 0.1);
+        --card-hover: rgba(15, 23, 42, 0.03);
+        --border-color: rgba(15, 23, 42, 0.10);
         --text-muted: #64748b;
         --text-heading: #0f172a;
         --code-bg: #f1f5f9;
         --simulator-bg: #ffffff;
-        --accent: #06b6d4; /* Cyan 500 */
-        --accent-glow: rgba(6, 182, 212, 0.3);
+        --accent: #06b6d4;
+        --accent-glow: rgba(6, 182, 212, 0.32);
     }
 
     .dark {
         --bg-main: #020617;
         --text-main: #e2e8f0;
-        --glass-bg: rgba(10, 14, 23, 0.85); 
-        --glass-border: rgba(255, 255, 255, 0.05);
-        --glass-header: rgba(2, 6, 23, 0.80);
-        --card-bg: #1e1e1e;
-        --card-hover: rgba(255, 255, 255, 0.02);
-        --border-color: rgba(255, 255, 255, 0.1);
-        --text-muted: rgba(255, 255, 255, 0.5);
+        --glass-bg: rgba(10, 14, 23, 0.88);
+        --glass-border: rgba(255, 255, 255, 0.06);
+        --glass-header: rgba(2, 6, 23, 0.82);
+        --card-bg: #0f172a;
+        --card-hover: rgba(255, 255, 255, 0.04);
+        --border-color: rgba(255, 255, 255, 0.10);
+        --text-muted: rgba(226, 232, 240, 0.62);
         --text-heading: #ffffff;
-        --code-bg: #252525;
-        --simulator-bg: #0b0f19;
-        --accent-glow: rgba(6, 182, 212, 0.5);
+        --code-bg: #111827;
+        --simulator-bg: #0b1120;
+        --accent-glow: rgba(6, 182, 212, 0.48);
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s, color 0.4s; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color .4s, color .4s; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-    /* UTILITIES ADAPTIF */
     .bg-adaptive { background-color: var(--bg-main); }
     .text-adaptive { color: var(--text-main); }
     .text-heading { color: var(--text-heading); }
     .text-muted { color: var(--text-muted); }
     .border-adaptive { border-color: var(--border-color); }
-    .card-adaptive { background-color: var(--card-bg); border-color: var(--glass-border); transition: all 0.3s; }
-    .card-adaptive:hover { border-color: var(--accent-glow); }
+    .card-adaptive { background-color: var(--card-bg); border-color: var(--glass-border); transition: all .3s; }
+    .card-adaptive:hover { border-color: var(--accent-glow); transform: translateY(-1px); }
     .sim-bg-adaptive { background-color: var(--simulator-bg); }
     .code-adaptive { background-color: var(--code-bg); border-color: var(--glass-border); }
 
-    /* SCROLLBAR */
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .hl-term {
+        background-color: rgba(6, 182, 212, 0.14);
+        color: #0891b2;
+        padding: .125rem .375rem;
+        border-radius: .375rem;
+        font-weight: 700;
+        border: 1px solid rgba(6, 182, 212, .26);
+        white-space: nowrap;
+    }
+    .dark .hl-term { color: #67e8f9; background-color: rgba(6,182,212,.18); border-color: rgba(34,211,238,.38); }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-    
-    /* ANIMATIONS & EFFECTS */
-    #animated-bg { 
-        background: radial-gradient(800px circle at 20% 20%, rgba(99,102,241,.10), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(6,182,212,.10), transparent 40%); 
-        animation: bgMove 20s ease-in-out infinite alternate; 
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148,163,184,.38); border-radius: 999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+    #animated-bg {
+        background:
+            radial-gradient(600px circle at 18% 16%, rgba(6,182,212,.12), transparent 40%),
+            radial-gradient(700px circle at 85% 25%, rgba(59,130,246,.10), transparent 42%),
+            radial-gradient(800px circle at 48% 88%, rgba(99,102,241,.10), transparent 44%);
+        animation: bgMove 20s ease-in-out infinite alternate;
     }
     .dark #animated-bg {
-        background: radial-gradient(800px circle at 20% 20%, rgba(99,102,241,.15), transparent 40%), 
-                    radial-gradient(800px circle at 80% 80%, rgba(6,182,212,.15), transparent 40%); 
+        background:
+            radial-gradient(600px circle at 18% 16%, rgba(6,182,212,.18), transparent 40%),
+            radial-gradient(700px circle at 85% 25%, rgba(59,130,246,.14), transparent 42%),
+            radial-gradient(800px circle at 48% 88%, rgba(99,102,241,.16), transparent 44%);
     }
-    @keyframes bgMove{to{transform:scale(1.15)}}
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-    .shake { animation: shake 0.4s ease-in-out; }
-    
-    /* SCROLLSPY SIDEBAR ACTIVE */
-    .nav-item { display: flex; width: 100%; text-align: left; align-items: center; gap: 12px; padding: 10px 14px; font-size: 0.85rem; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; position: relative; }
-    .nav-item:hover { color: var(--text-main); background: var(--card-hover); }
-    .nav-item.active { color: #06b6d4; background: rgba(6, 182, 212, 0.05); font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; transition: all 0.3s; }
-    .dark .dot { background: #334155; }
-    .nav-item.active .dot { background: #06b6d4; box-shadow: 0 0 8px #06b6d4; transform: scale(1.2); }
+    @keyframes bgMove { to { transform: scale(1.12); } }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+    .shake { animation: shake .4s ease-in-out; }
+
+    .nav-item { display:flex; width:100%; text-align:left; align-items:center; gap:12px; padding:10px 14px; font-size:.85rem; color:var(--text-muted); border-radius:8px; transition:all .2s; }
+    .nav-item:hover { color:var(--text-main); background:var(--card-hover); }
+    .nav-item.active { color:#06b6d4; background:rgba(6,182,212,.08); font-weight:700; }
+    .dot { width:6px; height:6px; border-radius:50%; background:#94a3b8; transition:all .3s; }
+    .dark .dot { background:#475569; }
+    .nav-item.active .dot { background:#06b6d4; box-shadow:0 0 8px #06b6d4; transform:scale(1.2); }
+
+    .code-line { display:block; min-width:max-content; }
+    .tag { color:#0e7490; font-weight:700; }
+    .attr { color:#d97706; }
+    .str { color:#059669; }
+    .prop { color:#2563eb; }
+    .comment { color:#94a3b8; font-style:italic; }
+    .dark .tag { color:#67e8f9; }
+    .dark .attr { color:#fbbf24; }
+    .dark .str { color:#34d399; }
+    .dark .prop { color:#60a5fa; }
+
+    .step-card.active { border-color: rgba(6,182,212,.55) !important; box-shadow: 0 0 0 3px rgba(6,182,212,.12); }
+    .folder-row.active { background: rgba(6,182,212,.12); }
+    .activity-select.valid { border-color:#10b981 !important; background:rgba(16,185,129,.10) !important; }
+    .activity-select.invalid { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
 
-    {{-- BACKGROUND EFFECTS --}}
     <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div id="animated-bg" class="absolute inset-0 opacity-50 transition-opacity"></div>
-        <div class="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-indigo-500/5 dark:bg-indigo-900/20 rounded-full blur-[150px] animate-pulse transition-colors"></div>
-        <div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-cyan-500/5 dark:bg-cyan-900/20 rounded-full blur-[100px] transition-colors"></div>
+        <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
         <canvas id="stars" class="absolute inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500"></canvas>
-        <div id="noise-overlay" class="absolute inset-0 z-10 opacity-[0.02] dark:opacity-[0.03]"></div>
     </div>
 
     @include('layouts.partials.navbar')
 
-    <div class="flex flex-1 overflow-hidden relative z-20">
-
+    <div class="flex flex-1 overflow-hidden relative z-20 h-full">
         @include('layouts.partials.course-sidebar')
 
         <main id="mainScroll" class="flex-1 h-full overflow-y-auto scroll-smooth relative bg-transparent custom-scrollbar scroll-padding-top-24">
-            
-            {{-- STICKY HEADER & PROGRESS BAR --}}
-            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
-                <div class="flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 transition-colors">1.4</div>
-                    <div>
-                        <h1 class="text-sm font-bold text-heading transition-colors">Implementasi Utility Classes</h1>
-                        <p class="text-[10px] text-muted transition-colors">Core Concepts & Architecture</p>
+
+            <div id="stickyHeader" class="sticky top-0 z-30 w-full backdrop-blur-2xl border-b border-adaptive px-4 md:px-8 py-4 flex items-center justify-between transition-colors duration-500" style="background-color: var(--glass-header);">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 shrink-0">1.4</div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm font-bold text-heading line-clamp-1">Instalasi Tailwind CSS</h1>
+                        <p class="text-[10px] text-muted line-clamp-1">Node.js, NPM, Tailwind CLI, input.css, dan output.css</p>
                     </div>
                 </div>
-                
-                {{-- DYNAMIC PROGRESS BAR UI --}}
-                <div class="flex items-center gap-3">
-                    <div class="hidden sm:block w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden transition-colors">
-                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="hidden sm:block w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+                        <div id="topProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
                     </div>
-                    <span id="progressLabelTop" class="text-cyan-600 dark:text-cyan-400 font-bold text-xs transition-colors">0%</span>
+                    <span id="progressLabelTop" class="text-cyan-600 dark:text-cyan-400 font-bold text-xs">0%</span>
                 </div>
             </div>
 
-            <div class="p-6 lg:p-16 max-w-5xl mx-auto pb-40">
-                
-                {{-- TUJUAN PEMBELAJARAN --}}
-                <div class="mb-24">
-                    <h3 class="text-xl font-bold text-heading mb-6 flex items-center gap-2 transition-colors">
-                        <svg class="w-5 h-5 text-cyan-500 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
+            <div class="p-4 sm:p-6 lg:p-16 max-w-5xl mx-auto pb-40">
+
+                <div class="mb-16 md:mb-24">
+                    <div class="card-adaptive rounded-3xl border p-6 md:p-8 overflow-hidden relative">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl"></div>
+                        <p class="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-[.25em] mb-3">Subbab 1.4</p>
+                        <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight mb-4">Instalasi Tailwind CSS</h2>
+                        <p class="text-sm md:text-base text-muted leading-relaxed max-w-3xl text-justify">
+                            Pada subbab ini, pembelajar mempelajari cara menyiapkan Tailwind CSS secara lokal. Instalasi dilakukan menggunakan Node.js, NPM, dan Tailwind CLI agar file CSS sumber dapat diproses menjadi file CSS hasil yang siap dihubungkan ke HTML.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-heading mt-10 mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Tujuan Pembelajaran
                     </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-cyan-500/30 transition group h-full">
-                            <div class="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 font-bold text-sm border border-cyan-200 dark:border-cyan-500/10 transition-colors">1</div>
-                            <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors">Filosofi Utility-First</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Memahami pola penamaan utilitas dan sistem grid matematis untuk memastikan konsistensi tata letak visual.</p>
-                            </div>
-                        </div>
 
-                        <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-indigo-500/30 transition group h-full">
-                            <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 font-bold text-sm border border-indigo-200 dark:border-indigo-500/10 transition-colors">2</div>
-                            <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">Komposisi Kode</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Membangun elemen antarmuka yang reaktif terhadap interaksi kursor langsung dari HTML.</p>
-                            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold mb-4">1</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menyiapkan Prasyarat</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Menjelaskan fungsi Node.js, NPM, terminal, dan folder proyek.</p>
                         </div>
-
-                        <div class="card-adaptive border border-adaptive p-6 rounded-xl flex items-start gap-4 hover:border-fuchsia-500/30 transition group h-full">
-                            <div class="w-10 h-10 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/20 text-fuchsia-600 dark:text-fuchsia-400 flex items-center justify-center shrink-0 font-bold text-sm border border-fuchsia-200 dark:border-fuchsia-500/10 transition-colors">3</div>
-                            <div>
-                                <h4 class="text-sm font-bold text-heading mb-2 group-hover:text-fuchsia-500 dark:group-hover:text-fuchsia-400 transition-colors">Ekstraksi Komponen</h4>
-                                <p class="text-xs text-muted leading-relaxed transition-colors">Menghindari repetisi dan duplikasi kode HTML dengan memanfaatkan strategi arsitektur komponen modular.</p>
-                            </div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4">2</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menyusun Folder</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Membedakan fungsi index.html, input.css, output.css, dan package.json.</p>
                         </div>
-
-                        <div class="bg-gradient-to-br from-cyan-100 to-indigo-100 dark:from-cyan-900/10 dark:to-indigo-900/10 border border-cyan-300 dark:border-cyan-500/20 p-6 rounded-xl flex items-start gap-4 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition group h-full col-span-1 md:col-span-3 cursor-default">
-                            <div class="w-10 h-10 rounded-lg bg-white/50 dark:bg-white/10 text-cyan-700 dark:text-white flex items-center justify-center shrink-0 font-bold text-lg border border-white/10 shadow-sm dark:shadow-none transition-colors">🏁</div>
-                            <div>
-                                <h4 class="text-sm font-bold text-cyan-900 dark:text-white mb-2 transition-colors">Final Mission</h4>
-                                <p class="text-xs text-cyan-800 dark:text-white/60 leading-relaxed max-w-2xl transition-colors">Lakukan refaktor pada komponen statis agar memenuhi standar utility-first dan lolos verifikasi sistem.</p>
-                            </div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold mb-4">3</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menjalankan Perintah</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Mengurutkan perintah npm init, instalasi paket, dan build Tailwind CLI.</p>
+                        </div>
+                        <div class="card-adaptive border rounded-xl p-5">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4">4</div>
+                            <h4 class="text-sm font-bold text-heading mb-1">Menganalisis Build</h4>
+                            <p class="text-[11px] text-muted leading-relaxed">Menjelaskan alur input.css menjadi output.css yang dipakai HTML.</p>
                         </div>
                     </div>
                 </div>
 
-                <article class="space-y-40">
-                    
-                    {{-- LESSON 16 --}}
+                <article class="space-y-32 md:space-y-40">
+
                     <section id="section-16" class="lesson-section scroll-mt-32" data-lesson-id="16">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-cyan-500 pl-6">
-                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.1</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Filosofi Utilitas & <br> 
-                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-600 dark:from-cyan-400 dark:to-indigo-500">Sistem Desain</span>
-                                </h2>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-[10px] text-white">A</span> Pergeseran Paradigma</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>CSS konvensional sering berpusat pada komponen statis. Framework lawas menyediakan kelas siap pakai seperti <code>.card</code> atau <code>.btn</code>. Cara ini memang mempercepat proses awal, tetapi menjadi kaku ketika ada kebutuhan modifikasi kecil. Pengembang biasanya harus menulis kode CSS tambahan untuk menimpa gaya bawaan, yang berujung pada penumpukan kode dan konflik tata letak.</p>
-                                    <p>Tailwind mengubah paradigma ini melalui konsep Utility-First. Daripada memberikan komponen utuh, Tailwind menyediakan kelas utilitas spesifik seperti <strong class="text-cyan-600 dark:text-cyan-400">bg-blue-500</strong> untuk warna, <strong class="text-cyan-600 dark:text-cyan-400">px-4 py-2</strong> untuk ruang padding, dan <strong class="text-cyan-600 dark:text-cyan-400">rounded-md</strong> untuk membulatkan sudut. Anda merakit elemen langsung di HTML secara bebas tanpa harus menulis atau mengelola file CSS kustom terpisah.</p>
-                                </div>
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.1</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Persiapan <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Node.js dan NPM</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">B</span> Konsistensi Sistem Penamaan</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Banyak pengembang ragu menggunakan Tailwind karena merasa harus menghafal banyak nama kelas. Pada kenyataannya, Tailwind menggunakan pola penamaan yang dapat diprediksi. Pola ini konsisten mengadopsi format Properti-Nilai. Contohnya, properti <code>text-align: center</code> ditulis sebagai <strong class="text-cyan-600 dark:text-cyan-400">text-center</strong>, dan ukuran <code>font-size: 1.125rem</code> ditulis sebagai <strong class="text-cyan-600 dark:text-cyan-400">text-lg</strong>. Pola ini membuat proses pengembangan antarmuka menjadi sangat cepat.</p>
-                                    <p>Tailwind juga menggunakan pendekatan desain berbasis batasan (Constraint-Based Design). Sistem ini mencegah penggunaan angka acak seperti margin 13px atau padding 17px. Sebagai gantinya, ukuran mengacu pada skala kelipatan 4px atau 0.25rem. Disiplin ukuran ini memastikan antarmuka selalu proporsional dan rapi.</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Pada subbab sebelumnya, Tailwind CSS digunakan melalui CDN untuk latihan cepat. Pada proyek yang lebih terstruktur, Tailwind CSS perlu dipasang secara lokal agar proses pengelolaan file, build CSS, dan pengembangan proyek dapat berjalan lebih rapi.</p>
+                                <p><span class="hl-term">Node.js</span> digunakan agar alat berbasis JavaScript dapat berjalan di komputer. <span class="hl-term">NPM</span> digunakan untuk membuat paket proyek dan memasang Tailwind CSS. Sementara itu, terminal digunakan untuk menjalankan perintah instalasi dan build.</p>
+                                <p>Sebelum instalasi, pembelajar perlu memastikan Node.js dan NPM sudah tersedia. Pengecekan dilakukan melalui perintah <code>node -v</code> dan <code>npm -v</code>. Jika terminal menampilkan nomor versi, prasyarat dasar sudah siap.</p>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-4 text-center transition-colors">Simulator: Skala 4px System</h4>
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 1 --}}
-                                <div class="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-500/30 rounded-lg p-4 mb-8 text-sm text-cyan-800 dark:text-cyan-300 relative z-10 transition-colors">
-                                    <p class="font-bold flex items-center gap-2 mb-2">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        Panduan Simulasi
-                                    </p>
-                                    <ol class="list-decimal pl-5 space-y-1">
-                                        <li>Ubah posisi Slider untuk mengatur nilai kelas padding <code>p-N</code>.</li>
-                                        <li>Perhatikan bagaimana angka N otomatis dikalikan 4px untuk menghasilkan ukuran ruang visual yang sesungguhnya.</li>
-                                    </ol>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-cyan-600/95 dark:bg-cyan-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-cyan-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 1 — Cek Prasyarat</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Klik tombol pengecekan untuk melihat bagaimana terminal memastikan Node.js dan NPM sudah siap.</p>
                                 </div>
-
-                                <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                                    <div class="w-full md:w-1/2 space-y-6">
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between text-xs font-bold font-mono transition-colors">
-                                                <span class="text-cyan-600 dark:text-cyan-400">CLASS: PADDING</span>
-                                                <span id="scale-p-val" class="text-slate-800 dark:text-white">p-6</span>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[360px]">
+                                    <div class="code-adaptive border-b lg:border-b-0 lg:border-r border-adaptive p-5">
+                                        <div class="flex flex-wrap gap-2 mb-5">
+                                            <button onclick="runCheck('node')" class="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition">Cek Node.js</button>
+                                            <button onclick="runCheck('npm')" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">Cek NPM</button>
+                                            <button onclick="runCheck('reset')" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-bold border border-adaptive transition">Reset</button>
+                                        </div>
+                                        <div class="bg-slate-950 text-slate-100 rounded-xl border border-slate-800 p-4 font-mono text-xs min-h-[220px] overflow-auto custom-scrollbar shadow-inner">
+                                            <div class="text-slate-500 mb-2">Terminal</div>
+                                            <div id="check-terminal" class="space-y-2">
+                                                <div class="text-slate-400">$ Siapkan pengecekan prasyarat instalasi...</div>
                                             </div>
-                                            <input type="range" min="0" max="16" step="1" value="6" class="w-full accent-cyan-500 cursor-pointer" oninput="updateScale('p', this.value)">
-                                        </div>
-                                        <div class="p-4 bg-slate-50 dark:bg-white/5 rounded-lg border border-adaptive shadow-inner dark:shadow-none transition-colors">
-                                            <p class="text-xs font-mono text-slate-500 dark:text-white/60">Perhitungan Piksel:<br><br><span id="scale-formula" class="text-slate-800 dark:text-white font-bold text-sm block">6 x 4px = <span class="text-cyan-600 dark:text-cyan-400">24px</span> (1.5rem)</span></p>
                                         </div>
                                     </div>
-                                    <div class="w-full md:w-1/2 flex items-center justify-center h-48 bg-slate-100 dark:bg-[#0b0f19] rounded-xl border border-adaptive relative overflow-hidden transition-colors shadow-inner">
-                                        <div id="scale-target" class="bg-indigo-600 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform border border-indigo-400 dark:border-white/20 flex items-center justify-center">
-                                            Dynamic Box
+                                    <div class="bg-white dark:bg-slate-950 flex items-center justify-center p-6">
+                                        <div class="w-full max-w-sm space-y-3">
+                                            <div id="node-status" class="step-card card-adaptive border rounded-xl p-4">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div><h4 class="text-sm font-bold text-heading">Node.js</h4><p class="text-[11px] text-muted mt-1">Menjalankan perintah berbasis JavaScript.</p></div>
+                                                    <span class="text-[10px] px-2 py-1 rounded bg-slate-100 dark:bg-white/10 text-muted font-bold">Belum dicek</span>
+                                                </div>
+                                            </div>
+                                            <div id="npm-status" class="step-card card-adaptive border rounded-xl p-4">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div><h4 class="text-sm font-bold text-heading">NPM</h4><p class="text-[11px] text-muted mt-1">Memasang paket Tailwind CSS.</p></div>
+                                                    <span class="text-[10px] px-2 py-1 rounded bg-slate-100 dark:bg-white/10 text-muted font-bold">Belum dicek</span>
+                                                </div>
+                                            </div>
+                                            <div id="ready-status" class="border border-dashed border-adaptive rounded-xl p-4 text-center">
+                                                <p class="text-[11px] text-muted leading-relaxed">Status siap muncul setelah Node.js dan NPM berhasil dicek.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {{-- KESIMPULAN SIMULASI 1 --}}
-                                <div class="mt-8 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-5 rounded-r-xl relative z-10 transition-colors">
-                                    <h5 class="text-sm font-bold text-cyan-700 dark:text-cyan-400 mb-2 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                        Kesimpulan
-                                    </h5>
-                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                        Penggunaan sistem desain berbasis batasan ini memastikan keseragaman jarak antar elemen. Konsistensi skala matematis mencegah desainer atau pengembang membuat tata letak yang tidak proporsional.
-                                    </p>
-                                </div>
+                            <div class="bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-cyan-700 dark:text-cyan-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Instalasi Tailwind CSS membutuhkan lingkungan kerja yang siap. Node.js menjalankan alatnya, NPM mengelola paketnya, dan terminal digunakan untuk menjalankan proses instalasi.</p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 17 --}}
                     <section id="section-17" class="lesson-section scroll-mt-32" data-lesson-id="17">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-indigo-500 pl-6">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.2</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Komposisi & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500">Interaktivitas</span>
-                                </h2>
-                            </div>  
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.2</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Struktur <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Folder Proyek</span></h2>
+                            </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-[10px] text-white">A</span> Harmoni Layering Komponen</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Kelas utilitas tunggal terlihat sederhana, namun penggabungannya mampu membentuk komponen antarmuka yang lengkap dan fungsional. Proses ini mirip dengan menyusun fondasi bangunan secara berlapis.</p>
-                                    <p>Misalnya, pembuatan sebuah tombol panggilan aksi (CTA). Pertama, kita gunakan <strong class="text-indigo-600 dark:text-indigo-400">flex items-center justify-center</strong> untuk menempatkan teks di tengah. Selanjutnya, ruang di dalam tombol diatur melalui <strong class="text-indigo-600 dark:text-indigo-400">px-6 py-3</strong>. Latar dan warna teks dibentuk menggunakan <strong class="text-indigo-600 dark:text-indigo-400">bg-slate-800 text-white</strong>. Tahap akhir melibatkan pembulatan sudut dengan <strong class="text-indigo-600 dark:text-indigo-400">rounded-xl</strong> serta efek bayangan elevasi melalui <strong class="text-indigo-600 dark:text-indigo-400">shadow-lg</strong>. Seluruh proses perakitan komponen kompleks ini berhasil direalisasikan di dalam atribut kelas HTML.</p>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Langkah awal instalasi adalah membuat folder proyek. Folder ini digunakan untuk menyimpan file HTML, file CSS sumber, file CSS hasil, dan file informasi paket. Struktur folder yang rapi membantu pembelajar memahami alur kerja Tailwind secara bertahap.</p>
+                                <p>File <code>index.html</code> memuat struktur halaman dan class Tailwind. File <code>input.css</code> menjadi sumber CSS yang berisi pemanggilan Tailwind. File <code>output.css</code> adalah hasil build yang nantinya dihubungkan ke HTML. File <code>package.json</code> menyimpan informasi proyek dan daftar paket yang dipasang.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="card-adaptive border rounded-2xl p-5">
+                                    <h3 class="font-bold text-heading mb-4">Struktur folder yang digunakan</h3>
+                                    <div class="bg-slate-100 dark:bg-black/30 border border-adaptive rounded-xl p-4 font-mono text-xs leading-7">
+                                        <div class="folder-row rounded px-2" id="folder-root">belajar-tailwind/</div>
+                                        <div class="folder-row rounded px-2 pl-6" id="folder-package">├── package.json</div>
+                                        <div class="folder-row rounded px-2 pl-6" id="folder-src">└── src/</div>
+                                        <div class="folder-row rounded px-2 pl-10" id="folder-html">├── index.html</div>
+                                        <div class="folder-row rounded px-2 pl-10" id="folder-input">├── input.css</div>
+                                        <div class="folder-row rounded px-2 pl-10" id="folder-output">└── output.css</div>
+                                    </div>
+                                </div>
+                                <div class="card-adaptive border rounded-2xl p-5">
+                                    <h3 class="font-bold text-heading mb-4">Fungsi file</h3>
+                                    <div class="grid grid-cols-2 gap-2 mb-4">
+                                        <button id="file-html" onclick="selectProjectFile('html')" class="file-btn px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500 transition">index.html</button>
+                                        <button id="file-input" onclick="selectProjectFile('input')" class="file-btn px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500 transition">input.css</button>
+                                        <button id="file-output" onclick="selectProjectFile('output')" class="file-btn px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500 transition">output.css</button>
+                                        <button id="file-package" onclick="selectProjectFile('package')" class="file-btn px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500 transition">package.json</button>
+                                    </div>
+                                    <div class="bg-slate-100 dark:bg-black/30 border border-adaptive rounded-xl p-4">
+                                        <h4 id="file-title" class="font-bold text-heading text-sm mb-2">index.html</h4>
+                                        <p id="file-desc" class="text-xs text-muted leading-relaxed mb-4">File halaman HTML yang memanggil output.css dan berisi class Tailwind.</p>
+                                        <pre id="file-code" class="font-mono text-[11px] leading-relaxed overflow-auto custom-scrollbar whitespace-pre-wrap text-slate-700 dark:text-slate-300"></pre>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-purple-500 dark:bg-purple-600 flex items-center justify-center text-[10px] text-white">B</span> Locality of Behavior (LoB)</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Prinsip <strong>Locality of Behavior (LoB)</strong> menekankan bahwa perilaku suatu elemen harus bisa dipahami sepenuhnya hanya dengan memeriksa kode elemen tersebut. Pada pendekatan CSS tradisional, perilaku seperti status kursor melayang (hover) harus diatur dalam file terpisah, yang memperpanjang waktu pelacakan bug.</p>
-                                    <p>Tailwind menarik logika reaktif ini langsung ke HTML melalui penggunaan modifikator status (State Modifiers). Cukup tambahkan prefiks kondisi di depan utilitas utama, seperti <strong class="text-indigo-600 dark:text-indigo-400">hover:bg-blue-600</strong> untuk mengubah warna dasar saat dilewati kursor, atau <strong class="text-indigo-600 dark:text-indigo-400">active:scale-95</strong> untuk mengecilkan elemen ketika ditekan. Pendekatan deklaratif ini menjaga kode tetap transparan tanpa ketergantungan pada file eksternal.</p>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-blue-600/95 dark:bg-blue-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-blue-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 2 — Alur File</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Klik tahap alur untuk melihat bagaimana file saling berhubungan dalam instalasi Tailwind.</p>
+                                </div>
+                                <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-4 gap-3">
+                                    <button onclick="setFlow(1)" id="flow-1" class="flow-card card-adaptive border rounded-xl p-4 text-left"><span class="text-xs font-bold text-cyan-600">1. HTML</span><p class="text-[11px] text-muted mt-2">Class Tailwind ditulis di elemen HTML.</p></button>
+                                    <button onclick="setFlow(2)" id="flow-2" class="flow-card card-adaptive border rounded-xl p-4 text-left"><span class="text-xs font-bold text-blue-600">2. input.css</span><p class="text-[11px] text-muted mt-2">Tailwind dipanggil sebagai sumber CSS.</p></button>
+                                    <button onclick="setFlow(3)" id="flow-3" class="flow-card card-adaptive border rounded-xl p-4 text-left"><span class="text-xs font-bold text-indigo-600">3. CLI Build</span><p class="text-[11px] text-muted mt-2">CLI memproses file sumber.</p></button>
+                                    <button onclick="setFlow(4)" id="flow-4" class="flow-card card-adaptive border rounded-xl p-4 text-left"><span class="text-xs font-bold text-emerald-600">4. output.css</span><p class="text-[11px] text-muted mt-2">CSS hasil dihubungkan ke HTML.</p></button>
+                                </div>
+                                <div class="border-t border-adaptive p-5 md:p-6 bg-slate-50 dark:bg-black/20">
+                                    <pre id="flow-code" class="font-mono text-xs leading-relaxed overflow-auto custom-scrollbar bg-white dark:bg-black/30 border border-adaptive rounded-xl p-4"></pre>
+                                    <p id="flow-desc" class="text-xs text-muted leading-relaxed mt-3 text-justify"></p>
                                 </div>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: Interaktivitas DOM States</h4>
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 2 --}}
-                                <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4 mb-8 text-sm text-indigo-800 dark:text-indigo-300 relative z-10 transition-colors">
-                                    <p class="font-bold flex items-center gap-2 mb-2">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        Panduan Simulasi
-                                    </p>
-                                    <ol class="list-decimal pl-5 space-y-1">
-                                        <li>Pilih kotak centang di panel kiri untuk menerapkan modifikator seperti <code class="bg-indigo-100 dark:bg-indigo-800/50 px-1 rounded">hover:</code> atau <code class="bg-indigo-100 dark:bg-indigo-800/50 px-1 rounded">active:</code> pada komponen.</li>
-                                        <li>Lakukan interaksi langsung dengan komponen tombol di sebelah kanan.</li>
-                                    </ol>
-                                </div>
-
-                                <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                                    <div class="w-full md:w-1/2 space-y-3">
-                                        <label class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-white/5 border border-adaptive cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group shadow-sm dark:shadow-none">
-                                            <span class="text-xs font-mono text-cyan-600 dark:text-cyan-300 font-bold transition-colors">hover:scale-110</span>
-                                            <input type="checkbox" onchange="toggleStateClass('hover')" class="accent-cyan-500 w-4 h-4 cursor-pointer">
-                                        </label>
-                                        
-                                        <label class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-white/5 border border-adaptive cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group shadow-sm dark:shadow-none">
-                                            <span class="text-xs font-mono text-fuchsia-600 dark:text-fuchsia-300 font-bold transition-colors">active:bg-fuchsia-600</span>
-                                            <input type="checkbox" onchange="toggleStateClass('active')" class="accent-fuchsia-500 w-4 h-4 cursor-pointer">
-                                        </label>
-                                        
-                                        <label class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-white/5 border border-adaptive cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group shadow-sm dark:shadow-none">
-                                            <span class="text-xs font-mono text-amber-600 dark:text-yellow-400 font-bold transition-colors">focus:ring-4</span>
-                                            <input type="checkbox" onchange="toggleStateClass('focus')" class="accent-amber-500 dark:accent-yellow-500 w-4 h-4 cursor-pointer">
-                                        </label>
-                                    </div>
-                                    <div class="w-full md:w-1/2 flex items-center justify-center h-56 bg-slate-100 dark:bg-[#0b0f19] rounded-xl border border-adaptive relative group transition-colors shadow-inner">
-                                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 dark:opacity-20"></div>
-                                        <button id="state-target" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 outline-none shadow-xl relative z-10 border border-indigo-400 dark:border-transparent">
-                                            Interact Component
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {{-- KESIMPULAN SIMULASI 2 --}}
-                                <div class="mt-8 bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent border-l-4 border-indigo-500 p-5 rounded-r-xl relative z-10 transition-colors">
-                                    <h5 class="text-sm font-bold text-indigo-700 dark:text-indigo-400 mb-2 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                        Kesimpulan
-                                    </h5>
-                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                        Prinsip Locality of Behavior (LoB) mempercepat waktu pelacakan bug. Dengan menyematkan perilaku interaktif secara berdekatan pada tag HTML aslinya, Anda tidak perlu lagi berpindah file untuk memodifikasi reaksi kursor pada komponen web.
-                                    </p>
-                                </div>
+                            <div class="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-900/20 dark:to-transparent border-l-4 border-blue-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-blue-700 dark:text-blue-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Instalasi Tailwind CSS tidak hanya memasang paket. Pembelajar juga perlu memahami hubungan antara file HTML, file CSS sumber, file CSS hasil, dan file package proyek.</p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 18 --}}
                     <section id="section-18" class="lesson-section scroll-mt-32" data-lesson-id="18">
-                        <div class="space-y-10">
-                            <div class="space-y-4 border-l-4 border-fuchsia-500 pl-6">
-                                <span class="text-fuchsia-600 dark:text-fuchsia-400 font-mono text-xs uppercase tracking-widest transition-colors">Lesson 1.4.3</span>
-                                <h2 class="text-4xl lg:text-5xl font-black text-heading leading-[1.1] transition-colors">
-                                    Arsitektur Kode & <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-rose-600 dark:from-fuchsia-400 dark:to-rose-500">Mitos Duplikasi</span>
-                                </h2>
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.3</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Membuat Package dan <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Memasang Tailwind CLI</span></h2>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-fuchsia-500 dark:bg-fuchsia-600 flex items-center justify-center text-[10px] text-white">A</span> Mitos HTML yang Panjang</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Salah satu kritik utama terhadap Tailwind adalah atribut HTML yang menjadi sangat panjang dan terkesan kotor. Secara visual, blok seperti <code>&lt;button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700..."&gt;</code> mungkin terlihat kurang rapi jika dibandingkan dengan penamaan singkat seperti <code>class="btn-primary"</code>.</p>
-                                    <p>Namun, dalam pengelolaan aplikasi perangkat lunak yang kompleks, masalah utamanya bukanlah panjang karakter HTML, melainkan <strong>Duplikasi Kode</strong>. Apabila Anda secara manual menyalin atribut panjang tersebut pada 50 tombol di file yang berbeda, perubahan desain ke depannya akan sangat menyulitkan. Ini jelas merupakan pelanggaran terhadap prinsip pengkodean DRY (Don't Repeat Yourself).</p>
-                                </div>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>Setelah folder proyek dibuat, terminal dibuka pada folder tersebut. Perintah <code>npm init -y</code> digunakan untuk membuat file <code>package.json</code>. File ini menjadi penanda bahwa folder sudah menjadi proyek yang dapat mengelola paket melalui NPM.</p>
+                                <p>Langkah berikutnya adalah memasang Tailwind CSS dan Tailwind CLI. Paket <code>tailwindcss</code> berisi fitur utama Tailwind, sedangkan <code>@tailwindcss/cli</code> digunakan untuk menjalankan proses build melalui terminal.</p>
                             </div>
 
-                            <div class="space-y-4">
-                                <h3 class="text-xl font-bold text-heading flex items-center gap-2 transition-colors"><span class="w-6 h-6 rounded bg-rose-500 dark:bg-rose-600 flex items-center justify-center text-[10px] text-white">B</span> Ekstraksi Komponen Modular</h3>
-                                <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-80 text-lg leading-relaxed space-y-4 text-justify transition-colors">
-                                    <p>Untuk mengatasi masalah duplikasi tersebut, Tailwind merekomendasikan teknik <strong>Ekstraksi Komponen (Component Extraction)</strong> melalui ekosistem bawaan framework web Anda, seperti komponen Blade di Laravel atau komponen React/Vue.</p>
-                                    <p>Mekanisme ini memastikan pemusatan pengaturan logika pada satu file (*Single Source of Truth*). Anda cukup membuat sebuah komponen utama, misalnya <code>&lt;x-button&gt;</code>, yang berisikan seluruh daftar kelas utilitas. Saat komponen ini dipakai berulang kali, setiap perubahan warna atau ukuran hanya perlu diedit sekali pada file komponen inti, yang secara otomatis akan diperbarui ke seluruh antarmuka aplikasi.</p>
+                            <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                    <span class="font-mono text-xs font-bold text-muted">Terminal</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-cyan-500 font-bold">Perintah Instalasi</span>
                                 </div>
+                                <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="code-line"><span class="comment"># masuk ke folder proyek</span></span>
+<span class="code-line"><span class="tag">cd</span> belajar-tailwind</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="comment"># membuat package.json</span></span>
+<span class="code-line"><span class="tag">npm</span> init -y</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="comment"># memasang Tailwind CSS dan CLI</span></span>
+<span class="code-line"><span class="tag">npm</span> install tailwindcss @tailwindcss/cli</span></code></pre>
                             </div>
 
-                            <div class="sim-bg-adaptive border border-adaptive rounded-xl overflow-hidden shadow-xl dark:shadow-2xl p-8 relative transition-colors mt-8">
-                                <h4 class="text-xs font-bold text-muted uppercase mb-6 text-center transition-colors">Simulator: Component Morphology</h4>
-                                
-                                {{-- KOTAK INSTRUKSI SIMULATOR 3 --}}
-                                <div class="bg-fuchsia-50 dark:bg-fuchsia-900/20 border border-fuchsia-200 dark:border-fuchsia-500/30 rounded-lg p-4 mb-8 text-sm text-fuchsia-800 dark:text-fuchsia-300 relative z-10 transition-colors">
-                                    <p class="font-bold flex items-center gap-2 mb-2">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        Panduan Simulasi
-                                    </p>
-                                    <ol class="list-decimal pl-5 space-y-1">
-                                        <li>Lihat barisan struktur atribut HTML yang menduplikasi susunan utilitas secara berulang pada panel kiri.</li>
-                                        <li>Pilih <strong>Ekstrak ke Modul Pusat</strong>.</li>
-                                        <li>Perhatikan perubahan di mana duplikasi teks disederhanakan melalui pemanggilan abstraksi komponen modular (contoh: <code>&lt;x-button&gt;</code>).</li>
-                                    </ol>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-cyan-600/95 dark:bg-cyan-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-cyan-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 3 — Jalankan Perintah Instalasi</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jalankan perintah secara berurutan agar proses instalasi masuk akal.</p>
                                 </div>
-
-                                <div class="grid md:grid-cols-2 gap-0 relative rounded-xl overflow-hidden border border-adaptive h-48 bg-slate-50 dark:bg-black/20 shadow-inner transition-colors z-10">
-                                    {{-- Messy HTML --}}
-                                    <div class="p-6 flex flex-col items-center justify-center gap-2 border-r border-adaptive transition-all duration-700" id="morph-messy">
-                                        <div class="text-[10px] text-rose-600 dark:text-red-400 font-mono font-bold bg-rose-100 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-red-500/20 w-full text-center opacity-100 transition-colors shadow-sm dark:shadow-none">&lt;button class="p-4 flex bg-blue-600 text-white..."&gt;</div>
-                                        <div class="text-[10px] text-rose-600 dark:text-red-400 font-mono font-bold bg-rose-100 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-red-500/20 w-full text-center opacity-100 transition-colors shadow-sm dark:shadow-none delay-100">&lt;button class="p-4 flex bg-blue-600 text-white..."&gt;</div>
-                                        <div class="text-[10px] text-rose-600 dark:text-red-400 font-mono font-bold bg-rose-100 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-red-500/20 w-full text-center opacity-100 transition-colors shadow-sm dark:shadow-none delay-200">&lt;button class="p-4 flex bg-blue-600 text-white..."&gt;</div>
-                                    </div>
-
-                                    {{-- Clean Component --}}
-                                    <div class="p-6 flex flex-col items-center justify-center gap-2 transition-all duration-700 relative">
-                                        <div id="morph-clean" class="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 scale-90 transition-all duration-500">
-                                            <div class="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-bold bg-emerald-100 dark:bg-emerald-900/10 px-4 py-2 rounded-lg border border-emerald-300 dark:border-emerald-500/20 w-3/4 text-center shadow-sm dark:shadow-none transition-colors">&lt;x-button /&gt;</div>
-                                            <div class="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-bold bg-emerald-100 dark:bg-emerald-900/10 px-4 py-2 rounded-lg border border-emerald-300 dark:border-emerald-500/20 w-3/4 text-center shadow-sm dark:shadow-none transition-colors">&lt;x-button /&gt;</div>
-                                            <div class="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-bold bg-emerald-100 dark:bg-emerald-900/10 px-4 py-2 rounded-lg border border-emerald-300 dark:border-emerald-500/20 w-3/4 text-center shadow-sm dark:shadow-none transition-colors">&lt;x-button /&gt;</div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[360px]">
+                                    <div class="code-adaptive p-5 border-b lg:border-b-0 lg:border-r border-adaptive">
+                                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
+                                            <button onclick="runInstallStep(1)" id="install-step-1" class="install-step px-3 py-2 rounded-lg bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500">cd folder</button>
+                                            <button onclick="runInstallStep(2)" id="install-step-2" class="install-step px-3 py-2 rounded-lg bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500">npm init</button>
+                                            <button onclick="runInstallStep(3)" id="install-step-3" class="install-step px-3 py-2 rounded-lg bg-white dark:bg-black/30 border border-adaptive text-xs font-bold hover:border-cyan-500">install</button>
+                                            <button onclick="runInstallStep(0)" class="px-3 py-2 rounded-lg bg-slate-200 dark:bg-white/10 border border-adaptive text-xs font-bold">Reset</button>
+                                        </div>
+                                        <div class="bg-slate-950 text-slate-100 rounded-xl border border-slate-800 p-4 font-mono text-xs min-h-[220px] overflow-auto custom-scrollbar" id="install-terminal">
+                                            <div class="text-slate-400">$ Terminal siap menjalankan perintah instalasi.</div>
                                         </div>
                                     </div>
+                                    <div class="bg-white dark:bg-slate-950 p-6 flex items-center justify-center">
+                                        <div class="w-full max-w-sm">
+                                            <div class="rounded-2xl border border-adaptive bg-slate-50 dark:bg-black/30 p-5">
+                                                <p class="text-[10px] uppercase tracking-widest text-muted font-bold mb-4">Hasil Setelah Instalasi</p>
+                                                <div class="font-mono text-xs leading-7">
+                                                    <div id="after-root">belajar-tailwind/</div>
+                                                    <div id="after-package" class="pl-4 text-slate-400">├── package.json</div>
+                                                    <div id="after-lock" class="pl-4 text-slate-400">├── package-lock.json</div>
+                                                    <div id="after-node" class="pl-4 text-slate-400">├── node_modules/</div>
+                                                    <div class="pl-4">└── src/</div>
+                                                    <div class="pl-8">├── index.html</div>
+                                                    <div class="pl-8">└── input.css</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <button onclick="triggerMorph()" class="absolute bottom-4 right-4 px-4 py-2 bg-fuchsia-600 text-white text-[10px] font-bold rounded-lg shadow-lg hover:bg-fuchsia-500 transition z-10">
-                                        Ekstrak ke Modul Pusat
-                                    </button>
-                                </div>
-                                
-                                {{-- KESIMPULAN SIMULASI 3 --}}
-                                <div class="mt-8 bg-gradient-to-r from-fuchsia-50 to-transparent dark:from-fuchsia-900/20 dark:to-transparent border-l-4 border-fuchsia-500 p-5 rounded-r-xl relative z-10 transition-colors">
-                                    <h5 class="text-sm font-bold text-fuchsia-700 dark:text-fuchsia-400 mb-2 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-                                        Kesimpulan
-                                    </h5>
-                                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                                        Mengekstrak kelas utilitas ke dalam satu file komponen utama meminimalisasi duplikasi dan menjaga kebersihan arsitektur kode antarmuka. Dengan memusatkan elemen, pengelolaan dan pembaruan aplikasi web ke depannya menjadi sangat terstruktur.
-                                    </p>
-                                </div>
+                            <div class="bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/20 dark:to-transparent border-l-4 border-cyan-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-cyan-700 dark:text-cyan-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Perintah instalasi harus berjalan dari folder proyek. <code>package.json</code> dibuat terlebih dahulu, lalu Tailwind CSS dan Tailwind CLI dipasang sebagai paket proyek.</p>
                             </div>
                         </div>
                     </section>
 
-                    {{-- LESSON 19: ACTIVITY FINAL (CODE REFACTOR) --}}
-                    <section id="section-19" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive transition-colors" data-lesson-id="19" data-type="activity">
-                        <div class="relative rounded-[2.5rem] sim-bg-adaptive border border-adaptive p-6 md:p-10 overflow-hidden shadow-xl dark:shadow-2xl group hover:border-cyan-500/30 transition-all duration-500">
-                            
-                            <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 dark:bg-cyan-600/20 blur-[100px] rounded-full pointer-events-none transition-colors"></div>
+                    <section id="section-19" class="lesson-section scroll-mt-32" data-lesson-id="19">
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-cyan-500 pl-4 md:pl-6">
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-widest">Lesson 1.4.4</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Proses Build <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Input ke Output CSS</span></h2>
+                            </div>
 
-                            <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 relative z-10">
-                                <div class="p-4 bg-gradient-to-br from-cyan-600 to-indigo-800 rounded-2xl text-white shadow-lg shadow-cyan-500/20 shrink-0">
-                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-3 mb-1">
-                                        <h2 class="text-3xl font-black text-heading tracking-tight transition-colors">Mission: Code Refactoring</h2>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/30 uppercase tracking-wider transition-colors">Expert Validation</span>
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed space-y-4 text-justify">
+                                <p>File <code>input.css</code> berisi perintah <code>@import "tailwindcss";</code>. File ini disebut file CSS sumber karena menjadi pintu masuk Tailwind dalam proyek. File ini belum langsung dipakai oleh browser.</p>
+                                <p>Tailwind CLI memproses <code>input.css</code> dan class Tailwind yang digunakan pada HTML, lalu menghasilkan <code>output.css</code>. File <code>output.css</code> inilah yang dihubungkan ke HTML melalui tag <code>&lt;link rel="stylesheet" href="./output.css"&gt;</code>.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-muted">src/input.css</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-cyan-500 font-bold">File Sumber</span>
                                     </div>
-                                    <p class="text-slate-600 dark:text-cyan-200/60 text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">
-                                        Selesaikan perbaikan pada kerangka komponen tombol statis di editor bawah. Tulis dan terapkan utilitas CSS Tailwind yang valid sesuai dengan syarat pada checklist untuk mengubahnya menjadi elemen interaktif modern.
-                                    </p>
+                                    <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="code-line"><span class="prop">@import</span> <span class="str">"tailwindcss"</span>;</span></code></pre>
+                                </div>
+                                <div class="code-adaptive border border-adaptive rounded-2xl overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-adaptive flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-muted">Perintah build</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-blue-500 font-bold">Tailwind CLI</span>
+                                    </div>
+                                    <pre class="p-5 overflow-auto custom-scrollbar text-xs md:text-sm font-mono leading-relaxed"><code><span class="tag">npx</span> @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch</code></pre>
                                 </div>
                             </div>
 
-                            <div class="grid lg:grid-cols-2 gap-0 border border-adaptive rounded-2xl overflow-hidden min-h-[550px] shadow-2xl transition-colors relative z-10">
-                                
-                                {{-- LEFT PANEL: MONACO EDITOR & CLUES --}}
-                                <div class="bg-slate-50 dark:bg-[#151515] border-r border-adaptive overflow-hidden relative flex flex-col transition-colors min-h-[550px]">
-                                    
-                                    {{-- LOCK OVERLAY (Muncul saat sukses) --}}
-                                    <div id="lockOverlay" class="hidden absolute inset-0 bg-white/90 dark:bg-[#050912]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-8 transition-colors">
-                                        <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-300 dark:border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.2)] animate-bounce transition-colors">
-                                            <svg class="w-12 h-12 text-emerald-600 dark:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                                        </div>
-                                        <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors">REFACTOR SUCCESS!</h3>
-                                        <p class="text-sm font-bold text-slate-500 dark:text-white/60 mb-8 max-w-xs transition-colors">Struktur kode telah lolos kompilasi dan riwayat pengerjaan berhasil disimpan.</p>
+                            <div class="sim-bg-adaptive border border-adaptive rounded-2xl overflow-hidden shadow-xl">
+                                <div class="bg-blue-600/95 dark:bg-blue-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-blue-400/50">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Simulasi 4 — Build CSS</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih tahap build untuk memahami hubungan HTML, input.css, Tailwind CLI, dan output.css.</p>
+                                </div>
+                                <div class="p-5 md:p-6">
+                                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-5">
+                                        <button onclick="setBuildStage(1)" id="build-pill-1" class="build-pill px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold transition">HTML</button>
+                                        <button onclick="setBuildStage(2)" id="build-pill-2" class="build-pill px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold transition">input.css</button>
+                                        <button onclick="setBuildStage(3)" id="build-pill-3" class="build-pill px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold transition">Build</button>
+                                        <button onclick="setBuildStage(4)" id="build-pill-4" class="build-pill px-3 py-2 rounded-lg bg-slate-100 dark:bg-black/30 border border-adaptive text-xs font-bold transition">output.css</button>
                                     </div>
-
-                                    <div class="bg-slate-200 dark:bg-[#0f141e] px-4 py-2 border-b border-adaptive flex justify-between items-center transition-colors">
-                                        <span class="text-xs text-slate-600 dark:text-white/50 font-mono font-bold transition-colors">Action-Button.html</span>
-                                        <button onclick="resetEditor()" class="text-[10px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors uppercase font-bold">Reset</button>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <pre id="build-code" class="bg-slate-100 dark:bg-black/30 border border-adaptive rounded-xl p-4 font-mono text-xs leading-relaxed overflow-auto custom-scrollbar min-h-[180px]"></pre>
+                                        <div class="bg-slate-50 dark:bg-black/20 border border-adaptive rounded-xl p-5 flex flex-col justify-center">
+                                            <p class="text-[10px] uppercase tracking-widest font-bold text-muted mb-2">Penjelasan Tahap</p>
+                                            <p id="build-desc" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-justify"></p>
+                                            <div class="mt-5 rounded-xl bg-white dark:bg-slate-900 border border-adaptive p-4">
+                                                <p class="text-[10px] uppercase tracking-widest text-muted font-bold mb-2">Preview Alur</p>
+                                                <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+                                                    <span class="px-3 py-2 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">input.css</span>
+                                                    <span class="text-muted">→</span>
+                                                    <span class="px-3 py-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">Tailwind CLI</span>
+                                                    <span class="text-muted">→</span>
+                                                    <span class="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">output.css</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    
-                                    {{-- Editor Container --}}
-                                    <div id="codeEditor" class="h-[200px] w-full border-b border-adaptive transition-colors"></div>
+                                </div>
+                            </div>
 
-                                    {{-- CLUES AREA DENGAN INSTRUKSI KONTEKSTUAL --}}
-                                    <div class="p-6 bg-slate-50 dark:bg-[#0f141e] transition-colors flex flex-col flex-1">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <span class="text-[10px] uppercase font-bold text-muted transition-colors">Requirements Checklist</span>
-                                            <span id="progressText" class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold transition-colors">0/4 Terpenuhi</span>
-                                        </div>
-                                        <div class="space-y-3 text-[11px] text-slate-600 dark:text-white/60 mb-6 transition-colors overflow-y-auto custom-scrollbar pr-2 flex-1">
-                                            <div id="chk-pad" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Ruang Padding</strong>
-                                                    <span class="opacity-80">Berikan padding sumbu horizontal sebesar 32px  dan vertikal sejauh 12px .</span>
-                                                </div>
-                                            </div>
-                                            <div id="chk-hover" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Reaktivitas Hover State</strong>
-                                                    <span class="opacity-80">Gunakan transisi hover untuk merubah latar tombol menjadi <code class="text-cyan-600 dark:text-cyan-400 font-bold">bg-indigo-600</code>.</span>
-                                                </div>
-                                            </div>
-                                            <div id="chk-fx" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Elevasi Kedalaman (Shadow)</strong>
-                                                    <span class="opacity-80">Tambahkan dimensi bayangan medium (md) menggunakan atribut <code class="text-cyan-600 dark:text-cyan-400 font-bold">shadow</code>.</span>
-                                                </div>
-                                            </div>
-                                            <div id="chk-rnd" class="flex items-start gap-3 transition-colors">
-                                                <span class="w-4 h-4 mt-0.5 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[8px] transition-colors shrink-0"></span> 
-                                                <div>
-                                                    <strong class="block text-slate-800 dark:text-white mb-0.5 transition-colors">Kelengkungan Sudut (Rounded)</strong>
-                                                    <span class="opacity-80">Buat sudut tombol membulat penuh (full) menggunakan kelas <code class="text-cyan-600 dark:text-cyan-400 font-bold">rounded</code>.</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-900/20 dark:to-transparent border-l-4 border-blue-500 p-4 rounded-r-xl">
+                                <h5 class="text-xs font-bold text-blue-700 dark:text-blue-400 mb-1">Kesimpulan</h5>
+                                <p class="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed m-0 text-justify">Alur instalasi berakhir ketika <code>output.css</code> berhasil dibuat dan dihubungkan ke HTML. Browser membaca file hasil tersebut untuk menampilkan gaya Tailwind pada halaman.</p>
+                            </div>
+                        </div>
+                    </section>
 
-                                        <button id="submitExerciseBtn" onclick="submitExercise()" disabled class="w-full py-3 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-all cursor-not-allowed opacity-50 flex items-center justify-center gap-2 mt-auto shrink-0">
-                                            <span>Validasi ke Server</span>
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        </button>
+                    <section id="section-20" class="lesson-section scroll-mt-32" data-lesson-id="20" data-type="activity">
+                        <div class="space-y-8">
+                            <div class="space-y-4 border-l-4 border-blue-500 pl-4 md:pl-6">
+                                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs uppercase tracking-widest">Aktivitas 1.4</span>
+                                <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight">Susun Alur <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Instalasi Tailwind CSS</span></h2>
+                            </div>
+
+                            <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
+                                <p>Aktivitas ini menguji pemahaman alur instalasi Tailwind CSS. Pilih perintah atau file yang paling tepat untuk setiap kebutuhan instalasi. Jawaban dinyatakan berhasil jika minimal empat dari lima langkah sudah tepat.</p>
+                            </div>
+
+                            <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
+                                <div id="lockOverlay" class="hidden absolute inset-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm items-center justify-center p-6">
+                                    <div class="max-w-md text-center">
+                                        <div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
+                                        <h3 class="font-black text-heading mb-2">Aktivitas Sudah Selesai</h3>
+                                        <p class="text-sm text-muted leading-relaxed">Jawaban aktivitas telah tersimpan. Anda dapat melanjutkan ke subbab berikutnya.</p>
                                     </div>
                                 </div>
 
-                                {{-- RIGHT PANEL: VISUAL RENDER ZONE --}}
-                                <div class="bg-white dark:bg-[#1e1e1e] border-l border-adaptive flex-1 flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
-                                    <div class="bg-slate-100 dark:bg-[#2d2d2d] px-4 py-2 border-b border-adaptive flex items-center justify-between transition-colors">
-                                        <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono font-bold transition-colors">Browser Preview</span>
-                                        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold transition-colors">Live Update</span>
+                                <div class="bg-blue-600/95 dark:bg-blue-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih jawaban pada setiap baris, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                </div>
+
+                                <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
+                                    <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="b">
+                                        <p class="text-sm font-bold text-heading mb-3">1. Terminal perlu memastikan Node.js sudah terpasang. Perintah yang tepat adalah ....</p>
+                                        <select onchange="chooseActivity(this, 'q1')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
+                                            <option value="">Pilih jawaban</option>
+                                            <option value="a">npm init -y</option>
+                                            <option value="b">node -v</option>
+                                            <option value="c">@import "tailwindcss";</option>
+                                            <option value="d">&lt;link rel="stylesheet" href="./output.css"&gt;</option>
+                                        </select>
                                     </div>
-                                    <div class="flex-1 bg-slate-50 dark:bg-[#020617] p-8 flex items-center justify-center relative overflow-hidden transition-colors w-full h-full">
-                                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-                                        <iframe id="previewFrame" class="w-full h-full border-0 relative z-10"></iframe>
+                                    <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="a">
+                                        <p class="text-sm font-bold text-heading mb-3">2. Folder proyek perlu dibuat menjadi proyek NPM agar memiliki package.json. Perintah yang tepat adalah ....</p>
+                                        <select onchange="chooseActivity(this, 'q2')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
+                                            <option value="">Pilih jawaban</option>
+                                            <option value="a">npm init -y</option>
+                                            <option value="b">npm -v</option>
+                                            <option value="c">src/output.css</option>
+                                            <option value="d">grid-cols-3</option>
+                                        </select>
+                                    </div>
+                                    <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="c">
+                                        <p class="text-sm font-bold text-heading mb-3">3. Paket yang dipasang agar Tailwind dan CLI dapat digunakan adalah ....</p>
+                                        <select onchange="chooseActivity(this, 'q3')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
+                                            <option value="">Pilih jawaban</option>
+                                            <option value="a">npm install bootstrap jquery</option>
+                                            <option value="b">npm install laravel vite</option>
+                                            <option value="c">npm install tailwindcss @tailwindcss/cli</option>
+                                            <option value="d">npm install html css</option>
+                                        </select>
+                                    </div>
+                                    <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="d">
+                                        <p class="text-sm font-bold text-heading mb-3">4. Isi dasar file input.css untuk memanggil Tailwind adalah ....</p>
+                                        <select onchange="chooseActivity(this, 'q4')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
+                                            <option value="">Pilih jawaban</option>
+                                            <option value="a">&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</option>
+                                            <option value="b">body { margin: 0; }</option>
+                                            <option value="c">npm init -y</option>
+                                            <option value="d">@import "tailwindcss";</option>
+                                        </select>
+                                    </div>
+                                    <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="b">
+                                        <p class="text-sm font-bold text-heading mb-3">5. Perintah yang memproses input.css menjadi output.css adalah ....</p>
+                                        <select onchange="chooseActivity(this, 'q5')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
+                                            <option value="">Pilih jawaban</option>
+                                            <option value="a">node -v -i ./src/input.css</option>
+                                            <option value="b">npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch</option>
+                                            <option value="c">&lt;link rel="stylesheet" href="./input.css"&gt;</option>
+                                            <option value="d">npm init output.css</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-adaptive p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <p id="activity-status" class="text-xs font-bold text-muted">Belum diperiksa.</p>
+                                        <p id="activity-score" class="text-sm font-black text-heading mt-1">Skor: -</p>
+                                    </div>
+                                    <button id="submitBtn" onclick="checkActivity()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-xs shadow-lg hover:shadow-cyan-500/30 transition">Periksa Jawaban</button>
+                                </div>
+
+                                <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
+                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <div class="space-y-2 text-xs text-muted leading-relaxed">
+                                        <p><strong>1.</strong> <code>node -v</code> digunakan untuk memastikan Node.js sudah tersedia.</p>
+                                        <p><strong>2.</strong> <code>npm init -y</code> membuat file <code>package.json</code> sebagai informasi proyek.</p>
+                                        <p><strong>3.</strong> <code>tailwindcss</code> dan <code>@tailwindcss/cli</code> dipasang agar Tailwind dapat diproses melalui terminal.</p>
+                                        <p><strong>4.</strong> <code>@import "tailwindcss";</code> ditulis pada <code>input.css</code> sebagai file sumber.</p>
+                                        <p><strong>5.</strong> Perintah build membaca <code>input.css</code>, lalu menghasilkan <code>output.css</code> yang dihubungkan ke HTML.</p>
                                     </div>
                                 </div>
                             </div>
@@ -515,25 +553,24 @@
 
                 </article>
 
-                {{-- FOOTER NAVIGATION --}}
-                <div class="mt-32 pt-8 border-t border-adaptive flex justify-between items-center transition-colors">
-                    <a href="{{ route('courses.latarbelakang') ?? '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors">
-                        <div class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <a href="{{ \Illuminate\Support\Facades\Route::has('courses.latarbelakang') ? route('courses.latarbelakang') : '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
-                        <div class="text-left hidden sm:block">
+                        <div class="text-left">
                             <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Sebelumnya</div>
-                            <div class="font-black text-sm">Latar Belakang & Struktur</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Tailwind CSS melalui CDN</div>
                         </div>
                     </a>
-                    
-                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500">
-                        <div class="text-right hidden sm:block">
-                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Terkunci</div>
-                            <div class="font-black text-sm">Keunggulan Tailwind CSS</div>
+
+                    <div id="nextChapterBtn" class="group flex items-center gap-4 text-right text-muted cursor-not-allowed opacity-50 pointer-events-none transition-all duration-500 w-full sm:w-auto justify-center sm:justify-end">
+                        <div class="text-right">
+                            <div id="nextLabel" class="text-[10px] uppercase tracking-widest font-bold opacity-60">Berikutnya</div>
+                            <div class="font-black text-xs md:text-sm line-clamp-1">Konfigurasi Dasar Tailwind CSS</div>
                         </div>
-                        <div id="nextIcon" class="w-12 h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <div id="nextIcon" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center bg-slate-100 dark:bg-white/5 transition-colors shrink-0">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                     </div>
                 </div>
@@ -543,73 +580,95 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-
 <script>
-    /* --- 1. CONFIGURATION (AJAX & DATABASE) --- */
-    window.LESSON_IDS = [16, 17, 18, 19]; 
+    window.LESSON_IDS = [16, 17, 18, 19, 20];
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
-    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id)); 
+    window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id));
     let completedSet = new Set(window.COMPLETED_IDS);
-    
-    // Config Aktivitas
-    const ACTIVITY_LESSON_ID = 19; 
-    let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
+    const ACTIVITY_LESSON_ID = 20;
+    let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
 
-    /* --- 2. INITIALIZATION --- */
-    document.addEventListener('DOMContentLoaded', () => {
-    initSidebarScroll();
-    initVisualEffects();
-    
-    // Render Progress Bar awal
-    updateProgressUI(false); 
-    
-    // PENGAMANAN: Cek apakah elemen ada sebelum fungsi dijalankan
-    if(typeof setTranslate === 'function' && document.getElementById('decoder-input')) {
-        setTranslate('text-center');
-    }
-    if(typeof updateScale === 'function' && document.getElementById('scale-target')) {
-        updateScale('p', 6);
-    }
-    
-    // Eksekusi Monaco
-    initMonaco();
-    
-    // Buka kunci chapter selanjutnya jika aktivitas sudah selesai
-    if (activityCompleted) {
-        unlockNextChapter();
-    }
-
-    // Inisialisasi observer tunggal yang digabung
-    initMasterObserver();
-    
-    // Tandai sidebar jika sudah komplit
-    document.querySelectorAll('.nav-item').forEach(item => {
-        const targetId = parseInt(item.getAttribute('data-target').replace('#section-', ''));
-        if(completedSet.has(targetId)) {
-            markSidebarDone(targetId);
+    const activityAnswers = {};
+    const projectFiles = {
+        html: {
+            title: 'index.html',
+            desc: 'File halaman HTML. File ini memanggil output.css dan berisi class Tailwind pada elemen HTML.',
+            code: '<link rel="stylesheet" href="./output.css">\n\n<section class="bg-slate-100 p-6">\n  <h1 class="text-2xl font-bold">Halo Tailwind</h1>\n</section>',
+            folder: 'folder-html'
+        },
+        input: {
+            title: 'input.css',
+            desc: 'File sumber CSS. File ini memanggil Tailwind sebelum diproses menjadi output.css.',
+            code: '@import "tailwindcss";',
+            folder: 'folder-input'
+        },
+        output: {
+            title: 'output.css',
+            desc: 'File hasil build. File ini dibuat oleh Tailwind CLI dan dipakai oleh browser.',
+            code: '/* Hasil proses build Tailwind */\n.bg-slate-100 { background-color: #f1f5f9; }\n.p-6 { padding: 1.5rem; }\n.text-2xl { font-size: 1.5rem; }',
+            folder: 'folder-output'
+        },
+        package: {
+            title: 'package.json',
+            desc: 'File informasi proyek dan daftar paket yang dipasang melalui NPM.',
+            code: '{\n  "scripts": {\n    "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch"\n  },\n  "devDependencies": {\n    "tailwindcss": "latest",\n    "@tailwindcss/cli": "latest"\n  }\n}',
+            folder: 'folder-package'
         }
-    });
-});
+    };
 
-    // ==========================================
-    // LOGIKA UPDATE PROGRESS BAR DINAMIS
-    // ==========================================
+    const flowStages = {
+        1: {
+            code: '<section class="bg-slate-100 p-6 rounded-xl">\n  <h1 class="text-2xl font-bold">Halo Tailwind</h1>\n</section>',
+            desc: 'HTML berisi class Tailwind. Class ini menjadi bahan yang akan dibaca saat proses build berjalan.'
+        },
+        2: {
+            code: '@import "tailwindcss";',
+            desc: 'input.css menjadi pintu masuk Tailwind. File ini belum digunakan langsung oleh HTML.'
+        },
+        3: {
+            code: 'npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch',
+            desc: 'Tailwind CLI memproses input.css dan class yang dipakai di HTML, lalu menulis hasilnya ke output.css.'
+        },
+        4: {
+            code: '<link rel="stylesheet" href="./output.css">',
+            desc: 'output.css dihubungkan ke HTML. Browser membaca file ini untuk menampilkan gaya Tailwind.'
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initScrollSpy();
+        initVisualEffects();
+        initLessonObserver();
+        updateProgressUI(false);
+        selectProjectFile('html');
+        setFlow(1);
+        setBuildStage(1);
+
+        if (activityCompleted) {
+            lockActivityUI();
+            unlockNextChapter();
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const target = item.getAttribute('data-target');
+            if (!target) return;
+            const targetId = parseInt(target.replace('#section-', ''));
+            if (completedSet.has(targetId)) markSidebarDone(targetId);
+        });
+    });
+
     function updateProgressUI(animate = true) {
-        const total = window.LESSON_IDS.length; 
-        const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length; 
+        const total = window.LESSON_IDS.length;
+        const done = window.LESSON_IDS.filter(id => completedSet.has(Number(id))).length;
         const percent = Math.round((done / total) * 100);
-        
         const bar = document.getElementById('topProgressBar');
         const label = document.getElementById('progressLabelTop');
-        
+        if (!bar || !label) return;
         if(!animate) bar.style.transition = 'none';
-        bar.style.width = percent + '%'; 
-        if(!animate) setTimeout(() => bar.style.transition = 'all 0.5s', 50);
-        
+        bar.style.width = percent + '%';
+        if(!animate) setTimeout(() => bar.style.transition = 'all .5s', 50);
         label.innerText = percent + '%';
-        if(percent === 100 && activityCompleted) unlockNextChapter();
+        if (percent === 100 && activityCompleted) unlockNextChapter();
     }
 
     function markSidebarDone(lessonId) {
@@ -617,400 +676,264 @@
         if(navItem) {
             const dot = navItem.querySelector('.dot');
             if(dot) {
-                const isActivity = navItem.querySelector('.sidebar-anchor')?.dataset.type === 'activity';
-                if (isActivity) {
-                    dot.outerHTML = `<svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
-                } else {
-                    dot.outerHTML = `<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
-                }
+                dot.outerHTML = `<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
             }
         }
     }
 
-    // ==========================================
-    // AJAX POST REQUEST KE DATABASE
-    // ==========================================
-    async function saveLessonToDB(lessonId) { 
+    async function saveLessonToDB(lessonId) {
         lessonId = Number(lessonId);
-        if(completedSet.has(lessonId)) return; 
+        if (completedSet.has(lessonId) && !(lessonId === ACTIVITY_LESSON_ID && !activityCompleted)) return true;
 
         try {
             const formData = new FormData();
             formData.append('lesson_id', lessonId);
 
-            const response = await fetch('{{ route("lesson.complete") }}', { 
-                method: 'POST', 
-                headers: { 
+            const response = await fetch('{{ route("lesson.complete") }}', {
+                method: 'POST',
+                headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json' 
-                }, 
-                body: formData 
+                    'Accept': 'application/json'
+                },
+                body: formData
             });
 
             if (response.ok) {
                 completedSet.add(lessonId);
                 updateProgressUI(true);
                 markSidebarDone(lessonId);
+                if (lessonId === ACTIVITY_LESSON_ID) {
+                    window.markActiveCourseItemCompleted?.();
+                }
             }
         } catch(e) {
             console.error('Network Error:', e);
         }
     }
 
-    // ==========================================
-    // MASTER SCROLL OBSERVER
-    // ==========================================
-    function initMasterObserver() {
-        const mainScroll = document.getElementById('mainScroll'); 
-        const sections = document.querySelectorAll('.lesson-section');
-
-        if (mainScroll && sections.length > 0) {
-            const observerOptions = { 
-                root: mainScroll, 
-                rootMargin: "-10% 0px -60% 0px", 
-                threshold: 0 
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const targetId = entry.target.id;
-                        const lessonId = Number(entry.target.dataset.lessonId);
-                        const isActivity = entry.target.dataset.type === 'activity';
-
-                        if (typeof highlightAnchor === 'function') {
-                            highlightAnchor(targetId);
-                        }
-
-                        if (lessonId && !isActivity && !completedSet.has(lessonId)) {
-                            saveLessonToDB(lessonId); 
-                        }
+    function initLessonObserver() {
+        const root = document.getElementById('mainScroll');
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = Number(entry.target.dataset.lessonId);
+                    if (id && entry.target.dataset.type !== 'activity' && !completedSet.has(id)) {
+                        saveLessonToDB(id);
                     }
-                });
-            }, observerOptions);
+                    highlightAnchor(entry.target.id);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: "0px 0px -50px 0px", root });
+        document.querySelectorAll('.lesson-section').forEach(s => obs.observe(s));
+    }
 
-            sections.forEach(section => observer.observe(section));
+    function initScrollSpy() {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.getAttribute('data-target');
+                if (!target) return;
+                const el = document.querySelector(target);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    }
+
+    function highlightAnchor(id) {
+        if (!id) return;
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[data-target="#${id}"]`);
+        if (active) active.classList.add('active');
+    }
+
+    function runCheck(type) {
+        const terminal = document.getElementById('check-terminal');
+        if (!terminal) return;
+        if (type === 'reset') {
+            terminal.innerHTML = '<div class="text-slate-400">$ Siapkan pengecekan prasyarat instalasi...</div>';
+            setStatus('node-status', 'Belum dicek', false);
+            setStatus('npm-status', 'Belum dicek', false);
+            document.getElementById('ready-status').innerHTML = '<p class="text-[11px] text-muted leading-relaxed">Status siap muncul setelah Node.js dan NPM berhasil dicek.</p>';
+            return;
+        }
+        if (type === 'node') {
+            terminal.innerHTML += '<div class="text-cyan-300 mt-2">$ node -v</div><div class="text-emerald-300">v20.11.1 — Node.js tersedia.</div>';
+            setStatus('node-status', 'Siap', true);
+        }
+        if (type === 'npm') {
+            terminal.innerHTML += '<div class="text-blue-300 mt-2">$ npm -v</div><div class="text-emerald-300">10.2.4 — NPM tersedia.</div>';
+            setStatus('npm-status', 'Siap', true);
+        }
+        const nodeReady = document.getElementById('node-status')?.classList.contains('active');
+        const npmReady = document.getElementById('npm-status')?.classList.contains('active');
+        if (nodeReady && npmReady) {
+            document.getElementById('ready-status').innerHTML = '<p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold leading-relaxed">Prasyarat siap. Proyek dapat dilanjutkan ke instalasi Tailwind CSS.</p>';
+        }
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function setStatus(id, text, ready) {
+        const box = document.getElementById(id);
+        if (!box) return;
+        box.classList.toggle('active', ready);
+        const badge = box.querySelector('span');
+        if (badge) {
+            badge.innerText = text;
+            badge.className = ready ? 'text-[10px] px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold' : 'text-[10px] px-2 py-1 rounded bg-slate-100 dark:bg-white/10 text-muted font-bold';
         }
     }
 
-    /* --- 4. FINISH LOGIC (ACTIVITY MONACO REFACTOR) --- */
-    let editor;
-    const starterCode = `<button class="bg-indigo-500 text-white font-bold transition-all ">
-  Kirim Komando
-</button>
-`;
-
-    function initMonaco() {
-    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
-    require(['vs/editor/editor.main'], function () {
-        
-        const isDark = document.documentElement.classList.contains('dark');
-        
-        editor = monaco.editor.create(document.getElementById('codeEditor'), {
-            value: starterCode, 
-            language: 'html', 
-            theme: isDark ? 'vs-dark' : 'vs', 
-            fontSize: 13,
-            minimap: { enabled: false }, 
-            automaticLayout: true, 
-            padding: { top: 16 }, 
-            lineNumbers: 'off',
-            scrollBeyondLastLine: false
+    function selectProjectFile(type) {
+        Object.keys(projectFiles).forEach(k => {
+            document.getElementById('file-' + k)?.classList.remove('active', 'border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-500/10');
+            document.getElementById(projectFiles[k].folder)?.classList.remove('active');
         });
-        
-        updatePreview(starterCode);
-        
-        if (activityCompleted) {
-            lockActivityUI();
+        const item = projectFiles[type];
+        document.getElementById('file-' + type)?.classList.add('border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-500/10');
+        document.getElementById(item.folder)?.classList.add('active');
+        document.getElementById('file-title').innerText = item.title;
+        document.getElementById('file-desc').innerText = item.desc;
+        document.getElementById('file-code').innerText = item.code;
+    }
+
+    function setFlow(stage) {
+        [1,2,3,4].forEach(n => document.getElementById('flow-' + n)?.classList.remove('active', 'border-cyan-500'));
+        document.getElementById('flow-' + stage)?.classList.add('active', 'border-cyan-500');
+        document.getElementById('flow-code').innerText = flowStages[stage].code;
+        document.getElementById('flow-desc').innerText = flowStages[stage].desc;
+    }
+
+    function runInstallStep(step) {
+        const terminal = document.getElementById('install-terminal');
+        if (!terminal) return;
+        if (step === 0) {
+            terminal.innerHTML = '<div class="text-slate-400">$ Terminal siap menjalankan perintah instalasi.</div>';
+            [1,2,3].forEach(n => document.getElementById('install-step-' + n)?.classList.remove('active', 'border-cyan-500'));
+            ['after-package','after-lock','after-node'].forEach(id => document.getElementById(id)?.classList.add('text-slate-400'));
+            return;
         }
-        
-        editor.onDidChangeModelContent(() => {
-            if(activityCompleted) return;
-            const code = editor.getValue();
-            updatePreview(code);
-            validateConfig(code);
-        });
-        
-        window.addEventListener('theme-toggled', () => {
-            const newIsDark = document.documentElement.classList.contains('dark');
-            monaco.editor.setTheme(newIsDark ? 'vs-dark' : 'vs');
-            updatePreview(editor.getValue());
-        });
-    });
-}
-
-    function updatePreview(code) {
-        const frame = document.getElementById('previewFrame');
-        const isDark = document.documentElement.classList.contains('dark');
-        const bgColor = isDark ? '#020617' : '#f8fafc'; 
-        
-        const content = `<!doctype html><html><head><script src="https://cdn.tailwindcss.com"><\/script><style>body { background-color: ${bgColor}; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; transition: background-color 0.3s; }</style></head><body>${code}</body></html>`;
-        frame.srcdoc = content;
-    }
-
-    function validateConfig(code) {
-    const checks = [
-        { id: 'chk-pad', regex: /(?=.*\bpx-8\b)(?=.*\bpy-3\b)/ }, 
-        { id: 'chk-hover', regex: /(?=.*\bhover:bg-indigo-600\b)/ },
-        { id: 'chk-fx', regex: /(?=.*\bshadow-md\b)/ },
-        { id: 'chk-rnd', regex: /(?=.*\brounded-full\b)/ }
-    ];
-
-    let passed = 0;
-    const isDark = document.documentElement.classList.contains('dark');
-
-    checks.forEach(c => {
-        const el = document.getElementById(c.id);
-        if (!el) return;
-        const dot = el.querySelector('span'); 
-        const textContainer = el.querySelector('div'); 
-        
-        const classMatch = code.match(/class=["'](.*?)["']/);
-        const classString = classMatch ? classMatch[1] : '';
-
-        if(c.regex.test(classString)) {
-            textContainer.classList.remove('opacity-80');
-            textContainer.classList.add(isDark ? 'text-green-400' : 'text-emerald-600');
-            
-            dot.innerHTML = '✓'; 
-            dot.classList.remove('border-slate-300', 'border-white/20');
-            dot.classList.add('bg-emerald-500', 'border-transparent', 'text-white');
-            passed++;
-        } else {
-            textContainer.classList.add('opacity-80');
-            textContainer.classList.remove('text-green-400', 'text-emerald-600');
-            
-            dot.innerHTML = ''; 
-            dot.classList.remove('bg-emerald-500', 'border-transparent', 'text-white');
-            dot.classList.add(isDark ? 'border-white/20' : 'border-slate-300');
+        const lines = {
+            1: '<div class="text-cyan-300 mt-2">$ cd belajar-tailwind</div><div class="text-slate-300">Berhasil masuk ke folder proyek.</div>',
+            2: '<div class="text-cyan-300 mt-2">$ npm init -y</div><div class="text-emerald-300">package.json berhasil dibuat.</div>',
+            3: '<div class="text-cyan-300 mt-2">$ npm install tailwindcss @tailwindcss/cli</div><div class="text-emerald-300">Tailwind CSS dan CLI berhasil dipasang.</div>'
+        };
+        terminal.innerHTML += lines[step];
+        document.getElementById('install-step-' + step)?.classList.add('active', 'border-cyan-500');
+        if (step >= 2) document.getElementById('after-package')?.classList.remove('text-slate-400');
+        if (step >= 3) {
+            document.getElementById('after-lock')?.classList.remove('text-slate-400');
+            document.getElementById('after-node')?.classList.remove('text-slate-400');
         }
-    });
-
-    document.getElementById('progressText').innerText = `${passed}/4 Terpenuhi`;
-    
-    const btn = document.getElementById('submitExerciseBtn');
-    if (passed === 4) {
-        btn.disabled = false;
-        btn.classList.remove('cursor-not-allowed', 'opacity-50');
-        btn.innerHTML = `<span>Validasi ke Server</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-    } else {
-        btn.disabled = true;
-        btn.classList.add('cursor-not-allowed', 'opacity-50');
-        btn.innerHTML = `<span>Menunggu Persyaratan</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-    }
-}
-
-    function resetEditor() { 
-        if(editor && !activityCompleted) { 
-            editor.setValue(starterCode); 
-            validateConfig(starterCode); 
-        } 
+        terminal.scrollTop = terminal.scrollHeight;
     }
 
-    async function submitExercise() {
-        const btn = document.getElementById('submitExerciseBtn');
-        btn.innerHTML = '<span class="animate-pulse">Menyimpan data...</span>'; 
-        btn.disabled = true;
-        
-        try {
-            await saveLessonToDB(ACTIVITY_LESSON_ID); 
-            
+    function setBuildStage(stage) {
+        setFlow(stage);
+        [1,2,3,4].forEach(n => document.getElementById('build-pill-' + n)?.classList.remove('active', 'border-cyan-500'));
+        document.getElementById('build-pill-' + stage)?.classList.add('active', 'border-cyan-500');
+        document.getElementById('build-code').innerText = flowStages[stage].code;
+        document.getElementById('build-desc').innerText = flowStages[stage].desc;
+    }
+
+    function chooseActivity(select, q) {
+        if (activityCompleted) return;
+        activityAnswers[q] = select.value;
+        select.classList.remove('valid', 'invalid');
+    }
+
+    async function checkActivity() {
+        if (activityCompleted) return;
+        const correct = { q1:'b', q2:'a', q3:'c', q4:'d', q5:'b' };
+        const total = Object.keys(correct).length;
+        const answered = Object.keys(activityAnswers).filter(k => activityAnswers[k]).length;
+        const status = document.getElementById('activity-status');
+        const scoreLabel = document.getElementById('activity-score');
+        const submit = document.getElementById('submitBtn');
+
+        if (answered < total) {
+            status.innerText = 'Lengkapi semua pilihan terlebih dahulu.';
+            status.className = 'text-xs font-bold text-red-500';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
+            return;
+        }
+
+        let score = 0;
+        document.querySelectorAll('.activity-row').forEach((row, index) => {
+            const q = 'q' + (index + 1);
+            const select = row.querySelector('select');
+            select.classList.remove('valid', 'invalid');
+            if (activityAnswers[q] === correct[q]) {
+                score++;
+                select.classList.add('valid');
+            } else {
+                select.classList.add('invalid');
+            }
+        });
+
+        scoreLabel.innerText = `Skor: ${score}/${total}`;
+        document.getElementById('activity-analysis').classList.remove('hidden');
+
+        if (score >= 4) {
+            status.innerText = 'Berhasil. Aktivitas instalasi Tailwind sudah valid.';
+            status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             activityCompleted = true;
-            lockActivityUI();   
-            unlockNextChapter(); 
-        } catch(e) { 
-            console.error(e); 
-            btn.innerHTML = "Koneksi gagal. Coba lagi.";
-            btn.disabled = false;
+            await saveLessonToDB(ACTIVITY_LESSON_ID);
+            lockActivityUI();
+            unlockNextChapter();
+        } else {
+            status.innerText = 'Belum berhasil. Periksa kembali urutan dan fungsi file instalasi.';
+            status.className = 'text-xs font-bold text-amber-600 dark:text-amber-400';
         }
     }
 
     function lockActivityUI() {
-        document.getElementById('lockOverlay').classList.remove('hidden');
-        if(editor) editor.updateOptions({ readOnly: true });
-        
-        const btn = document.getElementById('submitExerciseBtn'); 
-        btn.innerText = "Terkunci (Selesai)"; 
-        btn.disabled = true;
-        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
-        btn.classList.add('bg-slate-400', 'dark:bg-slate-700', 'text-slate-200', 'cursor-not-allowed', 'shadow-none');
-        
-        if(editor && activityCompleted) {
-            editor.setValue(`<button class="bg-indigo-500 text-white font-bold transition-all px-8 py-3 hover:bg-indigo-600 shadow-md rounded-full">\n  Kirim Komando\n</button>`);
-            validateConfig(editor.getValue());
+        const overlay = document.getElementById('lockOverlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
         }
+        document.querySelectorAll('#activityForm select, #submitBtn').forEach(el => el.disabled = true);
     }
 
     function unlockNextChapter() {
         const btn = document.getElementById('nextChapterBtn');
-        if(btn) {
-            btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
-            btn.classList.add('text-cyan-600', 'dark:text-cyan-400', 'cursor-pointer');
-            
-            document.getElementById('nextLabel').innerText = "Selanjutnya";
-            document.getElementById('nextLabel').classList.remove('opacity-60');
-            document.getElementById('nextLabel').classList.add('text-cyan-600', 'dark:text-cyan-400', 'opacity-100');
-            
-            const icon = document.getElementById('nextIcon');
-            icon.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
-            icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
-            icon.classList.add('bg-cyan-100', 'dark:bg-cyan-500/20', 'border-cyan-300', 'dark:border-cyan-500/50', 'text-cyan-600', 'dark:text-cyan-400', 'shadow-lg');
-            
-            btn.onclick = () => window.location.href = "{{ route('courses.advantages') ?? '#' }}"; 
+        const icon = document.getElementById('nextIcon');
+        const label = document.getElementById('nextLabel');
+        if (!btn || !icon || !label) return;
+        const nextUrl = "{{ \Illuminate\Support\Facades\Route::has('courses.advantages') ? route('courses.advantages') : '#' }}";
+        btn.classList.remove('cursor-not-allowed', 'opacity-50', 'pointer-events-none', 'text-muted');
+        btn.classList.add('cursor-pointer', 'text-cyan-600', 'dark:text-cyan-400');
+        icon.classList.add('bg-cyan-600', 'text-white', 'border-cyan-600');
+        icon.innerHTML = '<svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
+        label.innerText = 'Terbuka';
+        btn.onclick = () => { window.location.href = nextUrl; };
+    }
+
+    function initVisualEffects() {
+        const canvas = document.getElementById('stars');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = Array.from({ length: 70 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.4 + .2, a: Math.random() * .6 + .2 }));
         }
-    }
-
-    /* --- 5. SIMULATOR LOGIC (LAINNYA) --- */
-    function translateClass() {
-        const isDark = document.documentElement.classList.contains('dark');
-        const input = document.getElementById('decoder-input')?.value?.trim();
-        const res = document.getElementById('decoder-result');
-        let css = '';
-        
-        if (!input) {
-            css = `<span class="text-slate-400 dark:text-white/30 italic transition-colors">// Menunggu input...</span>`;
-            if(res) res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
-            return;
-        }
-
-        if (input.match(/^text-(center|left|right)$/)) css = `text-align: ${input.split('-')[1]};`;
-        else if (input.match(/^(m|p)[trblxy]?-\d+$/)) css = `${input.startsWith('m')?'margin':'padding'}: ${input.split('-').pop() * 0.25}rem;`;
-        else if (input.match(/^bg-[a-z]+-\d{3}$/)) css = `background-color: [Varian Palet ${input.split('-')[1]}];`;
-        else if (input === 'flex') css = 'display: flex;';
-        else if (input.startsWith('text-')) css = `font-size: [Skala Proporsi ${input.split('-')[1]}];`;
-        else css = `/* Deklarasi styling untuk .${input} */`;
-        
-        if(res) res.innerHTML = `<span class="text-xs text-slate-400 dark:text-white/30 mb-1 block transition-colors">// CSS Output:</span><code class="text-cyan-700 dark:text-cyan-400 font-bold text-sm block transition-colors">${css}</code>`;
-    }
-    
-    function setTranslate(val) { 
-        const inputEl = document.getElementById('decoder-input');
-        if(!inputEl) return; 
-        
-        inputEl.value = val; 
-        translateClass(); 
-    }
-
-    function updateScale(type, val) {
-        const formula = document.getElementById('scale-formula');
-        const target = document.getElementById('scale-target');
-        const label = document.getElementById('scale-p-val');
-        const px = val * 4; 
-        const rem = val * 0.25;
-        if(formula) formula.innerHTML = `${val} x 4px = <span class="text-cyan-600 dark:text-cyan-400 font-bold transition-colors">${px}px</span> (${rem}rem)`;
-        if(label) label.innerText = `p-${val}`;
-        if(target) target.style.padding = `${px}px`;
-    }
-
-    let activeStates = new Set();
-    function toggleStateClass(state) {
-        const btn = document.getElementById('state-target');
-        if(!btn) return;
-        if(activeStates.has(state)) {
-            activeStates.delete(state);
-            if(state==='hover') { btn.onmouseenter = null; btn.onmouseleave = null; btn.classList.remove('scale-110'); }
-            if(state==='active') { btn.onmousedown = null; btn.onmouseup = null; btn.classList.remove('bg-fuchsia-800'); }
-            if(state==='focus') btn.classList.remove('ring-4', 'ring-yellow-500/50');
-        } else {
-            activeStates.add(state);
-            if(state==='hover') { btn.onmouseenter = () => btn.classList.add('scale-110'); btn.onmouseleave = () => btn.classList.remove('scale-110'); }
-            if(state==='active') { btn.onmousedown = () => btn.classList.add('bg-fuchsia-800'); btn.onmouseup = () => btn.classList.remove('bg-fuchsia-800'); }
-            if(state==='focus') btn.classList.add('ring-4', 'ring-yellow-500/50');
-        }
-    }
-
-    function triggerMorph() {
-        const messy = document.getElementById('morph-messy');
-        const clean = document.getElementById('morph-clean');
-        if(messy && clean) {
-            messy.style.opacity = '0'; messy.style.transform = 'translateY(-20px)';
-            setTimeout(() => { clean.classList.remove('opacity-0', 'scale-90'); }, 400);
-        }
-    }
-
-    /* --- 7. SCROLL SPY & SIDEBAR LOGIC --- */
-    function highlightAnchor(id) {
-        const isDark = document.documentElement.classList.contains('dark');
-        const anchors = document.querySelectorAll('.sidebar-anchor');
-
-        anchors.forEach(a => {
-            a.classList.remove('bg-slate-100', 'dark:bg-white/5', 'border-cyan-500', 'border-amber-500');
-            a.classList.add('border-transparent');
-            
-            const dot = a.querySelector('.anchor-dot');
-            const isActivity = a.dataset.type === 'activity';
-
-            if(dot) dot.classList.remove('scale-125', 'shadow-sm', 'dark:shadow-[0_0_10px_#06b6d4]', 'dark:shadow-[0_0_10px_#f59e0b]', 'bg-cyan-500', 'dark:bg-cyan-400');
-            
-            if (isActivity) {
-                if(dot) { dot.classList.remove('bg-amber-500', 'dark:bg-amber-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
-            } else {
-                if(dot) { dot.classList.remove('bg-cyan-500', 'dark:bg-cyan-400'); dot.classList.add('bg-slate-400', 'dark:bg-slate-600'); }
-            }
-
-            const text = a.querySelector('.anchor-text');
-            if(text) { text.classList.remove('text-slate-800', 'dark:text-white', 'font-bold'); text.classList.add('text-slate-500'); }
-        });
-
-        const activeAnchor = document.querySelector(`.sidebar-anchor[data-target="${id}"]`);
-        if (activeAnchor) {
-            const isActivity = activeAnchor.dataset.type === 'activity';
-            
-            activeAnchor.classList.add(isDark ? 'dark:bg-white/5' : 'bg-slate-100');
-            activeAnchor.classList.add(isActivity ? 'border-amber-500' : 'border-cyan-500');
-            activeAnchor.classList.remove('border-transparent');
-            
-            const dot = activeAnchor.querySelector('.anchor-dot');
-            if(dot) {
-                dot.classList.remove('bg-slate-400', 'dark:bg-slate-600');
-                if (isActivity) {
-                    dot.classList.add(isDark ? 'dark:bg-amber-400' : 'bg-amber-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#f59e0b]' : 'shadow-sm');
-                } else {
-                    dot.classList.add(isDark ? 'dark:bg-cyan-400' : 'bg-cyan-500', 'scale-125', isDark ? 'dark:shadow-[0_0_10px_#06b6d4]' : 'shadow-sm');
-                }
-            }
-            
-            const text = activeAnchor.querySelector('.anchor-text');
-            if(text) { text.classList.remove('text-slate-500'); text.classList.add(isDark ? 'dark:text-white' : 'text-slate-800', 'font-bold'); }
-        }
-    }
-
-    function initSidebarScroll(){
-        const m = document.getElementById('mainScroll');
-        const l = document.querySelectorAll('.accordion-content .nav-item');
-        if(!m) return;
-        m.addEventListener('scroll', () => {
-            let c = '';
-            document.querySelectorAll('.lesson-section').forEach(s => {
-                if (m.scrollTop >= s.offsetTop - 250) c = '#' + s.id;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+                ctx.fill();
+                s.y += .08;
+                if (s.y > canvas.height) s.y = 0;
             });
-            l.forEach(k => {
-                k.classList.remove('active');
-                if (k.getAttribute('data-target') === c) k.classList.add('active');
-            })
-        });
-    }
-
-    function initVisualEffects(){
-        const c = document.getElementById('stars');
-        if(!c) return;
-        const x = c.getContext('2d');
-        function r(){ c.width = innerWidth; c.height = innerHeight; }
-        r(); window.addEventListener('resize', r);
-        let s=[];
-        for(let i=0; i<100; i++) s.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.2, v:Math.random()*0.2+.1});
-        
-        function drawStars() {
-            x.clearRect(0,0,c.width,c.height);
-            x.fillStyle='rgba(255,255,255,.3)';
-            s.forEach(t=>{
-                x.beginPath(); x.arc(t.x,t.y,t.r,0,6.28); x.fill();
-                t.y += t.v;
-                if(t.y > c.height) t.y = 0;
-            });
-            requestAnimationFrame(drawStars);
+            requestAnimationFrame(draw);
         }
-        drawStars();
+        resize();
+        draw();
+        window.addEventListener('resize', resize);
     }
 </script>
 @endsection

@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Menambahkan kolom baru setelah email
-            $table->string('class_group')->nullable()->after('email'); // Contoh: Kelas A1
-            $table->string('institution')->nullable()->after('class_group'); // Contoh: Universitas X
-            $table->string('study_program')->nullable()->after('institution'); // Contoh: Informatika
-            $table->string('phone')->nullable()->after('study_program');
-            $table->string('avatar')->nullable()->after('phone'); // Foto profil
-        });
+        $columns = ['class_group', 'institution', 'study_program', 'phone', 'avatar'];
+
+        foreach ($columns as $column) {
+            if (!Schema::hasColumn('users', $column)) {
+                Schema::table('users', function (Blueprint $table) use ($column) {
+                    $table->string($column)->nullable();
+                });
+            }
+        }
     }
 
     /**
@@ -26,8 +27,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['class_group', 'institution', 'study_program', 'phone', 'avatar']);
+        $columns = array_values(array_filter(
+            ['class_group', 'institution', 'study_program', 'phone', 'avatar'],
+            fn ($column) => Schema::hasColumn('users', $column)
+        ));
+
+        if (empty($columns)) {
+            return;
+        }
+
+        Schema::table('users', function (Blueprint $table) use ($columns) {
+            $table->dropColumn($columns);
         });
     }
 };

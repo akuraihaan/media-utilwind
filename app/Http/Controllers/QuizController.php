@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 // Models
 use App\Models\QuizQuestion;
@@ -41,6 +42,18 @@ class QuizController extends Controller
 
         // Jika sudah lulus (Nilai >= 70), blokir akses.
         if ($bestScore >= 70) {
+            $latestPassedAttempt = QuizAttempt::where('user_id', $userId)
+                ->where('chapter_id', $chapterId)
+                ->where('score', '>=', 70)
+                ->whereNotNull('completed_at')
+                ->latest('completed_at')
+                ->first();
+
+            if ($latestPassedAttempt) {
+                return redirect()->route('quiz.result', $latestPassedAttempt->id)
+                    ->with('success', 'Selamat! Anda sudah lulus materi ini dengan nilai ' . $bestScore);
+            }
+
             return redirect()->route('dashboard')
                 ->with('success', 'Selamat! Anda sudah lulus materi ini dengan nilai ' . $bestScore);
         }
@@ -81,14 +94,14 @@ class QuizController extends Controller
             ->first();
 
         if (!$existing) {
-            QuizAttempt::create([
+            QuizAttempt::create($this->filterColumns('quiz_attempts', [
                 'user_id' => $userId,
                 'chapter_id' => $chapterId,
+                'started_at' => Carbon::now(),
                 'score' => 0,
                 'time_spent_seconds' => 0,
-                'created_at' => Carbon::now(),
                 'completed_at' => null // Null menandakan sesi sedang berjalan
-            ]);
+            ]));
         }
 
         return redirect()->route('quiz.show', ['chapterId' => $chapterId]);
@@ -160,7 +173,9 @@ class QuizController extends Controller
         $request->validate([
             'attempt_id'   => 'required|integer',
             'question_id'  => 'required|integer',
-            'is_flagged'   => 'required|boolean'
+            'option_id'    => 'nullable|integer',
+            'is_flagged'   => 'required|boolean',
+            'client_elapsed_seconds' => 'nullable|integer|min:0'
         ]);
 
         try {
@@ -168,6 +183,10 @@ class QuizController extends Controller
             $attempt = QuizAttempt::find($request->attempt_id);
             if (!$attempt || $attempt->user_id != Auth::id()) {
                 return response()->json(['status' => 'error', 'message' => 'Sesi tidak valid'], 403);
+            }
+
+            if ($attempt->completed_at) {
+                return response()->json(['status' => 'error', 'message' => 'Evaluasi sudah dikumpulkan'], 422);
             }
 
             // 3. Persiapkan Data Jawaban
@@ -189,6 +208,27 @@ class QuizController extends Controller
                 $optionId = null; // Pastikan tersimpan sebagai NULL database, bukan string "null"
             }
 
+            $existingAnswer = QuizAttemptAnswer::where('quiz_attempt_id', $attempt->id)
+                ->where('quiz_question_id', $request->question_id)
+                ->first();
+
+            $hasChangedAnswer = $existingAnswer
+                && !empty($existingAnswer->quiz_option_id)
+                && !empty($optionId)
+                && (int) $existingAnswer->quiz_option_id !== (int) $optionId;
+
+            $answerChangeCount = ($existingAnswer->answer_change_count ?? 0) + ($hasChangedAnswer ? 1 : 0);
+
+            $answerPayload = $this->filterColumns('quiz_attempt_answers', [
+                'quiz_option_id' => $optionId,
+                'is_flagged'     => $request->is_flagged,
+                'is_correct'     => $isCorrect,
+                'answer_change_count' => $answerChangeCount,
+                'client_elapsed_seconds' => $request->client_elapsed_seconds,
+                'first_answered_at' => $existingAnswer?->first_answered_at ?? ($optionId ? Carbon::now() : null),
+                'last_answered_at' => $optionId ? Carbon::now() : ($existingAnswer?->last_answered_at),
+            ]);
+
             // 4. SIMPAN KE DATABASE (Update jika ada, Create jika belum)
             // Menggunakan updateOrCreate agar tidak duplikat data per soal
             $answer = QuizAttemptAnswer::updateOrCreate(
@@ -196,11 +236,7 @@ class QuizController extends Controller
                     'quiz_attempt_id'  => $attempt->id, 
                     'quiz_question_id' => $request->question_id
                 ],
-                [
-                    'quiz_option_id' => $optionId,
-                    'is_flagged'     => $request->is_flagged,
-                    'is_correct'     => $isCorrect // Simpan status benar/salah langsung
-                ]
+                $answerPayload
             );
 
             return response()->json([
@@ -225,6 +261,8 @@ class QuizController extends Controller
     {
         $request->validate([
             'attempt_id' => 'required|integer',
+            'time_spent' => 'nullable|integer|min:0',
+            'focus_lost_count' => 'nullable|integer|min:0',
         ]);
 
         try {
@@ -239,7 +277,7 @@ class QuizController extends Controller
 
             // Prevent Double Submit
             if ($attempt->completed_at != null) {
-                return response()->json(['status' => 'success', 'redirect' => route('dashboard')]);
+                return response()->json(['status' => 'success', 'redirect' => route('quiz.result', $attempt->id)]);
             }
 
             // --- LOGIKA PENILAIAN ---
@@ -251,24 +289,48 @@ class QuizController extends Controller
             
             // Hitung total soal (Ambil real dari tabel soal chapter ini)
             $totalQuestions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->count();
-            if ($totalQuestions == 0) $totalQuestions = 10; // Fallback prevent division by zero
+            if ($totalQuestions == 0) {
+                throw new \Exception("Soal evaluasi belum tersedia.");
+            }
+
+            $answeredCount = $answers->filter(fn ($answer) => !empty($answer->quiz_option_id))
+                ->unique('quiz_question_id')
+                ->count();
+
+            if ($answeredCount < $totalQuestions) {
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Evaluasi belum dapat dikumpulkan. Lengkapi ' . ($totalQuestions - $answeredCount) . ' soal yang masih kosong.',
+                    'missing_count' => $totalQuestions - $answeredCount,
+                ], 422);
+            }
 
             // Kalkulasi Skor (Skala 100)
             $score = round(($correctCount / $totalQuestions) * 100);
+            $metrics = $this->buildAttemptMetrics($answers, $totalQuestions, $score);
+            $feedback = $this->buildEvaluationFeedback($score, $metrics);
 
             // Finalisasi Data Sesi
-            $attempt->update([
+            $attempt->update($this->filterColumns('quiz_attempts', [
                 'score' => $score,
                 'completed_at' => Carbon::now(),
-                'time_spent_seconds' => $request->time_spent ?? 0 // Opsional dari frontend
-            ]);
+                'time_spent_seconds' => $request->time_spent ?? 0,
+                'answered_count' => $metrics['answered_count'],
+                'unanswered_count' => $metrics['unanswered_count'],
+                'flagged_count' => $metrics['flagged_count'],
+                'focus_lost_count' => $request->focus_lost_count ?? 0,
+                'feedback_level' => $feedback['level'],
+                'feedback_message' => $feedback['message'],
+            ]));
 
             DB::commit();
 
             return response()->json([
                 'status' => 'success', 
                 'score' => $score, 
-                'redirect' => route('dashboard')
+                'redirect' => route('quiz.result', $attempt->id)
             ]);
 
         } catch (\Exception $e) {
@@ -279,7 +341,77 @@ class QuizController extends Controller
     }
 
     // =========================================================================
-    // 6. HELPER: FORCE SUBMIT (SAAT WAKTU HABIS)
+    // 6. RESULT & FEEDBACK AKHIR EVALUASI
+    // =========================================================================
+    public function result($attemptId)
+    {
+        $attempt = QuizAttempt::with('answers')
+            ->where('id', $attemptId)
+            ->where('user_id', Auth::id())
+            ->whereNotNull('completed_at')
+            ->firstOrFail();
+
+        $questions = QuizQuestion::where('chapter_id', $attempt->chapter_id)
+            ->with('options')
+            ->get();
+
+        $answers = $attempt->answers->keyBy('quiz_question_id');
+        $totalQuestions = max(1, $questions->count());
+        $metrics = $this->buildAttemptMetrics($attempt->answers, $totalQuestions, (int) $attempt->score);
+        $feedback = $this->buildEvaluationFeedback((int) $attempt->score, $metrics);
+
+        $reviewItems = $questions->values()->map(function ($question, $index) use ($answers) {
+            $answer = $answers->get($question->id);
+            $selectedOption = $answer?->quiz_option_id
+                ? $question->options->firstWhere('id', $answer->quiz_option_id)
+                : null;
+            $correctOption = $question->options->firstWhere('is_correct', true);
+
+            return [
+                'number' => $index + 1,
+                'question' => $question,
+                'answer' => $answer,
+                'selected_option' => $selectedOption,
+                'correct_option' => $correctOption,
+                'is_correct' => (bool) ($answer?->is_correct),
+                'is_flagged' => (bool) ($answer?->is_flagged),
+                'status' => $answer?->quiz_option_id ? (($answer?->is_correct) ? 'Benar' : 'Perlu ditinjau') : 'Belum dijawab',
+            ];
+        });
+
+        return view('quiz.result', [
+            'attempt' => $attempt,
+            'chapterId' => $attempt->chapter_id,
+            'metrics' => $metrics,
+            'feedback' => $feedback,
+            'reviewItems' => $reviewItems,
+        ]);
+    }
+
+    public function saveReflection(Request $request, $attemptId)
+    {
+        $validated = $request->validate([
+            'reflection_note' => 'nullable|string|max:1000',
+        ], [
+            'reflection_note.max' => 'Catatan refleksi maksimal 1000 karakter.',
+        ]);
+
+        $attempt = QuizAttempt::where('id', $attemptId)
+            ->where('user_id', Auth::id())
+            ->whereNotNull('completed_at')
+            ->firstOrFail();
+
+        $attempt->update($this->filterColumns('quiz_attempts', [
+            'reflection_note' => trim($validated['reflection_note'] ?? ''),
+        ]));
+
+        return redirect()
+            ->route('quiz.result', $attempt->id)
+            ->with('success', 'Catatan refleksi berhasil disimpan.');
+    }
+
+    // =========================================================================
+    // 7. HELPER: FORCE SUBMIT (SAAT WAKTU HABIS)
     // =========================================================================
     private function forceSubmit($attempt) {
         // Logika sama dengan submit, tapi tanpa request dari user
@@ -288,13 +420,73 @@ class QuizController extends Controller
         $totalQuestions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->count();
         
         $score = ($totalQuestions > 0) ? round(($correctCount / $totalQuestions) * 100) : 0;
+        $metrics = $this->buildAttemptMetrics($answers, max(1, $totalQuestions), $score);
+        $feedback = $this->buildEvaluationFeedback($score, $metrics);
+        $elapsed = Carbon::parse($attempt->created_at)->diffInSeconds(Carbon::now());
 
-        $attempt->update([
+        $attempt->update($this->filterColumns('quiz_attempts', [
             'score' => $score,
-            'completed_at' => Carbon::now()
-        ]);
+            'completed_at' => Carbon::now(),
+            'time_spent_seconds' => $elapsed,
+            'answered_count' => $metrics['answered_count'],
+            'unanswered_count' => $metrics['unanswered_count'],
+            'flagged_count' => $metrics['flagged_count'],
+            'feedback_level' => $feedback['level'],
+            'feedback_message' => $feedback['message'],
+        ]));
         
-        return redirect()->route('dashboard')
+        return redirect()->route('quiz.result', $attempt->id)
             ->with('info', 'Waktu habis! Jawaban tersimpan otomatis dikumpulkan. Skor Anda: ' . $score);
+    }
+
+    private function buildAttemptMetrics($answers, int $totalQuestions, int $score): array
+    {
+        $answeredCount = $answers->filter(fn ($answer) => !empty($answer->quiz_option_id))->count();
+        $flaggedCount = $answers->where('is_flagged', true)->count();
+        $wrongCount = $answers->where('is_correct', false)->filter(fn ($answer) => !empty($answer->quiz_option_id))->count();
+        $changeCount = $answers->sum('answer_change_count');
+
+        return [
+            'total_questions' => $totalQuestions,
+            'answered_count' => $answeredCount,
+            'unanswered_count' => max(0, $totalQuestions - $answeredCount),
+            'correct_count' => $answers->where('is_correct', true)->count(),
+            'wrong_count' => $wrongCount,
+            'flagged_count' => $flaggedCount,
+            'answer_change_count' => $changeCount,
+            'mastery_percent' => $score,
+            'completion_percent' => $totalQuestions > 0 ? round(($answeredCount / $totalQuestions) * 100) : 0,
+        ];
+    }
+
+    private function buildEvaluationFeedback(int $score, array $metrics): array
+    {
+        if ($score >= 85) {
+            $level = 'Sangat Baik';
+            $message = 'Penguasaan materi sudah kuat. Pertahankan ritme belajar dan gunakan hasil ini untuk memperdalam bagian soal yang masih sempat ditandai ragu-ragu.';
+        } elseif ($score >= 70) {
+            $level = 'Lulus';
+            $message = 'Anda sudah mencapai KKM. Agar pemahaman lebih stabil, tinjau kembali soal yang salah atau belum dijawab sebelum lanjut ke materi berikutnya.';
+        } else {
+            $level = 'Perlu Penguatan';
+            $message = 'Skor belum mencapai KKM. Pelajari kembali materi bab ini, fokus pada soal yang salah, lalu ulangi evaluasi setelah latihan singkat.';
+        }
+
+        if (($metrics['unanswered_count'] ?? 0) > 0) {
+            $message .= ' Masih ada ' . $metrics['unanswered_count'] . ' soal kosong; jadikan ini perhatian utama pada percobaan berikutnya.';
+        }
+
+        if (($metrics['flagged_count'] ?? 0) > 0) {
+            $message .= ' Terdapat ' . $metrics['flagged_count'] . ' soal ditandai ragu-ragu, sehingga bagian tersebut layak ditinjau ulang.';
+        }
+
+        return compact('level', 'message');
+    }
+
+    private function filterColumns(string $table, array $attributes): array
+    {
+        return collect($attributes)
+            ->filter(fn ($value, $column) => Schema::hasColumn($table, $column))
+            ->all();
     }
 }

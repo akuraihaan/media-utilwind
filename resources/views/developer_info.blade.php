@@ -196,7 +196,7 @@
                                 </div>
                                 
                                 <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-tight mb-5 transition-colors">
-                                    Penerapan Pemantauan Kinerja Siswa Pada Media Pembelajaran Interaktif Materi <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Tailwind CSS</span>
+                                    Integrasi Learning analytics Pada Media Pembelajaran Interaktif Materi <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Tailwind CSS</span> Dasar
                                 </h2>
 
                                 <p class="text-slate-600 dark:text-slate-400 text-[13px] md:text-[14px] leading-relaxed max-w-2xl transition-colors">

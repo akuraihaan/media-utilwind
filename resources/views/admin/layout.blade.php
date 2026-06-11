@@ -16,13 +16,13 @@
                 flex items-center justify-center font-bold text-black">
       FW
     </div>
-    <span class="font-semibold">Admin Panel</span>
+    <span class="font-semibold">Panel Admin</span>
   </div>
 
   <nav class="space-y-3 text-sm">
-    <a href="{{ route('admin.dashboard') }}" class="admin-link">Dashboard</a>
-    <a href="{{ route('admin.courses.index') }}" class="admin-link">Courses</a>
-    <a href="{{ route('admin.progress') }}" class="admin-link">Student Progress</a>
+    <a href="{{ route('admin.dashboard') }}" class="admin-link">Dasbor</a>
+    <a href="{{ route('admin.analytics.questions') }}" class="admin-link">Bank Soal</a>
+    <a href="{{ route('admin.lab.analytics') }}" class="admin-link">Analitik Lab</a>
   </nav>
 </aside>
 

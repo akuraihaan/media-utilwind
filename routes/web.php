@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cheatsheet', function () { return view('cheatsheet.index'); })->name('cheatsheet.index');
     Route::get('/gallery', function () { return view('components.gallery'); })->name('gallery.index');
     
-    // Dashboard & Sistem Token
+    // Dasbor & Sistem Token
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/student/join-class', [DashboardController::class, 'joinClass'])->name('student.join_class');
     Route::get('/api/dashboard/progress', [DashboardController::class, 'progress'])->name('api.dashboard.progress');
@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
 
 // ====================================================
 // 3. RESTRICTED LEARNING ROUTES (Wajib Punya Kelas)
-// Siswa yang belum join kelas akan dilempar ke Dashboard.
+// Siswa yang belum join kelas akan dilempar ke Dasbor.
 // ====================================================
 Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
     
@@ -86,12 +86,14 @@ Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
     Route::get('/courses/background-story', [CourseController::class, 'background'])->name('courses.latarbelakang');
     Route::get('/courses/implementation', [CourseController::class, 'implementation'])->name('courses.implementation');
     Route::get('/courses/advantages', [CourseController::class, 'advantages'])->name('courses.advantages');
-    Route::get('/courses/installation', [CourseController::class, 'installation'])->name('courses.installation');
+
 
     // BAB 2
+    Route::get('/courses/layout-basics', [CourseController::class, 'layoutBasics'])->name('courses.layout-basics');
     Route::get('/courses/flexbox', [CourseController::class, 'flexbox'])->name('courses.flexbox');
     Route::get('/courses/grid', [CourseController::class, 'grid'])->name('courses.grid');
-    Route::get('/courses/layout-management', [CourseController::class, 'layoutMgmt'])->name('courses.layout-mgmt');
+    Route::redirect('/courses/layout-management', '/courses/grid')->name('courses.layout-mgmt');
+    Route::get('/courses/responsive', [CourseController::class, 'responsive'])->name('courses.responsive');
 
     // BAB 3
     Route::get('/courses/typography', [CourseController::class, 'typography'])->name('courses.typography');
@@ -115,6 +117,8 @@ Route::middleware(['auth', 'verified', EnsureHasActiveClass::class])->group(func
     Route::get('/quiz/attempt/{chapterId}', [QuizController::class, 'show'])->name('quiz.show');
     Route::post('/quiz/save-progress', [QuizController::class, 'saveProgress'])->name('quiz.save-progress');
     Route::post('/quiz/submit', [QuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('/quiz/result/{attemptId}', [QuizController::class, 'result'])->name('quiz.result');
+    Route::post('/quiz/result/{attemptId}/reflection', [QuizController::class, 'saveReflection'])->name('quiz.reflection');
 });
 
 // ====================================================
@@ -122,7 +126,7 @@ Route::middleware(['auth', 'verified', EnsureHasActiveClass::class])->group(func
 // ====================================================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    // 1. Dashboard Utama
+    // 1. Dasbor Utama
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     
     // User Actions
@@ -139,14 +143,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/users/{id}/update', [AdminDashboardController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{id}', [AdminDashboardController::class, 'deleteUser'])->name('users.delete');
 
-    // 2. Analytics & Quiz Management
+    
+
+    // 2. Analitik & Manajemen Kuis
     Route::get('/analytics/questions', [AdminDashboardController::class, 'questionAnalytics'])->name('analytics.questions');
     Route::get('/questions/create', [AdminDashboardController::class, 'createQuestion'])->name('questions.create');
     Route::post('/questions/store', [AdminDashboardController::class, 'storeQuestion'])->name('questions.store');
     Route::post('/questions/update/{id}', [AdminDashboardController::class, 'updateQuestion'])->name('questions.update');
     Route::delete('/questions/delete/{id}', [AdminDashboardController::class, 'destroyQuestion'])->name('questions.destroy');
 
-    // 3. Lab Configuration & Analytics
+    // 3. Konfigurasi & Analitik Lab
     Route::get('/labs', [LabController::class, 'index'])->name('labs.index');
     Route::post('/labs', [LabController::class, 'store'])->name('labs.store');
     Route::put('/labs/{id}', [LabController::class, 'update'])->name('labs.update');
@@ -173,4 +179,4 @@ Route::get('/clear-time', function() {
     \Illuminate\Support\Facades\Artisan::call('config:clear');
     \Illuminate\Support\Facades\Artisan::call('cache:clear');
     return "Cache konfigurasi berhasil dibersihkan! Waktu sekarang: " . now();
-});
+})->middleware(['auth', 'admin']);

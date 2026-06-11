@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Quiz Creator Studio · Utilwind')
+@section('title', 'Studio Pembuat Kuis · Utilwind')
 
 @section('content')
 {{-- SETUP RESOURCES --}}
@@ -55,9 +55,9 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
                 <a href="{{ route('admin.analytics.questions') }}" class="text-xs font-bold text-white/40 hover:text-white transition uppercase tracking-widest flex items-center gap-2 mb-2">
-                    <span>←</span> Kembali ke Analytics
+                    <span>←</span> Kembali ke Analitik
                 </a>
-                <h1 class="text-3xl md:text-4xl font-black text-white">Quiz <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">Creator Studio</span></h1>
+                <h1 class="text-3xl md:text-4xl font-black text-white">Studio <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">Pembuat Kuis</span></h1>
             </div>
             
             <button onclick="submitForm()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:scale-105 transition transform flex items-center gap-2 w-full md:w-auto justify-center">
@@ -132,7 +132,7 @@
                 {{-- Label Preview --}}
                 <div class="absolute top-0 right-10 flex items-center gap-2 animate-pulse">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Live Preview Student App</span>
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Pratinjau Tampilan Siswa</span>
                 </div>
 
                 {{-- Phone Frame --}}
@@ -153,7 +153,7 @@
                             </div>
                             <div class="text-center">
                                 <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block" id="previewChapter">BAB 1</span>
-                                <span class="text-xs font-bold text-white">Quiz Session</span>
+                                <span class="text-xs font-bold text-white">Sesi Kuis</span>
                             </div>
                             <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs">1/10</div>
                         </div>

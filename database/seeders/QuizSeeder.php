@@ -2,399 +2,621 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\QuizQuestion;
 use App\Models\QuizOption;
+use App\Models\QuizQuestion;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use InvalidArgumentException;
 
 class QuizSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Opsional: Bersihkan tabel dulu agar tidak duplikat saat seeding ulang
         Schema::disableForeignKeyConstraints();
-        QuizQuestion::truncate();
         QuizOption::truncate();
+        QuizQuestion::truncate();
         Schema::enableForeignKeyConstraints();
 
-        // =================================================================
-        // BAB 1: PENDAHULUAN (10 SOAL)
-        // =================================================================
-        $bab1 = 1;
-
-        $this->createQuestion($bab1, 'Apa filosofi utama dari Tailwind CSS?', [
-            ['text' => 'Component-First Framework', 'correct' => false],
-            ['text' => 'Utility-First Framework', 'correct' => true],
-            ['text' => 'Object-Oriented CSS', 'correct' => false],
-            ['text' => 'Semantic CSS Framework', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Perintah CLI apa yang digunakan untuk membuat file konfigurasi tailwind.config.js?', [
-            ['text' => 'npx tailwindcss init', 'correct' => true],
-            ['text' => 'npm install tailwindcss', 'correct' => false],
-            ['text' => 'npx create-tailwind', 'correct' => false],
-            ['text' => 'tailwind --config', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Di file manakah kita mendefinisikan path file HTML/Blade agar Tailwind bisa melakukan Tree Shaking (menghapus CSS tak terpakai)?', [
-            ['text' => 'package.json', 'correct' => false],
-            ['text' => 'style.css', 'correct' => false],
-            ['text' => 'tailwind.config.js (bagian content)', 'correct' => true],
-            ['text' => 'webpack.mix.js', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Mana cara penulisan padding 1rem (16px) pada semua sisi yang benar di Tailwind?', [
-            ['text' => 'padding: 4', 'correct' => false],
-            ['text' => 'pa-4', 'correct' => false],
-            ['text' => 'p-4', 'correct' => true],
-            ['text' => 'p-16px', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Apa arti dari utility class "m-auto"?', [
-            ['text' => 'Margin otomatis hanya di atas dan bawah.', 'correct' => false],
-            ['text' => 'Margin otomatis di semua sisi.', 'correct' => true],
-            ['text' => 'Margin otomatis hanya di kiri dan kanan.', 'correct' => false],
-            ['text' => 'Membuat elemen menjadi absolute.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Apa keuntungan utama menggunakan Utility-First CSS seperti Tailwind?', [
-            ['text' => 'Kode HTML menjadi lebih bersih tanpa class.', 'correct' => false],
-            ['text' => 'Tidak perlu memikirkan nama class yang aneh-aneh (Naming Fatigue).', 'correct' => true],
-            ['text' => 'File CSS otomatis menjadi sangat besar.', 'correct' => false],
-            ['text' => 'Hanya bisa digunakan dengan React.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Directive Tailwind manakah yang digunakan untuk menyuntikkan style dasar (reset CSS)?', [
-            ['text' => '@tailwind base', 'correct' => true],
-            ['text' => '@tailwind components', 'correct' => false],
-            ['text' => '@tailwind utilities', 'correct' => false],
-            ['text' => '@tailwind reset', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Bagaimana cara menambahkan kustomisasi warna baru di tailwind.config.js?', [
-            ['text' => 'Di dalam properti "plugins".', 'correct' => false],
-            ['text' => 'Di dalam properti "theme" > "extend" > "colors".', 'correct' => true],
-            ['text' => 'Langsung di file CSS.', 'correct' => false],
-            ['text' => 'Tidak bisa dikustomisasi.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Class "w-full" setara dengan properti CSS apa?', [
-            ['text' => 'width: 100vw', 'correct' => false],
-            ['text' => 'width: 100%', 'correct' => true],
-            ['text' => 'width: auto', 'correct' => false],
-            ['text' => 'max-width: 100%', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab1, 'Untuk mengatur ukuran teks menjadi sangat kecil (0.75rem), class apa yang digunakan?', [
-            ['text' => 'text-sm', 'correct' => false],
-            ['text' => 'text-xs', 'correct' => true],
-            ['text' => 'text-tiny', 'correct' => false],
-            ['text' => 'font-small', 'correct' => false],
-        ]);
-
-
-        // =================================================================
-        // BAB 2: LAYOUTING (10 SOAL)
-        // =================================================================
-        $bab2 = 2;
-
-        $this->createQuestion($bab2, 'Kelas utilitas mana yang digunakan untuk menyusun item Flexbox secara vertikal (kolom)?', [
-            ['text' => 'flex-row', 'correct' => false],
-            ['text' => 'flex-col', 'correct' => true],
-            ['text' => 'items-center', 'correct' => false],
-            ['text' => 'grid-cols-1', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Apa fungsi dari kelas "flex-wrap" pada elemen induk?', [
-            ['text' => 'Mencegah elemen anak untuk menyusut.', 'correct' => false],
-            ['text' => 'Membalik urutan elemen anak.', 'correct' => false],
-            ['text' => 'Membungkus elemen anak ke baris baru jika tidak muat.', 'correct' => true],
-            ['text' => 'Memaksa semua elemen tetap dalam satu baris.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Kelas manakah yang membuat elemen mengisi sisa ruang yang tersedia (setara flex-grow: 1)?', [
-            ['text' => 'flex-1', 'correct' => true],
-            ['text' => 'flex-none', 'correct' => false],
-            ['text' => 'flex-initial', 'correct' => false],
-            ['text' => 'w-full', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Jika Anda ingin elemen tertentu muncul paling awal terlepas dari urutan HTML-nya, kelas apa yang digunakan?', [
-            ['text' => 'order-0', 'correct' => false],
-            ['text' => 'order-last', 'correct' => false],
-            ['text' => 'order-first', 'correct' => true],
-            ['text' => 'z-10', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Untuk membagi halaman menjadi 3 kolom grid yang sama besar, kelas apa yang digunakan?', [
-            ['text' => 'grid-rows-3', 'correct' => false],
-            ['text' => 'cols-3', 'correct' => false],
-            ['text' => 'grid-cols-3', 'correct' => true],
-            ['text' => 'flex-3', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Bagaimana cara membuat sebuah elemen Grid melebar (merge) menempati 2 kolom?', [
-            ['text' => 'col-span-2', 'correct' => true],
-            ['text' => 'row-span-2', 'correct' => false],
-            ['text' => 'col-start-2', 'correct' => false],
-            ['text' => 'w-2/4', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Kelas "justify-between" pada Flexbox berfungsi untuk...', [
-            ['text' => 'Menengahkan semua item.', 'correct' => false],
-            ['text' => 'Memberi jarak merata di antara item, item pertama di awal, item terakhir di akhir.', 'correct' => true],
-            ['text' => 'Memberi jarak merata di sekeliling item.', 'correct' => false],
-            ['text' => 'Meratakan item ke kanan.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Agar container berada di tengah layar secara horizontal, kelas apa yang digunakan bersama dengan width tertentu?', [
-            ['text' => 'text-center', 'correct' => false],
-            ['text' => 'align-center', 'correct' => false],
-            ['text' => 'mx-auto', 'correct' => true],
-            ['text' => 'justify-center', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Apa fungsi kelas "gap-4" pada container Grid atau Flex?', [
-            ['text' => 'Memberikan margin luar sebesar 1rem.', 'correct' => false],
-            ['text' => 'Memberikan jarak (gutter) antar item sebesar 1rem.', 'correct' => true],
-            ['text' => 'Memberikan padding dalam sebesar 1rem.', 'correct' => false],
-            ['text' => 'Membuat border setebal 4px.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab2, 'Kelas untuk membuat elemen absolute diposisikan relatif terhadap parent-nya adalah...', [
-            ['text' => 'Parent harus memiliki class "static"', 'correct' => false],
-            ['text' => 'Parent harus memiliki class "relative"', 'correct' => true],
-            ['text' => 'Parent harus memiliki class "fixed"', 'correct' => false],
-            ['text' => 'Tidak perlu class tambahan pada parent', 'correct' => false],
-        ]);
-
-
-        // =================================================================
-        // BAB 3: STYLING (10 SOAL)
-        // =================================================================
-        $bab3 = 3;
-
-        $this->createQuestion($bab3, 'Bagaimana cara membuat teks menjadi tebal (bold) di Tailwind?', [
-            ['text' => 'text-bold', 'correct' => false],
-            ['text' => 'font-bold', 'correct' => true],
-            ['text' => 'weight-bold', 'correct' => false],
-            ['text' => 'style-bold', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Kelas apa yang digunakan untuk mengubah warna teks menjadi biru standar?', [
-            ['text' => 'color-blue-500', 'correct' => false],
-            ['text' => 'text-blue-500', 'correct' => true],
-            ['text' => 'font-blue-500', 'correct' => false],
-            ['text' => 'bg-blue-500', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Untuk membuat sudut elemen menjadi benar-benar bulat (lingkaran), gunakan kelas...', [
-            ['text' => 'rounded', 'correct' => false],
-            ['text' => 'rounded-lg', 'correct' => false],
-            ['text' => 'rounded-full', 'correct' => true],
-            ['text' => 'circle', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Bagaimana cara menerapkan warna background HANYA saat mouse diarahkan ke elemen (hover)?', [
-            ['text' => 'bg-red-500-hover', 'correct' => false],
-            ['text' => 'hover:bg-red-500', 'correct' => true],
-            ['text' => 'on-hover:bg-red-500', 'correct' => false],
-            ['text' => 'bg-hover-red-500', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Kelas "shadow-lg" digunakan untuk memberikan efek apa?', [
-            ['text' => 'Bayangan teks (Text Shadow)', 'correct' => false],
-            ['text' => 'Bayangan kotak (Box Shadow) berukuran besar', 'correct' => true],
-            ['text' => 'Garis tepi (Border)', 'correct' => false],
-            ['text' => 'Efek transparan (Opacity)', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Untuk membuat huruf pertama setiap kata menjadi kapital, gunakan kelas...', [
-            ['text' => 'uppercase', 'correct' => false],
-            ['text' => 'lowercase', 'correct' => false],
-            ['text' => 'capitalize', 'correct' => true],
-            ['text' => 'text-caps', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Kelas manakah yang digunakan untuk mengatur ketebalan border?', [
-            ['text' => 'border-4', 'correct' => true],
-            ['text' => 'border-width-4', 'correct' => false],
-            ['text' => 'stroke-4', 'correct' => false],
-            ['text' => 'outline-4', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Apa fungsi dari kelas "opacity-50"?', [
-            ['text' => 'Membuat elemen 50% lebih kecil.', 'correct' => false],
-            ['text' => 'Membuat elemen menjadi 50% transparan.', 'correct' => true],
-            ['text' => 'Memutar elemen 50 derajat.', 'correct' => false],
-            ['text' => 'Mengubah warna menjadi abu-abu.', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Manakah kelas untuk membuat background gradient dari kiri ke kanan?', [
-            ['text' => 'bg-gradient-to-r', 'correct' => true],
-            ['text' => 'bg-gradient-to-l', 'correct' => false],
-            ['text' => 'bg-gradient-to-b', 'correct' => false],
-            ['text' => 'linear-gradient-right', 'correct' => false],
-        ]);
-
-        $this->createQuestion($bab3, 'Untuk menghilangkan garis bawah pada link (anchor), gunakan kelas...', [
-            ['text' => 'no-underline', 'correct' => true],
-            ['text' => 'decoration-none', 'correct' => false],
-            ['text' => 'text-plain', 'correct' => false],
-            ['text' => 'remove-decoration', 'correct' => false],
-        ]);
-
-
-        // =================================================================
-        // EVALUASI AKHIR (GABUNGAN BAB 1-3) - 20 SOAL
-        // =================================================================
-        // Anggap ID Chapter untuk Evaluasi Akhir adalah 99 atau sesuai kebutuhan
-        $evaluasi = 99; 
-
-        // Soal 1-5: Konsep Dasar
-        $this->createQuestion($evaluasi, 'Dalam konsep Utility-First, bagaimana cara kita membuat style?', [
-            ['text' => 'Menulis CSS kustom di file terpisah.', 'correct' => false],
-            ['text' => 'Menggabungkan class-class kecil langsung di HTML.', 'correct' => true],
-            ['text' => 'Menggunakan tag style inline.', 'correct' => false],
-            ['text' => 'Menggunakan preprocessor SASS.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Satuan ukuran default yang digunakan Tailwind (seperti p-4, m-2) adalah...', [
-            ['text' => 'Pixel (px)', 'correct' => false],
-            ['text' => 'REM (root em)', 'correct' => true],
-            ['text' => 'Persentase (%)', 'correct' => false],
-            ['text' => 'Point (pt)', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Class "hidden" pada Tailwind setara dengan...', [
-            ['text' => 'visibility: hidden', 'correct' => false],
-            ['text' => 'display: none', 'correct' => true],
-            ['text' => 'opacity: 0', 'correct' => false],
-            ['text' => 'z-index: -1', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Bagaimana cara membuat elemen responsif yang hanya muncul di layar desktop (lg)?', [
-            ['text' => 'hidden lg:block', 'correct' => true],
-            ['text' => 'block lg:hidden', 'correct' => false],
-            ['text' => 'visible-lg', 'correct' => false],
-            ['text' => 'desktop:show', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Breakpoint "md" di Tailwind secara default menargetkan lebar layar minimal...', [
-            ['text' => '640px', 'correct' => false],
-            ['text' => '768px', 'correct' => true],
-            ['text' => '1024px', 'correct' => false],
-            ['text' => '1280px', 'correct' => false],
-        ]);
-
-        // Soal 6-12: Layouting (Flex & Grid)
-        $this->createQuestion($evaluasi, 'Kombinasi kelas untuk memusatkan item Flexbox secara total (tengah vertikal & horizontal)?', [
-            ['text' => 'flex justify-center items-center', 'correct' => true],
-            ['text' => 'flex align-middle text-center', 'correct' => false],
-            ['text' => 'flex center-all', 'correct' => false],
-            ['text' => 'flex justify-between items-start', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Apa efek dari "flex-row-reverse"?', [
-            ['text' => 'Menyusun item dari bawah ke atas.', 'correct' => false],
-            ['text' => 'Menyusun item secara horizontal dari kanan ke kiri.', 'correct' => true],
-            ['text' => 'Membalik warna item.', 'correct' => false],
-            ['text' => 'Menghapus item flex.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Untuk membuat grid responsif: 1 kolom di HP dan 3 kolom di tablet ke atas, kodenya adalah...', [
-            ['text' => 'grid-cols-1 md:grid-cols-3', 'correct' => true],
-            ['text' => 'grid-cols-3 mobile:grid-cols-1', 'correct' => false],
-            ['text' => 'cols-1 cols-md-3', 'correct' => false],
-            ['text' => 'grid-responsive-3', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Kelas "space-y-4" berfungsi untuk...', [
-            ['text' => 'Memberi margin atas pada semua elemen anak kecuali yang pertama.', 'correct' => true],
-            ['text' => 'Memberi padding vertikal 1rem.', 'correct' => false],
-            ['text' => 'Memberi jarak antar huruf secara vertikal.', 'correct' => false],
-            ['text' => 'Membuat spasi baris (line-height).', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Posisi "sticky" akan membuat elemen...', [
-            ['text' => 'Selalu diam di posisi awal.', 'correct' => false],
-            ['text' => 'Menempel pada sisi layar saat di-scroll melewati batas tertentu.', 'correct' => true],
-            ['text' => 'Melayang di atas elemen lain secara permanen.', 'correct' => false],
-            ['text' => 'Hilang saat di-scroll.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Kelas "z-50" digunakan untuk...', [
-            ['text' => 'Zoom level 50%.', 'correct' => false],
-            ['text' => 'Mengatur tumpukan elemen (z-index) agar berada di atas.', 'correct' => true],
-            ['text' => 'Memberi jarak 50 unit.', 'correct' => false],
-            ['text' => 'Mengatur transparansi.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Class "object-cover" biasanya digunakan pada tag <img> untuk...', [
-            ['text' => 'Membuat gambar menjadi hitam putih.', 'correct' => false],
-            ['text' => 'Menjaga rasio aspek gambar sambil memenuhi container (crop jika perlu).', 'correct' => true],
-            ['text' => 'Memaksa gambar gepeng sesuai container.', 'correct' => false],
-            ['text' => 'Membuat gambar menjadi background.', 'correct' => false],
-        ]);
-
-        // Soal 13-20: Styling & Effects
-        $this->createQuestion($evaluasi, 'Bagaimana cara membuat efek transisi halus saat warna berubah?', [
-            ['text' => 'transition duration-300', 'correct' => true],
-            ['text' => 'animate-smooth', 'correct' => false],
-            ['text' => 'effect-fade', 'correct' => false],
-            ['text' => 'transform-color', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Class "cursor-pointer" akan mengubah kursor mouse menjadi...', [
-            ['text' => 'Tanda panah standar.', 'correct' => false],
-            ['text' => 'Ikon tangan menunjuk (hand).', 'correct' => true],
-            ['text' => 'Ikon teks (I-beam).', 'correct' => false],
-            ['text' => 'Ikon loading.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Untuk membuat elemen menjadi lingkaran penuh, kita menggunakan border-radius sejauh...', [
-            ['text' => '50%', 'correct' => false],
-            ['text' => '9999px (rounded-full)', 'correct' => true],
-            ['text' => '100px', 'correct' => false],
-            ['text' => '360deg', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Warna "bg-transparent" berarti...', [
-            ['text' => 'Warna putih.', 'correct' => false],
-            ['text' => 'Tidak memiliki warna latar belakang (tembus pandang).', 'correct' => true],
-            ['text' => 'Warna hitam pekat.', 'correct' => false],
-            ['text' => 'Warna default browser.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Kelas "tracking-widest" mempengaruhi properti CSS...', [
-            ['text' => 'word-spacing', 'correct' => false],
-            ['text' => 'letter-spacing', 'correct' => true],
-            ['text' => 'line-height', 'correct' => false],
-            ['text' => 'text-indent', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Efek "hover:scale-110" akan membuat elemen...', [
-            ['text' => 'Berputar 110 derajat saat disorot.', 'correct' => false],
-            ['text' => 'Membesar 10% saat disorot mouse.', 'correct' => true],
-            ['text' => 'Pindah posisi ke kanan.', 'correct' => false],
-            ['text' => 'Menjadi transparan.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Apa fungsi dari "ring-2 ring-blue-500"?', [
-            ['text' => 'Membuat lingkaran biru.', 'correct' => false],
-            ['text' => 'Menambahkan outline/box-shadow solid di luar elemen berwarna biru.', 'correct' => true],
-            ['text' => 'Membuat elemen berdering.', 'correct' => false],
-            ['text' => 'Mengubah warna border menjadi biru.', 'correct' => false],
-        ]);
-        $this->createQuestion($evaluasi, 'Pseudo-class "focus:outline-none" biasanya digunakan pada input form untuk...', [
-            ['text' => 'Menghilangkan garis biru default browser saat diklik.', 'correct' => true],
-            ['text' => 'Membuat input tidak bisa diklik.', 'correct' => false],
-            ['text' => 'Menghapus border input secara permanen.', 'correct' => false],
-            ['text' => 'Mengubah warna teks input.', 'correct' => false],
-        ]);
-
+        DB::transaction(function () {
+            foreach ($this->questions() as $question) {
+                $this->createQuestion(
+                    $question['chapter'],
+                    $question['text'],
+                    $question['options'],
+                    $question['answer']
+                );
+            }
+        });
     }
 
-    /**
-     * Helper function untuk membuat pertanyaan dan opsi jawaban.
-     */
-    private function createQuestion($chapter, $text, $options)
+    private function questions(): array
     {
-        $q = QuizQuestion::create([
+        return [
+            // BAB 1
+            [
+                'chapter' => 1,
+                'answer' => 'B',
+                'text' => 'Peran utama HTML dalam pembuatan halaman web adalah...',
+                'options' => [
+                    'A' => 'Mengatur warna latar halaman',
+                    'B' => 'Menyusun struktur dan isi halaman',
+                    'C' => 'Memberi bayangan pada elemen',
+                    'D' => 'Mengatur ukuran layar perangkat',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'B',
+                'text' => 'Bagian HTML yang berisi konten yang tampil langsung kepada pengguna adalah ....',
+                'options' => [
+                    'A' => '<head>',
+                    'B' => '<body>',
+                    'C' => '<meta>',
+                    'D' => '<title>',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'C',
+                'text' => 'Perhatikan kode berikut: <a href="https://www.example.com">Kunjungi</a>. Fungsi atribut href pada kode tersebut adalah ....',
+                'options' => [
+                    'A' => 'Memberi warna pada teks tautan',
+                    'B' => 'Membuat teks menjadi tebal',
+                    'C' => 'Menentukan alamat tujuan tautan',
+                    'D' => 'Menampilkan gambar pada halaman',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'B',
+                'text' => 'Sebuah halaman memiliki bagian atas, menu navigasi, isi utama, dan bagian bawah. Susunan tag semantik yang paling tepat antara lain...',
+                'options' => [
+                    'A' => '<div>, <span>, <br>, dan <style>',
+                    'B' => '<header>, <nav>, <main>, dan <footer>',
+                    'C' => '<meta>, <title>, <link>, dan <script>',
+                    'D' => '<p>, <a>, <img>, dan <input>',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'C',
+                'text' => 'Perhatikan kode tombol berikut: <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold">Simpan</button>. Bagian yang mengatur padding kiri dan kanan adalah ....',
+                'options' => [
+                    'A' => 'bg-blue-600',
+                    'B' => 'text-white',
+                    'C' => 'px-4',
+                    'D' => 'rounded-lg',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'B',
+                'text' => 'Perhatikan class rounded-lg pada komponen kartu. Class rounded-lg digunakan untuk...',
+                'options' => [
+                    'A' => 'Memberi bayangan pada kartu',
+                    'B' => 'Membuat sudut kartu melengkung',
+                    'C' => 'Memberi warna latar putih',
+                    'D' => 'Memberi padding pada kartu',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'C',
+                'text' => 'Perhatikan alur kerja Tailwind CSS. Makna alur tersebut adalah ....',
+                'options' => [
+                    'A' => 'input.css langsung dibuka di browser sebagai halaman utama',
+                    'B' => 'index.html diproses menjadi input.css',
+                    'C' => 'output.css menjadi file CSS hasil yang digunakan oleh HTML',
+                    'D' => 'package.json menggantikan fungsi output.css',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'A',
+                'text' => 'Dalam instalasi Tailwind CSS menggunakan Tailwind CLI, file output.css berfungsi sebagai ...',
+                'options' => [
+                    'A' => 'File hasil build yang dihubungkan ke HTML',
+                    'B' => 'File sumber yang berisi struktur HTML',
+                    'C' => 'File untuk menyimpan perintah NPM',
+                    'D' => 'File untuk mengganti package.json',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'B',
+                'text' => 'Perhatikan konfigurasi warna sekolah. Setelah konfigurasi diproses, class yang tepat untuk menggunakan warna tersebut sebagai latar adalah ....',
+                'options' => [
+                    'A' => 'bg-color-sekolah',
+                    'B' => 'bg-sekolah-500',
+                    'C' => 'theme-sekolah-500',
+                    'D' => 'warna-sekolah-500',
+                ],
+            ],
+            [
+                'chapter' => 1,
+                'answer' => 'A',
+                'text' => 'Seseorang ingin mencoba Tailwind CSS tanpa instalasi. Langkah yang paling tepat yaitu....',
+                'options' => [
+                    'A' => 'menambahkan script CDN Tailwind CSS pada bagian <head>',
+                    'B' => 'membuat file output.css terlebih dahulu',
+                    'C' => 'menjalankan Tailwind CLI sebelum membuat HTML',
+                    'D' => 'menulis konfigurasi @theme pada package.json',
+                ],
+            ],
+
+            // BAB 2
+            [
+                'chapter' => 2,
+                'answer' => 'B',
+                'text' => 'Fungsi utama layout dalam halaman web adalah ....',
+                'options' => [
+                    'A' => 'Menghapus elemen yang tidak digunakan pada halaman',
+                    'B' => 'Mengatur susunan elemen agar halaman rapi dan mudah dibaca',
+                    'C' => 'Mengubah semua teks menjadi gambar agar lebih menarik',
+                    'D' => 'Menentukan jenis database yang digunakan oleh halaman web',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'C',
+                'text' => 'Pada struktur halaman web, bagian yang paling tepat digunakan untuk menampung isi utama halaman adalah....',
+                'options' => [
+                    'A' => '<header>',
+                    'B' => '<nav>',
+                    'C' => '<main>',
+                    'D' => '<footer>',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'A',
+                'text' => 'Class Tailwind CSS yang paling tepat digunakan agar isi elemen tidak menempel pada tepi adalah....',
+                'options' => [
+                    'A' => 'p-6',
+                    'B' => 'mx-auto',
+                    'C' => 'grid-cols-3',
+                    'D' => 'justify-between',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'A',
+                'text' => 'Sebuah menu berisi Profil, Pesanan, dan Keluar perlu disusun dari atas ke bawah dengan jarak yang cukup. Susunan class yang paling tepat adalah....',
+                'options' => [
+                    'A' => 'flex flex-col gap-3',
+                    'B' => 'grid grid-cols-3 gap-3',
+                    'C' => 'flex flex-row justify-between',
+                    'D' => 'block mx-auto max-w-md',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'B',
+                'text' => 'Judul berada di kiri, menu berada di kanan, dan keduanya sejajar secara vertikal. Susunan class yang paling tepat untuk elemen <nav> adalah ....',
+                'options' => [
+                    'A' => 'flex flex-col gap-4',
+                    'B' => 'flex items-center justify-between',
+                    'C' => 'grid grid-cols-1 items-center',
+                    'D' => 'block text-center justify-between',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'B',
+                'text' => 'Perhatikan kode input pada navbar. Fungsi class flex-1 pada tag <input> tersebut yaitu...',
+                'options' => [
+                    'A' => 'Membuat input tersembunyi pada layar kecil',
+                    'B' => 'Membuat input mengisi ruang kosong di antara judul dan tombol',
+                    'C' => 'Membuat input berubah menjadi tiga kolom',
+                    'D' => 'Membuat input berada di bawah tombol',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'B',
+                'text' => 'Susunan class yang paling tepat untuk membuat daftar produk menjadi tiga kolom dengan jarak antar kartu adalah ....',
+                'options' => [
+                    'A' => 'flex flex-col gap-4',
+                    'B' => 'grid grid-cols-3 gap-4',
+                    'C' => 'grid grid-cols-1 col-span-3',
+                    'D' => 'block max-w-md mx-auto',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'C',
+                'text' => 'Pada Grid tiga kolom, class yang tepat agar produk utama menempati dua kolom adalah ....',
+                'options' => [
+                    'A' => 'grid-cols-2',
+                    'B' => 'gap-2',
+                    'C' => 'col-span-2',
+                    'D' => 'flex-1',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'B',
+                'text' => 'Class yang sesuai untuk membuat kartu tampil satu kolom di layar kecil, dua kolom di layar sedang, dan tiga kolom di layar besar adalah ....',
+                'options' => [
+                    'A' => 'grid grid-cols-3',
+                    'B' => 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3',
+                    'C' => 'flex flex-row gap-4',
+                    'D' => 'hidden md:block lg:hidden',
+                ],
+            ],
+            [
+                'chapter' => 2,
+                'answer' => 'A',
+                'text' => 'Sebuah bagian halaman perlu memiliki padding kecil pada layar kecil, tetapi lebih besar pada layar sedang ke atas. Susunan class yang paling tepat adalah....',
+                'options' => [
+                    'A' => 'p-4 md:p-8',
+                    'B' => 'gap-4 md:grid-cols-2',
+                    'C' => 'flex-col md:flex-row',
+                    'D' => 'grid-cols-1 lg:text-4xl',
+                ],
+            ],
+
+            // BAB 3
+            [
+                'chapter' => 3,
+                'answer' => 'B',
+                'text' => 'Fungsi utama styling dalam halaman web adalah ....',
+                'options' => [
+                    'A' => 'Menghapus struktur HTML yang tidak digunakan',
+                    'B' => 'Memperjelas tampilan elemen agar halaman lebih rapi dan mudah dibaca',
+                    'C' => 'Mengubah semua elemen menjadi gambar',
+                    'D' => 'Membuat halaman web tanpa memerlukan CSS',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Dalam Tailwind CSS, class font-mono paling tepat digunakan untuk ....',
+                'options' => [
+                    'A' => 'Teks yang berkaitan dengan kode atau tampilan huruf berjarak tetap',
+                    'B' => 'Tombol utama yang harus berwarna biru',
+                    'C' => 'Kartu produk yang memiliki bayangan',
+                    'D' => 'Paragraf biasa yang harus selalu rata tengah',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Class Tailwind CSS yang tepat untuk mengatur jarak antarbaris adalah ....',
+                'options' => [
+                    'A' => 'leading-7',
+                    'B' => 'rounded-lg',
+                    'C' => 'bg-blue-600',
+                    'D' => 'border-slate-300',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'B',
+                'text' => 'Perhatikan kode berikut. Fungsi class font-bold pada kode tersebut adalah ....',
+                'options' => [
+                    'A' => 'Membuat teks menjadi berwarna',
+                    'B' => 'Membuat teks menjadi tebal',
+                    'C' => 'Membuat teks elemen melengkung',
+                    'D' => 'Memberi bayangan pada teks',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Sebuah judul bagian ingin diletakkan di tengah area halaman. Class Tailwind CSS yang paling tepat digunakan adalah ....',
+                'options' => [
+                    'A' => 'text-center',
+                    'B' => 'text-right',
+                    'C' => 'font-bold',
+                    'D' => 'leading-7',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Sebuah kotak informasi bertuliskan "Data berhasil disimpan" perlu diberi latar hijau muda dan teks hijau gelap. Kombinasi class yang paling tepat adalah ....',
+                'options' => [
+                    'A' => 'bg-green-100 text-green-700',
+                    'B' => 'bg-red-100 text-red-700',
+                    'C' => 'bg-blue-600 text-white',
+                    'D' => 'border border-slate-300',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Class yang digunakan untuk memberi garis tepi pada elemen adalah....',
+                'options' => [
+                    'A' => 'border',
+                    'B' => 'rounded',
+                    'C' => 'shadow-md',
+                    'D' => 'text-base',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Class Tailwind CSS yang tepat untuk membuat sudut tombol melengkung adalah....',
+                'options' => [
+                    'A' => 'rounded-lg',
+                    'B' => 'shadow-lg',
+                    'C' => 'leading-7',
+                    'D' => 'font-semibold',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Sebuah paragraf deskripsi terlihat terlalu padat saat terdiri dari beberapa baris. Class Tailwind CSS yang dapat digunakan agar jarak antarbaris lebih nyaman adalah ....',
+                'options' => [
+                    'A' => 'leading-7',
+                    'B' => 'rounded-xl',
+                    'C' => 'shadow-md',
+                    'D' => 'border',
+                ],
+            ],
+            [
+                'chapter' => 3,
+                'answer' => 'A',
+                'text' => 'Sebuah kartu produk perlu memiliki tampilan rapi. Judul dibuat besar dan tebal, deskripsi dibuat abu-abu, kartu berlatar putih, tombol berlatar biru, dan sudut kartu melengkung. Pilihan class yang paling sesuai adalah ....',
+                'options' => [
+                    'A' => 'bg-white rounded-xl text-2xl font-bold text-slate-600 bg-blue-600 text-white',
+                    'B' => 'grid grid-cols-3 gap-4 col-span-2 flex-1 justify-between',
+                    'C' => 'hidden md:block lg:grid p-0 text-left border-none',
+                    'D' => 'font-mono leading-7 grid-cols-1 justify-center',
+                ],
+            ],
+
+            // EVALUASI AKHIR
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Dalam pembuatan halaman web, HTML berperan untuk ...',
+                'options' => [
+                    'A' => 'menyusun struktur dan isi utama halaman web',
+                    'B' => 'menyimpan semua file yang digunakan dalam halaman web',
+                    'C' => 'menjalankan perintah untuk membuka halaman web',
+                    'D' => 'mengirim halaman web agar tampil di mesin pencari',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'D',
+                'text' => 'Bagian HTML yang berisi konten yang tampil langsung kepada pengguna adalah ...',
+                'options' => [
+                    'A' => '<head>',
+                    'B' => '<meta>',
+                    'C' => '<title>',
+                    'D' => '<body>',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Perhatikan kode berikut: <a href="https://www.example.com">Kunjungi</a>. Fungsi atribut href pada kode tersebut adalah ...',
+                'options' => [
+                    'A' => 'menentukan alamat tujuan tautan',
+                    'B' => 'memberi warna pada teks tautan',
+                    'C' => 'membuat teks menjadi lebih tebal',
+                    'D' => 'menampilkan gambar pada halaman',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Sebuah halaman memiliki bagian atas, menu navigasi, isi utama, dan bagian bawah. Susunan tag semantik yang paling tepat yaitu ....',
+                'options' => [
+                    'A' => '<header>, <nav>, <main>, dan <footer>',
+                    'B' => '<div>, <span>, <br>, dan <style>',
+                    'C' => '<meta>, <title>, <link>, dan <script>',
+                    'D' => '<p>, <a>, <img>, dan <input>',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'C',
+                'text' => 'Perhatikan kode berikut: <button class="tombol">Simpan</button> .tombol-utama { background-color: #2563eb; color: white; }. Tampilan tombol tidak berubah sesuai aturan CSS karena ....',
+                'options' => [
+                    'A' => 'elemen <button> harus diganti menjadi <a> agar dapat diberi warna',
+                    'B' => 'property background-color seharusnya ditulis pada HTML',
+                    'C' => 'nama class pada HTML tidak sesuai dengan selector CSS',
+                    'D' => 'selector class hanya dapat digunakan pada elemen paragraf',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'C',
+                'text' => 'Perhatikan kode berikut: <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold">Simpan</button>. Pernyataan yang paling tepat tentang kode tersebut yaitu ...',
+                'options' => [
+                    'A' => 'semua tampilan tombol diatur oleh satu class utama',
+                    'B' => 'class tersebut hanya digunakan untuk menandai struktur HTML',
+                    'C' => 'setiap utility class mengatur bagian kecil dari tampilan tombol',
+                    'D' => 'tampilan tombol tetap harus ditulis ulang pada file CSS terpisah',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Perhatikan kode tombol berikut: <button class="bg-blue-600 text-white rounded-lg">Simpan</button>. Tombol sudah memiliki warna latar, warna teks, dan sudut melengkung. Namun, ruang dalam tombol belum nyaman. Class yang paling tepat ditambahkan yaitu ....',
+                'options' => [
+                    'A' => 'px-4 py-2',
+                    'B' => 'mt-4 mb-4',
+                    'C' => 'shadow-md border',
+                    'D' => 'text-center font-mono',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'B',
+                'text' => 'Seseorang ingin mencoba Tailwind CSS tanpa instalasi. Langkah yang paling tepat dilakukan adalah ...',
+                'options' => [
+                    'A' => 'membuat file input.css, lalu menjalankan build',
+                    'B' => 'menambahkan script CDN Tailwind CSS pada bagian <head>',
+                    'C' => 'memasang package tailwindcss melalui NPM terlebih dahulu',
+                    'D' => 'menulis nilai desain khusus menggunakan @theme',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Class Tailwind CSS sudah ditulis pada elemen HTML melalui CDN, tetapi tampilan belum berubah. Pemeriksaan awal yang paling tepat adalah...',
+                'options' => [
+                    'A' => 'memastikan script CDN ditulis dengan benar dan perangkat terhubung ke internet',
+                    'B' => 'mengganti semua class Tailwind CSS dengan selector CSS biasa',
+                    'C' => 'memindahkan semua class Tailwind CSS ke dalam bagian <head>',
+                    'D' => 'menghubungkan output.css karena CDN tidak dapat langsung digunakan',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'B',
+                'text' => 'Elemen input search harus memenuhi sisa padding navbar tanpa mengganggu tombol lain. Utilitas yang tepat adalah ...',
+                'options' => [
+                    'A' => 'shrink-0',
+                    'B' => 'flex-1',
+                    'C' => 'flex-wrap',
+                    'D' => 'block',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'B',
+                'text' => 'Dalam instalasi Tailwind CSS, alur kerja file yang tepat adalah ...',
+                'options' => [
+                    'A' => 'output.css diproses menjadi input.css, lalu dihubungkan ke HTML',
+                    'B' => 'input.css diproses oleh Tailwind CLI menjadi output.css, lalu dihubungkan ke HTML',
+                    'C' => 'index.html diproses menjadi output.css, lalu dihubungkan ke package.json',
+                    'D' => 'package-lock.json diproses menjadi input.css, lalu dibuka di browser',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'B',
+                'text' => 'Sebuah navbar memiliki judul di kiri dan menu di kanan. Keduanya perlu sejajar secara vertikal. Susunan class yang paling tepat untuk elemen pembungkus navbar adalah ...',
+                'options' => [
+                    'A' => 'flex flex-col gap-4',
+                    'B' => 'flex items-center justify-between',
+                    'C' => 'grid grid-cols-3 gap-4',
+                    'D' => 'items-start justify-center text-center',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'C',
+                'text' => 'Perhatikan kebutuhan layout berikut: Daftar kartu perlu tampil dalam tiga kolom. Setiap kartu perlu memiliki jarak agar tidak menempel. Susunan class Tailwind CSS yang paling sesuai yaitu...',
+                'options' => [
+                    'A' => 'flex flex-col gap-4',
+                    'B' => 'grid grid-cols-1 gap-4',
+                    'C' => 'grid grid-cols-3 gap-4',
+                    'D' => 'grid col-span-3 gap-4',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'B',
+                'text' => 'Pada Grid tiga kolom, satu kartu utama perlu dibuat lebih lebar dan menempati dua kolom. Class yang tepat ditulis pada kartu utama adalah ...',
+                'options' => [
+                    'A' => 'grid-cols-2',
+                    'B' => 'col-span-2',
+                    'C' => 'gap-2',
+                    'D' => 'flex-1',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Perhatikan kebutuhan layout berikut: layar kecil kartu tampil satu kolom, layar sedang dua kolom, layar besar tiga kolom, dan jarak antar kartu tetap rapi. Susunan class yang paling tepat yaitu ...',
+                'options' => [
+                    'A' => 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3',
+                    'B' => 'grid grid-cols-3 gap-4 md:grid-cols-2 lg:grid-cols-1',
+                    'C' => 'flex flex-col gap-4 md:grid-cols-2 lg:grid-cols-3',
+                    'D' => 'grid gap-4 flex-col md:flex-row lg:grid-cols-3',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'D',
+                'text' => 'Sebuah proyek membutuhkan warna khusus bernama utama-500 agar dapat digunakan sebagai class bg-utama-500. Konfigurasi yang tepat ditulis pada @theme yaitu ...',
+                'options' => [
+                    'A' => '--radius-utama-500: #16a34a;',
+                    'B' => '--shadow-utama-500: #16a34a;',
+                    'C' => '--font-utama-500: #16a34a;',
+                    'D' => '--color-utama-500: #16a34a;',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Sebuah kartu informasi perlu memiliki tampilan berikut: latar putih, sudut melengkung besar, bayangan sedang, judul besar dan tebal, deskripsi berwarna abu-abu. Susunan class yang paling tepat untuk membentuk tampilan tersebut yaitu ...',
+                'options' => [
+                    'A' => 'bg-white rounded-xl shadow-md text-3xl font-bold text-slate-600',
+                    'B' => 'bg-white rounded-md shadow-none text-base font-medium text-slate-900',
+                    'C' => 'bg-slate-100 rounded-full shadow-lg text-sm font-bold text-white',
+                    'D' => 'bg-blue-600 text-white border-slate-300 font-mono leading-7',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Perhatikan potongan kode berikut: <p class="text-slate-600">Sepatu ini ringan untuk kegiatan harian. Bahannya nyaman digunakan dan cocok dipakai ke sekolah.</p>. Jika paragraf tersebut menjadi dua atau tiga baris, tampilannya masih terasa padat saat dibaca. Class yang paling tepat ditambahkan pada elemen <p> adalah ...',
+                'options' => [
+                    'A' => 'leading-7',
+                    'B' => 'font-bold',
+                    'C' => 'text-center',
+                    'D' => 'font-mono',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Kartu informasi terlihat kurang menonjol dibanding area di sekitarnya. Pengguna menjadi sulit membedakan batas antara area halaman dan isi kartu. Perbaikan yang paling sesuai adalah....',
+                'options' => [
+                    'A' => 'mengganti latar kartu menjadi bg-white',
+                    'B' => 'mengganti teks kartu menjadi text-white',
+                    'C' => 'mengganti tombol menjadi bg-slate-100',
+                    'D' => 'mengganti kartu menjadi text-slate-600',
+                ],
+            ],
+            [
+                'chapter' => 99,
+                'answer' => 'A',
+                'text' => 'Tombol B terlihat lebih halus karena sudutnya melengkung. Class Tailwind CSS yang sesuai untuk membuat bentuk tersebut adalah....',
+                'options' => [
+                    'A' => 'rounded-lg',
+                    'B' => 'shadow-none',
+                    'C' => 'text-slate-600',
+                    'D' => 'bg-white',
+                ],
+            ],
+        ];
+    }
+
+    private function createQuestion(int $chapter, string $text, array $options, string $answer): void
+    {
+        $expectedLabels = ['A', 'B', 'C', 'D'];
+        $labels = array_keys($options);
+        sort($labels);
+
+        if ($labels !== $expectedLabels) {
+            throw new InvalidArgumentException("Soal chapter {$chapter} harus memiliki opsi A, B, C, dan D.");
+        }
+
+        if (!array_key_exists($answer, $options)) {
+            throw new InvalidArgumentException("Kunci {$answer} tidak ditemukan untuk soal: {$text}");
+        }
+
+        $question = QuizQuestion::create([
             'chapter_id' => $chapter,
-            'question_text' => $text
+            'question_text' => $text,
         ]);
 
-        foreach ($options as $opt) {
+        foreach ($expectedLabels as $label) {
             QuizOption::create([
-                'quiz_question_id' => $q->id,
-                'option_text' => $opt['text'],
-                'is_correct' => $opt['correct']
+                'quiz_question_id' => $question->id,
+                'option_text' => $options[$label],
+                'is_correct' => $label === $answer,
             ]);
         }
     }

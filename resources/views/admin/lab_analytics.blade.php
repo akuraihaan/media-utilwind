@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Lab Analytics</title>
+    <title>Analitik Lab</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -193,6 +193,126 @@
         
         $chartLabels = $chartLabels ?? [];
         $chartData = $chartData ?? [];
+
+
+        // Data chart utama: perbandingan nilai kuis dan nilai lab.
+        // Data dikalkulasi dari skor terbaik agar grafik tidak bias oleh percobaan berulang.
+        $assessmentLabels = collect();
+        $quizScoreSeries = collect();
+        $labScoreSeries = collect();
+        $quizChartAverage = null;
+        $labChartAverage = null;
+        $quizChartHighest = null;
+        $labChartHighest = null;
+        $hasAssessmentChartData = false;
+
+        try {
+            $quizBestRaw = collect();
+            $labBestRaw = collect();
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('quiz_attempts')) {
+                $quizDateColumn = \Illuminate\Support\Facades\Schema::hasColumn('quiz_attempts', 'completed_at') ? 'completed_at' : 'created_at';
+                $quizChapterColumn = \Illuminate\Support\Facades\Schema::hasColumn('quiz_attempts', 'chapter_id') ? 'chapter_id' : null;
+
+                if ($quizChapterColumn && \Illuminate\Support\Facades\Schema::hasColumn('quiz_attempts', 'score')) {
+                    $quizAttemptsForChart = \Illuminate\Support\Facades\DB::table('quiz_attempts')
+                        ->select('user_id', 'chapter_id', 'score', \Illuminate\Support\Facades\DB::raw($quizDateColumn . ' as chart_date'))
+                        ->whereNotNull('score')
+                        ->whereNotNull('chapter_id')
+                        ->get();
+
+                    $quizBestRaw = $quizAttemptsForChart
+                        ->groupBy(fn ($item) => $item->user_id . '-' . $item->chapter_id)
+                        ->map(function ($items) {
+                            return $items->sortByDesc('score')->sortByDesc('chart_date')->first();
+                        })
+                        ->values()
+                        ->groupBy('chapter_id')
+                        ->map(function ($items) {
+                            return round((float) $items->avg('score'), 1);
+                        });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('lab_histories')) {
+                $hasLabsTable = \Illuminate\Support\Facades\Schema::hasTable('labs');
+                $hasLabChapter = $hasLabsTable && \Illuminate\Support\Facades\Schema::hasColumn('labs', 'chapter_id');
+                $labDateColumn = \Illuminate\Support\Facades\Schema::hasColumn('lab_histories', 'updated_at') ? 'lab_histories.updated_at' : 'lab_histories.created_at';
+
+                if (\Illuminate\Support\Facades\Schema::hasColumn('lab_histories', 'final_score')) {
+                    $labQueryForChart = \Illuminate\Support\Facades\DB::table('lab_histories')
+                        ->select(
+                            'lab_histories.user_id',
+                            'lab_histories.lab_id',
+                            'lab_histories.final_score',
+                            \Illuminate\Support\Facades\DB::raw($labDateColumn . ' as chart_date'),
+                            \Illuminate\Support\Facades\DB::raw(($hasLabChapter ? 'labs.chapter_id' : 'lab_histories.lab_id') . ' as chart_group')
+                        )
+                        ->whereNotNull('lab_histories.final_score');
+
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('lab_histories', 'status')) {
+                        $labQueryForChart->whereIn('lab_histories.status', ['passed', 'failed', 'completed']);
+                    }
+
+                    if ($hasLabsTable) {
+                        $labQueryForChart->leftJoin('labs', 'lab_histories.lab_id', '=', 'labs.id');
+                    }
+
+                    $labAttemptsForChart = $labQueryForChart->get();
+
+                    $labBestRaw = $labAttemptsForChart
+                        ->filter(fn ($item) => $item->chart_group !== null)
+                        ->groupBy(fn ($item) => $item->user_id . '-' . $item->chart_group)
+                        ->map(function ($items) {
+                            return $items->sortByDesc('final_score')->sortByDesc('chart_date')->first();
+                        })
+                        ->values()
+                        ->groupBy('chart_group')
+                        ->map(function ($items) {
+                            return round((float) $items->avg('final_score'), 1);
+                        });
+                }
+            }
+
+            $assessmentKeys = collect($quizBestRaw->keys())
+                ->merge($labBestRaw->keys())
+                ->filter(fn ($key) => $key !== null && $key !== '')
+                ->unique()
+                ->sortBy(fn ($key) => is_numeric($key) ? (int) $key : 999)
+                ->values();
+
+            $assessmentLabels = $assessmentKeys
+                ->map(fn ($key) => ((string) $key === '99') ? 'Evaluasi' : 'Bab ' . $key)
+                ->values();
+
+            $quizScoreSeries = $assessmentKeys
+                ->map(fn ($key) => isset($quizBestRaw[$key]) ? $quizBestRaw[$key] : null)
+                ->values();
+
+            $labScoreSeries = $assessmentKeys
+                ->map(fn ($key) => isset($labBestRaw[$key]) ? $labBestRaw[$key] : null)
+                ->values();
+
+            $validQuizScores = $quizScoreSeries->filter(fn ($score) => $score !== null);
+            $validLabScores = $labScoreSeries->filter(fn ($score) => $score !== null);
+
+            $quizChartAverage = $validQuizScores->count() ? round($validQuizScores->avg(), 1) : null;
+            $labChartAverage = $validLabScores->count() ? round($validLabScores->avg(), 1) : null;
+            $quizChartHighest = $validQuizScores->count() ? round($validQuizScores->max(), 1) : null;
+            $labChartHighest = $validLabScores->count() ? round($validLabScores->max(), 1) : null;
+            $hasAssessmentChartData = $validQuizScores->count() > 0 || $validLabScores->count() > 0;
+        } catch (\Exception $e) {
+            $assessmentLabels = collect();
+            $quizScoreSeries = collect();
+            $labScoreSeries = collect();
+            $hasAssessmentChartData = false;
+        }
+
+        if (!$hasAssessmentChartData) {
+            $assessmentLabels = collect(['Belum Ada Data']);
+            $quizScoreSeries = collect([null]);
+            $labScoreSeries = collect([null]);
+        }
     @endphp
 
     <div class="flex h-screen w-full relative">
@@ -219,33 +339,33 @@
 
         <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dashboard
+                        Dasbor
                     </a>
                 </div>
             </div>
 
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Quiz Management
+                        Manajemen Kuis
                     </a>
                     <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Configuration
+                        Konfigurasi Lab
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Lab Analytics
+                        Analitik Lab
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Class Management
+                        Manajemen Kelas
                     </a>
                 </div>
             </div>
@@ -300,11 +420,11 @@
                             <div>
                                 <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
                                     <ol class="inline-flex items-center space-x-1">
-                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
+                                        <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dasbor</a></li>
                                         <li>
                                             <div class="flex items-center transition-colors">
                                                 <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                                <span class="text-slate-900 dark:text-white transition-colors">Lab Analytics</span>
+                                                <span class="text-slate-900 dark:text-white transition-colors">Analitik Lab</span>
                                             </div>
                                         </li>
                                     </ol>
@@ -319,7 +439,7 @@
                                 </div>
                                 <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                    Global Overview & Monitoring
+                                    Ikhtisar & Pemantauan Global
                                 </p>
                             </div>
                         </div>
@@ -429,38 +549,84 @@
                     </div>
 
                     {{-- =======================================================
-                         B. DUAL CHARTS
+                         B. CHART PERFORMA AKADEMIK
                          ======================================================= --}}
-                    <div class="grid lg:grid-cols-3 gap-8 reveal" style="animation-delay: 0.2s;">
-                        
-                        {{-- Chart 1: Activity Trend --}}
-                        <div class="lg:col-span-2 glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden">
-                            <div class="flex justify-between items-center mb-6 relative z-10">
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white transition-colors">Tren Aktivitas Mingguan</h3>
-                                    <p class="text-[10px] text-slate-500 dark:text-white/40 mt-0.5 transition-colors">Jumlah percobaan siswa 7 hari terakhir.</p>
-                                </div>
-                                <span class="text-[10px] bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/20 font-bold uppercase tracking-widest flex items-center gap-1.5 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_5px_#6366f1]"></span>Live</span>
-                            </div>
-                            <div class="flex-1 w-full relative z-10 h-[300px]">
-                                <canvas id="labTrendChart"></canvas>
-                            </div>
-                            <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-indigo-100/50 dark:from-indigo-900/10 to-transparent pointer-events-none transition-colors"></div>
-                        </div>
+                    <div class="reveal" style="animation-delay: 0.2s;" x-data="{ chartView: 'all', chartType: 'line' }">
+                        <div class="glass-card rounded-2xl overflow-hidden relative">
+                            <div class="relative px-6 py-5 border-b border-slate-200 dark:border-white/5 bg-slate-50/60 dark:bg-[#0a0e17]/50 transition-colors overflow-hidden">
+                                <div class="absolute -top-24 -right-16 w-72 h-72 bg-indigo-300/20 dark:bg-indigo-600/10 rounded-full blur-[90px] pointer-events-none"></div>
+                                <div class="absolute -bottom-28 -left-16 w-72 h-72 bg-cyan-300/20 dark:bg-cyan-600/10 rounded-full blur-[90px] pointer-events-none"></div>
 
-                        {{-- Chart 2: Pass Ratio --}}
-                        <div class="glass-card rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden border-t-2 border-emerald-500/30">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 w-full text-left transition-colors">Rasio Kelulusan Modul</h3>
-                            <div class="relative w-48 h-48">
-                                <canvas id="passFailChart"></canvas>
-                                <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-                                    <span class="text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $totalAttempts }}</span>
-                                    <span class="text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Total</span>
+                                <div class="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                                    <div>
+                                        <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-1">
+                                            Performa Akademik
+                                        </p>
+                                        <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white transition-colors">
+                                            Grafik Perkembangan Nilai Kuis dan Lab
+                                        </h3>
+                                        <p class="text-xs text-slate-500 dark:text-white/40 mt-1 font-medium transition-colors max-w-2xl">
+                                            Menampilkan rata-rata skor terbaik per bab. Data kosong dibiarkan kosong, bukan dianggap nol.
+                                        </p>
+                                    </div>
+
+                                    <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                                        <div class="flex items-center bg-white/80 dark:bg-[#020617] p-1 rounded-xl border border-slate-200 dark:border-white/5 shadow-inner transition-colors">
+                                            <button type="button" @click="chartView = 'all'; window.updateMainPerformanceChartView('all')" :class="chartView === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Semua</button>
+                                            <button type="button" @click="chartView = 'quiz'; window.updateMainPerformanceChartView('quiz')" :class="chartView === 'quiz' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Kuis</button>
+                                            <button type="button" @click="chartView = 'lab'; window.updateMainPerformanceChartView('lab')" :class="chartView === 'lab' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Lab</button>
+                                        </div>
+
+                                        <div class="flex items-center bg-white/80 dark:bg-[#020617] p-1 rounded-xl border border-slate-200 dark:border-white/5 shadow-inner transition-colors">
+                                            <button type="button" @click="chartType = 'line'; window.updateMainPerformanceChartType('line')" :class="chartType === 'line' ? 'bg-slate-900 dark:bg-white text-white dark:text-[#020617] shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Line</button>
+                                            <button type="button" @click="chartType = 'bar'; window.updateMainPerformanceChartType('bar')" :class="chartType === 'bar' ? 'bg-slate-900 dark:bg-white text-white dark:text-[#020617] shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Bar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex justify-center gap-6 mt-8 w-full text-xs">
-                                <div class="flex items-center gap-2 font-bold text-slate-600 dark:text-white/60 transition-colors"><span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span> Passed</div>
-                                <div class="flex items-center gap-2 font-bold text-slate-600 dark:text-white/60 transition-colors"><span class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]"></span> Failed</div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 pt-5">
+                                <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Avg Kuis</p>
+                                    <p class="mt-1 text-xl font-black text-cyan-600 dark:text-cyan-400">{{ $quizChartAverage !== null ? $quizChartAverage : '-' }}</p>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Avg Lab</p>
+                                    <p class="mt-1 text-xl font-black text-blue-600 dark:text-blue-400">{{ $labChartAverage !== null ? $labChartAverage : '-' }}</p>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Best Kuis</p>
+                                    <p class="mt-1 text-xl font-black text-emerald-600 dark:text-emerald-400">{{ $quizChartHighest !== null ? $quizChartHighest : '-' }}</p>
+                                </div>
+                                <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Best Lab</p>
+                                    <p class="mt-1 text-xl font-black text-indigo-600 dark:text-indigo-400">{{ $labChartHighest !== null ? $labChartHighest : '-' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="relative p-6">
+                                <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                                    <div class="absolute -top-16 right-8 w-72 h-72 bg-indigo-300/10 dark:bg-indigo-500/10 rounded-full blur-[90px]"></div>
+                                    <div class="absolute -bottom-20 left-4 w-72 h-72 bg-cyan-300/10 dark:bg-cyan-500/10 rounded-full blur-[90px]"></div>
+                                </div>
+
+                                <div class="relative h-[330px] w-full z-10">
+                                    @if($hasAssessmentChartData)
+                                        <canvas id="mainPerformanceChart"></canvas>
+                                    @else
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-white/[0.02] transition-colors">
+                                            <p class="text-xs font-semibold text-slate-400 dark:text-white/40">Belum ada data nilai kuis atau lab.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="relative z-10 mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-[10px] font-bold text-slate-500 dark:text-white/40">
+                                    <div class="flex items-center gap-4">
+                                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>Nilai Kuis</span>
+                                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Nilai Lab</span>
+                                    </div>
+                                    <p>Skor terbaik per bab. Data kosong tidak dipaksa menjadi 0.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -472,7 +638,7 @@
                         <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-                                    <span class="text-amber-500 drop-shadow-[0_0_8px_#eab308]">🏆</span> Top Performers
+                                    Top Performers
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Peringkat siswa berdasarkan nilai terbaik dan kecepatan.</p>
                             </div>
@@ -484,7 +650,7 @@
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-10 shadow-sm dark:shadow-lg transition-colors">
                                     <tr>
                                         <th class="px-6 py-4 w-16 text-center border-b border-slate-200 dark:border-white/5">Rank</th>
-                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Student Profile</th>
+                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Profil Siswa</th>
                                         <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Statistics</th>
                                         <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Last Active</th>
                                         <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Best Score</th>
@@ -504,7 +670,7 @@
                                         <td class="px-6 py-4">
                                             <div class="flex flex-col">
                                                 <a href="{{ route('admin.student.analytics', $usr->student_id ?? 1) }}" class="font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-2 group-hover:translate-x-1 duration-200">
-                                                    {{ $usr->name ?? 'Student' }}
+                                                    {{ $usr->name ?? 'Siswa' }}
                                                     <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                                 </a>
                                                 <span class="text-[10px] text-slate-500 dark:text-white/30 font-mono mt-0.5 transition-colors">{{ $usr->email ?? '-' }}</span>
@@ -513,10 +679,10 @@
                                         <td class="px-6 py-4 text-center">
                                             <div class="flex justify-center items-center gap-3">
                                                 <span class="bg-white dark:bg-[#020617] px-2 py-1.5 rounded-lg text-[10px] text-slate-600 dark:text-white/60 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">
-                                                    🔄 {{ $usr->total_tries ?? 0 }}x
+                                                    Percobaan {{ $usr->total_tries ?? 0 }}x
                                                 </span>
                                                 <span class="bg-white dark:bg-[#020617] px-2 py-1.5 rounded-lg text-[10px] text-cyan-600 dark:text-cyan-400 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">
-                                                    ⏱️ {{ is_numeric($usr->avg_time ?? 0) ? gmdate("i:s", $usr->avg_time) : ($usr->avg_time ?? 0) }}
+                                                    Durasi {{ is_numeric($usr->avg_time ?? 0) ? gmdate("i:s", $usr->avg_time) : ($usr->avg_time ?? 0) }}
                                                 </span>
                                             </div>
                                         </td>
@@ -567,28 +733,28 @@
             <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Analitik & Pemantauan Performa</p>
             
             <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Halaman ini dikonstruksikan sebagai instrumen analitik komprehensif bagi Administrator dalam mengevaluasi efektivitas modul praktikum (Lab) secara terpusat.</p>
+                <p>Halaman ini membantu admin membaca perkembangan praktikum siswa secara lebih cepat. Data utama ditampilkan dalam bentuk ringkasan, grafik, dan daftar peringkat agar mudah ditindaklanjuti.</p>
                 
                 <div class="space-y-3 mt-4 text-left">
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Indikator Kinerja Makro</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menyajikan kompilasi data kuantitatif terkait agregat percobaan, rasio keberhasilan murni, serta kalkulasi rata-rata skor dan durasi pelaksanaan praktikum.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan jumlah percobaan, rasio kelulusan, rata-rata nilai, dan rata-rata durasi pengerjaan lab.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Visualisasi Tren & Rasio</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pemetaan grafis distribusi kelulusan dan fluktuasi intensitas aktivitas harian siswa untuk mengukur pola partisipasi akademik.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan grafik perkembangan nilai kuis dan lab agar pola belajar siswa lebih mudah dibaca.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Hierarki Prestasi Peserta</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Direktori peringkat siswa yang diklasifikasikan berdasarkan performa perolehan nilai tertinggi (Top Performers).</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan siswa dengan performa terbaik berdasarkan nilai, jumlah percobaan, dan waktu pengerjaan.</p>
                         </div>
                     </div>
                 </div>
@@ -622,7 +788,7 @@
                 @forelse($userPerformance->sortByDesc('total_tries')->take(10) as $usr)
                 <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-colors group shadow-sm dark:shadow-inner">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">{{ $usr->name ?? 'Student' }}</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">{{ $usr->name ?? 'Siswa' }}</p>
                         <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-1 transition-colors">{{ $usr->email ?? '-' }}</p>
                     </div>
                     <div class="text-right shrink-0">
@@ -690,7 +856,7 @@
                 @forelse($userPerformance->sortByDesc('best_score')->take(10) as $usr)
                 <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-amber-300 dark:hover:border-yellow-500/30 transition-colors group shadow-sm dark:shadow-inner">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-amber-600 dark:group-hover:text-yellow-300 transition-colors">{{ $usr->name ?? 'Student' }}</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-amber-600 dark:group-hover:text-yellow-300 transition-colors">{{ $usr->name ?? 'Siswa' }}</p>
                         <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-1 transition-colors">{{ $usr->email ?? '-' }}</p>
                     </div>
                     <div class="text-right shrink-0">
@@ -725,7 +891,7 @@
                 @forelse($userPerformance->sortBy('avg_time')->take(10) as $usr)
                 <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors group shadow-sm dark:shadow-inner">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">{{ $usr->name ?? 'Student' }}</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">{{ $usr->name ?? 'Siswa' }}</p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="text-lg font-black text-cyan-600 dark:text-cyan-400 font-mono transition-colors">{{ is_numeric($usr->avg_time ?? 0) ? gmdate("i:s", $usr->avg_time) : ($usr->avg_time ?? '00:00') }}</span>
@@ -781,82 +947,142 @@
             });
 
             // ==========================================
-            // CHARTS INITIALIZATION (Adaptif Tema)
+            // MAIN PERFORMANCE CHART
             // ==========================================
-            const ctxTrend = document.getElementById('labTrendChart');
-            const ctxPie = document.getElementById('passFailChart');
-            let trendChart, pieChart;
+            const performanceCanvas = document.getElementById('mainPerformanceChart');
+            let mainPerformanceChart = null;
+            let activeChartView = 'all';
+            let activeChartType = 'line';
+
+            function createGradient(ctx, color) {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 330);
+                if (color === 'cyan') {
+                    gradient.addColorStop(0, 'rgba(6, 182, 212, 0.35)');
+                    gradient.addColorStop(0.55, 'rgba(6, 182, 212, 0.11)');
+                    gradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
+                } else {
+                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.32)');
+                    gradient.addColorStop(0.55, 'rgba(99, 102, 241, 0.11)');
+                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                }
+                return gradient;
+            }
 
             function initCharts() {
+                if (!performanceCanvas) return;
+
                 const isDark = document.documentElement.classList.contains('dark');
-                // Setup warna sesuai CSS variable
                 const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim();
                 const tickColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-tick').trim();
-                const donutBorder = isDark ? '#020617' : '#ffffff';
-                const trendPointBg = isDark ? '#0f141e' : '#ffffff';
-                const trendLineColor = isDark ? '#818cf8' : '#6366f1';
+                const ctx = performanceCanvas.getContext('2d');
 
-                // 1. TREND CHART (Line)
-                if(ctxTrend) {
-                    const gradient = ctxTrend.getContext('2d').createLinearGradient(0, 0, 0, 300);
-                    gradient.addColorStop(0, isDark ? 'rgba(99, 102, 241, 0.4)' : 'rgba(99, 102, 241, 0.2)');
-                    gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+                if (mainPerformanceChart) mainPerformanceChart.destroy();
 
-                    if (trendChart) trendChart.destroy();
+                const isLine = activeChartType === 'line';
+                const quizGradient = createGradient(ctx, 'cyan');
+                const labGradient = createGradient(ctx, 'blue');
 
-                    trendChart = new Chart(ctxTrend.getContext('2d'), {
-                        type: 'line',
-                        data: {
-                            labels: {!! json_encode($chartLabels ?? []) !!},
-                            datasets: [{
-                                label: 'Percobaan',
-                                data: {!! json_encode($chartData ?? []) !!},
-                                borderColor: trendLineColor,
-                                backgroundColor: gradient,
-                                borderWidth: 3,
-                                pointBackgroundColor: trendPointBg,
-                                pointBorderColor: trendLineColor,
+                mainPerformanceChart = new Chart(ctx, {
+                    type: activeChartType,
+                    data: {
+                        labels: {!! json_encode($assessmentLabels->values()) !!},
+                        datasets: [
+                            {
+                                label: 'Nilai Kuis',
+                                data: {!! json_encode($quizScoreSeries->values()) !!},
+                                borderColor: '#06b6d4',
+                                backgroundColor: isLine ? quizGradient : 'rgba(6, 182, 212, 0.72)',
+                                borderWidth: isLine ? 3 : 0,
+                                borderRadius: isLine ? 0 : 8,
+                                pointBackgroundColor: isDark ? '#0f141e' : '#ffffff',
+                                pointBorderColor: '#06b6d4',
                                 pointBorderWidth: 2,
-                                pointRadius: 6,
-                                pointHoverRadius: 8,
-                                fill: true,
-                                tension: 0.4
-                            }]
+                                pointRadius: isLine ? 4 : 0,
+                                pointHoverRadius: 7,
+                                fill: isLine,
+                                tension: 0.42,
+                                spanGaps: false,
+                                hidden: activeChartView === 'lab'
+                            },
+                            {
+                                label: 'Nilai Lab',
+                                data: {!! json_encode($labScoreSeries->values()) !!},
+                                borderColor: '#3b82f6',
+                                backgroundColor: isLine ? labGradient : 'rgba(59, 130, 246, 0.72)',
+                                borderWidth: isLine ? 3 : 0,
+                                borderRadius: isLine ? 0 : 8,
+                                pointBackgroundColor: isDark ? '#0f141e' : '#ffffff',
+                                pointBorderColor: '#3b82f6',
+                                pointBorderWidth: 2,
+                                pointRadius: isLine ? 4 : 0,
+                                pointHoverRadius: 7,
+                                fill: isLine,
+                                tension: 0.42,
+                                spanGaps: false,
+                                hidden: activeChartView === 'quiz'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: isDark ? 'rgba(15, 20, 30, 0.96)' : 'rgba(255, 255, 255, 0.96)',
+                                titleColor: isDark ? '#ffffff' : '#0f172a',
+                                bodyColor: isDark ? '#cbd5e1' : '#475569',
+                                borderColor: gridColor,
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: true,
+                                usePointStyle: true,
+                                titleFont: { family: 'Inter', size: 12, weight: '800' },
+                                bodyFont: { family: 'Inter', size: 11, weight: '600' },
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.raw === null || context.raw === undefined) {
+                                            return context.dataset.label + ': belum ada data';
+                                        }
+                                        return context.dataset.label + ': ' + context.raw + ' poin';
+                                    }
+                                }
+                            }
                         },
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                x: { grid: { display: false }, ticks: { color: tickColor, font: {size: 10, family: 'JetBrains Mono'} } },
-                                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1, font: {family: 'JetBrains Mono'} } }
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: tickColor, font: { size: 10, family: 'JetBrains Mono', weight: '600' } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: { color: gridColor, drawBorder: false },
+                                ticks: {
+                                    color: tickColor,
+                                    stepSize: 20,
+                                    font: { size: 10, family: 'JetBrains Mono', weight: '600' },
+                                    callback: function(value) { return value + ' pts'; }
+                                }
                             }
                         }
-                    });
-                }
-
-                // 2. PASS/FAIL CHART (Doughnut)
-                if(ctxPie) {
-                    if (pieChart) pieChart.destroy();
-                    
-                    pieChart = new Chart(ctxPie.getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Passed', 'Failed'],
-                            datasets: [{
-                                data: [{{ $passedCount ?? 0 }}, {{ $failedCount ?? 0 }}],
-                                backgroundColor: ['#10b981', '#ef4444'], 
-                                borderColor: donutBorder,
-                                borderWidth: 5,
-                                hoverOffset: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true, maintainAspectRatio: false, cutout: '75%',
-                            plugins: { legend: {display: false} }
-                        }
-                    });
-                }
+                    }
+                });
             }
+
+            window.updateMainPerformanceChartView = function(view) {
+                activeChartView = view;
+                if (!mainPerformanceChart) return;
+                mainPerformanceChart.data.datasets[0].hidden = view === 'lab';
+                mainPerformanceChart.data.datasets[1].hidden = view === 'quiz';
+                mainPerformanceChart.update();
+            };
+
+            window.updateMainPerformanceChartType = function(type) {
+                activeChartType = type;
+                initCharts();
+            };
 
             initCharts();
 

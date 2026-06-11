@@ -332,33 +332,33 @@
 
         <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Overview</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dashboard
+                        Dasbor
                     </a>
                 </div>
             </div>
 
             <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Academic</p>
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
                 <div class="space-y-1">
                     <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Quiz Management
+                        Manajemen Kuis
                     </a>
                     <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Lab Configuration
+                        Konfigurasi Lab
                     </a>
                     <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Lab Analytics
+                        Analitik Lab
                     </a>
                     <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Class Management
+                        Manajemen Kelas
                     </a>
                 </div>
             </div>
@@ -412,18 +412,18 @@
                     
                     {{-- Judul & Breadcrumb --}}
                     <div class="flex items-center gap-3">
-                        <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke Overview">
+                        <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke Ikhtisar">
                             <svg class="w-4 h-4 text-slate-500 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                         </button>
 
                         <div>
                             <nav class="flex text-[10px] text-slate-500 dark:text-white/50 mb-1.5 font-bold hidden sm:flex transition-colors" aria-label="Breadcrumb">
                                 <ol class="inline-flex items-center space-x-1">
-                                    <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a></li>
+                                    <li class="inline-flex items-center"><a href="{{ route('admin.dashboard') ?? '#' }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dasbor</a></li>
                                     <li>
                                         <div class="flex items-center transition-colors">
                                             <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                            <span class="text-slate-700 dark:text-white transition-colors">Quiz Management</span>
+                                            <span class="text-slate-700 dark:text-white transition-colors">Manajemen Kuis</span>
                                         </div>
                                     </li>
                                 </ol>
@@ -521,7 +521,7 @@
                         {{-- Akurasi Global --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-emerald-500 cursor-pointer group transition-all" @click="showAccuracyModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Akurasi Global</p>
+                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Akurasi soal</p>
                                 <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">?</div>
                                     <div class="tooltip-content">
@@ -532,7 +532,7 @@
                             </div>
                             <div class="flex items-baseline gap-1 mt-2">
                                 <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $globalAcc }}</h3>
-                                <span class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold">%</span>
+                                <span class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold"></span>
                             </div>
                             <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Rincian &rarr;</p>
                         </div>
@@ -665,8 +665,8 @@
                                     <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase font-bold tracking-widest mt-1 transition-colors">Soal</p>
                                 </div>
                                 <div>
-                                    <p class="text-3xl md:text-4xl font-black {{ $finalAcc >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400' }} group-hover:scale-110 transition">{{ $finalAcc }}%</p>
-                                    <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase font-bold tracking-widest mt-1 transition-colors">Avg Skor</p>
+                                    <p class="text-3xl md:text-4xl font-black {{ $finalAcc >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400' }} group-hover:scale-110 transition">{{ $finalAcc }}</p>
+                                    <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase font-bold tracking-widest mt-1 transition-colors">Rata-rata Skor</p>
                                 </div>
                                 <div class="flex items-center hidden sm:flex">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-white group-hover:bg-yellow-500 group-hover:text-slate-900 transition shadow-sm dark:shadow-none">
@@ -686,7 +686,7 @@
                             <div class="flex flex-col gap-3 mb-4 pb-4 border-b border-slate-200 dark:border-white/5 transition-colors">
                                 <div>
                                     <h3 class="text-lg font-bold text-adaptive flex items-center gap-2">
-                                        <svg class="w-5 h-5 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                                        {{-- <svg class="w-5 h-5 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg> --}}
                                         Daftar Seluruh Evaluasi Siswa
                                     </h3>
                                     <p class="text-[10px] text-adaptive-muted mt-1 font-mono">Diurutkan berdasarkan rata-rata nilai kuis tertinggi.</p>
@@ -739,7 +739,7 @@
                                         <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         Log Evaluasi Terbaru
                                     </h3>
-                                    <p class="text-[10px] text-adaptive-muted mt-1 font-mono">Penyelesaian kuis secara *real-time*.</p>
+                                    <p class="text-[10px] text-adaptive-muted mt-1 font-mono">Log penyelesaian kuis secara real-time.</p>
                                 </div>
                             </div>
 
@@ -763,7 +763,7 @@
                                             <div class="flex-1 min-w-0 pl-8">
                                                 <p class="text-[11px] font-medium leading-snug transition-colors text-adaptive">
                                                     {{ $act->chapter_id == 99 ? 'Evaluasi Akhir' : 'Kuis Bab ' . $act->chapter_id }}
-                                                    <span class="{{ $isPassed ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black ml-1">({{ $act->score }} Pts)</span>
+                                                    <span class="{{ $isPassed ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black ml-1">({{ $act->score }} Poin)</span>
                                                 </p>
                                                 <div class="flex items-center justify-between mt-1.5">
                                                     <p class="text-[9px] text-adaptive-muted font-mono transition-colors flex items-center gap-1">
@@ -919,7 +919,7 @@
                     </div>
                     <div>
                         <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Rata-Rata Nilai</p>
-                        <p class="text-base font-black text-emerald-600 dark:text-emerald-400" x-text="selectedStudent?.summary_score + ' Pts'"></p>
+                        <p class="text-base font-black text-emerald-600 dark:text-emerald-400" x-text="selectedStudent?.summary_score + ' Poin'"></p>
                     </div>
                 </div>
             </div>
@@ -1056,7 +1056,7 @@
                     <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-0.5 transition-colors">{{ $stat->email }}</p>
                 </div>
                 <div class="text-right shrink-0">
-                    <span class="block text-sm font-black transition-colors {{ $stat->avg_score >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">{{ $stat->avg_score }} Avg</span>
+                    <span class="block text-sm font-black transition-colors {{ $stat->avg_score >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">Rata-rata : {{ $stat->avg_score }} </span>
                     <span class="text-[9px] text-slate-500 dark:text-white/40 transition-colors">{{ $stat->total_attempts }} Evaluasi Selesai</span>
                 </div>
             </div>
@@ -1245,7 +1245,7 @@
                     <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                     <div>
                         <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Metrik Makro</h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kartu rangkuman yang menyajikan status agregat, meliputi rasio penyelesaian kuis, kalkulasi akurasi global, serta rekapitulasi data pengerjaan.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kartu rangkuman yang menyajikan status agregat, meliputi rasio penyelesaian kuis, kalkulasi, serta rekapitulasi data pengerjaan.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
@@ -1391,7 +1391,7 @@
         $.post(url, form.serialize()).done((res) => { 
             Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', background: bg, color: color, confirmButtonColor: '#6366f1' }).then(() => location.reload()); 
         }).fail((err) => { 
-            Swal.fire({ title: 'Error', text: err.responseJSON?.message || 'Terjadi kesalahan sistem', icon: 'error', background: bg, color: color, confirmButtonColor: '#ef4444' }); 
+            Swal.fire({ title: 'Gagal', text: err.responseJSON?.message || 'Terjadi kesalahan sistem', icon: 'error', background: bg, color: color, confirmButtonColor: '#ef4444' }); 
         });
     }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Ujian Bab {{ $chapterId }} | Utilwind CBT</title>
+    <title>Evaluasi Bab {{ $chapterId }} | Utilwind CBT</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
@@ -65,7 +65,7 @@
         </div>
         <h2 class="text-2xl font-bold text-white mb-2 tracking-widest uppercase">Fokus Terganggu</h2>
         <p class="text-white/50 max-w-md">
-            Sistem mendeteksi Anda meninggalkan halaman ujian. <br>Kembali fokus mengerjakan soal sekarang.
+            Sistem mendeteksi Anda meninggalkan halaman evaluasi. <br>Kembali fokus mengerjakan soal sekarang.
         </p>
         <button @click="isBlurred = false" class="mt-8 px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-900/40">
             KEMBALI KE UJIAN
@@ -202,7 +202,11 @@
                     
                     <template x-if="currentIndex === questions.length - 1">
                         <button @click="confirmSubmit()" 
-                                class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2 font-bold text-sm animate-pulse">
+                                :disabled="!isComplete"
+                                class="px-8 py-2.5 rounded-xl transition-all flex items-center gap-2 font-bold text-sm"
+                                :class="isComplete
+                                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/30 animate-pulse'
+                                    : 'bg-white/5 border border-white/10 text-white/35 cursor-not-allowed'">
                             <span>Kumpulkan</span>
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         </button>
@@ -247,9 +251,12 @@
             </div>
             
             <div class="p-4 border-t border-white/5 bg-white/[0.02] text-center">
+                 <div x-show="!isComplete" class="mb-3 text-[10px] text-amber-300/90 font-bold tracking-widest uppercase bg-amber-500/5 py-2 rounded border border-amber-500/20">
+                    Lengkapi <span x-text="unansweredCount"></span> soal sebelum mengumpulkan
+                </div>
                  <div class="flex items-center justify-center gap-2 text-[10px] text-red-400/80 font-bold tracking-widest uppercase bg-red-500/5 py-2 rounded border border-red-500/20">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m0 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    Akses Keluar Dikunci
+                    Fokus Evaluasi Aktif
                 </div>
             </div>
         </aside>
@@ -262,16 +269,26 @@
                 questions: @json($questions),
                 savedAnswers: @json($savedAnswers),
                 timeLeft: Math.floor({{ $remainingSeconds }}), 
+                initialRemainingSeconds: Math.floor({{ $remainingSeconds }}),
                 attemptId: {{ $attemptId }},
                 
                 currentIndex: 0,
                 answers: {},
                 flags: {},
+                focusLostCount: 0,
                 ready: false,
                 isBlurred: false,
                 timerInterval: null,
 
                 get currentQuestion() { return this.questions[this.currentIndex]; },
+                get answeredCount() { return Object.keys(this.answers).filter(qId => this.answers[qId]).length; },
+                get unansweredCount() { return Math.max(0, this.questions.length - this.answeredCount); },
+                get isComplete() { return this.unansweredCount === 0; },
+                get unansweredNumbers() {
+                    return this.questions
+                        .map((q, index) => this.answers[q.id] ? null : index + 1)
+                        .filter(number => number !== null);
+                },
 
                 initCBT() {
                     // 1. Restore Data
@@ -322,11 +339,26 @@
                     fetch("{{ route('quiz.save-progress') }}", {
                         method: "POST",
                         headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
-                        body: JSON.stringify({ attempt_id: this.attemptId, question_id: qId, option_id: oId, is_flagged: isFlagged ? 1 : 0 })
+                        body: JSON.stringify({
+                            attempt_id: this.attemptId,
+                            question_id: qId,
+                            option_id: oId,
+                            is_flagged: isFlagged ? 1 : 0,
+                            client_elapsed_seconds: Math.max(0, this.initialRemainingSeconds - this.timeLeft)
+                        })
                     }).catch(e => {});
                 },
 
                 confirmSubmit() {
+                    if (!this.isComplete) {
+                        const missing = this.unansweredNumbers.slice(0, 8).join(', ');
+                        alert(`Evaluasi belum dapat dikumpulkan. Lengkapi ${this.unansweredCount} soal yang masih kosong${missing ? ': ' + missing : ''}.`);
+                        if (this.unansweredNumbers.length > 0) {
+                            this.goToQuestion(this.unansweredNumbers[0] - 1);
+                        }
+                        return;
+                    }
+
                     if(confirm("Apakah Anda yakin ingin mengumpulkan jawaban dan mengakhiri ujian?")) {
                         this.submitQuiz();
                     }
@@ -339,14 +371,37 @@
                     fetch("{{ route('quiz.submit') }}", {
                         method: "POST",
                         headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
-                        body: JSON.stringify({ attempt_id: this.attemptId, time_spent: ({{ $remainingSeconds }} - this.timeLeft) })
-                    }).then(res => res.json()).then(data => {
-                        window.location.href = data.redirect;
+                        body: JSON.stringify({
+                            attempt_id: this.attemptId,
+                            time_spent: Math.max(0, this.initialRemainingSeconds - this.timeLeft),
+                            focus_lost_count: this.focusLostCount
+                        })
+                    }).then(async res => {
+                        const data = await res.json();
+                        if (!res.ok) {
+                            throw data;
+                        }
+                        return data;
+                    }).then(data => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = "{{ route('dashboard') }}";
+                        }
+                    }).catch(error => {
+                        this.disableStrictMode();
+                        alert(error.message || 'Evaluasi belum dapat dikumpulkan. Pastikan semua soal sudah dijawab.');
+                        window.location.reload();
                     });
                 },
 
                 timeOut() {
                     clearInterval(this.timerInterval);
+                    if (!this.isComplete) {
+                        alert(`Waktu habis, tetapi evaluasi belum lengkap. Lengkapi ${this.unansweredCount} soal yang masih kosong sebelum mengumpulkan.`);
+                        return;
+                    }
+
                     alert("WAKTU HABIS! Sistem mengumpulkan jawaban otomatis.");
                     this.submitQuiz();
                 },
@@ -366,10 +421,11 @@
                     // Anti-Switch Tab
                     document.addEventListener("visibilitychange", () => {
                         if (document.hidden) {
+                            this.focusLostCount++;
                             this.isBlurred = true;
-                            document.title = "⚠️ KEMBALI SEGERA!";
+                            document.title = "KEMBALI KE EVALUASI";
                         } else {
-                            document.title = "Ujian Bab {{ $chapterId }}";
+                            document.title = "Evaluasi Bab {{ $chapterId }}";
                         }
                     });
 

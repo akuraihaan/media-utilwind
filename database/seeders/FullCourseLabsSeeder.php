@@ -5,236 +5,370 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use InvalidArgumentException;
 
 class FullCourseLabsSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Schema::disableForeignKeyConstraints();
 
-        // Pembersihan data lama agar seeder selalu fresh saat dijalankan ulang
         DB::table('lab_steps')->truncate();
         DB::table('labs')->truncate();
 
         Schema::enableForeignKeyConstraints();
 
-        $this->seedLabBab1();
-        $this->seedLabBab2();
-        $this->seedLabBab3();
-        $this->seedLabFinal();
+        foreach ($this->labs() as $lab) {
+            $this->createLab($lab);
+        }
     }
 
-    /**
-     * LAB BAB 1: FUNDAMENTALS & SPACING
-     * Fokus: Konversi CSS Tradisional ke Utility-First, Box Model, Typography.
-     */
-    private function seedLabBab1()
+    private function createLab(array $lab): void
     {
+        if (empty($lab['steps'])) {
+            throw new InvalidArgumentException("Lab {$lab['title']} tidak memiliki task.");
+        }
+
+        $now = now();
         $labId = DB::table('labs')->insertGetId([
-            'title' => 'Lab 01: Modernisasi Profil Komponen',
-            'slug' => 'lab-01-refactoring-legacy',
-            'description' => 'Requirement: Bangun ulang komponen Profile Card lawas. Terapkan sistem Grid 4-Point Tailwind untuk margin/padding dan gunakan palet warna bawaan.',
-            'duration_minutes' => 45,
-            'passing_grade' => 70,
+            'title' => $lab['title'],
+            'chapter_id' => $lab['chapter_id'],
+            'slug' => $lab['slug'],
+            'description' => $lab['description'],
+            'duration_minutes' => $lab['duration_minutes'],
+            'passing_grade' => $lab['passing_grade'],
             'is_active' => 1,
-            'created_at' => now(), 'updated_at' => now(),
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
-        $steps = [
-            [
-                'lab_id' => $labId, 'order_index' => 1, 'points' => 10,
-                'title' => 'Integrasi Lingkungan Tailwind',
-                'instruction' => 'Engine Tailwind belum dimuat. Sisipkan skrip CDN Tailwind CSS secara langsung ke dalam tag <head> dokumen HTML Anda untuk memulai.',
-                'initial_code' => "<!DOCTYPE html>\n<html>\n<head>\n    <title>Profile Component</title>\n    \n</head>\n<body>\n    <div>Setup Berhasil</div>\n</body>\n</html>",
-                'validation_rules' => json_encode(['<script src="https://cdn.tailwindcss.com"></script>']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 2, 'points' => 15,
-                'title' => 'Konfigurasi Kontainer Utama',
-                'instruction' => 'Atur div pembungkus utama. Batasi lebar maksimalnya ke ukuran menengah (md), posisikan tepat di tengah layar secara horizontal, berikan ruang padding internal sebesar 24px (skala 6), dan atur warna latar menjadi slate-100.',
-                'initial_code' => "<body>\n    <div>\n        \n    </div>\n</body>",
-                'validation_rules' => json_encode(['max-w-md', 'mx-auto', 'p-6', 'bg-slate-100']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 3, 'points' => 15,
-                'title' => 'Elevasi dan Bentuk Kartu',
-                'instruction' => 'Ubah div child menjadi bentuk kartu. Berikan latar belakang putih solid, bulatkan sudut elemen secara ekstra besar (xl), dan tambahkan efek bayangan berukuran besar (lg) agar tampak menonjol dari latar belakang.',
-                'initial_code' => "<div class=\"max-w-md mx-auto p-6 bg-slate-100\">\n    <div class=\"\">\n        \n    </div>\n</div>",
-                'validation_rules' => json_encode(['bg-white', 'rounded-xl', 'shadow-lg']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 4, 'points' => 20,
-                'title' => 'Hierarki Tipografi',
-                'instruction' => 'Format judul nama (H2) dengan ukuran 2xl, ketebalan bold, dan warna slate-800. Untuk teks profesi (P), gunakan warna indigo-600 dengan ketebalan font medium.',
-                'initial_code' => "<div class=\"bg-white rounded-xl shadow-lg p-6\">\n    <h2>Budi Santoso</h2>\n    <p>Fullstack Developer</p>\n</div>",
-                'validation_rules' => json_encode(['text-2xl', 'font-bold', 'text-slate-800', 'text-indigo-600', 'font-medium']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 5, 'points' => 20,
-                'title' => 'Penyesuaian Media Avatar',
-                'instruction' => 'Format tag gambar agar memiliki lebar dan tinggi absolut 96px (skala 24). Buat agar bentuknya melingkar sempurna, dan tambahkan cincin border (ring) setebal 4px berwarna indigo-50.',
-                'initial_code' => "<img src=\"/api/placeholder/150/150\" alt=\"Profile\">\n<h2>Budi Santoso</h2>",
-                'validation_rules' => json_encode(['w-24', 'h-24', 'rounded-full', 'ring-4', 'ring-indigo-50']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 6, 'points' => 20,
-                'title' => 'Interaksi Tombol Aksi',
-                'instruction' => 'Buat elemen <button> dengan latar indigo-600, teks putih putih, sudut membulat standar (lg), dan transisi hover yang mengubah warna latar menjadi indigo-700.',
-                'initial_code' => "<div>\n    <button>Hubungi Saya</button>\n</div>",
-                'validation_rules' => json_encode(['bg-indigo-600', 'text-white', 'rounded-lg', 'hover:bg-indigo-700']),
-            ],
-        ];
+        $steps = [];
+
+        foreach ($lab['steps'] as $index => $step) {
+            if (empty($step['rules']) || ! is_array($step['rules'])) {
+                throw new InvalidArgumentException("Task {$step['title']} belum memiliki validation rules.");
+            }
+
+            $steps[] = [
+                'lab_id' => $labId,
+                'title' => $step['title'],
+                'instruction' => $step['instruction'],
+                'initial_code' => $step['initial_code'],
+                'validation_rules' => json_encode(array_values($step['rules'])),
+                'points' => $step['points'],
+                'order_index' => $index + 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
 
         DB::table('lab_steps')->insert($steps);
     }
 
-    /**
-     * LAB BAB 2: MODERN LAYOUTING
-     * Fokus: Flexbox, CSS Grid, Responsive Breakpoints (Mobile-First).
-     */
-    private function seedLabBab2()
+    private function labs(): array
     {
-        $labId = DB::table('labs')->insertGetId([
-            'title' => 'Lab 02: Arsitektur Admin Dashboard',
-            'slug' => 'lab-02-layouting-mastery',
-            'description' => 'Requirement: Bangun struktur layout Dashboard responsif. Implementasikan Flexbox untuk navigasi makro dan CSS Grid untuk area statistik data.',
-            'duration_minutes' => 60,
-            'passing_grade' => 75,
-            'is_active' => 1,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        $steps = [
+        return [
             [
-                'lab_id' => $labId, 'order_index' => 1, 'points' => 25,
-                'title' => 'Makro Layout (Flex Container)',
-                'instruction' => 'Buat layout pembagian layar utama. Jadikan kontainer div terluar sebagai flexbox dengan tinggi memenuhi layar (100vh). Set elemen aside (Sidebar) memiliki lebar statis 256px (skala 64), dan biarkan elemen main (Konten) menyita sisa ruang fleksibel yang tersedia.',
-                'initial_code' => "<div class=\"bg-slate-50\">\n    <aside class=\"bg-white border-r\">\n        Sidebar Menu\n    </aside>\n    <main>\n        Area Konten Utama\n    </main>\n</div>",
-                'validation_rules' => json_encode(['flex', 'h-screen', 'w-64', 'flex-1']),
+                'title' => 'Lab 01: Struktur HTML dan Tailwind CDN',
+                'chapter_id' => 1,
+                'slug' => 'lab-01-struktur-html-tailwind-cdn',
+                'description' => 'Praktik membangun halaman profil sederhana dengan struktur HTML semantik, script CDN Tailwind CSS, padding, warna, sudut melengkung, dan kartu dasar.',
+                'duration_minutes' => 45,
+                'passing_grade' => 70,
+                'steps' => [
+                    [
+                        'title' => 'Pasang Tailwind CDN',
+                        'instruction' => 'Tambahkan script CDN Tailwind CSS di dalam tag <head> agar utility class Tailwind dapat digunakan tanpa instalasi.',
+                        'initial_code' => <<<'HTML'
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Siswa</title>
+</head>
+<body>
+    <p>Tailwind siap digunakan.</p>
+</body>
+</html>
+HTML,
+                        'rules' => ['<script'],
+                        'points' => 15,
+                    ],
+                    [
+                        'title' => 'Susun Bagian Semantik',
+                        'instruction' => 'Buat struktur halaman yang terdiri dari <header>, <nav>, <main>, dan <footer>. Letakkan semuanya di dalam <body>.',
+                        'initial_code' => <<<'HTML'
+<body>
+    <div>Judul halaman</div>
+    <div>Menu</div>
+    <div>Konten utama</div>
+    <div>Bagian bawah</div>
+</body>
+HTML,
+                        'rules' => ['<header', '<nav', '<main', '<footer'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Buat Tombol Nyaman Dibaca',
+                        'instruction' => 'Pada tombol Simpan, gunakan utility class untuk latar biru, teks putih, padding horizontal px-4, padding vertikal py-2, sudut rounded-lg, dan teks semibold.',
+                        'initial_code' => <<<'HTML'
+<button>
+    Simpan
+</button>
+HTML,
+                        'rules' => ['bg-blue-600', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'font-semibold'],
+                        'points' => 25,
+                    ],
+                    [
+                        'title' => 'Bentuk Kartu Profil',
+                        'instruction' => 'Ubah pembungkus profil menjadi kartu: latar putih, padding p-6, sudut rounded-xl, bayangan shadow-md, dan teks deskripsi berwarna slate-600.',
+                        'initial_code' => <<<'HTML'
+<section class="bg-slate-100 p-6">
+    <article class="">
+        <h2 class="text-2xl font-bold">Rani Putri</h2>
+        <p>Siswa SMK jurusan RPL.</p>
+    </article>
+</section>
+HTML,
+                        'rules' => ['bg-white', 'p-6', 'rounded-xl', 'shadow-md', 'text-slate-600'],
+                        'points' => 25,
+                    ],
+                    [
+                        'title' => 'Pusatkan Konten Halaman',
+                        'instruction' => 'Batasi lebar konten dengan max-w-md, posisikan di tengah memakai mx-auto, dan beri jarak atas mt-6 agar kartu tidak menempel ke tepi halaman.',
+                        'initial_code' => <<<'HTML'
+<main>
+    <section class="bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-2xl font-bold">Profil</h1>
+    </section>
+</main>
+HTML,
+                        'rules' => ['max-w-md', 'mx-auto', 'mt-6'],
+                        'points' => 15,
+                    ],
+                ],
             ],
             [
-                'lab_id' => $labId, 'order_index' => 2, 'points' => 25,
-                'title' => 'Distribusi Navigasi Topbar',
-                'instruction' => 'Pada elemen header, jadikan sebagai kontainer flex. Distribusikan elemen Logo dan Profil sejauh mungkin ke sisi yang berlawanan secara horizontal, lalu pastikan keduanya sejajar secara vertikal di tengah poros.',
-                'initial_code' => "<header class=\"bg-white p-4 border-b\">\n    <div class=\"font-bold\">DevPanel</div>\n    <div class=\"user-avatar\">Profil</div>\n</header>",
-                'validation_rules' => json_encode(['flex', 'justify-between', 'items-center']),
+                'title' => 'Lab 02: Flexbox, Grid, dan Responsive Layout',
+                'chapter_id' => 2,
+                'slug' => 'lab-02-flex-grid-responsive-layout',
+                'description' => 'Praktik menyusun navbar, pencarian, daftar kartu, kartu utama, dan breakpoint responsive sesuai materi layout terbaru.',
+                'duration_minutes' => 60,
+                'passing_grade' => 75,
+                'steps' => [
+                    [
+                        'title' => 'Navbar Dua Sisi',
+                        'instruction' => 'Atur elemen <nav> agar judul berada di kiri, menu berada di kanan, dan keduanya sejajar vertikal menggunakan flex, items-center, dan justify-between.',
+                        'initial_code' => <<<'HTML'
+<nav class="p-4 bg-white border-b">
+    <h1>Dashboard</h1>
+    <ul>
+        <li>Profil</li>
+        <li>Keluar</li>
+    </ul>
+</nav>
+HTML,
+                        'rules' => ['flex', 'items-center', 'justify-between'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Input Search Fleksibel',
+                        'instruction' => 'Pada bar pencarian, buat input mengisi ruang kosong di antara judul dan tombol dengan utility flex-1.',
+                        'initial_code' => <<<'HTML'
+<div class="flex items-center gap-3">
+    <span class="font-bold">Produk</span>
+    <input class="border rounded-lg px-3 py-2" placeholder="Cari produk">
+    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Cari</button>
+</div>
+HTML,
+                        'rules' => ['flex-1'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Grid Tiga Kolom',
+                        'instruction' => 'Susun daftar produk menjadi grid tiga kolom dengan jarak antar kartu menggunakan grid, grid-cols-3, dan gap-4.',
+                        'initial_code' => <<<'HTML'
+<section class="">
+    <article class="bg-white p-4 rounded-lg">Produk 1</article>
+    <article class="bg-white p-4 rounded-lg">Produk 2</article>
+    <article class="bg-white p-4 rounded-lg">Produk 3</article>
+</section>
+HTML,
+                        'rules' => ['grid', 'grid-cols-3', 'gap-4'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Kartu Utama Lebih Lebar',
+                        'instruction' => 'Pada grid tiga kolom, buat kartu utama menempati dua kolom menggunakan col-span-2.',
+                        'initial_code' => <<<'HTML'
+<section class="grid grid-cols-3 gap-4">
+    <article class="bg-white p-4 rounded-lg">Produk Utama</article>
+    <article class="bg-white p-4 rounded-lg">Produk Lain</article>
+</section>
+HTML,
+                        'rules' => ['col-span-2'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Breakpoint Mobile-First',
+                        'instruction' => 'Buat daftar kartu responsif: satu kolom pada layar kecil, dua kolom pada md, tiga kolom pada lg, dan tetap memiliki gap-4.',
+                        'initial_code' => <<<'HTML'
+<section class="">
+    <article class="bg-white p-4 rounded-lg">A</article>
+    <article class="bg-white p-4 rounded-lg">B</article>
+    <article class="bg-white p-4 rounded-lg">C</article>
+</section>
+HTML,
+                        'rules' => ['grid', 'grid-cols-1', 'gap-4', 'md:grid-cols-2', 'lg:grid-cols-3'],
+                        'points' => 20,
+                    ],
+                ],
             ],
             [
-                'lab_id' => $labId, 'order_index' => 3, 'points' => 25,
-                'title' => 'Grid Sistem Responsif',
-                'instruction' => 'Atur div kontainer statistik agar menggunakan CSS Grid. Implementasikan Mobile-First: mulai dengan 1 kolom secara default. Pada layar medium (md) ubah menjadi 2 kolom, dan pada layar besar (lg) menjadi 4 kolom. Berikan celah antar kolom/baris sebesar 24px (skala 6).',
-                'initial_code' => "<div class=\"mt-8\">\n    <div class=\"p-4 bg-white shadow rounded\">Stat 1</div>\n    <div class=\"p-4 bg-white shadow rounded\">Stat 2</div>\n    <div class=\"p-4 bg-white shadow rounded\">Stat 3</div>\n    <div class=\"p-4 bg-white shadow rounded\">Stat 4</div>\n</div>",
-                'validation_rules' => json_encode(['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-4', 'gap-6']),
+                'title' => 'Lab 03: Styling, Tipografi, dan Komponen',
+                'chapter_id' => 3,
+                'slug' => 'lab-03-styling-tipografi-komponen',
+                'description' => 'Praktik memperjelas tampilan elemen menggunakan font, leading, border, warna status, kartu, dan tombol rounded sesuai materi styling.',
+                'duration_minutes' => 60,
+                'passing_grade' => 70,
+                'steps' => [
+                    [
+                        'title' => 'Teks Kode dengan Font Mono',
+                        'instruction' => 'Gunakan font-mono pada potongan kode agar tampil dengan huruf berjarak tetap.',
+                        'initial_code' => <<<'HTML'
+<code class="">
+    npm run build
+</code>
+HTML,
+                        'rules' => ['font-mono'],
+                        'points' => 15,
+                    ],
+                    [
+                        'title' => 'Paragraf Lebih Nyaman Dibaca',
+                        'instruction' => 'Tambahkan leading-7 pada paragraf deskripsi agar jarak antarbaris lebih nyaman saat teks menjadi beberapa baris.',
+                        'initial_code' => <<<'HTML'
+<p class="text-slate-600">
+    Sepatu ini ringan untuk kegiatan harian. Bahannya nyaman digunakan dan cocok dipakai ke sekolah.
+</p>
+HTML,
+                        'rules' => ['leading-7'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Alert Berhasil',
+                        'instruction' => 'Buat kotak informasi keberhasilan dengan latar hijau muda dan teks hijau gelap menggunakan bg-green-100 dan text-green-700.',
+                        'initial_code' => <<<'HTML'
+<div class="p-4 rounded-lg">
+    Data berhasil disimpan.
+</div>
+HTML,
+                        'rules' => ['bg-green-100', 'text-green-700'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Garis Tepi Elemen',
+                        'instruction' => 'Tambahkan border dan border-slate-300 pada input agar batas elemen terlihat jelas.',
+                        'initial_code' => <<<'HTML'
+<input class="px-3 py-2 rounded-lg" placeholder="Nama lengkap">
+HTML,
+                        'rules' => ['border', 'border-slate-300'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Kartu Produk Lengkap',
+                        'instruction' => 'Lengkapi kartu produk dengan bg-white, rounded-xl, shadow-md, judul text-2xl font-bold, deskripsi text-slate-600, dan tombol bg-blue-600 text-white rounded-lg.',
+                        'initial_code' => <<<'HTML'
+<article class="p-6">
+    <h2>Sepatu Sekolah</h2>
+    <p>Ringan dan nyaman digunakan.</p>
+    <button>Beli</button>
+</article>
+HTML,
+                        'rules' => ['bg-white', 'rounded-xl', 'shadow-md', 'text-2xl', 'font-bold', 'text-slate-600', 'bg-blue-600', 'text-white', 'rounded-lg'],
+                        'points' => 25,
+                    ],
+                ],
             ],
             [
-                'lab_id' => $labId, 'order_index' => 4, 'points' => 25,
-                'title' => 'Manajemen Overflow Konten',
-                'instruction' => 'Tabel data yang lebar dapat merusak layout pada perangkat mobile. Berikan utilitas agar kontainer tabel ini memunculkan scrollbar horizontal secara otomatis hanya ketika kontennya melewati batas lebar layar (overflow). Pastikan lebar tabel tersetting 100%.',
-                'initial_code' => "<div class=\"mt-8 bg-white p-4 rounded shadow\">\n    <table>\n        \n    </table>\n</div>",
-                'validation_rules' => json_encode(['overflow-x-auto', 'w-full']),
-            ]
+                'title' => 'Evaluasi Lab: Landing Page Katalog Produk',
+                'chapter_id' => 99,
+                'slug' => 'evaluasi-lab-landing-page-katalog-produk',
+                'description' => 'Proyek praktik akhir yang merangkum HTML semantik, Tailwind CDN/CLI concept, warna tema, flex, grid responsif, tipografi, dan komponen kartu.',
+                'duration_minutes' => 90,
+                'passing_grade' => 75,
+                'steps' => [
+                    [
+                        'title' => 'Fondasi HTML dan Tailwind',
+                        'instruction' => 'Siapkan struktur HTML lengkap, tambahkan script Tailwind CDN pada <head>, lalu gunakan <header>, <main>, dan <footer> sebagai struktur utama halaman.',
+                        'initial_code' => <<<'HTML'
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Katalog Produk</title>
+</head>
+<body>
+    <div>Katalog Produk Sekolah</div>
+</body>
+</html>
+HTML,
+                        'rules' => ['<script', '<header', '<main', '<footer'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Navbar Responsif Dasar',
+                        'instruction' => 'Buat navbar dengan judul di kiri dan menu di kanan. Gunakan flex, items-center, justify-between, padding p-4, dan border-b.',
+                        'initial_code' => <<<'HTML'
+<header>
+    <nav>
+        <h1>Katalog Sekolah</h1>
+        <div>Produk Bantuan Kontak</div>
+    </nav>
+</header>
+HTML,
+                        'rules' => ['flex', 'items-center', 'justify-between', 'p-4', 'border-b'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Warna Tema Khusus',
+                        'instruction' => 'Gunakan class bg-utama-500 pada tombol utama sebagai penerapan warna tema khusus utama-500. Lengkapi tombol dengan text-white, px-4, py-2, dan rounded-lg.',
+                        'initial_code' => <<<'HTML'
+<button>
+    Lihat Produk
+</button>
+HTML,
+                        'rules' => ['bg-utama-500', 'text-white', 'px-4', 'py-2', 'rounded-lg'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Grid Katalog Responsive',
+                        'instruction' => 'Susun kartu katalog dalam grid mobile-first: grid-cols-1 pada layar kecil, md:grid-cols-2 pada layar sedang, lg:grid-cols-3 pada layar besar, dan gap-4.',
+                        'initial_code' => <<<'HTML'
+<section>
+    <article>Tas</article>
+    <article>Sepatu</article>
+    <article>Buku</article>
+</section>
+HTML,
+                        'rules' => ['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-4'],
+                        'points' => 20,
+                    ],
+                    [
+                        'title' => 'Poles Kartu dan Teks',
+                        'instruction' => 'Setiap kartu perlu terlihat jelas: gunakan bg-white, rounded-xl, shadow-md, judul text-2xl font-bold, deskripsi text-slate-600 leading-7, dan beri area halaman bg-slate-100.',
+                        'initial_code' => <<<'HTML'
+<main>
+    <article>
+        <h2>Tas Sekolah</h2>
+        <p>Tas kuat dan ringan untuk kegiatan harian.</p>
+    </article>
+</main>
+HTML,
+                        'rules' => ['bg-slate-100', 'bg-white', 'rounded-xl', 'shadow-md', 'text-2xl', 'font-bold', 'text-slate-600', 'leading-7'],
+                        'points' => 20,
+                    ],
+                ],
+            ],
         ];
-
-        DB::table('lab_steps')->insert($steps);
-    }
-
-    /**
-     * LAB BAB 3: ADVANCED STYLING & EFFECTS
-     * Fokus: Pseudo-classes (Hover, Focus), Transisi, dan Dekorasi Visual Kompleks.
-     */
-    private function seedLabBab3()
-    {
-        $labId = DB::table('labs')->insertGetId([
-            'title' => 'Lab 03: Implementasi UI Lanjutan',
-            'slug' => 'lab-03-advanced-styling',
-            'description' => 'Requirement: Modifikasi komponen UI menggunakan utilitas tingkat lanjut. Integrasikan efek Glassmorphism, transisi state (hover), dan manipulasi rendering background.',
-            'duration_minutes' => 60,
-            'passing_grade' => 70,
-            'is_active' => 1,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        $steps = [
-            [
-                'lab_id' => $labId, 'order_index' => 1, 'points' => 25,
-                'title' => 'Linear Background Gradient',
-                'instruction' => 'Hapus warna latar solid pada tombol. Terapkan background gradient dengan arah dari kiri ke kanan. Gunakan warna titik awal violet-500 dan titik akhir fuchsia-500.',
-                'initial_code' => "<button class=\"px-8 py-3 rounded-lg text-white font-bold\">\n    Deploy App\n</button>",
-                'validation_rules' => json_encode(['bg-gradient-to-r', 'from-violet-500', 'to-fuchsia-500']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 2, 'points' => 25,
-                'title' => 'Micro-Interactions (Hover State)',
-                'instruction' => 'Tambahkan efek interaktif pada kartu saat di-hover oleh kursor: angkat posisi kartu ke atas sumbu Y sebesar skala 2, dan perbesar ukuran bayangannya menjadi skala 2xl. Pastikan Anda menambahkan utilitas transisi dan durasi 300ms agar animasi tidak kasar.',
-                'initial_code' => "<div class=\"bg-white p-6 rounded-xl shadow-md cursor-pointer\">\n    <h3>Server Server Alpha</h3>\n</div>",
-                'validation_rules' => json_encode(['hover:-translate-y-2', 'hover:shadow-2xl', 'transition', 'duration-300']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 3, 'points' => 25,
-                'title' => 'Penerapan Efek Glassmorphism',
-                'instruction' => 'Ubah div konten menjadi efek kaca tembus pandang (glassmorphism). Set background menjadi putih dengan opasitas 10%. Tambahkan efek backdrop blur skala medium (md), dan buat border tipis menggunakan warna putih beropasitas 20%.',
-                'initial_code' => "<div class=\"bg-slate-900 p-10 min-h-screen\">\n    <div class=\"p-8 rounded-2xl\">\n        <p class=\"text-white\">Data Rahasia Terenkripsi</p>\n    </div>\n</div>",
-                'validation_rules' => json_encode(['bg-white/10', 'backdrop-blur-md', 'border-white/20']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 4, 'points' => 25,
-                'title' => 'Masking Gradient Text',
-                'instruction' => 'Buat teks H1 seolah dicat dengan warna gradient. Pertama, atur warna teks menjadi transparan penuh. Kemudian, mask (clip) background gradient agar hanya muncul di dalam batas area teks tersebut.',
-                'initial_code' => "<h1 class=\"text-5xl font-black bg-gradient-to-r from-cyan-400 to-blue-500\">\n    Kinerja Tanpa Batas\n</h1>",
-                'validation_rules' => json_encode(['text-transparent', 'bg-clip-text']),
-            ]
-        ];
-
-        DB::table('lab_steps')->insert($steps);
-    }
-
-    /**
-     * FINAL PROJECT: CAPSTONE
-     * Fokus: Sintesis seluruh materi untuk membuat layout landing page komersial utuh.
-     */
-    private function seedLabFinal()
-    {
-        $labId = DB::table('labs')->insertGetId([
-            'title' => 'Ujian Akhir: DevStudio Landing Page',
-            'slug' => 'final-project-ch1-3',
-            'description' => 'Requirement: Kompilasi semua pemahaman Anda (Layout, Spacing, Responsive, Effects) untuk menstrukturkan satu halaman pendaratan (Landing Page) yang modern dan fungsional.',
-            'duration_minutes' => 90,
-            'passing_grade' => 75,
-            'is_active' => 1,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        $steps = [
-            [
-                'lab_id' => $labId, 'order_index' => 1, 'points' => 25,
-                'title' => 'Arsitektur Fixed Navigation',
-                'instruction' => 'Ubah elemen <nav> agar melayang statis di area teratas layar (fixed) dengan lebar maksimal layar (100%). Tinggikan z-index ke 50 agar menutupi konten bawah, lalu implementasikan Flexbox untuk menyejajarkan logo ke kiri dan menu ke kanan layar.',
-                'initial_code' => "<nav class=\"bg-white/80 backdrop-blur px-6 py-4 border-b\">\n    <div class=\"font-bold\">DevStudio</div>\n    <ul class=\"gap-4\">\n        <li>Features</li>\n    </ul>\n</nav>",
-                'validation_rules' => json_encode(['fixed', 'top-0', 'w-full', 'z-50', 'flex', 'justify-between']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 2, 'points' => 25,
-                'title' => 'Hero Section Alignment',
-                'instruction' => 'Beri padding vertikal yang sangat besar (skala 32) pada Hero section. Pusatkan seluruh perataan teks di dalamnya (text-center). Pada elemen tag judul, implementasikan teknik Gradient Text transparan dengan arah gradasi ke kanan.',
-                'initial_code' => "<section class=\"bg-slate-50 px-6\">\n    <div class=\"max-w-4xl mx-auto\">\n        <h1 class=\"text-5xl font-black from-cyan-600 to-blue-600\">\n            Bangun Masa Depan Web\n        </h1>\n    </div>\n</section>",
-                'validation_rules' => json_encode(['py-32', 'text-center', 'bg-clip-text', 'text-transparent', 'bg-gradient-to-r']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 3, 'points' => 25,
-                'title' => 'Responsivitas Blok Fitur',
-                'instruction' => 'Konfigurasikan area Features menjadi Grid. Susun secara default menjadi 1 kolom. Untuk tablet (md) naikkan jadi 2 kolom, dan desktop (lg) menjadi 3 kolom. Berikan celah grid ruang sebesar skala 8. Tambahkan juga interaksi bayangan membesar (shadow-lg) saat kartu di-hover.',
-                'initial_code' => "<section class=\"py-20 px-6 max-w-6xl mx-auto\">\n    <div class=\"\">\n        <div class=\"p-6 bg-white rounded-xl border transition-all\">Cepat</div>\n        <div class=\"p-6 bg-white rounded-xl border transition-all\">Aman</div>\n        <div class=\"p-6 bg-white rounded-xl border transition-all\">Skalabel</div>\n    </div>\n</section>",
-                'validation_rules' => json_encode(['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-8', 'hover:shadow-lg']),
-            ],
-            [
-                'lab_id' => $labId, 'order_index' => 4, 'points' => 25,
-                'title' => 'Formatting Footer',
-                'instruction' => 'Lengkapi area footer. Terapkan warna background slate-900 pekat. Atur perataan teks ke tengah, dan ubah warna font menjadi abu-abu redup (slate-400) agar tidak terlalu kontras.',
-                'initial_code' => "<footer class=\"py-8\">\n    <p>&copy; 2024 DevStudio Open Source.</p>\n</footer>",
-                'validation_rules' => json_encode(['bg-slate-900', 'text-slate-400', 'text-center']),
-            ]
-        ];
-
-        DB::table('lab_steps')->insert($steps);
     }
 }
