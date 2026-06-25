@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Bank Soal & Analisis · Utilwind Admin</title>
+    <title>Bank Soal & Analisis · Panel Admin Utilwind</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -97,6 +97,224 @@
         .dark .table-row { border-bottom: 1px solid rgba(255,255,255,0.03); }
         .dark .table-row:hover { background: rgba(255,255,255,0.02); }
 
+        .question-form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1.25rem;
+        }
+        @media (min-width: 1024px) {
+            .question-form-grid {
+                grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+                align-items: start;
+            }
+        }
+        .question-panel,
+        .question-preview-panel {
+            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 1.25rem;
+            box-shadow: 0 12px 34px rgba(15, 23, 42, 0.05);
+        }
+        .dark .question-panel,
+        .dark .question-preview-panel {
+            border-color: rgba(255, 255, 255, 0.09);
+            background: rgba(2, 6, 23, 0.42);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+        }
+        .question-preview-panel { padding: 1rem; }
+        @media (min-width: 640px) { .question-preview-panel { padding: 1.25rem; } }
+        .question-kicker {
+            margin-bottom: 0.25rem;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #0891b2;
+        }
+        .dark .question-kicker { color: #67e8f9; }
+        .question-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        .dark .question-label { color: rgba(255, 255, 255, 0.48); }
+        .question-input {
+            width: 100%;
+            border-radius: 0.9rem;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            padding: 0.8rem 0.95rem;
+            color: #0f172a;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .question-input:focus {
+            border-color: #0891b2;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+        }
+        .dark .question-input {
+            border-color: rgba(255, 255, 255, 0.10);
+            background: rgba(2, 6, 23, 0.72);
+            color: #f8fafc;
+        }
+        .dark .question-input:focus {
+            border-color: #22d3ee;
+            box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
+        }
+        .question-type-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            min-height: 92px;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            padding: 0.85rem;
+            text-align: left;
+            transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .question-type-card:hover {
+            border-color: #67e8f9;
+            transform: translateY(-1px);
+        }
+        .question-type-card.is-active {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.18), 0 14px 34px rgba(15, 23, 42, 0.08);
+            background: rgba(236, 254, 255, 0.92);
+        }
+        .dark .question-type-card {
+            border-color: rgba(255, 255, 255, 0.10);
+            background: rgba(2, 6, 23, 0.58);
+        }
+        .dark .question-type-card:hover { border-color: rgba(103, 232, 249, 0.55); }
+        .dark .question-type-card.is-active {
+            border-color: rgba(34, 211, 238, 0.58);
+            background: rgba(8, 145, 178, 0.12);
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.14), 0 18px 40px rgba(0, 0, 0, 0.28);
+        }
+        .answer-input-row { display: flex; align-items: center; gap: 0.75rem; }
+        .answer-letter,
+        .preview-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 900;
+        }
+        .answer-letter {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+        }
+        .dark .answer-letter {
+            border-color: rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.62);
+        }
+        .preview-option {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            border-radius: 0.9rem;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 0.7rem;
+            color: #475569;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .preview-letter {
+            width: 2rem;
+            height: 2rem;
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .preview-option.is-correct {
+            border-color: #86efac;
+            background: #f0fdf4;
+            color: #166534;
+        }
+        .preview-option.is-correct .preview-letter {
+            background: #16a34a;
+            color: white;
+        }
+        .dark .preview-option {
+            border-color: rgba(255, 255, 255, 0.09);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.68);
+        }
+        .dark .preview-option.is-correct {
+            border-color: rgba(74, 222, 128, 0.45);
+            background: rgba(34, 197, 94, 0.12);
+            color: #bbf7d0;
+        }
+        .question-media-card {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.9));
+        }
+        .dark .question-media-card {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.78));
+        }
+        .question-media-card img {
+            aspect-ratio: 16 / 9;
+        }
+        .question-rich-text code {
+            display: inline-flex;
+            max-width: 100%;
+            align-items: center;
+            border: 1px solid #bae6fd;
+            border-radius: 0.6rem;
+            background: linear-gradient(135deg, #eff6ff, #ecfeff);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+            color: #0369a1;
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92em;
+            font-weight: 900;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            padding: 0.1rem 0.45rem;
+            white-space: break-spaces;
+        }
+        .dark .question-rich-text code {
+            border-color: rgba(103, 232, 249, 0.3);
+            background: linear-gradient(135deg, rgba(8, 47, 73, 0.72), rgba(15, 23, 42, 0.94));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+            color: #67e8f9;
+        }
+        .question-rich-text pre {
+            margin: 0.75rem 0;
+            max-width: 100%;
+            overflow-x: auto;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #0f172a, #111827);
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+            color: #dbeafe;
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            font-weight: 800;
+            line-height: 1.75;
+            padding: 0.95rem 1rem;
+        }
+        .question-rich-text pre code {
+            display: block;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            color: inherit;
+            padding: 0;
+            white-space: pre;
+        }
+
         /* =========================================================================
            SISTEM TOOLTIP SUPER SOLID
            ========================================================================= */
@@ -135,6 +353,8 @@
         .dark .tooltip-violet .tooltip-trigger { background-color: #8b5cf6; color: white; border-color: transparent; box-shadow: 0 0 10px rgba(139,92,246,0.5); }
 
         .modal-open { overflow: hidden; padding-right: 5px; } 
+        .swal2-container.quiz-alert-layer { z-index: 2147483647 !important; }
+        .quiz-alert-popup { border-radius: 1.25rem !important; }
         .text-adaptive { color: #1e293b; }
         .dark .text-adaptive { color: #f8fafc; }
         .text-adaptive-muted { color: #64748b; }
@@ -154,31 +374,63 @@
     // Data Master Soal & Akurasi
     $questionsRaw = \App\Models\QuizQuestion::with('options')->get();
     $questions = $questionsRaw->map(function($q) {
-        $stats = \Illuminate\Support\Facades\DB::table('quiz_attempt_answers')
-            ->where('quiz_question_id', $q->id)
-            ->selectRaw('count(*) as total_attempts')
-            ->selectRaw('sum(case when is_correct = 1 then 1 else 0 end) as correct_count')
-            ->selectRaw('sum(case when is_correct = 0 then 1 else 0 end) as wrong_count')
-            ->first();
+        $correctOptionText = $q->options->firstWhere('is_correct', 1)?->option_text ?? 'Tidak ada kunci';
+        $latestStudentAnswers = \Illuminate\Support\Facades\DB::table('quiz_attempt_answers')
+            ->join('quiz_attempts', 'quiz_attempt_answers.quiz_attempt_id', '=', 'quiz_attempts.id')
+            ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+            ->leftJoin('quiz_options as chosen', 'quiz_attempt_answers.quiz_option_id', '=', 'chosen.id')
+            ->where('quiz_attempt_answers.quiz_question_id', $q->id)
+            ->whereNotNull('quiz_attempts.completed_at')
+            ->select(
+                'quiz_attempts.user_id',
+                'users.name',
+                'users.email',
+                'users.class_group',
+                'quiz_attempts.score',
+                'quiz_attempts.completed_at',
+                'quiz_attempt_answers.is_correct',
+                'chosen.option_text as chosen_text'
+            )
+            ->orderByDesc('quiz_attempts.completed_at')
+            ->get()
+            ->unique('user_id')
+            ->values();
 
-        $q->total_attempts = $stats->total_attempts ?? 0;
-        $q->correct_count = $stats->correct_count ?? 0;
-        $q->wrong_count = $stats->wrong_count ?? 0;
+        $q->total_attempts = $latestStudentAnswers->count();
+        $q->correct_count = $latestStudentAnswers->where('is_correct', 1)->count();
+        $q->wrong_count = $latestStudentAnswers->where('is_correct', 0)->count();
         $q->accuracy = $q->total_attempts > 0 ? round(($q->correct_count / $q->total_attempts) * 100) : 0;
-
         if ($q->accuracy >= 80) $q->status = 'Mudah';
         elseif ($q->accuracy >= 50) $q->status = 'Sedang';
         else $q->status = 'Sulit';
+        $q->outcome_meta = \App\Support\LearningOutcomeAnalytics::quizOutcomeMetadata($q);
+        $q->answer_summary = [
+            'correct_count' => $q->correct_count,
+            'wrong_count' => $q->wrong_count,
+            'total_count' => $q->total_attempts,
+            'correct_percent' => $q->accuracy,
+            'wrong_percent' => $q->total_attempts > 0 ? round(($q->wrong_count / $q->total_attempts) * 100) : 0,
+        ];
+        $answerDetails = $latestStudentAnswers->map(function ($answer) use ($correctOptionText) {
+            $isCorrect = (int) $answer->is_correct === 1;
 
-        $answersData = \Illuminate\Support\Facades\DB::table('quiz_attempt_answers')
-            ->join('quiz_attempts', 'quiz_attempt_answers.quiz_attempt_id', '=', 'quiz_attempts.id')
-            ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
-            ->where('quiz_attempt_answers.quiz_question_id', $q->id)
-            ->select('users.name', 'quiz_attempt_answers.is_correct')
-            ->get();
-            
-        $q->list_correct = $answersData->where('is_correct', 1)->pluck('name')->toArray();
-        $q->list_wrong = $answersData->where('is_correct', 0)->pluck('name')->toArray();
+            return [
+                'name' => $answer->name ?: 'Tanpa nama',
+                'email' => $answer->email ?: '-',
+                'class_group' => $answer->class_group ?: 'Kelas belum diatur',
+                'is_correct' => $isCorrect ? 1 : 0,
+                'chosen' => $answer->chosen_text ?: 'Tidak dijawab',
+                'correct' => $correctOptionText,
+                'score' => is_null($answer->score) ? '-' : round((float) $answer->score, 1),
+                'answered_at' => $answer->completed_at ? \Illuminate\Support\Carbon::parse($answer->completed_at)->timezone(config('app.timezone'))->format('d M Y H:i') : '-',
+                'context' => $isCorrect
+                    ? 'Siswa sudah memilih kunci yang sesuai pada percobaan terbaru.'
+                    : 'Siswa perlu penguatan pada konsep yang ditanyakan soal ini.',
+            ];
+        });
+
+        $q->list_correct = $answerDetails->where('is_correct', 1)->values()->all();
+        $q->list_wrong = $answerDetails->where('is_correct', 0)->values()->all();
 
         return $q;
     });
@@ -189,12 +441,12 @@
     $hardQuestionsCount = $questions->where('status', 'Sulit')->count();
 
     $chapterGroups = $questions->where('chapter_id', '!=', 99)->groupBy('chapter_id');
+
     $finalExam = $questions->where('chapter_id', 99);
     $hardestQuestions = $questions->where('status', 'Sulit')->sortBy('accuracy')->take(5)->map(function($q) {
         $q->failure_rate = 100 - $q->accuracy;
         return $q;
     });
-
     // Daftar Semua Siswa (Digunakan di UI Tabel Pencarian)
     $studentStats = \Illuminate\Support\Facades\DB::table('quiz_attempts')
         ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
@@ -290,6 +542,12 @@
               if(dataElement) {
                   this.studentDetails = JSON.parse(dataElement.textContent);
               }
+              const chapterParam = new URLSearchParams(window.location.search).get('chapter');
+              if (chapterParam) {
+                  const chapterId = chapterParam === 'all' ? 'all' : Number(chapterParam);
+                  const chapterName = chapterParam === '99' ? 'Evaluasi Akhir' : 'Bab ' + chapterParam;
+                  this.selectChapter(chapterId, chapterName);
+              }
           },
 
           selectChapter(id, name) {
@@ -297,14 +555,27 @@
               this.activeChapterName = name;
               this.currentView = 'table';
               this.search = '';
+              window.currentQuestionBankChapter = id;
+              window.currentQuestionBankChapterName = name;
           },
           resetView() {
               this.currentView = 'dashboard';
               this.activeChapter = null;
+              window.currentQuestionBankChapter = null;
+              window.currentQuestionBankChapterName = '';
           },
           openStudentDetail(email) {
               this.selectedStudent = this.studentDetails[email] || null;
               this.showStudentDetailModal = true;
+          },
+          matchesQuestionRow(el, chapterId) {
+              const searchText = this.search.toLowerCase().trim();
+              const haystack = (el.dataset.search || '').toLowerCase();
+              const status = el.dataset.status || '';
+
+              return (this.activeChapter === 'all' || this.activeChapter == chapterId) &&
+                  (searchText === '' || haystack.includes(searchText)) &&
+                  (this.difficulty === 'all' || this.difficulty === status);
           }
       }" 
       @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showQuestionsModal = false; showParticipantsModal = false; showAccuracyModal = false; showHardModal = false; showStudentDetailModal = false; showDashboardInfoModal = false; closeModal(); closeInsightModal();" 
@@ -322,7 +593,7 @@
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
                 <div>
                     <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
-                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Admin Panel</span>
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Panel Admin</span>
                 </div>
             </a>
             <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
@@ -330,39 +601,7 @@
             </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dasbor
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Manajemen Kuis
-                    </a>
-                    <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Konfigurasi Lab
-                    </a>
-                    <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Analitik Lab
-                    </a>
-                    <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Manajemen Kelas
-                    </a>
-                </div>
-            </div>
-        </nav>
+        @include('admin.partials.sidebar-nav')
 
         {{-- USER PROFILE Bawah Sidebar --}}
         <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
@@ -370,7 +609,7 @@
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
                 <div class="overflow-hidden">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">Administrator Sistem</p>
                 </div>
             </div>
             
@@ -412,7 +651,7 @@
                     
                     {{-- Judul & Breadcrumb --}}
                     <div class="flex items-center gap-3">
-                        <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke Ikhtisar">
+                        <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke ringkasan bank soal">
                             <svg class="w-4 h-4 text-slate-500 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                         </button>
 
@@ -423,13 +662,13 @@
                                     <li>
                                         <div class="flex items-center transition-colors">
                                             <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                            <span class="text-slate-700 dark:text-white transition-colors">Manajemen Kuis</span>
+                                            <span class="text-slate-700 dark:text-white transition-colors">Bank Soal</span>
                                         </div>
                                     </li>
                                 </ol>
                             </nav>
                             <div class="flex items-center gap-2">
-                                <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Bank Soal & Analisis Evaluasi' : 'Detail Bab: ' + activeChapterName"></h2>
+                                <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Manajemen Bank Soal' : 'Detail Bank Soal: ' + activeChapterName"></h2>
                                 
                                 {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                 <button x-show="currentView === 'dashboard'" @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Modul Soal">
@@ -438,18 +677,18 @@
                             </div>
                             <p class="text-[9px] md:text-xs text-adaptive-muted flex items-center gap-1.5 mt-0.5 transition-colors">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                <span x-text="currentView === 'dashboard' ? 'Tinjauan Performa Kuis ' : 'Mode Bank Soal'"></span>
+                                <span x-text="currentView === 'dashboard' ? 'Ringkasan kuis dan pratinjau TP' : 'Daftar soal pada bab terpilih'"></span>
                             </p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-3 sm:gap-6">
-                    <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Refresh Data">
+                    <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Perbarui Data">
                         <svg class="w-4 h-4 hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </button>
 
-                    <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Fullscreen Mode">
+                    <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Mode Layar Penuh">
                         <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                         <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
@@ -499,7 +738,7 @@
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalQuestions }}</h3>
-                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Database &rarr;</p>
+                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Buka bank soal &rarr;</p>
                         </div>
 
                         {{-- Peserta Ujian --}}
@@ -515,7 +754,7 @@
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalParticipants }}</h3>
-                            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Daftar &rarr;</p>
+                            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat peserta &rarr;</p>
                         </div>
 
                         {{-- Akurasi Global --}}
@@ -534,7 +773,7 @@
                                 <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $globalAcc }}</h3>
                                 <span class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold"></span>
                             </div>
-                            <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat Rincian &rarr;</p>
+                            <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat akurasi &rarr;</p>
                         </div>
 
                         {{-- Soal Sulit --}}
@@ -545,12 +784,25 @@
                                     <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-red-600 dark:group-hover:text-red-400">?</div>
                                     <div class="tooltip-content">
                                         <span class="block font-bold text-red-600 dark:text-red-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Butuh Perhatian</span>
-                                        Jumlah spesifik soal yang memiliki tingkat kegagalan (salah jawab) di atas 50%.
+                                        Jumlah soal dengan tingkat salah jawab di atas 50%.
                                     </div>
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-red-600 dark:text-red-500 mt-2 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] transition-colors">{{ $hardQuestionsCount }}</h3>
                             <p class="text-[9px] text-red-600 dark:text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Tinjau Soal &rarr;</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 shadow-sm dark:border-cyan-500/20 dark:bg-cyan-500/10">
+                        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                            <div class="min-w-0">
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-300">Pemetaan TP</p>
+                                <p class="mt-1 text-xs font-semibold leading-relaxed text-slate-600 dark:text-white/55">Analitik tujuan pembelajaran dipisahkan agar bank soal tetap fokus pada pengelolaan soal.</p>
+                            </div>
+                            <a href="{{ route('admin.learning-outcomes.index') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-300 md:w-auto">
+                                Buka Pemetaan TP
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </a>
                         </div>
                     </div>
 
@@ -643,7 +895,7 @@
                     @endphp
                     <div class="mb-8 md:mb-12 reveal" style="animation-delay: 0.3s;">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg> Evaluasi Akhir</h3>
-                        <div @click="selectChapter(99, 'FINAL EXAM: Evaluasi Akhir')" 
+                        <div @click="selectChapter(99, 'Evaluasi Akhir')"
                             class="glass-card rounded-3xl p-6 md:p-8 cursor-pointer group hover:border-yellow-400/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 bg-gradient-to-r from-yellow-50 to-transparent dark:from-yellow-900/10 dark:to-transparent border-t-2 border-yellow-400 dark:border-yellow-500/50 transition-colors">
                             
                             <div class="card-bg-gfx">
@@ -656,7 +908,7 @@
                                     <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> 
                                 </div>
                                 <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 transition-colors">Evaluasi Akhir (Bab 1 - 3)</h3>
-                                <p class="text-xs text-slate-600 dark:text-white/60 transition-colors">Kumpulan seluruh soal teori dari semua materi untuk menguji tingkat pemahaman komprehensif siswa.</p>
+                                <p class="text-xs text-slate-600 dark:text-white/60 transition-colors">Kumpulan soal teori dari seluruh materi untuk mengukur pemahaman siswa.</p>
                             </div>
 
                             <div class="relative z-10 flex gap-6 md:gap-8 text-center w-full md:w-auto justify-around md:justify-end border-t md:border-none border-slate-200 dark:border-white/10 pt-4 md:pt-0 transition-colors">
@@ -681,7 +933,7 @@
                     {{-- 4. TABEL SELURUH SISWA DENGAN TOMBOL "LEMBAR JAWABAN" --}}
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 reveal" style="animation-delay: 0.4s;">
                         
-                        {{-- KIRI: Daftar Seluruh Siswa dengan Search Bar --}}
+                        {{-- KIRI: Daftar Seluruh Siswa dengan Kolom Pencarian --}}
                         <div class="glass-card rounded-2xl p-6 flex flex-col h-full border-t-2 border-amber-400 dark:border-amber-500/50" x-data="{ searchStudent: '' }">
                             <div class="flex flex-col gap-3 mb-4 pb-4 border-b border-slate-200 dark:border-white/5 transition-colors">
                                 <div>
@@ -721,7 +973,7 @@
                                             <button @click="openStudentDetail('{{ addslashes($stat->email) }}')" class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-indigo-600 dark:hover:bg-indigo-500 text-slate-400 hover:text-white transition-colors shadow-sm border border-slate-200 dark:border-white/10">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                             </button>
-                                            <div class="tooltip-content" style="width:150px; text-align:center;">Lihat Lembar Jawaban</div>
+                                            <div class="tooltip-content" style="width:150px; text-align:center;">Lihat jawaban siswa</div>
                                         </div>
                                     </div>
                                 </div>
@@ -745,7 +997,7 @@
 
                             <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2 max-h-[400px]">
                                 @forelse($recentAttempts as $act)
-                                    @php $isPassed = $act->score >= 70; @endphp
+                                    @php $isLulus = $act->score >= 70; @endphp
                                     <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors group">
                                         <div class="flex justify-between items-start mb-2 gap-2">
                                             <div class="flex items-center gap-2 min-w-0">
@@ -754,8 +1006,8 @@
                                                 </div>
                                                 <p class="text-xs font-bold text-adaptive truncate">{{ $act->user->name ?? 'Unknown User' }}</p>
                                             </div>
-                                            <span class="text-[8px] font-bold px-2 py-0.5 rounded border transition-colors shrink-0 {{ $isPassed ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20' }}">
-                                                {{ $isPassed ? 'Lulus' : 'Gagal' }}
+                                            <span class="text-[8px] font-bold px-2 py-0.5 rounded border transition-colors shrink-0 {{ $isLulus ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20' }}">
+                                                {{ $isLulus ? 'Lulus' : 'Gagal' }}
                                             </span>
                                         </div>
                                         
@@ -763,7 +1015,7 @@
                                             <div class="flex-1 min-w-0 pl-8">
                                                 <p class="text-[11px] font-medium leading-snug transition-colors text-adaptive">
                                                     {{ $act->chapter_id == 99 ? 'Evaluasi Akhir' : 'Kuis Bab ' . $act->chapter_id }}
-                                                    <span class="{{ $isPassed ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black ml-1">({{ $act->score }} Poin)</span>
+                                                    <span class="{{ $isLulus ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black ml-1">({{ $act->score }} Poin)</span>
                                                 </p>
                                                 <div class="flex items-center justify-between mt-1.5">
                                                     <p class="text-[9px] text-adaptive-muted font-mono transition-colors flex items-center gap-1">
@@ -790,12 +1042,12 @@
                     {{-- Controls --}}
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                         <div class="relative w-full md:w-96 group">
-                            <input x-model="search" type="text" placeholder="Cari teks pertanyaan, atau opsi jawaban..." class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
+                            <input x-model="search" type="text" placeholder="Cari soal atau opsi jawaban..." class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
                             <div class="absolute left-3 top-3 md:top-3.5 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
                         </div>
                         <div class="flex gap-3 w-full md:w-auto">
                             <select x-model="difficulty" class="w-full md:w-auto bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white text-xs rounded-xl px-4 py-3 outline-none focus:border-indigo-500 cursor-pointer min-w-[150px] shadow-sm dark:shadow-inner transition-colors">
-                                <option value="all">Semua Kesulitan</option>
+                                <option value="all">Semua tingkat kesulitan</option>
                                 <option value="Sulit">🔥 Sulit (< 50%)</option>
                                 <option value="Sedang">⚖️ Sedang (50-79%)</option>
                                 <option value="Mudah">✅ Mudah (≥ 80%)</option>
@@ -812,22 +1064,62 @@
                                     <tr>
                                         <th class="px-6 py-4 w-[50%]">Teks Pertanyaan & Opsi Jawaban</th>
                                         <th class="px-6 py-4 text-center">Analisis Rasio Jawaban</th>
-                                        <th class="px-6 py-4 text-center">Status Label</th>
-                                        <th class="px-6 py-4 text-right">Aksi Panel</th>
+                                        <th class="px-6 py-4 text-center">Label Status</th>
+                                        <th class="px-6 py-4 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 dark:divide-white/5 bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors">
                                     @foreach($questions as $q)
+                                    @php
+                                        $questionSearchText = strtolower(trim(strip_tags(
+                                            (string) ($q->question_text ?? '') . ' ' . (($q->options ?? collect())->pluck('option_text')->join(' '))
+                                        )));
+                                    @endphp
                                     <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition-colors group question-row" 
-                                        x-show="(activeChapter === 'all' || activeChapter == {{ $q->chapter_id ?? 0 }}) && 
-                                                ('{{ strtolower($q->question_text ?? '') }}'.includes(search.toLowerCase())) &&
-                                                (difficulty === 'all' || difficulty === '{{ $q->status ?? '' }}')"
+                                        data-search="{{ e($questionSearchText) }}"
+                                        data-status="{{ e($q->status ?? '') }}"
+                                        x-show="matchesQuestionRow($el, {{ (int) ($q->chapter_id ?? 0) }})"
                                         x-transition>
                                         <td class="px-6 py-5 align-top">
                                             <div class="flex items-start gap-3">
-                                                <span class="px-2 py-1 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/50 text-[9px] font-bold rounded-md whitespace-nowrap mt-0.5 shadow-inner transition-colors">BAB {{ $q->chapter_id }}</span>
+                                                <span class="px-2 py-1 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/50 text-[9px] font-bold rounded-md whitespace-nowrap mt-0.5 shadow-inner transition-colors">{{ (int) $q->chapter_id === 99 ? 'Evaluasi' : 'BAB ' . $q->chapter_id }}</span>
                                                 <div>
-                                                    <p class="text-slate-900 dark:text-white font-medium text-xs md:text-sm leading-relaxed mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors pr-4">{{ $q->question_text }}</p>
+                                                    @if(!empty($q->media_url))
+                                                        <div data-media-card class="question-media-card mb-3 overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 max-w-xl shadow-sm">
+                                                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-3 py-2">
+                                                                <span class="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Media Soal</span>
+                                                                <span class="rounded-md border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-2 py-0.5 text-[9px] font-bold text-slate-500 dark:text-white/45">Gambar</span>
+                                                            </div>
+                                                            <img src="{{ $q->media_url }}" alt="{{ $q->media_caption ?: 'Media soal' }}" loading="lazy" onerror="this.closest('[data-media-card]').classList.add('hidden')" class="h-32 w-full object-contain bg-slate-100 dark:bg-[#020617]">
+                                                            @if(!empty($q->media_caption))
+                                                                <p class="px-3 py-2 text-[10px] text-slate-500 dark:text-white/50">{{ $q->media_caption }}</p>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                    <p onclick="openInsightModalById({{ (int) $q->id }})"
+                                                       onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openInsightModalById({{ (int) $q->id }}); }"
+                                                       role="button"
+                                                       tabindex="0"
+                                                       title="Klik untuk ringkasan benar/salah"
+                                                       class="question-rich-text text-slate-900 dark:text-white font-medium text-xs md:text-sm leading-relaxed mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors pr-4 cursor-pointer rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400/40">{!! $q->question_text !!}</p>
+                                                    <div class="mb-3 flex flex-wrap gap-2">
+                                                        @php $questionInteractionType = !empty($q->media_url) ? 'image_context' : ($q->interaction_type ?? 'multiple_choice'); @endphp
+                                                        <span class="px-2 py-1 rounded-lg border border-cyan-200 dark:border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-[9px] font-black uppercase tracking-widest">
+                                                            {{ $q->outcome_meta['display_code'] ?? ($q->learning_objective_code ?: 'TP Umum') }}
+                                                        </span>
+                                                        <span class="px-2 py-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-500 dark:text-white/50 text-[9px] font-bold">
+                                                            {{ Str::limit($q->outcome_meta['title'] ?? ($q->learning_objective_title ?: 'Tujuan pembelajaran umum'), 72) }}
+                                                        </span>
+                                                        <span class="px-2 py-1 rounded-lg border border-fuchsia-200 dark:border-fuchsia-500/20 bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300 text-[9px] font-black uppercase tracking-widest">
+                                                            {{ [
+                                                                'multiple_choice' => 'Pilihan Ganda',
+                                                                'image_context' => 'Gambar',
+                                                            ][$questionInteractionType] ?? 'Pilihan Ganda' }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mb-3 rounded-xl border border-cyan-100 dark:border-cyan-500/10 bg-cyan-50/70 dark:bg-cyan-500/[0.06] px-3 py-2 text-[11px] leading-relaxed text-cyan-900 dark:text-cyan-100">
+                                                        <span class="font-black">Tujuan:</span> {{ $q->outcome_meta['title'] ?? 'Tujuan pembelajaran terkait' }}
+                                                    </div>
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 opacity-80 sm:opacity-60 group-hover:opacity-100 transition-opacity">
                                                         @if(isset($q->options))
                                                             @foreach($q->options as $idx => $opt)
@@ -856,7 +1148,7 @@
                                                         <div class="w-full h-full bg-slate-300 dark:bg-white/5 transition-colors"></div>
                                                     @endif
                                                 </div>
-                                                <div class="text-center mt-1 transition-colors"><span class="text-xs font-black text-slate-800 dark:text-white">{{ $q->total_attempts ?? 0 }}</span> <span class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/30">Total Dicoba</span></div>
+                                                <div class="text-center mt-1 transition-colors"><span class="text-xs font-black text-slate-800 dark:text-white">{{ $q->total_attempts ?? 0 }}</span> <span class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/30">Siswa Menjawab</span></div>
                                             </div>
                                         </td>
                                         <td class="px-6 py-5 text-center align-middle">
@@ -869,9 +1161,8 @@
                                         </td>
                                         <td class="px-6 py-5 text-right align-middle">
                                             <div class="flex justify-end gap-2 sm:opacity-0 group-hover:opacity-100 transition duration-300">
-                                                <button onclick='openInsightModal(@json($q->list_correct ?? []), @json($q->list_wrong ?? []))' class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-indigo-600 dark:hover:bg-indigo-500 text-slate-500 dark:text-indigo-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-indigo-500 dark:hover:border-indigo-400" title="Lihat Daftar Siswa"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
-                                                <button onclick='openModal("edit", @json($q))' class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-amber-500 dark:hover:bg-amber-500 text-slate-500 dark:text-amber-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-amber-500 dark:hover:border-amber-400" title="Edit Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                                                <button onclick="confirmDelete('{{ $q->id }}')" class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-500 dark:hover:bg-red-500 text-slate-500 dark:text-red-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-red-500 dark:hover:border-red-400" title="Hapus Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                                                <button onclick='openModal("edit", @json($q))' class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-amber-500 dark:hover:bg-amber-500 text-slate-500 dark:text-amber-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-amber-500 dark:hover:border-amber-400" title="Perbarui Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                                                <button onclick="confirmHapus('{{ $q->id }}')" class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-500 dark:hover:bg-red-500 text-slate-500 dark:text-red-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-red-500 dark:hover:border-red-400" title="Hapus Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -883,7 +1174,7 @@
                     @else
                     <div class="glass-card rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[300px] opacity-60">
                         <div class="text-4xl mb-4 grayscale">📂</div>
-                        <h3 class="text-slate-900 dark:text-white font-bold transition-colors">Data Bank Soal Kosong</h3>
+                        <h3 class="text-slate-900 dark:text-white font-bold transition-colors">Bank soal belum tersedia</h3>
                         <p class="text-xs text-slate-500 dark:text-white/50 mt-2 transition-colors">Tidak ada data pertanyaan yang ditemukan di database untuk bab ini.</p>
                     </div>
                     @endif
@@ -918,7 +1209,7 @@
                         <p class="text-base font-black text-slate-700 dark:text-white" x-text="selectedStudent?.summary_total + ' Sesi'"></p>
                     </div>
                     <div>
-                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Rata-Rata Nilai</p>
+                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Rata-rata Nilai</p>
                         <p class="text-base font-black text-emerald-600 dark:text-emerald-400" x-text="selectedStudent?.summary_score + ' Poin'"></p>
                     </div>
                 </div>
@@ -937,7 +1228,7 @@
                             {{-- Accordion Header --}}
                             <div class="bg-slate-50 dark:bg-[#0a0e17]/50 p-4 flex justify-between items-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" @click="open = !open">
                                 <div class="flex items-center gap-3">
-                                    <span class="px-2 py-1 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/50 text-[10px] font-bold rounded uppercase tracking-widest transition-colors" x-text="chId == 99 ? 'FINAL' : 'BAB ' + chId"></span>
+                                    <span class="px-2 py-1 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/50 text-[10px] font-bold rounded uppercase tracking-widest transition-colors" x-text="chId == 99 ? 'Evaluasi' : 'BAB ' + chId"></span>
                                     <h4 class="font-bold text-slate-900 dark:text-white text-sm transition-colors" x-text="chapter.title"></h4>
                                 </div>
                                 <div class="flex items-center gap-4">
@@ -993,7 +1284,7 @@
             <template x-if="!selectedStudent || Object.keys(selectedStudent.chapters).length === 0">
                 <div class="flex flex-col items-center justify-center py-20 opacity-60">
                     <div class="text-4xl mb-4 grayscale">📂</div>
-                    <h3 class="text-slate-900 dark:text-white font-bold transition-colors">Belum Ada Riwayat Jawaban</h3>
+                    <h3 class="text-slate-900 dark:text-white font-bold transition-colors">Belum ada riwayat jawaban</h3>
                     <p class="text-xs text-slate-500 dark:text-white/50 mt-2 transition-colors">Siswa ini belum menyelesaikan evaluasi apapun.</p>
                 </div>
             </template>
@@ -1009,7 +1300,7 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Tinjauan Basis Data Soal
+                    Tinjauan Data Soal
                 </h3>
                 <p class="text-[10px] text-cyan-600 dark:text-cyan-400 mt-1 font-mono transition-colors">Daftar seluruh soal teori yang tersedia di sistem.</p>
             </div>
@@ -1020,7 +1311,7 @@
             <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors group">
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-slate-900 dark:text-white truncate transition-colors" title="{{ $q->question_text }}">{{ $q->question_text }}</p>
-                    <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-0.5 transition-colors">Bab {{ $q->chapter_id }}</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-0.5 transition-colors">{{ (int) $q->chapter_id === 99 ? 'Evaluasi' : 'Bab ' . $q->chapter_id }}</p>
                 </div>
                 <div class="text-right shrink-0">
                     <span class="text-[9px] font-bold uppercase tracking-widest border px-2 py-1 rounded transition-colors {{ ($q->status ?? '') == 'Sulit' ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20' : (($q->status ?? '') == 'Sedang' ? 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20') }}">{{ $q->status }}</span>
@@ -1115,7 +1406,7 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-red-600 dark:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    Daftar Soal Kritis (Banyak yang Gagal)
+                    Daftar Soal Perlu Perhatian
                 </h3>
                 <p class="text-[10px] text-red-600 dark:text-red-400 mt-1 font-mono transition-colors">Hanya menampilkan soal dengan rasio kegagalan > 50%</p>
             </div>
@@ -1137,7 +1428,7 @@
                         <td class="px-4 py-4 text-slate-700 dark:text-white/80 text-[11px] transition-colors" title="{{ $q->question_text }}">
                             {{ \Illuminate\Support\Str::limit($q->question_text, 60) }}
                         </td>
-                        <td class="px-4 py-4 text-center text-slate-500 dark:text-white/50 text-[10px] font-bold transition-colors">Bab {{ $q->chapter_id }}</td>
+                        <td class="px-4 py-4 text-center text-slate-500 dark:text-white/50 text-[10px] font-bold transition-colors">{{ (int) $q->chapter_id === 99 ? 'Evaluasi' : 'Bab ' . $q->chapter_id }}</td>
                         <td class="px-4 py-4 text-center transition-colors">
                             <span class="text-red-600 dark:text-red-400 font-bold">{{ $q->wrong_count }}</span> <span class="text-slate-400 dark:text-white/30">/ {{ $q->total_attempts }}</span>
                         </td>
@@ -1157,43 +1448,22 @@
 {{-- ==================== MODALS PENGOLAHAN SOAL (FORM/INSIGHT) ==================== --}}
 
 {{-- MODAL CREATE/EDIT QUESTION --}}
-<div id="quizModal" class="fixed inset-0 z-[999999] hidden flex items-center justify-center p-4">
+<div id="quizModal" class="fixed inset-0 z-[999999] hidden flex items-center justify-center p-3 sm:p-4">
     <div class="absolute inset-0 bg-slate-900/90 dark:bg-[#020617]/90 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
-    <div id="modalContent" class="relative w-full max-w-2xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]">
+    <div id="modalContent" class="relative w-full max-w-5xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[94vh]">
         <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-[#0a0e17] rounded-t-3xl transition-colors">
             <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors" id="modalTitle"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-700 dark:text-indigo-400 text-[10px] tracking-widest border border-indigo-200 dark:border-indigo-500/30 shadow-inner transition-colors">BARU</span> Tambah Soal</h3>
             <button onclick="closeModal()" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-200 dark:bg-white/5 hover:bg-red-100 dark:hover:bg-red-500/20 p-2 rounded-full border border-transparent dark:hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
-        <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] relative">
-            <div class="absolute inset-0 bg-white/95 dark:bg-[#0f141e]/95 mix-blend-overlay pointer-events-none transition-colors"></div>
-            <form id="quizForm" class="relative z-10">
+        <div class="p-4 sm:p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50 dark:bg-[#0a0e17]/70 relative">
+            <form id="quizForm" class="relative z-10" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" id="questionId" name="id">
-                <div class="space-y-6">
-                    <div><label class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-2 block transition-colors">Teks Pertanyaan</label><textarea name="question_text" id="inputQuestion" rows="3" class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl p-4 text-slate-900 dark:text-white text-sm outline-none focus:border-indigo-500 transition resize-none shadow-sm dark:shadow-inner" placeholder="Tuliskan pertanyaan di sini..." required></textarea></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-2 block transition-colors">Materi Bab</label>
-                            <select name="chapter_id" id="inputChapter" class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm outline-none focus:border-indigo-500 cursor-pointer shadow-sm dark:shadow-inner transition-colors">
-                                <option value="1">Bab 1: Pendahuluan</option>
-                                <option value="2">Bab 2: Layouting</option>
-                                <option value="3">Bab 3: Styling</option>
-                                <option value="99">Evaluasi Akhir (Final)</option>
-                            </select>
-                        </div>
-                        <div><label class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-2 block transition-colors">Jawaban Benar</label><select name="correct_answer" id="inputCorrect" class="w-full bg-white dark:bg-[#0a0e17] border border-emerald-500/30 rounded-xl px-4 py-3 text-emerald-600 dark:text-emerald-400 text-sm font-bold outline-none focus:border-emerald-500 cursor-pointer shadow-sm dark:shadow-inner transition-colors"><option value="option_a">Pilihan A</option><option value="option_b">Pilihan B</option><option value="option_c">Pilihan C</option><option value="option_d">Pilihan D</option></select></div>
-                    </div>
-                    <div class="space-y-3"><label class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider block transition-colors">Opsi Jawaban</label>
-                        @foreach(['a','b','c','d'] as $opt)
-                        <div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 shadow-inner flex items-center justify-center font-black text-slate-500 dark:text-white/50 text-xs uppercase shrink-0 transition-colors">{{ $opt }}</span><input type="text" name="option_{{ $opt }}" id="inputOption_{{ $opt }}" class="flex-1 bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white outline-none focus:border-indigo-500 text-sm shadow-sm dark:shadow-inner transition placeholder-slate-400 dark:placeholder-white/30" placeholder="Pilihan {{ strtoupper($opt) }}" required></div>
-                        @endforeach
-                    </div>
-                </div>
+                @include('admin.quiz._question_form_fields')
             </form>
         </div>
-        <div class="p-5 md:p-6 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#0a0e17] flex justify-end gap-3 rounded-b-3xl transition-colors">
+        <div class="p-4 sm:p-5 md:p-6 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#0a0e17] flex flex-col-reverse sm:flex-row sm:justify-end gap-3 rounded-b-3xl transition-colors">
             <button onclick="closeModal()" class="px-5 md:px-6 py-2.5 rounded-xl text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 font-bold text-xs transition border border-transparent dark:hover:border-white/10">Batal</button>
-            <button onclick="submitForm()" class="px-6 md:px-8 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition transform hover:-translate-y-0.5 border border-indigo-500 dark:border-indigo-400">Simpan Soal</button>
+            <button onclick="submitForm()" class="px-6 md:px-8 py-2.5 rounded-xl bg-slate-950 hover:bg-cyan-700 text-white dark:bg-cyan-500 dark:hover:bg-cyan-300 dark:text-slate-950 font-bold text-xs shadow-md transition transform hover:-translate-y-0.5 border border-slate-900 dark:border-cyan-300">Simpan Soal</button>
         </div>
     </div>
 </div>
@@ -1201,20 +1471,79 @@
 {{-- MODAL INSIGHT (DETAIL PENJAWAB BENAR/SALAH - BAGIAN TABEL BANK SOAL) --}}
 <div id="insightModal" class="fixed inset-0 z-[999999] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-slate-900/90 dark:bg-[#020617]/90 backdrop-blur-md transition-opacity" onclick="closeInsightModal()"></div>
-    <div id="insightContent" class="relative w-full max-w-md bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[85vh]">
+    <div id="insightContent" class="relative w-full max-w-4xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]">
         <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#0a0e17] flex justify-between items-center rounded-t-3xl transition-colors">
-            <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Tinjauan Siswa</h3>
+            <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Tinjauan Siswa per Soal</h3>
             <button onclick="closeInsightModal()" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-200 dark:bg-white/5 hover:bg-red-100 dark:hover:bg-red-500/20 p-2 rounded-full border border-transparent dark:hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
-        <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
-            <div>
-                <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Jawaban Benar</p><span id="countCorrect" class="text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-lg font-bold border border-emerald-200 dark:border-emerald-500/20 transition-colors">0 Siswa</span></div>
-                <div id="listCorrect" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+        <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-5">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-[#0a0e17]/80">
+                <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap gap-2">
+                            <span id="insightOutcomeCode" class="rounded-lg border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-cyan-700 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-200">TP</span>
+                            <span id="insightAccuracy" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">0%</span>
+                        </div>
+                        <p id="insightQuestion" class="mt-3 text-sm font-bold leading-relaxed text-slate-900 dark:text-white"></p>
+                        <p id="insightOutcomeTitle" class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400"></p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs md:min-w-64">
+                        <div class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                            <b id="countTotalNumber" class="block text-lg">0</b>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Total</span>
+                        </div>
+                        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">
+                            <b id="countCorrectNumber" class="block text-lg">0</b>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Benar</span>
+                        </div>
+                        <div class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200">
+                            <b id="countWrongNumber" class="block text-lg">0</b>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Salah</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="h-px bg-slate-200 dark:bg-white/5 w-full transition-colors"></div>
-            <div>
-                <div class="flex items-center justify-between mb-3"><p class="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-widest flex items-center gap-2 transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Jawaban Salah</p><span id="countWrong" class="text-[10px] bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 px-3 py-1 rounded-lg font-bold border border-red-200 dark:border-red-500/20 transition-colors">0 Siswa</span></div>
-                <div id="listWrong" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+
+            <section class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-white/10 dark:bg-[#0a0e17]/80">
+                <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Distribusi Kuantitas</p>
+                    <div class="flex gap-2">
+                        <span id="countCorrect" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300">0 siswa benar</span>
+                        <span id="countWrong" class="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-[10px] font-black text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">0 siswa salah</span>
+                    </div>
+                </div>
+                <div class="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-black/20">
+                    <div class="flex h-full">
+                        <div id="correctBar" class="h-full bg-emerald-500 transition-all" style="width: 0%"></div>
+                        <div id="wrongBar" class="h-full bg-red-500 transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-emerald-800 dark:border-emerald-500/20 dark:bg-emerald-500/[0.08] dark:text-emerald-200">
+                        <p class="text-[10px] font-black uppercase tracking-widest">Siswa Benar</p>
+                        <p id="correctQuantityNote" class="mt-1 text-xs font-bold">0 siswa atau 0% dari total.</p>
+                    </div>
+                    <div class="rounded-xl border border-red-200 bg-red-50/70 p-3 text-red-800 dark:border-red-500/20 dark:bg-red-500/[0.08] dark:text-red-200">
+                        <p class="text-[10px] font-black uppercase tracking-widest">Siswa Salah</p>
+                        <p id="wrongQuantityNote" class="mt-1 text-xs font-bold">0 siswa atau 0% dari total.</p>
+                    </div>
+                </div>
+            </section>
+            <div class="grid gap-4 lg:grid-cols-2">
+                <section class="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/[0.06]">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <p class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Siswa Benar</p>
+                        <span id="listCorrectCount" class="rounded-lg border border-emerald-200 bg-white px-3 py-1 text-[10px] font-black text-emerald-700 dark:border-emerald-500/20 dark:bg-[#0a0e17] dark:text-emerald-300">0 siswa</span>
+                    </div>
+                    <div id="listCorrect" class="space-y-2"></div>
+                </section>
+                <section class="rounded-2xl border border-red-200 bg-red-50/50 p-4 dark:border-red-500/20 dark:bg-red-500/[0.06]">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <p class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-red-700 dark:text-red-300"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span> Siswa Salah</p>
+                        <span id="listWrongCount" class="rounded-lg border border-red-200 bg-white px-3 py-1 text-[10px] font-black text-red-700 dark:border-red-500/20 dark:bg-[#0a0e17] dark:text-red-300">0 siswa</span>
+                    </div>
+                    <div id="listWrong" class="space-y-2"></div>
+                </section>
             </div>
         </div>
     </div>
@@ -1235,30 +1564,30 @@
             </div>
         
         <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Analisis Soal</span></h3>
-        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Manajemen & Tinjauan Komprehensif</p>
+        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Manajemen dan Tinjauan Soal</p>
         
         <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-            <p>Halaman kontrol ini direkayasa untuk memfasilitasi peran pengajar (Administrator) dalam melakukan peninjauan terhadap kualitas butir evaluasi teori yang disajikan kepada peserta didik.</p>
+            <p>Halaman ini membantu pengajar meninjau kualitas butir evaluasi teori yang dikerjakan siswa.</p>
             
             <div class="space-y-3 mt-4 text-left">
                 <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                     <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Metrik Makro</h4>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ringkasan Metrik</h4>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kartu rangkuman yang menyajikan status agregat, meliputi rasio penyelesaian kuis, kalkulasi, serta rekapitulasi data pengerjaan.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                     <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Mode Drill-Down Bab</h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Klik salah satu kartu kategori Bab (Pendahuluan, Layouting, dll) untuk membuka lembar analisis mendalam terhadap kualitas spesifik tiap soal yang diujikan.</p>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Mode Detail Bab</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pilih kartu bab untuk melihat kualitas soal pada bab tersebut.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                     <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tinjauan Mikro Peserta</h4>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tinjauan Jawaban Siswa</h4>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Melalui daftar direktori evaluasi siswa, administrator dapat menekan tombol panel aksi untuk memeriksa lembar jawaban individu secara terperinci.</p>
                     </div>
                 </div>
@@ -1274,7 +1603,29 @@
 </div>
 
 {{-- SCRIPT: TEMA, AJAX & SWEETALERT --}}
+@php
+    $questionInsightData = $questions->mapWithKeys(function ($q) {
+        return [
+            (int) $q->id => [
+                'id' => (int) $q->id,
+                'question' => \Illuminate\Support\Str::limit(strip_tags((string) $q->question_text), 180),
+                'outcome_code' => $q->outcome_meta['display_code'] ?? ($q->learning_objective_code ?: 'TP Umum'),
+                'outcome_title' => $q->outcome_meta['title'] ?? ($q->learning_objective_title ?: 'Tujuan pembelajaran terkait'),
+                'accuracy' => (int) ($q->accuracy ?? 0),
+                'total_attempts' => (int) ($q->total_attempts ?? 0),
+                'correct_count' => (int) ($q->correct_count ?? 0),
+                'wrong_count' => (int) ($q->wrong_count ?? 0),
+                'correct_percent' => (int) ($q->accuracy ?? 0),
+                'wrong_percent' => (int) (($q->total_attempts ?? 0) > 0 ? round((($q->wrong_count ?? 0) / max(1, $q->total_attempts)) * 100) : 0),
+                'correct' => $q->list_correct ?? [],
+                'wrong' => $q->list_wrong ?? [],
+            ],
+        ];
+    })->all();
+@endphp
 <script>
+    const questionInsightData = @json($questionInsightData);
+
     // --- SINKRONISASI TEMA GELAP/TERANG ---
     document.addEventListener('DOMContentLoaded', () => {
         const themeToggleBtnSidebar = document.getElementById('theme-toggle-sidebar');
@@ -1354,6 +1705,288 @@
     document.addEventListener("DOMContentLoaded", initChart);
     window.addEventListener('theme-toggled', initChart);
 
+    const interactionMeta = {
+        multiple_choice: { label: 'Pilihan Ganda', status: 'Standar' },
+        image_context: { label: 'Soal Gambar', status: 'Media' },
+    };
+    let previewObjectUrl = null;
+    const quizAlertDefaults = {
+        customClass: {
+            container: 'quiz-alert-layer',
+            popup: 'quiz-alert-popup',
+        },
+    };
+
+    function showQuizAlert(options = {}) {
+        return Swal.fire({
+            ...quizAlertDefaults,
+            ...options,
+            customClass: {
+                ...quizAlertDefaults.customClass,
+                ...(options.customClass || {}),
+            },
+        });
+    }
+
+    function renderQuestionStudentInsight(meta = null) {
+        const total = Number(meta?.total_attempts || 0);
+        const correct = Number(meta?.correct_count || 0);
+        const wrong = Number(meta?.wrong_count || 0);
+        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+        $('#studentInsightTotal').text(total);
+        $('#studentInsightCorrect').text(correct);
+        $('#studentInsightWrong').text(wrong);
+        $('#studentInsightBar').css('width', accuracy + '%');
+        $('#studentInsightStatus').text(total > 0 ? accuracy + '% akurat' : 'Baru');
+        $('#studentInsightNote').text(total > 0
+            ? `${correct} siswa menjawab benar dan ${wrong} siswa menjawab salah pada percobaan terbaru.`
+            : (meta?.id ? 'Belum ada siswa yang menjawab soal ini.' : 'Data siswa akan tampil setelah soal tersimpan dan dijawab.'));
+    }
+
+    function getQuestionOutcomeOptions() {
+        const element = document.getElementById('question-outcome-options-json');
+        if (!element) return {};
+
+        try {
+            return JSON.parse(element.textContent || '{}') || {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    const questionOutcomeOptions = getQuestionOutcomeOptions();
+
+    function setLearningOutcomeFields(row = null) {
+        $('#inputLearningObjectiveCode').val(row?.code || '');
+        $('#inputLearningObjectiveTitle').val(row?.title || '');
+        $('#inputRemediationHint').val(row?.material || row?.title || '');
+        $('#selectedLearningObjectiveHint').text(row
+            ? `${row.code} - ${row.title}`
+            : 'Pilih TP sesuai bab. Kode dan arahan materi tersimpan otomatis.');
+    }
+
+    function populateLearningOutcomeSelect(selectedCode = '') {
+        const chapter = String($('#inputChapter').val() || '1');
+        const rows = questionOutcomeOptions[chapter] || [];
+        const currentCode = selectedCode || ($('#inputLearningObjectiveCode').val() || '').trim();
+        const select = $('#inputLearningObjectiveSelect');
+
+        if (!select.length) return;
+
+        select.empty().append($('<option>', {
+            value: '',
+            text: rows.length ? 'Pilih TP resmi' : 'TP belum tersedia',
+        }));
+
+        rows.forEach((row) => {
+            $('<option>', {
+                value: row.code,
+                text: `${row.code} - ${row.title}`,
+            })
+                .attr('data-title', row.title || '')
+                .attr('data-material', row.material || row.title || '')
+                .appendTo(select);
+        });
+
+        const selectedRow = rows.find((row) => row.code === currentCode) || null;
+        select.val(selectedRow ? selectedRow.code : '');
+
+        if (selectedRow) {
+            setLearningOutcomeFields(selectedRow);
+        } else if (!currentCode) {
+            setLearningOutcomeFields(null);
+        }
+    }
+
+    function applySelectedLearningOutcome() {
+        const selected = $('#inputLearningObjectiveSelect option:selected');
+        const code = selected.val() || '';
+        if (!code) {
+            setLearningOutcomeFields(null);
+            return;
+        }
+
+        setLearningOutcomeFields({
+            code,
+            title: selected.attr('data-title') || '',
+            material: selected.attr('data-material') || selected.attr('data-title') || '',
+        });
+    }
+
+    function syncLearningOutcomeSelectFromFields() {
+        const code = ($('#inputLearningObjectiveCode').val() || '').trim();
+        const title = ($('#inputLearningObjectiveTitle').val() || '').trim().toLowerCase();
+        const select = $('#inputLearningObjectiveSelect');
+        if (!select.length) return;
+
+        const matched = select.find('option').filter(function () {
+            const option = $(this);
+            return option.val() === code || (title && (option.attr('data-title') || '').trim().toLowerCase() === title);
+        }).first();
+
+        select.val(matched.length ? matched.val() : '');
+        if (matched.length) {
+            applySelectedLearningOutcome();
+        }
+    }
+
+    function renderExistingMediaPath(mediaPath = '') {
+        const currentValue = (mediaPath || '').trim();
+        const existingPath = ($('#inputMediaFile').attr('data-existing-path') || '').trim();
+        const existingUrl = ($('#inputMediaFile').attr('data-existing-url') || '').trim();
+        const value = existingPath && (!currentValue || currentValue === existingUrl)
+            ? existingPath
+            : currentValue;
+        const mediaFile = $('#inputMediaFile')[0]?.files?.[0] || null;
+        const removingMedia = $('#inputRemoveMedia').is(':checked');
+        let label = 'Pilih gambar';
+        let badge = 'Pilih File';
+
+        if (removingMedia) {
+            label = 'Media akan dihapus';
+            badge = 'Hapus';
+        } else if (mediaFile) {
+            label = mediaFile.name;
+            badge = 'File Baru';
+        } else if (value) {
+            label = value;
+            badge = 'Media Aktif';
+        }
+
+        $('#mediaFileDisplay').text(label).attr('title', label);
+        $('#mediaFileBadge').text(badge);
+    }
+
+    function redirectToActiveQuestionChapter(chapterId = null) {
+        const target = new URL(window.location.href);
+        const value = chapterId || $('#inputChapter').val() || window.currentQuestionBankChapter;
+
+        if (value && value !== 'all') {
+            target.searchParams.set('chapter', value);
+        } else {
+            target.searchParams.delete('chapter');
+        }
+
+        window.location.href = target.toString();
+    }
+
+    function checkImageUrlAvailable(url) {
+        return new Promise((resolve) => {
+            if (!url) {
+                resolve(false);
+                return;
+            }
+
+            const image = new Image();
+            const timer = window.setTimeout(() => {
+                image.onload = null;
+                image.onerror = null;
+                resolve(false);
+            }, 7000);
+
+            image.onload = () => {
+                window.clearTimeout(timer);
+                resolve(true);
+            };
+            image.onerror = () => {
+                window.clearTimeout(timer);
+                resolve(false);
+            };
+            image.src = url;
+        });
+    }
+
+    function setQuestionType(type) {
+        $('#inputInteractionType').val(type);
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    }
+
+    function updateQuestionTypeUI() {
+        const type = $('#inputInteractionType').val() || 'multiple_choice';
+        const needsMedia = type === 'image_context';
+        const hasFile = Boolean($('#inputMediaFile')[0]?.files?.length);
+        const isEditing = Boolean($('#questionId').val());
+
+        $('.question-type-card').removeClass('is-active');
+        $(`.question-type-card[data-type="${type}"]`).addClass('is-active');
+
+        $('#optionFields, #correctAnswerField').removeClass('hidden');
+        $('#optionFields input').prop('required', true).prop('disabled', false);
+        $('#inputCorrect').prop('required', true).prop('disabled', false);
+        $('#imageUploadField, #imageMetaFields').toggleClass('hidden', !needsMedia);
+        $('#removeMediaField').toggleClass('hidden', !needsMedia || !isEditing);
+        $('#inputMediaFile, #inputMediaUrl, #inputMediaCaption, #inputRemoveMedia').prop('disabled', !needsMedia);
+        $('#inputInteractionPrompt').prop('required', false);
+        $('#inputMediaUrl').prop('required', needsMedia && !hasFile);
+        $('#previewTypeLabel').text(interactionMeta[type]?.label || 'Pilihan Ganda');
+        $('#previewStatus').text(interactionMeta[type]?.status || 'Draft');
+    }
+
+    function renderQuestionPreview() {
+        const type = $('#inputInteractionType').val() || 'multiple_choice';
+        const question = ($('#inputQuestion').val() || '').trim();
+        const caption = ($('#inputMediaCaption').val() || '').trim();
+        const mediaUrl = ($('#inputMediaUrl').val() || '').trim();
+        const mediaFile = $('#inputMediaFile')[0]?.files?.[0] || null;
+        const removingMedia = $('#inputRemoveMedia').is(':checked');
+        const isEditing = Boolean($('#questionId').val());
+
+        if (previewObjectUrl) {
+            URL.revokeObjectURL(previewObjectUrl);
+            previewObjectUrl = null;
+        }
+
+        const previewSrc = type === 'image_context' ? (mediaFile ? URL.createObjectURL(mediaFile) : (removingMedia ? '' : mediaUrl)) : '';
+        if (mediaFile) previewObjectUrl = previewSrc;
+
+        $('#previewQuestion').text(question || 'Teks pertanyaan akan tampil di sini.');
+        renderExistingMediaPath(type === 'image_context' && mediaUrl && !removingMedia ? mediaUrl : '');
+
+        if (previewSrc) {
+            $('#previewMedia').attr('src', previewSrc);
+            $('#previewMediaWrap').removeClass('hidden');
+        } else {
+            $('#previewMedia').attr('src', '');
+            $('#previewMediaWrap').addClass('hidden');
+        }
+
+        if (caption) {
+            $('#previewCaption').text(caption).removeClass('hidden');
+        } else {
+            $('#previewCaption').text('').addClass('hidden');
+        }
+
+        const options = ['a', 'b', 'c', 'd'];
+        const correctVal = $('#inputCorrect').val() || 'option_a';
+        options.forEach((opt) => {
+            const value = ($('#inputOption_' + opt).val() || '').trim();
+            const previewEl = $('#preview_' + opt);
+            previewEl.find('.preview-text').text(value || 'Pilihan ' + opt.toUpperCase());
+            previewEl.toggleClass('is-correct', correctVal === 'option_' + opt);
+        });
+    }
+
+    $(document).on('change', '#inputInteractionType', () => {
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    });
+    $(document).on('change', '#inputChapter', () => {
+        setLearningOutcomeFields(null);
+        populateLearningOutcomeSelect();
+    });
+    $(document).on('change', '#inputLearningObjectiveSelect', () => {
+        applySelectedLearningOutcome();
+    });
+    $(document).on('input', '#inputLearningObjectiveCode, #inputLearningObjectiveTitle', () => {
+        syncLearningOutcomeSelectFromFields();
+    });
+    $(document).on('input change', '#inputQuestion, #inputCorrect, #inputOption_a, #inputOption_b, #inputOption_c, #inputOption_d, #inputInteractionPrompt, #inputMediaUrl, #inputMediaCaption, #inputMediaFile, #inputRemoveMedia', () => {
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    });
+
     // --- MODAL FUNCTIONS UNTUK BANK SOAL ---
     function openModal(mode, data = null) {
         $('#quizModal').removeClass('hidden');
@@ -1364,38 +1997,119 @@
         if(mode === 'create') {
             const badge = isDark ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' : 'bg-indigo-100 text-indigo-700 border-indigo-200';
             $('#modalTitle').html(`<span class="p-1.5 ${badge} rounded-lg text-[10px] tracking-widest border shadow-inner transition-colors">BARU</span> Tambah Soal`);
-            $('#quizForm')[0].reset(); $('#questionId').val(''); $('#inputChapter').val(1);
+            const defaultChapter = window.currentQuestionBankChapter && window.currentQuestionBankChapter !== 'all'
+                ? window.currentQuestionBankChapter
+                : 1;
+            $('#quizForm')[0].reset(); $('#questionId').val(''); $('#inputChapter').val(defaultChapter);
+            $('#inputInteractionType').val('multiple_choice');
+            $('#inputOption_a, #inputOption_b, #inputOption_c, #inputOption_d').val('');
+            $('#inputMediaFile').removeAttr('data-existing-path data-existing-url');
+            $('#inputCorrect').val('option_a');
+            populateLearningOutcomeSelect();
+            renderExistingMediaPath('');
+            renderQuestionStudentInsight(null);
+            updateQuestionTypeUI();
+            renderQuestionPreview();
         } else {
             const badge = isDark ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-amber-100 text-amber-700 border-amber-200';
             $('#modalTitle').html(`<span class="p-1.5 ${badge} rounded-lg text-[10px] tracking-widest border shadow-inner transition-colors">EDIT</span> Perbarui Soal`);
+            const objectiveCode = data.learning_objective_code || data.outcome_meta?.code || '';
+            const objectiveTitle = data.learning_objective_title || data.outcome_meta?.title || '';
+            const remediationHint = data.remediation_hint || data.outcome_meta?.material || objectiveTitle;
             $('#questionId').val(data.id); $('#inputQuestion').val(data.question_text); $('#inputChapter').val(data.chapter_id);
+            $('#inputLearningObjectiveCode').val(objectiveCode);
+            $('#inputLearningObjectiveTitle').val(objectiveTitle);
+            $('#inputRemediationHint').val(remediationHint);
+            let normalizedType = ['multiple_choice', 'image_context'].includes(data.interaction_type) ? data.interaction_type : 'multiple_choice';
+            if (normalizedType === 'multiple_choice' && data.media_url) normalizedType = 'image_context';
+            $('#inputInteractionType').val(normalizedType);
+            $('#inputInteractionPrompt').val('');
+            $('#inputMediaUrl').val(data.media_url || '');
+            $('#inputMediaCaption').val(data.media_caption || '');
+            $('#inputRemoveMedia').prop('checked', false);
+            $('#inputMediaFile').val('');
+            $('#inputMediaFile')
+                .attr('data-existing-path', data.media_path || data.media_url || '')
+                .attr('data-existing-url', data.media_url || '');
+            populateLearningOutcomeSelect(objectiveCode);
+            syncLearningOutcomeSelectFromFields();
+            renderExistingMediaPath(data.media_path || data.media_url || '');
             if(data.options && data.options.length >= 4) {
                 $('#inputOption_a').val(data.options[0].option_text); $('#inputOption_b').val(data.options[1].option_text);
                 $('#inputOption_c').val(data.options[2].option_text); $('#inputOption_d').val(data.options[3].option_text);
                 if(data.options[0].is_correct) $('#inputCorrect').val('option_a'); else if(data.options[1].is_correct) $('#inputCorrect').val('option_b');
                 else if(data.options[2].is_correct) $('#inputCorrect').val('option_c'); else if(data.options[3].is_correct) $('#inputCorrect').val('option_d');
             }
+            renderQuestionStudentInsight(questionInsightData[data.id] || { id: data.id });
+            updateQuestionTypeUI();
+            renderQuestionPreview();
         }
     }
     function closeModal() { $('#modalContent').removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0'); setTimeout(() => { $('#quizModal').addClass('hidden'); }, 300); }
     
-    function submitForm() {
+    async function submitForm() {
         const form = $('#quizForm'); const id = $('#questionId').val(); const url = id ? `/admin/questions/update/${id}` : `{{ route('admin.questions.store') }}`;
+        const returnChapter = $('#inputChapter').val() || window.currentQuestionBankChapter;
+        const interactionType = $('#inputInteractionType').val() || 'multiple_choice';
+        const mediaUrl = ($('#inputMediaUrl').val() || '').trim();
+        const mediaFile = $('#inputMediaFile')[0]?.files?.length || 0;
+        const removingMedia = $('#inputRemoveMedia').is(':checked');
+
+        if (!($('#inputLearningObjectiveSelect').val() || '').trim()) {
+            showQuizAlert({
+                title: 'Pemetaan TP belum dipilih',
+                text: 'Pilih tujuan pembelajaran resmi sesuai bab sebelum menyimpan soal.',
+                icon: 'warning',
+                confirmButtonColor: '#06b6d4',
+            });
+            return;
+        }
+        applySelectedLearningOutcome();
+
+        if (interactionType === 'image_context' && (!mediaUrl || removingMedia) && !mediaFile) {
+            showQuizAlert({
+                title: 'Media belum tersedia',
+                text: 'Jenis soal Gambar wajib memiliki upload gambar atau URL gambar. Pilih file gambar atau isi URL gambar terlebih dahulu.',
+                icon: 'warning',
+                confirmButtonColor: '#06b6d4',
+            });
+            return;
+        }
+        if (interactionType === 'image_context' && mediaUrl && !mediaFile) {
+            const imageAvailable = await checkImageUrlAvailable(mediaUrl);
+            if (!imageAvailable) {
+                showQuizAlert({
+                    title: 'Gambar tidak dapat dimuat',
+                    text: 'URL gambar tidak dapat dibuka. Periksa kembali URL gambar atau gunakan upload file.',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444',
+                });
+                return;
+            }
+        }
         if(!form[0].checkValidity()) { form[0].reportValidity(); return; }
+
+        const formData = new FormData(form[0]);
         
         const isDark = document.documentElement.classList.contains('dark');
         const bg = isDark ? '#0f141e' : '#ffffff';
         const color = isDark ? '#fff' : '#1e293b';
 
-        Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: bg, color: color });
-        $.post(url, form.serialize()).done((res) => { 
-            Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', background: bg, color: color, confirmButtonColor: '#6366f1' }).then(() => location.reload()); 
-        }).fail((err) => { 
-            Swal.fire({ title: 'Gagal', text: err.responseJSON?.message || 'Terjadi kesalahan sistem', icon: 'error', background: bg, color: color, confirmButtonColor: '#ef4444' }); 
+        showQuizAlert({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: bg, color: color });
+        $.ajax({
+            url,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+        }).done((res) => {
+            showQuizAlert({ title: 'Berhasil!', text: res.message, icon: 'success', background: bg, color: color, confirmButtonColor: '#6366f1' }).then(() => redirectToActiveQuestionChapter(returnChapter));
+        }).fail((err) => {
+            showQuizAlert({ title: 'Gagal', text: err.responseJSON?.message || 'Terjadi kesalahan sistem', icon: 'error', background: bg, color: color, confirmButtonColor: '#ef4444' });
         });
     }
 
-    function confirmDelete(id) {
+    function confirmHapus(id) {
         const isDark = document.documentElement.classList.contains('dark');
         const bg = isDark ? '#0f141e' : '#ffffff';
         const color = isDark ? '#fff' : '#1e293b';
@@ -1421,21 +2135,104 @@
         });
     }
 
-    function openInsightModal(correct, wrong) {
-        const isDark = document.documentElement.classList.contains('dark');
+    function openInsightModalById(questionId) {
+        const data = questionInsightData[questionId] || {};
+        openInsightModal(data);
+    }
 
-        $('#countCorrect').text(correct.length + ' Siswa'); $('#countWrong').text(wrong.length + ' Siswa');
-        
-        const renderList = (list, color) => list.length ? list.map(name => `
-            <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white dark:bg-[#0a0e17] border border-${color}-200 dark:border-${color}-500/20 text-xs text-slate-700 dark:text-white shadow-sm dark:shadow-inner transition hover:border-${color}-400 dark:hover:border-${color}-500/50">
-                <div class="w-6 h-6 rounded-lg bg-${color}-50 dark:bg-${color}-500/20 border border-${color}-200 dark:border-${color}-500/30 text-${color}-600 dark:text-${color}-400 flex items-center justify-center font-bold text-[10px] shadow-sm dark:shadow-inner shrink-0">${name.charAt(0)}</div>
-                <span class="font-medium truncate">${name}</span>
-            </div>
-        `).join('') : `
-            <div class="col-span-full"><p class="text-[10px] text-slate-500 dark:text-white/30 italic pl-1 border border-dashed border-slate-300 dark:border-white/10 p-3 rounded-xl text-center bg-slate-50 dark:bg-[#0a0e17]/50 transition-colors">Tidak ada peserta pada kategori ini.</p></div>
-        `;
-        
-        $('#listCorrect').html(renderList(correct, 'emerald')); $('#listWrong').html(renderList(wrong, 'red'));
+    function escapeHtml(value = '') {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[char]));
+    }
+
+    function renderStudentAnswerList(list = [], type = 'correct') {
+        const isCorrect = type === 'correct';
+        const palette = isCorrect
+            ? {
+                card: 'border-emerald-200 bg-white hover:border-emerald-300 dark:border-emerald-500/20 dark:bg-[#0a0e17] dark:hover:border-emerald-500/40',
+                avatar: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200',
+                pill: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200',
+                label: 'text-emerald-700 dark:text-emerald-300',
+                empty: 'Belum ada siswa yang menjawab benar pada soal ini.',
+            }
+            : {
+                card: 'border-red-200 bg-white hover:border-red-300 dark:border-red-500/20 dark:bg-[#0a0e17] dark:hover:border-red-500/40',
+                avatar: 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200',
+                pill: 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200',
+                label: 'text-red-700 dark:text-red-300',
+                empty: 'Belum ada siswa yang menjawab salah pada soal ini.',
+            };
+
+        if (!list.length) {
+            return `<p class="rounded-xl border border-dashed border-slate-300 bg-white/70 p-4 text-center text-[11px] italic text-slate-500 dark:border-white/10 dark:bg-[#0a0e17]/50 dark:text-white/40">${palette.empty}</p>`;
+        }
+
+        return list.map((student) => {
+            const name = student.name || 'Tanpa nama';
+            const initial = name.trim().charAt(0) || '?';
+            const status = isCorrect ? 'Benar' : 'Salah';
+            const context = student.context || (isCorrect
+                ? 'Siswa sudah menjawab sesuai kunci pada percobaan terbaru.'
+                : 'Siswa perlu penguatan pada konsep yang ditanyakan soal ini.');
+
+            return `
+                <article class="rounded-xl border ${palette.card} p-3 text-xs shadow-sm transition">
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${palette.avatar} text-[11px] font-black">${escapeHtml(initial)}</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <p class="truncate font-black text-slate-900 dark:text-white">${escapeHtml(name)}</p>
+                                    <p class="truncate text-[10px] text-slate-500 dark:text-slate-400">${escapeHtml(student.email || '-')}</p>
+                                </div>
+                                <span class="shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-black ${palette.pill}">${status}</span>
+                            </div>
+                            <div class="mt-2 flex flex-wrap gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
+                                <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">${escapeHtml(student.class_group || 'Kelas belum diatur')}</span>
+                                <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">Skor ${escapeHtml(student.score ?? '-')}</span>
+                                <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">${escapeHtml(student.answered_at || '-')}</span>
+                            </div>
+                            <div class="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] leading-5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                                <p><span class="font-black ${palette.label}">Jawaban siswa:</span> ${escapeHtml(student.chosen || 'Tidak dijawab')}</p>
+                                <p class="mt-1"><span class="font-black text-emerald-700 dark:text-emerald-300">Kunci:</span> ${escapeHtml(student.correct || 'Tidak ada kunci')}</p>
+                            </div>
+                            <p class="mt-2 rounded-lg border border-slate-200 bg-white/80 px-3 py-2 text-[11px] leading-5 text-slate-600 dark:border-white/10 dark:bg-black/10 dark:text-slate-300">${escapeHtml(context)}</p>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    function openInsightModal(meta = {}) {
+        const total = Number(meta.total_attempts || 0);
+        const correct = Number(meta.correct_count || 0);
+        const wrong = Number(meta.wrong_count || 0);
+        const correctPercent = total > 0 ? Math.round((correct / total) * 100) : 0;
+        const wrongPercent = total > 0 ? Math.round((wrong / total) * 100) : 0;
+
+        $('#countTotalNumber').text(total);
+        $('#countCorrect').text(correct + ' siswa benar');
+        $('#countWrong').text(wrong + ' siswa salah');
+        $('#countCorrectNumber').text(correct);
+        $('#countWrongNumber').text(wrong);
+        $('#insightQuestion').text(meta.question || 'Soal belum tersedia');
+        $('#insightOutcomeCode').text(meta.outcome_code || 'TP');
+        $('#insightOutcomeTitle').text(meta.outcome_title || 'Tujuan pembelajaran terkait');
+        $('#insightAccuracy').text(correctPercent + '% akurasi');
+        $('#correctBar').css('width', correctPercent + '%');
+        $('#wrongBar').css('width', wrongPercent + '%');
+        $('#correctQuantityNote').text(correct + ' siswa atau ' + correctPercent + '% dari total siswa menjawab.');
+        $('#wrongQuantityNote').text(wrong + ' siswa atau ' + wrongPercent + '% dari total siswa menjawab.');
+        $('#listCorrectCount').text(correct + ' siswa');
+        $('#listWrongCount').text(wrong + ' siswa');
+        $('#listCorrect').html(renderStudentAnswerList(meta.correct || [], 'correct'));
+        $('#listWrong').html(renderStudentAnswerList(meta.wrong || [], 'wrong'));
         $('#insightModal').removeClass('hidden'); setTimeout(() => { $('#insightContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'); }, 10);
     }
     function closeInsightModal() { $('#insightContent').removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0'); setTimeout(() => { $('#insightModal').addClass('hidden'); }, 300); }

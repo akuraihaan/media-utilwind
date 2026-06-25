@@ -13,6 +13,7 @@ use App\Models\QuizAttempt;
 use App\Models\LabHistory;
 use App\Models\Lab;
 use App\Models\LabSession;
+use App\Models\ClassGroup;
 
 class CourseController extends Controller
 {
@@ -28,9 +29,9 @@ class CourseController extends Controller
         '1.4' => ['range' => [16, 20], 'activity' => 4,  'view' => 'courses.implementasi',   'required' => '1.3'],
         '1.5' => ['range' => [21, 25], 'activity' => 5,  'view' => 'courses.keunggulan',     'required' => '1.4'],
 
-        '2.1' => ['range' => [26, 30], 'activity' => 6,  'view' => 'courses.layout-mgmt',    'required' => 'quiz_1'],
-        '2.2' => ['range' => [31, 35], 'activity' => 7,  'view' => 'courses.flexbox',        'required' => '2.1'],
-        '2.3' => ['range' => [36, 40], 'activity' => 8,  'view' => 'courses.grid',           'required' => '2.2'],
+        '2.1' => ['range' => [26, 30], 'activity' => 6,  'view' => 'courses.flexbox',        'required' => 'quiz_1'],
+        '2.2' => ['range' => [31, 35], 'activity' => 7,  'view' => 'courses.grid',           'required' => '2.1'],
+        '2.3' => ['range' => [36, 40], 'activity' => 8,  'view' => 'courses.layout-mgmt',    'required' => '2.2'],
         '2.4' => ['range' => [41, 45], 'activity' => 9,  'view' => 'courses.responsive',     'required' => '2.3'],
 
         '3.1' => ['range' => [46, 50], 'activity' => 10, 'view' => 'courses.typography',     'required' => 'quiz_2'],
@@ -280,14 +281,70 @@ class CourseController extends Controller
      */
     public function showSyllabus()
     {
-        $userId = Auth::id();
-        $statusMap = $this->getChapterStatus($userId);
+        $user = Auth::user();
+        $userId = $user?->id;
+        $isAdmin = $user && $user->role === 'admin';
 
-        $passedLabsMap = LabHistory::where('user_id', $userId)
-            ->where('status', 'passed')
-            ->pluck('lab_id')
-            ->flip()
-            ->toArray();
+        $statusMap = $userId
+            ? $this->getChapterStatus($userId)
+            : collect($this->lessonMap)
+                ->mapWithKeys(fn ($_meta, $key) => [$key => false])
+                ->merge(['quiz_1' => false, 'quiz_2' => false, 'quiz_3' => false])
+                ->all();
+
+        $passedLabsMap = $userId
+            ? LabHistory::where('user_id', $userId)
+                ->where('status', 'passed')
+                ->pluck('lab_id')
+                ->flip()
+                ->toArray()
+            : [];
+
+        $canAccessLearning = false;
+        $accessRequirement = [
+            'title' => 'Akses Materi Terkunci',
+            'message' => 'Silabus dapat dibaca bebas, tetapi materi, lab, dan evaluasi membutuhkan akun belajar dan akses kelas aktif.',
+            'action' => 'Masuk atau gabung kelas untuk membuka materi.',
+        ];
+
+        if ($isAdmin) {
+            $canAccessLearning = true;
+            $accessRequirement = [
+                'title' => 'Mode Admin Aktif',
+                'message' => 'Admin dapat membuka semua materi, lab, dan evaluasi tanpa batasan kelas.',
+                'action' => 'Silakan lanjutkan peninjauan materi.',
+            ];
+        } elseif (!$user) {
+            $accessRequirement = [
+                'title' => 'Masuk untuk Membuka Materi',
+                'message' => 'Anda sedang melihat silabus publik. Untuk masuk ke isi materi, lab, atau evaluasi, silakan login terlebih dahulu lalu masukkan token kelas.',
+                'action' => 'Login atau buat akun sebelum mulai belajar.',
+            ];
+        } elseif (empty($user->class_group)) {
+            $accessRequirement = [
+                'title' => 'Token Kelas Diperlukan',
+                'message' => 'Akun Anda sudah aktif, tetapi belum terhubung ke kelas. Masukkan token kelas dari instruktur melalui dasbor.',
+                'action' => 'Buka dasbor dan gunakan menu Gabung Kelas.',
+            ];
+        } else {
+            $canAccessLearning = ClassGroup::where('name', $user->class_group)
+                ->where('is_active', true)
+                ->exists();
+
+            if (!$canAccessLearning) {
+                $accessRequirement = [
+                    'title' => 'Kelas Belum Aktif',
+                    'message' => 'Kelas pada akun Anda sedang ditutup atau belum tersedia. Hubungi instruktur sebelum membuka materi.',
+                    'action' => 'Cek kembali status kelas atau minta token kelas baru.',
+                ];
+            } else {
+                $accessRequirement = [
+                    'title' => 'Akses Belajar Aktif',
+                    'message' => 'Akun Anda sudah terhubung dengan kelas aktif. Materi, lab, dan evaluasi dapat dibuka sesuai urutan progres.',
+                    'action' => 'Lanjutkan belajar sesuai urutan silabus.',
+                ];
+            }
+        }
 
         $activeLabIds = Lab::where('is_active', 1)->pluck('id')->map(fn ($id) => (int) $id)->toArray();
         $totalSteps = count($this->lessonMap) + count($activeLabIds) + 3;
@@ -313,6 +370,8 @@ class CourseController extends Controller
             'completedLessonsMap' => $statusMap,
             'passedLabsMap' => $passedLabsMap,
             'progressPercent' => $progressPercent,
+            'canAccessLearning' => $canAccessLearning,
+            'accessRequirement' => $accessRequirement,
         ]);
     }
 }

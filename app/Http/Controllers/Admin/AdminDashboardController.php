@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File; // 🔹 WAJIB DITAMBAHKAN
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UserLessonProgress;
 use App\Models\QuizAttempt;
+use App\Models\QuizAttemptAnswer;
 use App\Models\QuizQuestion;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -19,6 +23,7 @@ use App\Models\Lab;
 use App\Models\CourseLesson;
 use App\Models\UserActivityProgress;
 use App\Models\ClassGroup;
+use App\Support\LearningOutcomeAnalytics;
 
 class AdminDashboardController extends Controller
 {
@@ -38,6 +43,220 @@ class AdminDashboardController extends Controller
             'created_at'  => now(),
             'updated_at'  => now(),
         ]);
+    }
+
+    private function filterColumns(string $table, array $attributes): array
+    {
+        return collect($attributes)
+            ->filter(fn ($value, $column) => Schema::hasColumn($table, $column))
+            ->all();
+    }
+
+    private function quizMediaPublicUrl(string $path): string
+    {
+        return '/uploads/' . ltrim(str_replace('\\', '/', $path), '/');
+    }
+
+    private function quizMediaPathFromUrl(?string $url): ?string
+    {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return null;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?: $url;
+        $path = trim(str_replace('\\', '/', rawurldecode($path)));
+
+        foreach (['/uploads/quiz-media/', 'uploads/quiz-media/'] as $needle) {
+            if (Str::contains($path, $needle)) {
+                return 'quiz-media/' . ltrim(Str::after($path, $needle), '/');
+            }
+        }
+
+        foreach (['/storage/quiz-media/', 'storage/quiz-media/'] as $needle) {
+            if (Str::contains($path, $needle)) {
+                return 'quiz-media/' . ltrim(Str::after($path, $needle), '/');
+            }
+        }
+
+        return Str::startsWith($path, 'quiz-media/') ? $path : null;
+    }
+
+    private function quizChapterLabel($chapterId): string
+    {
+        $chapterId = (int) $chapterId;
+
+        return $chapterId === 99 ? 'Evaluasi' : 'Bab ' . $chapterId;
+    }
+
+    private function formatDurationShort($seconds): string
+    {
+        $seconds = max(0, (int) round((float) ($seconds ?? 0)));
+        if ($seconds === 0) {
+            return '0s';
+        }
+
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+        $remainingSeconds = $seconds % 60;
+        $parts = [];
+
+        if ($hours > 0) {
+            $parts[] = $hours . 'j';
+        }
+
+        if ($minutes > 0) {
+            $parts[] = $minutes . 'm';
+        }
+
+        if ($remainingSeconds > 0 || empty($parts)) {
+            $parts[] = $remainingSeconds . 's';
+        }
+
+        return implode(' ', array_slice($parts, 0, 2));
+    }
+
+    private function normalizeQuizMediaUrl(?string $url, ?string $path = null): ?string
+    {
+        $url = trim((string) $url);
+        $localPath = $this->quizMediaPathFromUrl($url) ?: ($path ?: null);
+
+        if ($localPath) {
+            return $this->quizMediaPublicUrl($localPath);
+        }
+
+        return $url !== '' ? $url : null;
+    }
+
+    private function deleteQuizMedia(?string $path): void
+    {
+        $path = trim((string) $path);
+
+        if ($path !== '' && Str::startsWith(str_replace('\\', '/', $path), 'quiz-media/')) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+
+    private function questionMediaAttributes(Request $request, array $validated, object|null $oldQuestion = null): array
+    {
+        $attributes = [
+            'interaction_type' => $validated['interaction_type'] ?? 'multiple_choice',
+            'interaction_prompt' => $validated['interaction_prompt'] ?? null,
+            'media_caption' => $validated['media_caption'] ?? null,
+        ];
+
+        if (($validated['interaction_type'] ?? 'multiple_choice') !== 'image_context') {
+            $this->deleteQuizMedia($oldQuestion?->media_path ?? null);
+
+            $attributes['interaction_prompt'] = null;
+            $attributes['media_caption'] = null;
+
+            return $attributes + [
+                'media_type' => null,
+                'media_url' => null,
+                'media_path' => null,
+            ];
+        }
+
+        $mediaUrl = trim((string) ($validated['media_url'] ?? ''));
+
+        if ($request->hasFile('media_file')) {
+            $this->deleteQuizMedia($oldQuestion?->media_path ?? null);
+
+            $path = $request->file('media_file')->store('quiz-media', 'public');
+
+            return $attributes + [
+                'media_type' => 'image',
+                'media_url' => $this->quizMediaPublicUrl($path),
+                'media_path' => $path,
+            ];
+        }
+
+        if ($request->boolean('remove_media')) {
+            $this->deleteQuizMedia($oldQuestion?->media_path ?? null);
+
+            return $attributes + [
+                'media_type' => null,
+                'media_url' => null,
+                'media_path' => null,
+            ];
+        }
+
+        if ($mediaUrl !== '') {
+            $mediaPath = $this->quizMediaPathFromUrl($mediaUrl);
+
+            if (!empty($oldQuestion?->media_path) && (!$mediaPath || $mediaPath !== $oldQuestion->media_path)) {
+                $this->deleteQuizMedia($oldQuestion->media_path);
+            }
+
+            return $attributes + [
+                'media_type' => 'image',
+                'media_url' => $this->normalizeQuizMediaUrl($mediaUrl),
+                'media_path' => $mediaPath,
+            ];
+        }
+
+        if ($oldQuestion && (!empty($oldQuestion->media_url) || !empty($oldQuestion->media_path))) {
+            return $attributes + [
+                'media_type' => $oldQuestion->media_type ?? 'image',
+                'media_url' => $this->normalizeQuizMediaUrl($oldQuestion->media_url ?? null, $oldQuestion->media_path ?? null),
+                'media_path' => $oldQuestion->media_path ?? null,
+            ];
+        }
+
+        return $attributes + [
+            'media_type' => null,
+            'media_url' => null,
+            'media_path' => null,
+        ];
+    }
+
+    private function validateQuestionInteraction(Request $request, array $validated, object|null $oldQuestion = null): void
+    {
+        $type = $validated['interaction_type'] ?? 'multiple_choice';
+        $mediaUrl = trim((string) ($validated['media_url'] ?? ''));
+        $isRemovingMedia = $request->boolean('remove_media');
+        $hasExistingMedia = !$isRemovingMedia && (!empty($oldQuestion?->media_url) || !empty($oldQuestion?->media_path));
+
+        if ($type === 'image_context' && !$request->hasFile('media_file') && ($isRemovingMedia || $mediaUrl === '') && !$hasExistingMedia) {
+            throw ValidationException::withMessages([
+                'media_url' => 'Soal gambar wajib memiliki upload gambar atau URL gambar.',
+            ]);
+        }
+    }
+
+    private function syncQuestionOptions(int $questionId, array $validated): void
+    {
+        $optionKeys = ['option_a', 'option_b', 'option_c', 'option_d'];
+        $existingOptions = DB::table('quiz_options')
+            ->where('quiz_question_id', $questionId)
+            ->orderBy('id')
+            ->get()
+            ->values();
+
+        foreach ($optionKeys as $index => $key) {
+            $payload = [
+                'quiz_question_id' => $questionId,
+                'option_text' => $validated[$key],
+                'is_correct' => ($key === $validated['correct_answer']) ? 1 : 0,
+                'updated_at' => now(),
+            ];
+
+            $existing = $existingOptions->get($index);
+            if ($existing) {
+                DB::table('quiz_options')->where('id', $existing->id)->update($payload);
+                continue;
+            }
+
+            DB::table('quiz_options')->insert($payload + [
+                'created_at' => now(),
+            ]);
+        }
+
+        $extraOptionIds = $existingOptions->slice(count($optionKeys))->pluck('id');
+        if ($extraOptionIds->isNotEmpty()) {
+            DB::table('quiz_options')->whereIn('id', $extraOptionIds)->delete();
+        }
     }
 
     /**
@@ -122,30 +341,174 @@ class AdminDashboardController extends Controller
                 });
         } catch (\Exception $e) {}
 
-        // 6. AKTIVITAS TERBARU & DAFTAR SISWA (Direktori)
+        // 6. AKTIVITAS TERBARU
         $recentActivities = QuizAttempt::with('user')->latest()->take(5)->get();
         $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
-        
-        // 🔹 LOGIKA GAMBAR AVATAR (HOSTING FIXED)
-        $users = User::orderByDesc('created_at')->limit(50)->get(); 
-        foreach ($users as $u) {
-            if (!empty($u->avatar)) {
-                if (Str::startsWith($u->avatar, ['http://', 'https://'])) {
-                    $u->avatar_url = $u->avatar;
-                } else {
-                    $u->avatar_url = asset('uploads/' . $u->avatar) . '?v=' . time(); 
-                }
-            } else {
-                $u->avatar_url = 'https://ui-avatars.com/api/?name=' . urlencode($u->name) . '&background=06b6d4&color=fff&size=256';
-            }
-        }
 
         return view('admin.dashboard', compact(
             'totalStudents', 'totalAttempts', 'globalAverage', 'remedialCount', 'totalLabsCompleted',
             'chartLabels', 'chartScores', 'questionStats', 
             'totalAdmins', 'auditLogs', // Data Audit
-            'recentActivities', 'users', 'availableClasses'
+            'recentActivities', 'availableClasses'
         ));
+    }
+
+    public function students()
+    {
+        $minimumQuizScore = 70;
+        $totalLessons = CourseLesson::count();
+        $totalLabs = Lab::where('is_active', 1)->count();
+        $totalQuizChapters = DB::table('quiz_questions')->select('chapter_id')->distinct()->count('chapter_id');
+        $totalItems = max(1, $totalLessons + $totalLabs + $totalQuizChapters);
+
+        $studentsRaw = User::where('role', 'student')
+            ->orderBy('class_group')
+            ->orderBy('name')
+            ->get();
+
+        $studentIds = $studentsRaw->pluck('id');
+        $quizAttempts = DB::table('quiz_attempts')
+            ->whereIn('user_id', $studentIds)
+            ->whereNotNull('completed_at')
+            ->get();
+        $labHistories = DB::table('lab_histories')
+            ->whereIn('user_id', $studentIds)
+            ->get();
+        $lessonProgress = DB::table('user_lesson_progress')
+            ->whereIn('user_id', $studentIds)
+            ->where('completed', true)
+            ->get();
+
+        $students = $studentsRaw->map(function (User $student) use ($quizAttempts, $labHistories, $lessonProgress, $totalItems, $minimumQuizScore, $totalQuizChapters) {
+            $userQuizzes = $quizAttempts->where('user_id', $student->id);
+            $userLabs = $labHistories->where('user_id', $student->id);
+            $completedLabs = $userLabs->where('status', 'passed')->unique('lab_id');
+            $completedLessons = $lessonProgress->where('user_id', $student->id);
+
+            $quizAttemptsCount = $userQuizzes->count();
+            $avgScore = $quizAttemptsCount > 0 ? round($userQuizzes->avg('score'), 1) : 0;
+            $bestScore = $quizAttemptsCount > 0 ? round($userQuizzes->max('score'), 1) : 0;
+            $quizChapterScores = $userQuizzes
+                ->groupBy('chapter_id')
+                ->map(fn ($attempts) => round($attempts->max('score'), 1));
+            $passedQuizChapters = $quizChapterScores->filter(fn ($score) => $score >= $minimumQuizScore)->count();
+            $quizPassedAttempts = $userQuizzes->filter(fn ($attempt) => (float) ($attempt->score ?? 0) >= $minimumQuizScore)->count();
+            $quizFailedAttempts = $userQuizzes->filter(fn ($attempt) => (float) ($attempt->score ?? 0) < $minimumQuizScore)->count();
+            $labAttemptsCount = $userLabs->count();
+            $labFailedAttempts = $userLabs->filter(fn ($attempt) => ($attempt->status ?? '') !== 'passed')->count();
+            $quizChaptersTouched = $userQuizzes->pluck('chapter_id')->filter()->unique()->count();
+            $learningCoveragePct = $totalQuizChapters > 0 ? min(100, round(($quizChaptersTouched / $totalQuizChapters) * 100)) : 0;
+            $sortedStrongChapters = $quizChapterScores->sortDesc();
+            $sortedWeakChapters = $quizChapterScores->sort();
+            $strongestChapterId = $sortedStrongChapters->keys()->first();
+            $weakestChapterId = $sortedWeakChapters->keys()->first();
+            $strongestChapter = $strongestChapterId !== null
+                ? $this->quizChapterLabel($strongestChapterId) . ' (' . $sortedStrongChapters->first() . ')'
+                : 'Belum ada data';
+            $weakestChapter = $weakestChapterId !== null
+                ? $this->quizChapterLabel($weakestChapterId) . ' (' . $sortedWeakChapters->first() . ')'
+                : 'Belum ada data';
+            $avgQuizDurationSeconds = $quizAttemptsCount > 0 ? (int) round($userQuizzes->avg('time_spent_seconds') ?? 0) : 0;
+
+            $activityCount = $quizAttemptsCount + $completedLabs->count() + $completedLessons->count();
+            $progressPct = min(100, round((($completedLessons->count() + $completedLabs->count() + $passedQuizChapters) / $totalItems) * 100));
+
+            if (empty($student->class_group)) {
+                $statusLabel = 'Belum Masuk Kelas';
+                $statusKey = 'unassigned';
+                $statusTone = 'slate';
+            } elseif ($quizAttemptsCount > 0 && $avgScore < $minimumQuizScore) {
+                $statusLabel = 'Perlu Penguatan';
+                $statusKey = 'attention';
+                $statusTone = 'rose';
+            } elseif ($progressPct >= 100) {
+                $statusLabel = 'Tuntas';
+                $statusKey = 'complete';
+                $statusTone = 'emerald';
+            } elseif ($activityCount > 0) {
+                $statusLabel = 'Aktif Belajar';
+                $statusKey = 'active';
+                $statusTone = 'indigo';
+            } else {
+                $statusLabel = 'Belum Mulai';
+                $statusKey = 'idle';
+                $statusTone = 'amber';
+            }
+
+            $lastActivityAt = collect([
+                $userQuizzes->max('completed_at'),
+                $userLabs->max('created_at'),
+                $completedLessons->max('updated_at'),
+            ])
+                ->filter()
+                ->map(fn ($date) => Carbon::parse($date))
+                ->sortDesc()
+                ->first();
+
+            $avatarUrl = !empty($student->avatar)
+                ? (Str::startsWith($student->avatar, ['http://', 'https://'])
+                    ? $student->avatar
+                    : asset('uploads/' . $student->avatar) . '?v=' . time())
+                : 'https://ui-avatars.com/api/?name=' . urlencode($student->name) . '&background=6366f1&color=fff&size=256';
+
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'email' => $student->email,
+                'class_group' => $student->class_group,
+                'institution' => $student->institution,
+                'joined_at' => $student->created_at,
+                'avatar_url' => $avatarUrl,
+                'avg_score' => $avgScore,
+                'best_score' => $bestScore,
+                'quiz_attempts' => $quizAttemptsCount,
+                'quiz_passed_attempts' => $quizPassedAttempts,
+                'quiz_failed_attempts' => $quizFailedAttempts,
+                'quizzes_passed' => $passedQuizChapters,
+                'lessons_done' => $completedLessons->count(),
+                'labs_done' => $completedLabs->count(),
+                'lab_attempts' => $labAttemptsCount,
+                'lab_failed_attempts' => $labFailedAttempts,
+                'learning_coverage_pct' => $learningCoveragePct,
+                'strongest_chapter' => $strongestChapter,
+                'weakest_chapter' => $weakestChapter,
+                'avg_quiz_duration_label' => $this->formatDurationShort($avgQuizDurationSeconds),
+                'focus_lost_total' => (int) $userQuizzes->sum('focus_lost_count'),
+                'flagged_total' => (int) $userQuizzes->sum('flagged_count'),
+                'unanswered_total' => (int) $userQuizzes->sum('unanswered_count'),
+                'progress_pct' => $progressPct,
+                'status_label' => $statusLabel,
+                'status_key' => $statusKey,
+                'status_tone' => $statusTone,
+                'last_activity_at' => $lastActivityAt,
+                'activity_count' => $activityCount,
+            ];
+        })->values();
+
+        $summary = [
+            'total_students' => $students->count(),
+            'with_class' => $students->filter(fn ($student) => !empty($student['class_group']))->count(),
+            'active_students' => $students->where('activity_count', '>', 0)->count(),
+            'need_attention' => $students->where('status_key', 'attention')->count(),
+            'avg_progress' => $students->count() > 0 ? round($students->avg('progress_pct'), 1) : 0,
+        ];
+
+        $classSummaries = $students
+            ->filter(fn ($student) => !empty($student['class_group']))
+            ->groupBy('class_group')
+            ->map(fn ($rows, $className) => [
+                'name' => $className,
+                'total' => $rows->count(),
+                'active' => $rows->where('activity_count', '>', 0)->count(),
+                'attention' => $rows->where('status_key', 'attention')->count(),
+                'avg_progress' => $rows->count() > 0 ? round($rows->avg('progress_pct'), 1) : 0,
+            ])
+            ->sortBy('name')
+            ->values();
+
+        $availableClasses = ClassGroup::where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.students.directory', compact('students', 'summary', 'classSummaries', 'availableClasses'));
     }
 
     /**
@@ -350,7 +713,7 @@ class AdminDashboardController extends Controller
              return response()->json(['status' => 'success', 'message' => 'User berhasil dihapus']);
         }
         
-        return redirect()->route('admin.dashboard')->with('success', 'Data siswa berhasil dihapus secara permanen!');
+        return redirect()->back()->with('success', 'Data siswa berhasil dihapus secara permanen!');
     }
     
     /**
@@ -371,6 +734,15 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'question_text'  => 'required|string',
             'chapter_id'     => 'required|integer',
+            'learning_objective_code' => 'nullable|string|max:40',
+            'learning_objective_title' => 'nullable|string|max:255',
+            'remediation_hint' => 'nullable|string|max:1000',
+            'interaction_type' => 'nullable|in:multiple_choice,image_context',
+            'interaction_prompt' => 'nullable|string|max:1000',
+            'media_url' => 'nullable|string|max:1000',
+            'media_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
+            'media_caption' => 'nullable|string|max:255',
+            'remove_media' => 'nullable|boolean',
             'option_a'       => 'required|string',
             'option_b'       => 'required|string',
             'option_c'       => 'required|string',
@@ -378,37 +750,29 @@ class AdminDashboardController extends Controller
             'correct_answer' => 'required|in:option_a,option_b,option_c,option_d',
         ]);
 
+        $this->validateQuestionInteraction($request, $validated);
+
         DB::beginTransaction();
         try {
-            $questionId = DB::table('quiz_questions')->insertGetId([
+            $questionId = DB::table('quiz_questions')->insertGetId($this->filterColumns('quiz_questions', [
                 'chapter_id'    => $validated['chapter_id'],
+                'learning_objective_code' => $validated['learning_objective_code'] ?? null,
+                'learning_objective_title' => $validated['learning_objective_title'] ?? null,
+                'remediation_hint' => $validated['remediation_hint'] ?? null,
+                ...$this->questionMediaAttributes($request, $validated),
                 'question_text' => $validated['question_text'],
                 'created_at'    => now(),
                 'updated_at'    => now(),
-            ]);
+            ]));
 
-            $optionsData = [
-                'option_a' => $validated['option_a'],
-                'option_b' => $validated['option_b'],
-                'option_c' => $validated['option_c'],
-                'option_d' => $validated['option_d'],
-            ];
-
-            foreach ($optionsData as $key => $text) {
-                DB::table('quiz_options')->insert([
-                    'quiz_question_id' => $questionId,
-                    'option_text'      => $text,
-                    'is_correct'       => ($key === $validated['correct_answer']) ? 1 : 0,
-                    'created_at'       => now(),
-                    'updated_at'       => now(),
-                ]);
-            }
+            $this->syncQuestionOptions($questionId, $validated);
 
             DB::commit();
 
             // Rekam Audit Log
             $this->logAudit('create_question', 'Question', $questionId, null, [
                 'chapter_id' => $validated['chapter_id'],
+                'learning_objective' => $validated['learning_objective_code'] ?? null,
                 'question' => Str::limit($validated['question_text'], 50)
             ]);
 
@@ -427,6 +791,15 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'question_text'  => 'required|string',
             'chapter_id'     => 'required|integer',
+            'learning_objective_code' => 'nullable|string|max:40',
+            'learning_objective_title' => 'nullable|string|max:255',
+            'remediation_hint' => 'nullable|string|max:1000',
+            'interaction_type' => 'nullable|in:multiple_choice,image_context',
+            'interaction_prompt' => 'nullable|string|max:1000',
+            'media_url' => 'nullable|string|max:1000',
+            'media_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
+            'media_caption' => 'nullable|string|max:255',
+            'remove_media' => 'nullable|boolean',
             'option_a'       => 'required|string',
             'option_b'       => 'required|string',
             'option_c'       => 'required|string',
@@ -434,41 +807,37 @@ class AdminDashboardController extends Controller
             'correct_answer' => 'required|in:option_a,option_b,option_c,option_d',
         ]);
 
+        $oldQuestion = DB::table('quiz_questions')->where('id', $id)->first();
+        if (!$oldQuestion) {
+            return response()->json(['status' => 'error', 'message' => 'Soal tidak ditemukan'], 404);
+        }
+
+        $this->validateQuestionInteraction($request, $validated, $oldQuestion);
+
         DB::beginTransaction();
         try {
-            $oldQuestion = DB::table('quiz_questions')->where('id', $id)->first();
             
-            DB::table('quiz_questions')->where('id', $id)->update([
+            DB::table('quiz_questions')->where('id', $id)->update($this->filterColumns('quiz_questions', [
                 'chapter_id'    => $validated['chapter_id'],
+                'learning_objective_code' => $validated['learning_objective_code'] ?? null,
+                'learning_objective_title' => $validated['learning_objective_title'] ?? null,
+                'remediation_hint' => $validated['remediation_hint'] ?? null,
+                ...$this->questionMediaAttributes($request, $validated, $oldQuestion),
                 'question_text' => $validated['question_text'],
                 'updated_at'    => now(),
-            ]);
+            ]));
 
-            DB::table('quiz_options')->where('quiz_question_id', $id)->delete();
-
-            $optionsData = [
-                'option_a' => $validated['option_a'],
-                'option_b' => $validated['option_b'],
-                'option_c' => $validated['option_c'],
-                'option_d' => $validated['option_d'],
-            ];
-
-            foreach ($optionsData as $key => $text) {
-                DB::table('quiz_options')->insert([
-                    'quiz_question_id' => $id,
-                    'option_text'      => $text,
-                    'is_correct'       => ($key === $validated['correct_answer']) ? 1 : 0,
-                    'created_at'       => now(),
-                    'updated_at'       => now(),
-                ]);
-            }
+            $this->syncQuestionOptions((int) $id, $validated);
 
             DB::commit();
 
             // Rekam Audit Log
             $this->logAudit('update_question', 'Question', $id, 
                 ['old_text' => Str::limit($oldQuestion->question_text ?? '', 50)], 
-                ['new_text' => Str::limit($validated['question_text'], 50)]
+                [
+                    'new_text' => Str::limit($validated['question_text'], 50),
+                    'learning_objective' => $validated['learning_objective_code'] ?? null,
+                ]
             );
 
             return response()->json(['status' => 'success', 'message' => 'Soal berhasil diperbarui']);
@@ -631,6 +1000,7 @@ class AdminDashboardController extends Controller
     public function studentDetail($id)
     {
         $user = \App\Models\User::findOrFail($id);
+        $minimumQuizScore = 70;
         $classGroup = null;
         if (!empty($user->class_group)) {
             $classGroup = \App\Models\ClassGroup::where('name', $user->class_group)->first();
@@ -654,6 +1024,7 @@ class AdminDashboardController extends Controller
         $lessonsCompleted = count($completedLessonIds);
 
         $totalLabs = \App\Models\Lab::where('is_active', 1)->count(); 
+        $totalQuizzes = max(1, DB::table('quiz_questions')->select('chapter_id')->distinct()->count('chapter_id'));
         $labHistories = \App\Models\LabHistory::with(['lab' => function($q) { $q->select('id', 'title'); }])
             ->select('id', 'user_id', 'lab_id', 'status', 'final_score', 'duration_seconds', 'last_code_snapshot', 'created_at')
             ->where('user_id', $id)
@@ -678,6 +1049,30 @@ class AdminDashboardController extends Controller
             ->latest('created_at')
             ->get();
 
+        $quizOutcomeAnalyticsByAttempt = [];
+        if ($quizAttempts->isNotEmpty()) {
+            $attemptIds = $quizAttempts->pluck('id');
+            $chapters = $quizAttempts->pluck('chapter_id')->unique()->values();
+            $answersByAttempt = QuizAttemptAnswer::whereIn('quiz_attempt_id', $attemptIds)
+                ->get()
+                ->groupBy('quiz_attempt_id');
+            $questionsByChapter = QuizQuestion::whereIn('chapter_id', $chapters)
+                ->get()
+                ->groupBy('chapter_id');
+
+            foreach ($quizAttempts as $attempt) {
+                $answersByQuestion = collect($answersByAttempt->get($attempt->id, collect()))
+                    ->keyBy('quiz_question_id');
+                $questionsForAttempt = collect($questionsByChapter->get($attempt->chapter_id, collect()));
+
+                $quizOutcomeAnalyticsByAttempt[$attempt->id] = LearningOutcomeAnalytics::forQuizAttempt(
+                    $questionsForAttempt,
+                    $answersByQuestion,
+                    $attempt
+                );
+            }
+        }
+
         $quizzesCompleted = $quizAttempts->count();
         $quizAverage = $quizzesCompleted > 0 ? $quizAttempts->avg('score') : 0;
 
@@ -685,10 +1080,10 @@ class AdminDashboardController extends Controller
             ->mapWithKeys(fn ($attempts, $chapterId) => ['quiz_' . $chapterId => $attempts->max('score')])
             ->toArray();
 
-        $chaptersPassed = count(array_filter($quizScoresMap, fn($s) => $s >= 70));
+        $chaptersPassed = count(array_filter($quizScoresMap, fn($s) => $s >= $minimumQuizScore));
         $quizStats = ['total' => $chaptersPassed, 'avg_score' => $quizAverage];
 
-        $totalItemsEstimasi = $totalLessons + $totalLabs + 4; 
+        $totalItemsEstimasi = $totalLessons + $totalLabs + $totalQuizzes;
         $totalDone = $lessonsCompleted + $labsCompleted + $chaptersPassed;
         $globalProgress = ($totalItemsEstimasi > 0) ? round(($totalDone / $totalItemsEstimasi) * 100) : 0;
         $globalProgress = min($globalProgress, 100);
@@ -701,7 +1096,7 @@ class AdminDashboardController extends Controller
             ->get();
 
         $chartData = [
-            'labels' => $bestQuizScores->map(fn($q) => $q->chapter_id == 99 ? 'Final' : 'Bab ' . $q->chapter_id)->toArray(),
+            'labels' => $bestQuizScores->map(fn($q) => $this->quizChapterLabel($q->chapter_id))->toArray(),
             'scores' => $bestQuizScores->pluck('max_score')->toArray(),
         ];
 
@@ -720,7 +1115,7 @@ class AdminDashboardController extends Controller
 
         $mappedQuizzes = $quizAttempts->take(15)->map(fn ($item) => [
             'id' => 'quiz-' . $item->id,
-            'name' => $item->chapter_id == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab ' . $item->chapter_id,
+            'name' => $item->chapter_id == 99 ? 'Evaluasi' : 'Evaluasi Bab ' . $item->chapter_id,
             'type' => 'quiz',
             'score' => $item->score,
             'date' => $item->created_at,
@@ -728,6 +1123,72 @@ class AdminDashboardController extends Controller
         ]);
 
         $historyCombined = $mappedLabs->merge($mappedQuizzes)->sortByDesc('date')->take(10)->values();
+        $outcomeRows = collect($quizOutcomeAnalyticsByAttempt)
+            ->flatMap(fn ($analytics) => collect($analytics['outcomes'] ?? []))
+            ->values();
+        $strongestOutcome = $outcomeRows
+            ->sortByDesc(fn ($row) => (float) data_get($row, 'mastery_percent', 0))
+            ->first();
+        $weakestOutcome = $outcomeRows
+            ->sortBy(fn ($row) => (float) data_get($row, 'mastery_percent', 0))
+            ->first();
+        $chapterPerformance = $quizAttempts
+            ->groupBy('chapter_id')
+            ->map(function ($attempts, $chapterId) use ($minimumQuizScore) {
+                $bestScore = round($attempts->max('score') ?? 0, 1);
+
+                return [
+                    'chapter_id' => (int) $chapterId,
+                    'label' => $this->quizChapterLabel($chapterId),
+                    'attempts' => $attempts->count(),
+                    'best_score' => $bestScore,
+                    'avg_score' => round($attempts->avg('score') ?? 0, 1),
+                    'passed' => $bestScore >= $minimumQuizScore,
+                ];
+            })
+            ->sortBy(fn ($row) => $row['chapter_id'] === 99 ? 99 : $row['chapter_id'])
+            ->values();
+        $quizAttemptCount = $quizAttempts->count();
+        $labAttemptCount = $labHistories->count();
+        $quizAvgDurationSeconds = $quizAttemptCount > 0 ? (int) round($quizAttempts->avg('time_spent_seconds') ?? 0) : 0;
+        $labAvgDurationSeconds = $labAttemptCount > 0 ? (int) round($labHistories->avg('duration_seconds') ?? 0) : 0;
+        $lastLearningActivity = collect([
+            $quizAttempts->max('completed_at'),
+            $labHistories->max('created_at'),
+            $lessonProgress->max('updated_at'),
+        ])
+            ->filter()
+            ->map(fn ($date) => Carbon::parse($date))
+            ->sortDesc()
+            ->first();
+        $studentAnalyticsSummary = [
+            'quiz_attempts' => $quizAttemptCount,
+            'quiz_passed_attempts' => $quizAttempts->filter(fn ($attempt) => (float) ($attempt->score ?? 0) >= $minimumQuizScore)->count(),
+            'quiz_failed_attempts' => $quizAttempts->filter(fn ($attempt) => (float) ($attempt->score ?? 0) < $minimumQuizScore)->count(),
+            'quiz_best_score' => $quizAttemptCount > 0 ? round($quizAttempts->max('score') ?? 0, 1) : 0,
+            'quiz_lowest_score' => $quizAttemptCount > 0 ? round($quizAttempts->min('score') ?? 0, 1) : 0,
+            'quiz_avg_duration_label' => $this->formatDurationShort($quizAvgDurationSeconds),
+            'quiz_flagged_total' => (int) $quizAttempts->sum('flagged_count'),
+            'quiz_focus_lost_total' => (int) $quizAttempts->sum('focus_lost_count'),
+            'quiz_unanswered_total' => (int) $quizAttempts->sum('unanswered_count'),
+            'lab_attempts' => $labAttemptCount,
+            'lab_passed_attempts' => $labHistories->where('status', 'passed')->count(),
+            'lab_failed_attempts' => $labHistories->filter(fn ($history) => ($history->status ?? '') !== 'passed')->count(),
+            'lab_best_score' => $labAttemptCount > 0 ? round($labHistories->max('final_score') ?? 0, 1) : 0,
+            'lab_avg_duration_label' => $this->formatDurationShort($labAvgDurationSeconds),
+            'coverage_pct' => $totalQuizzes > 0 ? min(100, round(($chapterPerformance->count() / $totalQuizzes) * 100)) : 0,
+            'outcomes_count' => $outcomeRows->count(),
+            'outcomes_need_review' => $outcomeRows->filter(fn ($row) => (float) data_get($row, 'mastery_percent', 0) < $minimumQuizScore)->count(),
+            'strongest_outcome' => $strongestOutcome,
+            'weakest_outcome' => $weakestOutcome,
+            'last_activity_label' => $lastLearningActivity ? $lastLearningActivity->diffForHumans() : 'Belum ada aktivitas',
+        ];
+        $outcomeSummary = [
+            'total' => $studentAnalyticsSummary['outcomes_count'],
+            'need_review' => $studentAnalyticsSummary['outcomes_need_review'],
+            'strongest' => $strongestOutcome,
+            'weakest' => $weakestOutcome,
+        ];
         $availableClasses = \App\Models\ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
 
         return view('admin.student_detail', compact(
@@ -735,10 +1196,11 @@ class AdminDashboardController extends Controller
             'unlockedBadges', 'allBadges', 'leaderboard', 
             'completedLessonIds', 'passedLabIds', 'quizScoresMap', 
             'labHistories', 'quizAttempts', 
-            'lessonsCompleted', 'totalLessons', 'labsCompleted', 'totalLabs', 'quizzesCompleted', 'quizAverage', 'chaptersPassed', 
+            'lessonsCompleted', 'totalLessons', 'labsCompleted', 'totalLabs', 'totalQuizzes', 'quizzesCompleted', 'quizAverage', 'chaptersPassed',
             'labStats', 'quizStats', 'globalProgress', 
             'chartData', 'chartLabels', 'chartScores', 'historyCombined', 
-            'availableClasses'
+            'availableClasses', 'quizOutcomeAnalyticsByAttempt', 'studentAnalyticsSummary',
+            'chapterPerformance', 'outcomeSummary'
         ));
     }
 
@@ -791,19 +1253,37 @@ class AdminDashboardController extends Controller
         ));
     }
 
-     public function questionAnalytics() 
+    private function splitQuizAnswerStudentCounts($answers): array
     {
-        $questions = \App\Models\QuizQuestion::with(['answers.attempt.user', 'options'])
+        $latestAnswers = collect($answers)
+            ->filter(fn ($answer) => $answer->attempt && $answer->attempt->completed_at && $answer->attempt->user_id)
+            ->sortByDesc(fn ($answer) => $answer->attempt->completed_at?->timestamp ?? 0)
+            ->unique(fn ($answer) => $answer->attempt->user_id)
+            ->values();
+
+        $correctCount = $latestAnswers->where('is_correct', 1)->count();
+        $wrongCount = $latestAnswers->where('is_correct', 0)->count();
+        $totalCount = $correctCount + $wrongCount;
+
+        return [
+            'correct_count' => $correctCount,
+            'wrong_count' => $wrongCount,
+            'total_count' => $totalCount,
+            'correct_percent' => $totalCount > 0 ? round(($correctCount / $totalCount) * 100, 1) : 0,
+            'wrong_percent' => $totalCount > 0 ? round(($wrongCount / $totalCount) * 100, 1) : 0,
+        ];
+    }
+
+    public function questionAnalytics()
+    {
+        $questions = \App\Models\QuizQuestion::with(['answers.attempt', 'options'])
             ->get()
             ->map(function ($q) {
-                $answers = $q->answers;
+                $answerBreakdown = $this->splitQuizAnswerStudentCounts($q->answers);
 
-                $q->list_correct = $answers->where('is_correct', 1)->map(fn($a) => $a->attempt && $a->attempt->user ? $a->attempt->user->name : 'Unknown')->values()->toArray();
-                $q->list_wrong = $answers->where('is_correct', 0)->map(fn($a) => $a->attempt && $a->attempt->user ? $a->attempt->user->name : 'Unknown')->values()->toArray();
-
-                $q->total_attempts = $answers->count();
-                $q->correct_count  = count($q->list_correct);
-                $q->wrong_count    = count($q->list_wrong);
+                $q->total_attempts = $answerBreakdown['total_count'];
+                $q->correct_count  = $answerBreakdown['correct_count'];
+                $q->wrong_count    = $answerBreakdown['wrong_count'];
 
                 $q->accuracy = $q->total_attempts > 0 ? round(($q->correct_count / $q->total_attempts) * 100) : 0;
 
@@ -836,8 +1316,141 @@ class AdminDashboardController extends Controller
             ->latest('completed_at')
             ->take(6)
             ->get();
-        
-        return view('admin.question_analytics', compact('questions', 'studentStats', 'recentActivities'));
+
+        return view('admin.question_analytics', compact(
+            'questions',
+            'studentStats',
+            'recentActivities'
+        ));
+    }
+
+    public function learningOutcomes()
+    {
+        $questions = QuizQuestion::with(['answers.attempt', 'options'])
+            ->get()
+            ->map(function ($question) {
+                $answerBreakdown = $this->splitQuizAnswerStudentCounts($question->answers);
+
+                $question->student_answer_breakdown = $answerBreakdown;
+                $question->total_attempts = $answerBreakdown['total_count'];
+                $question->correct_count = $answerBreakdown['correct_count'];
+                $question->wrong_count = $answerBreakdown['wrong_count'];
+                $question->accuracy = $question->total_attempts > 0
+                    ? round(($question->correct_count / max(1, $question->total_attempts)) * 100, 1)
+                    : 0;
+                $question->outcome_meta = LearningOutcomeAnalytics::quizOutcomeMetadata($question);
+
+                return $question;
+            });
+
+        $blueprints = collect(LearningOutcomeAnalytics::quizOutcomeBlueprints());
+        $chapterMeta = [
+            1 => ['label' => 'Bab 1', 'title' => 'Pendahuluan', 'description' => 'HTML, CSS, Tailwind CSS, CDN, instalasi.'],
+            2 => ['label' => 'Bab 2', 'title' => 'Layouting', 'description' => 'Layout, flex, grid, dan breakpoint.'],
+            3 => ['label' => 'Bab 3', 'title' => 'Styling', 'description' => 'Styling elemen web dengan Tailwind CSS.'],
+            99 => ['label' => 'Evaluasi Akhir', 'title' => 'Rangkuman', 'description' => 'Ringkasan capaian lintas bab.'],
+        ];
+
+        $chapters = $blueprints
+            ->map(function (array $objectives, int $chapterId) use ($questions, $chapterMeta) {
+                $chapterQuestions = $questions->where('chapter_id', $chapterId);
+                $objectiveRows = collect($objectives)->map(function (array $objective, int $index) use ($chapterQuestions, $chapterId) {
+                    $objectiveQuestions = $chapterQuestions->filter(function ($question) use ($objective) {
+                        return ($question->outcome_meta['code'] ?? '') === $objective['code'];
+                    })->values();
+
+                    $totalAnswers = $objectiveQuestions->sum('total_attempts');
+                    $correctCount = $objectiveQuestions->sum('correct_count');
+                    $wrongCount = $objectiveQuestions->sum('wrong_count');
+                    $masteryPercent = $totalAnswers > 0 ? round(($correctCount / max(1, $totalAnswers)) * 100, 1) : 0;
+                    $statusKey = $objectiveQuestions->count() === 0
+                        ? 'empty'
+                        : ($totalAnswers === 0 ? 'waiting' : ($masteryPercent < 70 ? 'attention' : 'stable'));
+                    $statusLabel = [
+                        'empty' => 'Belum Ada Soal',
+                        'waiting' => 'Menunggu Data',
+                        'attention' => 'Perlu Penguatan',
+                        'stable' => 'Tercukupi',
+                    ][$statusKey];
+
+                    return [
+                        'code' => $objective['code'],
+                        'display_code' => ($chapterId === 99 ? 'Evaluasi Akhir' : 'Bab ' . $chapterId) . ' - TP' . ($index + 1),
+                        'title' => $objective['title'],
+                        'material' => $objective['material'],
+                        'question_count' => $objectiveQuestions->count(),
+                        'total_answers' => $totalAnswers,
+                        'correct_count' => $correctCount,
+                        'wrong_count' => $wrongCount,
+                        'mastery_percent' => $masteryPercent,
+                        'status_key' => $statusKey,
+                        'status_label' => $statusLabel,
+                        'needs_questions' => $objectiveQuestions->count() === 0,
+                        'needs_attention' => $totalAnswers > 0 && $masteryPercent < 70,
+                        'student_breakdown' => [
+                            'correct_count' => $correctCount,
+                            'wrong_count' => $wrongCount,
+                            'total_count' => $totalAnswers,
+                            'correct_percent' => $totalAnswers > 0 ? round(($correctCount / max(1, $totalAnswers)) * 100, 1) : 0,
+                            'wrong_percent' => $totalAnswers > 0 ? round(($wrongCount / max(1, $totalAnswers)) * 100, 1) : 0,
+                        ],
+                        'activity_data' => sprintf(
+                            '%s soal, %s jawaban terkumpul, %s benar, %s salah.',
+                            $objectiveQuestions->count(),
+                            $totalAnswers,
+                            $correctCount,
+                            $wrongCount
+                        ),
+                        'direction' => match ($statusKey) {
+                            'empty' => 'Tambahkan soal yang mengukur ' . $objective['title'] . ' pada bank soal bab ini.',
+                            'waiting' => 'Kumpulkan pengerjaan siswa terlebih dahulu agar capaian TP terbaca.',
+                            'attention' => 'Arahkan siswa kembali ke ' . $objective['material'] . ' sebelum evaluasi berikutnya.',
+                            default => 'Pertahankan penguatan singkat dan siapkan variasi soal pada ' . $objective['material'] . '.',
+                        },
+                        'questions' => $objectiveQuestions
+                            ->sortBy('id')
+                            ->map(fn ($question) => [
+                                'id' => $question->id,
+                                'text' => Str::limit(strip_tags((string) $question->question_text), 95),
+                                'accuracy' => $question->accuracy,
+                                'correct_count' => $question->correct_count,
+                                'wrong_count' => $question->wrong_count,
+                                'type' => [
+                                    'multiple_choice' => 'Pilihan Ganda',
+                                    'image_context' => 'Gambar',
+                                ][$question->interaction_type ?? 'multiple_choice'] ?? 'Pilihan Ganda',
+                                'has_media' => !empty($question->media_url),
+                            ])
+                            ->values()
+                            ->all(),
+                    ];
+                })->values();
+
+                return [
+                    'id' => $chapterId,
+                    'label' => $chapterMeta[$chapterId]['label'] ?? 'Bab ' . $chapterId,
+                    'title' => $chapterMeta[$chapterId]['title'] ?? 'Materi Kuis',
+                    'description' => $chapterMeta[$chapterId]['description'] ?? 'Tujuan pembelajaran pada bab ini.',
+                    'question_count' => $chapterQuestions->count(),
+                    'mapped_question_count' => $objectiveRows->sum('question_count'),
+                    'objective_count' => $objectiveRows->count(),
+                    'attention_count' => $objectiveRows->filter(fn ($row) => $row['needs_questions'] || $row['needs_attention'])->count(),
+                    'average_mastery' => $objectiveRows->count() > 0 ? round($objectiveRows->avg('mastery_percent'), 1) : 0,
+                    'empty_count' => $objectiveRows->where('status_key', 'empty')->count(),
+                    'objectives' => $objectiveRows,
+                    'bank_url' => route('admin.analytics.questions', ['chapter' => $chapterId]),
+                ];
+            })
+            ->values();
+
+        $totals = [
+            'chapters' => $chapters->count(),
+            'objectives' => $chapters->sum('objective_count'),
+            'questions' => $questions->count(),
+            'attention' => $chapters->sum('attention_count'),
+        ];
+
+        return view('admin.learning_outcomes', compact('chapters', 'totals'));
     }
 
     public function quizAnalytics(Request $request)

@@ -887,7 +887,7 @@
             unlockNextChapter();
             setTimeout(lockActivityUI, 600);
         } else {
-            status.innerText = 'Skor belum memenuhi. Minimal benar 4 dari 5. Muat ulang halaman untuk mencoba lagi.';
+            status.innerText = 'Skor belum memenuhi. Minimal benar 4 dari 5. Baca ulang bagian CDN dan urutan penggunaan Tailwind, lalu muat ulang halaman untuk mencoba lagi.';
             status.className = 'text-xs font-bold text-orange-500';
         }
     }

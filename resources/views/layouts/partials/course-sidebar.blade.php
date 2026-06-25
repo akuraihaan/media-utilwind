@@ -174,7 +174,7 @@
                 'color' => 'indigo',
                 'items' => [
                     [
-                        'id' => '2.1', 'title' => 'Dasar Layout dan Ruang', 'route' => ['courses.layout-spacing', 'courses.layout-basics'],
+                        'id' => '2.1', 'title' => 'Dasar Layout dan Ruang', 'route' => ['courses.layout-basics', 'courses.layout-spacing'],
                         'anchors' => [
                             ['id' => 'section-26', 'label' => 'Pengertian Layout dan Ruang'],
                             ['id' => 'section-27', 'label' => 'Padding, Margin, dan Gap'],

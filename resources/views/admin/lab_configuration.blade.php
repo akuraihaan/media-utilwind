@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Konfigurasi Lab · Utilwind</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    
+
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -59,12 +59,12 @@
 
         .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 40; transition: 0.3s; }
         .dark .glass-header { background: rgba(2, 6, 23, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-        
+
         .glass-card {
             background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.05);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); backdrop-filter: blur(10px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; 
+            position: relative;
         }
         .dark .glass-card {
             background: rgba(10, 14, 23, 0.85); border: 1px solid rgba(255,255,255,0.08);
@@ -72,7 +72,7 @@
         }
         .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); transform: translateY(-4px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); z-index: 30; }
         .dark .glass-card:hover { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
-        
+
         .card-bg-gfx { position: absolute; inset: 0; overflow: hidden; border-radius: 1rem; pointer-events: none; z-index: 0; }
 
         /* --- INPUTS & NAV --- */
@@ -82,7 +82,7 @@
         .dark .glass-input:focus { background: rgba(255, 255, 255, 0.05); border-color: #818cf8; box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2); }
         .glass-input:read-only { opacity: 0.7; cursor: not-allowed; background: rgba(0,0,0,0.05); }
         .dark .glass-input:read-only { background: rgba(255,255,255,0.05); }
-        
+
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; border: 1px solid transparent; }
         .dark .nav-link { color: #94a3b8; font-weight: 500; }
         .nav-link:hover { background: rgba(0, 0, 0, 0.03); color: #0f172a; }
@@ -92,17 +92,17 @@
 
         .reveal { opacity: 0; transform: translateY(20px); animation: revealAnim 0.6s forwards ease-out; }
         @keyframes revealAnim { to { opacity: 1; transform: translateY(0); } }
-        
+
         .table-row { transition: background 0.2s; border-bottom: 1px solid rgba(0,0,0,0.03); }
         .table-row:hover { background: rgba(0,0,0,0.02); }
         .dark .table-row { border-bottom: 1px solid rgba(255,255,255,0.03); }
         .dark .table-row:hover { background: rgba(255,255,255,0.02); }
 
-        .modal-open { overflow: hidden; padding-right: 5px; } 
+        .modal-open { overflow: hidden; padding-right: 5px; }
     </style>
 </head>
-<body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{ 
-    sidebarOpen: false, 
+<body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{
+    sidebarOpen: false,
     isFullscreen: false,
     showDashboardInfoModal: false
 }" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); closeLabModal(); closeTaskManager(); showDashboardInfoModal = false;" :class="{'modal-open': sidebarOpen || showDashboardInfoModal}">
@@ -111,88 +111,58 @@
 
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-opacity" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
-        {{-- ==================== 1. SIDEBAR ==================== --}}
-        <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-            <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                
-                <a href="{{ route('landing') }}" class="flex items-center gap-3 relative z-10">
-                    <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain block dark:hidden" style="filter: brightness(0.1);" alt="Logo">
-                    <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
-                    <div>
-                        <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
-                        <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Admin Panel</span>
-                    </div>
-                </a>
-                <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+       {{-- ==================== 1. SIDEBAR ==================== --}}
+    <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
+
+    <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+        <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
+
+            <a href="{{ route('landing') }}" class="flex items-center gap-3 relative z-10">
+                <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain block dark:hidden" style="filter: brightness(0.1);" alt="Logo">
+                <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
+                <div>
+                    <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Panel Admin</span>
+                </div>
+            </a>
+            <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        @include('admin.partials.sidebar-nav')
+
+        {{-- USER PROFILE Bawah Sidebar --}}
+        <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">Administrator Sistem</p>
+                </div>
             </div>
 
-            <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
-                <div>
-                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
-                    <div class="space-y-1">
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                            Dasbor
-                        </a>
-                    </div>
-                </div>
+            {{-- THEME TOGGLE BUTTON --}}
+            <button id="theme-toggle-sidebar" type="button" class="w-full mb-2 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors border border-transparent dark:border-transparent text-xs font-bold shadow-sm dark:shadow-none">
+                <svg id="theme-toggle-dark-icon-sidebar" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon-sidebar" class="hidden w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                <span id="theme-toggle-text-sidebar">Ubah Tema</span>
+            </button>
 
-                <div>
-                    <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
-                    <div class="space-y-1">
-                        <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                            Manajemen Kuis
-                        </a>
-                        <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                            Konfigurasi Lab
-                        </a>
-                        <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                            Lab Analytics
-                        </a>
-                        <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            Manajemen Kelas
-                        </a>
-                    </div>
-                </div>
-            </nav>
-
-            {{-- USER PROFILE Bawah Sidebar --}}
-            <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
-                <div class="flex items-center gap-3 mb-4 px-2">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                        <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
-                    </div>
-                </div>
-                
-                {{-- THEME TOGGLE BUTTON --}}
-                <button id="theme-toggle-sidebar" type="button" class="w-full mb-2 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors border border-transparent dark:border-transparent text-xs font-bold shadow-sm dark:shadow-none">
-                    <svg id="theme-toggle-dark-icon-sidebar" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    <svg id="theme-toggle-light-icon-sidebar" class="hidden w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
-                    <span id="theme-toggle-text-sidebar">Ubah Tema</span>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500 hover:text-red-700 dark:hover:text-white transition-colors text-xs font-bold border border-red-200 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500 group shadow-sm dark:shadow-none">
+                    <svg class="w-3.5 h-3.5 transition group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Logout
                 </button>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500 hover:text-red-700 dark:hover:text-white transition-colors text-xs font-bold border border-red-200 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500 group shadow-sm dark:shadow-none">
-                        <svg class="w-3.5 h-3.5 transition group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </aside>
+            </form>
+        </div>
+    </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
         <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
-            
+
             {{-- Background FX Main --}}
             <div class="fixed inset-0 pointer-events-none z-0">
                 <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors"></div>
@@ -208,7 +178,7 @@
                         <button @click="sidebarOpen = true" class="md:hidden p-2 bg-slate-200 dark:bg-white/5 rounded-lg text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-white/10 transition-colors shadow-sm dark:shadow-none">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
-                        
+
                         {{-- Judul & Breadcrumb --}}
                         <div class="flex items-center gap-3">
                             <div>
@@ -225,7 +195,7 @@
                                 </nav>
                                 <div class="flex items-center gap-2">
                                     <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Konfigurasi Lab</h2>
-                                    
+
                                     {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                     <button @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Modul Praktik">
                                         ?
@@ -233,24 +203,24 @@
                                 </div>
                                 <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                    Manage Praktik Lab 
+                                    Kelola Praktikum Lab
                                 </p>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center gap-3 sm:gap-6">
-                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 group hidden sm:block border border-transparent dark:hover:border-white/10" title="Refresh Data">
+                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 group hidden sm:block border border-transparent dark:hover:border-white/10" title="Segarkan Data">
                             <svg class="w-4 h-4 transition-transform duration-500 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         </button>
-                        
-                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Fullscreen">
+
+                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Mode Layar Penuh">
                             <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
 
-                        
-                        
+
+
                         <div class="text-right hidden lg:block border-l border-slate-300 dark:border-white/10 pl-5 ml-1 transition-colors">
                             <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">{{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}</p>
                             <p class="text-[10px] text-slate-500 dark:text-white/40 font-mono mt-0.5 transition-colors">{{ \Carbon\Carbon::now()->format('H:i') }} WIB</p>
@@ -272,18 +242,18 @@
                     <div class="glass-card rounded-2xl p-6 md:p-10 overflow-hidden bg-gradient-to-r from-indigo-50 via-white to-purple-50 dark:from-indigo-900/30 dark:via-[#0f141e] dark:to-purple-900/20 group reveal transition-colors shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
                         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-[0.05] mix-blend-overlay transition-opacity"></div>
                         <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-[100px] group-hover:bg-indigo-500/20 transition duration-1000"></div>
-                        
+
                         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div>
-                                <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3 transition-colors">Lab <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Configuration</span></h1>
+                                <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3 transition-colors">Konfigurasi <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Lab</span></h1>
                                 <p class="text-slate-600 dark:text-indigo-200/60 max-w-xl text-xs md:text-sm leading-relaxed mb-6 transition-colors">
-                                    Pusat manajemen modul praktikum. Tambahkan lab baru, atur durasi pengerjaan, dan kelola langkah-langkah (tasks) validasi secara terstruktur.
+                                    Pusat manajemen modul praktikum. Tambahkan lab baru, atur durasi pengerjaan, dan kelola langkah validasi secara terstruktur.
                                 </p>
-                                
+
                                 <div class="flex items-center gap-3">
                                     <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 dark:bg-[#020617]/50 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner transition-colors">
                                         <span class="text-2xl font-bold text-indigo-600 dark:text-white transition-colors">{{ $labs->count() ?? 0 }}</span>
-                                        <span class="text-[9px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Total Modules</span>
+                                        <span class="text-[9px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Total Modul</span>
                                     </div>
                                 </div>
                             </div>
@@ -292,17 +262,17 @@
 
                     {{-- SEARCH & TABLE SECTION --}}
                     <div class="glass-card rounded-2xl flex flex-col transition-colors duration-300 z-10 reveal shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]" style="animation-delay: 0.1s;">
-                        
+
                         {{-- Controls & Search --}}
                         <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#020617]/40 rounded-t-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors">
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-                                    <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg> 
-                                    Lab Directory
+                                    <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                                    Direktori Lab
                                 </h3>
                             </div>
                             <div class="relative w-full sm:w-64 group">
-                                <input id="searchLab" type="text" placeholder="Cari berdasarkan judul atau slug..." 
+                                <input id="searchLab" type="text" placeholder="Cari berdasarkan judul atau slug..."
                                     class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition-colors shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
                                 <div class="absolute left-3 top-2.5 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -315,11 +285,11 @@
                             <table class="w-full text-sm text-left border-collapse min-w-[700px] border border-slate-200 dark:border-white/5 sm:rounded-xl shadow-sm dark:shadow-inner bg-white/50 dark:bg-[#0a0e17]/30 transition-colors">
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-20 shadow-sm dark:shadow-md transition-colors">
                                     <tr>
-                                        <th class="px-6 py-4 w-[35%] border-b border-slate-200 dark:border-white/5 transition-colors">Module Info</th>
-                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5 transition-colors">Slug Identifier</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5 transition-colors">Duration</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5 transition-colors">Pass Grade</th>
-                                        <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5 transition-colors">Actions</th>
+                                        <th class="px-6 py-4 w-[35%] border-b border-slate-200 dark:border-white/5 transition-colors">Informasi Modul</th>
+                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5 transition-colors">Identitas Slug</th>
+                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5 transition-colors">Durasi</th>
+                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5 transition-colors">Nilai Lulus</th>
+                                        <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5 transition-colors">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 dark:divide-white/5 relative z-10 transition-colors" id="labTableBody">
@@ -342,7 +312,7 @@
                                         <td class="px-6 py-4 text-center">
                                             <span class="bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm dark:shadow-none inline-flex items-center gap-1 transition-colors">
                                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                {{ $lab->duration_minutes }} Mins
+                                                {{ $lab->duration_minutes }} Menit
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
@@ -351,7 +321,7 @@
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end gap-2 md:opacity-60 group-hover:opacity-100 transition-opacity">
                                                 <button onclick="openTaskManager({{ $lab->id }}, '{{ addslashes($lab->title) }}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition flex items-center gap-1.5 border border-indigo-500 dark:border-indigo-400">
-                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Steps
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Langkah
                                                 </button>
                                                 <button onclick="deleteLab({{ $lab->id }})" class="p-1.5 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-500 text-slate-500 dark:text-white/50 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Hapus">
                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -360,7 +330,7 @@
                                         </td>
                                     </tr>
                                     @empty
-                                    <tr><td colspan="5" class="py-20 text-center"><div class="flex flex-col items-center opacity-50 dark:opacity-30 transition-opacity"><div class="text-5xl mb-4 grayscale">📦</div><h3 class="text-sm font-bold text-slate-900 dark:text-white transition-colors">No Labs Found</h3><p class="text-[10px] text-slate-500 dark:text-white/50 transition-colors">Start by clicking "Add Module".</p></div></td></tr>
+                                    <tr><td colspan="5" class="py-20 text-center"><div class="flex flex-col items-center opacity-50 dark:opacity-30 transition-opacity"><div class="text-5xl mb-4 grayscale">📦</div><h3 class="text-sm font-bold text-slate-900 dark:text-white transition-colors">Belum ada modul lab</h3><p class="text-[10px] text-slate-500 dark:text-white/50 transition-colors">Tambahkan modul lab pertama untuk memulai.</p></div></td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -375,37 +345,37 @@
     {{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
     <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
-        
+
         <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
-            
+
             <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
             <!-- Hero Logo Section -->
             <div class="relative w-4 h-4 mx-auto mb-6">
-                
+
             </div>
-            
+
             <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Konfigurasi Praktikum</span></h3>
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Kendali Ekosistem Simulasi</p>
-            
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Pengelolaan Praktikum</p>
+
             <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Modul Konfigurasi Laboratorium ini dirancang secara spesifik untuk memfasilitasi Administrator dalam menginisiasi, menyusun, dan mendistribusikan lingkungan simulasi praktikum koding yang adaptif.</p>
-                
+                <p>Halaman ini membantu admin menyusun, mengatur, dan membagikan modul praktikum secara terstruktur.</p>
+
                 <div class="space-y-3 mt-4 text-left">
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Manajemen Parameter Modul</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Mengatur secara komprehensif penamaan modul, indikator akses (slug), alokasi batas waktu (durasi) pelaksanaan, serta ambang batas skor kelayakan kelulusan.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Atur nama modul, slug, durasi pengerjaan, dan nilai minimum kelulusan dengan rapi.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
                         <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Hierarki Instruksi Terpadu (Steps)</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Sistem berjenjang yang memungkinkan penyusunan instruksi langkah-demi-langkah (tasks) guna memandu peserta didik merampungkan simulasi dengan lebih terarah.</p>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Urutan Instruksi Praktikum</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Susun instruksi langkah demi langkah agar siswa menyelesaikan praktik dengan lebih terarah.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
@@ -434,18 +404,18 @@
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" onclick="closeLabModal()"></div>
         <div id="labModalContent" class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col">
             <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-[#0a0e17] rounded-t-3xl transition-colors">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-700 dark:text-indigo-400 text-[9px] border border-indigo-200 dark:border-indigo-500/30 transition-colors shadow-inner">MODULE</span> <span id="modalTitle">New Module</span></h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-700 dark:text-indigo-400 text-[9px] border border-indigo-200 dark:border-indigo-500/30 transition-colors shadow-inner">MODUL</span> <span id="modalTitle">Modul Baru</span></h3>
                 <button onclick="closeLabModal()" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition-colors bg-slate-200 dark:bg-white/5 p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-500/20 border border-transparent hover:border-red-200 dark:hover:border-red-500/30"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="p-5 md:p-6 space-y-5 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] relative">
                 <div class="absolute inset-0 bg-white/95 dark:bg-[#0f141e]/95 mix-blend-overlay pointer-events-none transition-colors"></div>
                 <form id="labForm" class="relative z-10">
                     @csrf
-                    <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Lab Title</label><input type="text" id="labTitle" name="title" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="e.g. Advanced CSS Layout" required></div>
-                    <div class="mt-4"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Description</label><textarea id="labDesc" name="description" rows="3" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" placeholder="Brief objectives..."></textarea></div>
+                    <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Judul Lab</label><input type="text" id="labTitle" name="title" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="Contoh: Layout CSS Lanjutan" required></div>
+                    <div class="mt-4"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Deskripsi</label><textarea id="labDesc" name="description" rows="3" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" placeholder="Tuliskan tujuan singkat lab..."></textarea></div>
                     <div class="grid grid-cols-2 gap-4 mt-4">
-                        <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Duration (Mins)</label><input type="number" id="labDuration" name="duration" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="60" value="60"></div>
-                        <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Passing Grade</label><input type="number" id="labGrade" name="passing_grade" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="100" value="100"></div>
+                        <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Durasi (Menit)</label><input type="number" id="labDuration" name="duration" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="60" value="60"></div>
+                        <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Nilai Kelulusan</label><input type="number" id="labGrade" name="passing_grade" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="100" value="100"></div>
                     </div>
                 </form>
             </div>
@@ -460,11 +430,11 @@
     <div id="taskModal" class="fixed inset-0 z-[999999] hidden flex items-center justify-center p-4 md:p-10">
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" onclick="closeTaskManager()"></div>
         <div id="taskContent" class="relative w-full max-w-6xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(0,0,0,1)] transform scale-95 opacity-0 transition-all duration-300 flex flex-col h-full max-h-[90vh]">
-            
+
             <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-[#0a0e17] rounded-t-3xl shrink-0 transition-colors">
                 <div>
-                    <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[10px] tracking-widest shadow-inner transition-colors">STEPS MANAGER</span> <span id="modalLabTitle">Lab Title</span></h3>
-                    <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">Configure step-by-step instructions and validations.</p>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><span class="p-1.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[10px] tracking-widest shadow-inner transition-colors">PENGELOLA LANGKAH</span> <span id="modalLabTitle">Judul Lab</span></h3>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">Atur instruksi dan validasi langkah demi langkah.</p>
                 </div>
                 <button onclick="closeTaskManager()" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition-colors bg-slate-200 dark:bg-white/5 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-500/20 border border-transparent dark:hover:border-red-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
@@ -472,14 +442,14 @@
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 {{-- LEFT: LIST STEPS --}}
                 <div class="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/5 flex flex-col bg-slate-50/50 dark:bg-[#0a0e17]/50 h-64 md:h-auto shrink-0 transition-colors">
-                    <div class="p-4 border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#05080f]/50 transition-colors"><h4 class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest transition-colors">Existing Steps</h4></div>
+                    <div class="p-4 border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#05080f]/50 transition-colors"><h4 class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest transition-colors">Daftar Langkah</h4></div>
                     <div id="taskListContainer" class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3"></div>
                 </div>
 
                 {{-- RIGHT: FORM --}}
                 <div class="w-full md:w-2/3 flex flex-col bg-[url('https://grainy-gradients.vercel.app/noise.svg')] relative flex-1 transition-colors">
                     <div class="absolute inset-0 bg-white/95 dark:bg-[#0f141e]/95 mix-blend-overlay pointer-events-none z-0 transition-colors"></div>
-                    <div class="p-4 border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#05080f]/50 relative z-10 shrink-0 transition-colors"><h4 class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest transition-colors">Step Editor</h4></div>
+                    <div class="p-4 border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-[#05080f]/50 relative z-10 shrink-0 transition-colors"><h4 class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest transition-colors">Editor Langkah</h4></div>
                     <div class="flex-1 overflow-y-auto custom-scrollbar p-5 md:p-8 relative z-10">
                         <form id="taskForm">
                             @csrf
@@ -487,26 +457,41 @@
                             <input type="hidden" name="id" id="taskId">
 
                             <div class="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-5">
-                                <div class="col-span-1 sm:col-span-5"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Step Title</label><input type="text" name="title" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" required></div>
-                                <div class="col-span-1"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Index</label><input type="number" name="order_index" id="taskOrderIndex" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none text-center font-bold text-indigo-600 dark:text-indigo-400 bg-slate-100 dark:bg-[#020617] transition-colors" readonly></div>
+                                <div class="col-span-1 sm:col-span-5"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Judul Langkah</label><input type="text" name="title" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" required></div>
+                                <div class="col-span-1"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Urutan</label><input type="number" name="order_index" id="taskOrderIndex" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none text-center font-bold text-indigo-600 dark:text-indigo-400 bg-slate-100 dark:bg-[#020617] transition-colors" readonly></div>
                             </div>
-                            
-                            <div class="mb-5"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Instruction (Markdown)</label><textarea name="instruction" rows="3" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" required></textarea></div>
-                            
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-                                <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Initial Code</label><textarea name="initial_code" rows="7" class="w-full glass-input rounded-xl px-4 py-3 text-[11px] outline-none font-mono bg-slate-50 dark:bg-[#020617] leading-relaxed shadow-sm dark:shadow-inner transition-colors" required></textarea></div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                                 <div>
-                                    <label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Validation Rules (Comma Separated)</label>
-                                    <textarea name="validation_rules" rows="7" class="w-full glass-input rounded-xl px-4 py-3 text-[11px] outline-none font-mono bg-slate-50 dark:bg-[#020617] leading-relaxed shadow-sm dark:shadow-inner transition-colors" placeholder='"bg-red-500", "p-4"' required></textarea>
-                                    <p class="text-[9px] text-slate-400 dark:text-white/30 mt-1 font-mono transition-colors">Example: flex, justify-between, bg-red-500</p>
+                                    <label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Kode TP</label>
+                                    <input type="text" name="learning_objective_code" maxlength="40" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="Contoh: TP1">
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Tujuan Pembelajaran</label>
+                                    <input type="text" name="learning_objective_title" maxlength="255" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" placeholder="Contoh: Membuat layout flex responsif">
                                 </div>
                             </div>
-                            
-                            <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Points</label><input type="number" name="points" class="w-32 glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" value="25" required></div>
-                            
+
+                            <div class="mb-5"><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Instruksi (Markdown)</label><textarea name="instruction" rows="3" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" required></textarea></div>
+                            <div class="mb-5">
+                                <label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Arahan Materi Jika Belum Tuntas</label>
+                                <textarea name="remediation_hint" rows="2" maxlength="1000" class="w-full glass-input rounded-xl px-4 py-3 text-sm outline-none resize-none shadow-sm dark:shadow-inner" placeholder="Contoh: Pelajari kembali flex, gap, justify-content, dan breakpoint responsive."></textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+                                <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Kode Awal</label><textarea name="initial_code" rows="7" class="w-full glass-input rounded-xl px-4 py-3 text-[11px] outline-none font-mono bg-slate-50 dark:bg-[#020617] leading-relaxed shadow-sm dark:shadow-inner transition-colors" required></textarea></div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Aturan Validasi (Pisahkan dengan Koma)</label>
+                                    <textarea name="validation_rules" rows="7" class="w-full glass-input rounded-xl px-4 py-3 text-[11px] outline-none font-mono bg-slate-50 dark:bg-[#020617] leading-relaxed shadow-sm dark:shadow-inner transition-colors" placeholder='"bg-red-500", "p-4"' required></textarea>
+                                    <p class="text-[9px] text-slate-400 dark:text-white/30 mt-1 font-mono transition-colors">Contoh: flex, justify-between, bg-red-500</p>
+                                </div>
+                            </div>
+
+                            <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-1.5 block transition-colors">Poin</label><input type="number" name="points" class="w-32 glass-input rounded-xl px-4 py-3 text-sm outline-none shadow-sm dark:shadow-inner" value="25" required></div>
+
                             {{-- BUTTON GROUP --}}
                             <div class="p-4 border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0a0e17] flex justify-between items-center mt-6 rounded-xl shadow-sm dark:shadow-inner transition-colors">
-                                <button type="button" onclick="resetTaskForm()" class="text-[10px] font-bold text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-2 hover:bg-slate-200 dark:hover:bg-white/5 rounded-lg border border-transparent dark:hover:border-white/10">Clear / New Step</button>
+                                <button type="button" onclick="resetTaskForm()" class="text-[10px] font-bold text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-2 hover:bg-slate-200 dark:hover:bg-white/5 rounded-lg border border-transparent dark:hover:border-white/10">Bersihkan / Langkah Baru</button>
                                 <button type="button" onclick="submitTask()" id="btnSaveTask" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] border border-indigo-500 dark:border-indigo-400 transform hover:-translate-y-0.5">Simpan Konfigurasi Langkah</button>
                             </div>
                         </form>
@@ -573,7 +558,7 @@
             const title = document.getElementById('modalTitle');
 
             document.getElementById('labForm').reset();
-            if (title) title.innerText = 'New Module';
+            if (title) title.innerText = 'Modul Baru';
 
             modal.classList.remove('hidden');
             setTimeout(() => {
@@ -595,12 +580,12 @@
 
             const theme = getSwalTheme();
             Swal.fire({
-                title: 'Processing...',
+                title: 'Memproses...',
                 didOpen: () => { Swal.showLoading() },
                 background: theme.bg,
                 color: theme.color
             });
-            
+
             $.ajax({
                 url: url,
                 type: "POST",
@@ -644,7 +629,7 @@
             currentLabId = labId;
             $('#modalLabTitle').text(labTitle);
             $('#taskLabId').val(labId);
-            resetTaskForm(); 
+            resetTaskForm();
             $('#taskModal').removeClass('hidden');
             setTimeout(() => { $('#taskContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'); }, 10);
         }
@@ -654,26 +639,27 @@
         }
 
         function loadTasks(labId) {
-            $('#taskListContainer').html('<div class="text-center py-10 text-indigo-600 dark:text-indigo-400 text-[10px] tracking-widest uppercase font-bold animate-pulse transition-colors">Loading Data...</div>');
+            $('#taskListContainer').html('<div class="text-center py-10 text-indigo-600 dark:text-indigo-400 text-[10px] tracking-widest uppercase font-bold animate-pulse transition-colors">Memuat Data...</div>');
             $.get(`/admin/labs/${labId}/tasks`, function(tasks) {
                 let nextIndex = 1;
                 if(tasks.length > 0) { const maxOrder = Math.max(...tasks.map(t => t.order_index)); nextIndex = maxOrder + 1; }
                 if(!$('#taskId').val()) { $('#taskOrderIndex').val(nextIndex); }
 
-                if(tasks.length === 0) { $('#taskListContainer').html('<div class="text-center py-10 text-slate-500 dark:text-white/30 text-xs italic bg-white dark:bg-white/5 rounded-xl border border-dashed border-slate-300 dark:border-white/10 m-2 transition-colors">No steps created yet.</div>'); return; }
-                
+                if(tasks.length === 0) { $('#taskListContainer').html('<div class="text-center py-10 text-slate-500 dark:text-white/30 text-xs italic bg-white dark:bg-white/5 rounded-xl border border-dashed border-slate-300 dark:border-white/10 m-2 transition-colors">Belum ada langkah yang dibuat.</div>'); return; }
+
                 let html = '';
                 tasks.forEach(task => {
                     const taskJson = JSON.stringify(task).replace(/"/g, '&quot;');
                     html += `
                     <div class="p-3.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-transparent hover:border-slate-300 dark:hover:border-white/10 transition-colors group relative mb-3 flex justify-between items-start shadow-sm dark:shadow-inner">
                         <div>
-                            <span class="text-[9px] font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/20 transition-colors">Step ${task.order_index}</span>
+                            <span class="text-[9px] font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/20 transition-colors">Langkah ${task.order_index}</span>
                             <h5 class="text-xs font-bold text-slate-900 dark:text-white mt-1.5 line-clamp-1 transition-colors">${task.title}</h5>
+                            <p class="text-[9px] text-cyan-700 dark:text-cyan-300 mt-1 font-bold uppercase tracking-widest transition-colors">${task.learning_objective_code || 'TP Praktik'}</p>
                             <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">${task.points} Poin</p>
                         </div>
                         <div class="flex gap-1 md:opacity-0 group-hover:opacity-100 transition duration-300">
-                            <button onclick="editTask(${taskJson})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-amber-100 dark:hover:bg-amber-500 text-slate-400 dark:text-white/40 hover:text-amber-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-400 shadow-sm dark:shadow-inner" title="Edit"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            <button onclick="editTask(${taskJson})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-amber-100 dark:hover:bg-amber-500 text-slate-400 dark:text-white/40 hover:text-amber-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-400 shadow-sm dark:shadow-inner" title="Ubah"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
                             <button onclick="deleteTask(${task.id})" class="bg-slate-50 dark:bg-[#020617] rounded-md hover:bg-red-100 dark:hover:bg-red-500 text-slate-400 dark:text-white/40 hover:text-red-600 dark:hover:text-white transition-colors p-1.5 border border-slate-200 dark:border-white/10 hover:border-red-300 dark:hover:border-red-400 shadow-sm dark:shadow-inner" title="Hapus"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                         </div>
                     </div>`;
@@ -687,12 +673,15 @@
             $('#taskLabId').val(task.lab_id);
             $('#taskOrderIndex').val(task.order_index);
             $('[name="title"]').val(task.title);
+            $('[name="learning_objective_code"]').val(task.learning_objective_code || '');
+            $('[name="learning_objective_title"]').val(task.learning_objective_title || '');
+            $('[name="remediation_hint"]').val(task.remediation_hint || '');
             $('[name="instruction"]').val(task.instruction);
             $('[name="initial_code"]').val(task.initial_code);
             $('[name="points"]').val(task.points);
-            
+
             let rules = task.validation_rules;
-            if (typeof rules !== 'string') { rules = JSON.parse(rules).join(', '); } 
+            if (typeof rules !== 'string') { rules = JSON.parse(rules).join(', '); }
             $('[name="validation_rules"]').val(rules.replace(/[\[\]"]/g, ''));
 
             $('#btnSaveTask').text('Perbarui Langkah').removeClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]').addClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]');
@@ -701,10 +690,10 @@
         function resetTaskForm() {
             const labId = $('#taskLabId').val();
             $('#taskForm')[0].reset();
-            $('#taskId').val(''); 
-            $('#taskLabId').val(labId); 
+            $('#taskId').val('');
+            $('#taskLabId').val(labId);
             $('#btnSaveTask').text('Simpan Konfigurasi Langkah').removeClass('bg-amber-600 hover:bg-amber-500 border-amber-400 shadow-[0_0_15px_rgba(217,119,6,0.4)]').addClass('bg-indigo-600 hover:bg-indigo-500 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]');
-            loadTasks(labId); 
+            loadTasks(labId);
         }
 
         function submitTask() {
@@ -715,7 +704,7 @@
             const labId = $('#taskLabId').val();
             let url = "{{ route('admin.labs.tasks.store') ?? '#' }}";
             let formData = form.serialize();
-            
+
             if (id) { url = `/admin/labs/tasks/${id}`; formData += "&_method=PUT"; }
 
             const theme = getSwalTheme();
@@ -723,7 +712,7 @@
                 url: url, type: "POST", data: formData,
                 success: function(res) {
                     const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: theme.bg, color: theme.color, iconColor: '#10b981' });
-                    Toast.fire({ icon: 'success', title: id ? "Step updated successfully" : "Step added successfully" });
+                    Toast.fire({ icon: 'success', title: id ? "Langkah berhasil diperbarui" : "Langkah berhasil ditambahkan" });
                     resetTaskForm();
                 },
                 error: function() { Swal.fire({ title: 'Gagal!', text: 'Konfigurasi langkah gagal disimpan.', icon: 'error', background: theme.bg, color: theme.color, confirmButtonColor: '#ef4444' }); }

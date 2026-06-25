@@ -960,7 +960,7 @@ ${active ? `<span class="tag">.kartu</span> {
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
             icon.classList.add('bg-indigo-100', 'dark:bg-indigo-500/20', 'border-indigo-300', 'dark:border-indigo-500/50', 'text-indigo-600', 'dark:text-indigo-400', 'shadow-lg');
 
-            btn.onclick = () => window.location.href = "{{ route('courses.latarbelakang') ?? '#' }}";
+            btn.onclick = () => window.location.href = "{{ route('courses.tailwindcss') ?? '#' }}";
         }
     }
 

@@ -152,64 +152,54 @@
     <div id="sandboxInfoModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-[#020617]/70 backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeSandboxInfoModal()"></div>
         
-        <div id="sandboxInfoContent" class="relative w-full max-w-xl transform scale-95 translate-y-4 transition-all duration-300 ease-out">
-            <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
+        <div id="sandboxInfoContent" class="relative w-full max-w-lg transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+            <div class="relative bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl rounded-2xl p-6 md:p-7 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
                 
                 <button onclick="closeSandboxInfoModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
 
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-11 h-11 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Informasi Sandbox</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">Panduan Sandbox</h3>
                         <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Panduan Lingkungan Kerja Interaktif</p>
                     </div>
                 </div>
                 
-                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-8">
-                    Halaman ini adalah Live Environment untuk menguji dan memvisualisasikan implementasi kode secara langsung. Berikut adalah struktur area kerja Anda:
+                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-4">
+                    Gunakan sandbox untuk mencoba HTML dan class Tailwind sebelum masuk latihan atau lab.
+                </div>
+
+                <div class="mb-4 rounded-2xl border border-cyan-200 dark:border-cyan-500/20 bg-cyan-50/70 dark:bg-cyan-500/10 p-4">
+                    <p class="text-[10px] uppercase tracking-widest font-black text-cyan-700 dark:text-cyan-300 mb-2">Bahan singkat</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="rounded-lg bg-white/70 dark:bg-white/[0.05] border border-slate-100 dark:border-white/5 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">HTML dasar</span>
+                        <span class="rounded-lg bg-white/70 dark:bg-white/[0.05] border border-slate-100 dark:border-white/5 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">Class Tailwind</span>
+                        <span class="rounded-lg bg-white/70 dark:bg-white/[0.05] border border-slate-100 dark:border-white/5 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">Contoh dari materi</span>
+                    </div>
                 </div>
                 
-                <div class="space-y-3">
-                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Editor Code (Panel Kiri)</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gunakan editor berbasis Monaco untuk menulis struktur HTML dan utility class. Kode akan tersimpan secara otomatis (Auto-save).</p>
-                        </div>
+                <div class="space-y-2.5">
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 flex items-center justify-center font-black text-[10px] shrink-0">1</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"><b>Tulis kode</b> di panel kiri, mulai dari struktur HTML dan utility class.</p>
                     </div>
-
-                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Live Preview (Panel Kanan)</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Menampilkan hasil render visual secara instan (real-time) setiap kali Anda mengubah kode di Editor.</p>
-                        </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-black text-[10px] shrink-0">2</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"><b>Jalankan preview</b> dengan tombol RUN atau <kbd class="px-1 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Ctrl</kbd> + <kbd class="px-1 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Enter</kbd>.</p>
                     </div>
-
-                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">System Console (Panel Bawah)</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Memeriksa kesehatan sintaks HTML Anda. Console akan memberikan peringatan jika terdapat tag penutup (div) yang tidak seimbang.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-3 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">04</span>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Shortcut Render Manual</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Selain auto-render, Anda dapat menekan <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono">Enter</kbd> untuk mengeksekusi ulang panel Preview.</p>
-                        </div>
+                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-black text-[10px] shrink-0">3</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"><b>Perbaiki atau salin</b> hasilnya. Gunakan Reset jika layout rusak dan Copy Code jika sudah sesuai.</p>
                     </div>
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-6">
                     <button onclick="closeSandboxInfoModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-lg transition-colors">
                         Tutup Panduan
                     </button>

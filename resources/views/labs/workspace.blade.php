@@ -23,7 +23,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $lab->title }} | Pro Workspace</title>
+    <title>{{ $lab->title }} | Ruang Kerja Lab</title>
     
     {{-- LIBRARIES --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,7 +94,7 @@
     {{-- 1. HEADER (ACTIVITY BAR) --}}
     <header class="h-12 bg-vscode-activity flex items-center justify-between px-2 sm:px-4 shrink-0 select-none border-b border-vscode-bg z-30">
         <div class="flex items-center gap-2 sm:gap-4">
-            <button @click="goBack()" class="hover:text-white transition text-gray-400 p-1 sm:p-0" title="Back to Dashboard">
+            <button @click="goBack()" class="hover:text-white transition text-gray-400 p-1 sm:p-0" title="Kembali ke dasbor">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
             <div class="flex items-center gap-1 sm:gap-2">
@@ -105,15 +105,22 @@
 
         {{-- Center Actions (Only Desktop) --}}
         <div class="hidden lg:flex items-center gap-2">
+            <button @click="showGuideModal = true" class="flex items-center gap-2 px-3 py-1 bg-[#252526] hover:bg-[#3e3e42] rounded text-xs text-gray-200 transition border border-white/10 shadow-sm">
+                <svg class="w-3.5 h-3.5 text-vscode-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Panduan
+            </button>
             <button @click="manualSave()" class="flex items-center gap-2 px-3 py-1 bg-[#3e3e42] hover:bg-[#4e4e52] rounded text-xs text-white transition border border-white/5 shadow-sm">
-                <svg class="w-3 h-3 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Simpan & Run (Ctrl+S)
+                <svg class="w-3 h-3 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Simpan & Jalankan (Ctrl+S)
             </button>
         </div>
 
         {{-- Right Stats --}}
         <div class="flex items-center gap-2 sm:gap-4">
+            <button @click="showGuideModal = true" class="lg:hidden w-8 h-8 rounded bg-vscode-bg border border-vscode-border text-vscode-accent font-black text-xs flex items-center justify-center" title="Panduan Lab">
+                ?
+            </button>
             <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-vscode-bg rounded border border-vscode-border">
-                <span class="text-[10px] sm:text-xs text-gray-400">Score:</span>
+                <span class="text-[10px] sm:text-xs text-gray-400">Skor:</span>
                 <span class="font-mono font-bold text-vscode-accent text-[10px] sm:text-xs" x-text="Math.round(score) + '%'">0%</span>
             </div>
             
@@ -175,10 +182,10 @@
                             </div>
                             
                             <div class="flex justify-between items-center mt-3">
-                                {{-- Tombol Reset Code --}}
+                                {{-- Tombol Reset Kode --}}
                                 <button @click="forceLoadCode(step.id)" x-show="!isCompleted(step.id) && !readOnly" 
                                         class="text-[10px] text-gray-500 hover:text-vscode-warning underline decoration-dashed transition">
-                                    Reset Code
+                                    Reset Kode
                                 </button>
 
                                 {{-- Tombol Validasi --}}
@@ -211,9 +218,9 @@
                     <span x-show="unsaved" class="ml-2 w-2 h-2 rounded-full bg-white animate-pulse"></span>
                 </div>
                 
-                {{-- Run Button for Mobile --}}
+                {{-- Tombol jalankan untuk mobile --}}
                 <button @click="manualSave(); mobileTab = 'preview'" class="lg:hidden flex items-center gap-1 px-3 py-1 bg-vscode-accent rounded text-[10px] text-white font-bold shadow">
-                    <svg class="w-3 h-3 text-green-300" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Run
+                    <svg class="w-3 h-3 text-green-300" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Jalankan
                 </button>
             </div>
 
@@ -223,7 +230,7 @@
                 
                 {{-- Read Only Overlay --}}
                 <div x-show="readOnly" class="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-[1px] pointer-events-none">
-                    <span class="bg-black px-4 py-2 rounded border border-vscode-success text-vscode-success font-mono text-xs shadow-xl">READ ONLY MODE</span>
+                    <span class="bg-black px-4 py-2 rounded border border-vscode-success text-vscode-success font-mono text-xs shadow-xl">MODE TINJAU</span>
                 </div>
             </div>
         </main>
@@ -238,7 +245,7 @@
                     <span class="text-[10px] font-bold text-[#555] flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg> LOCALHOST:8000
                     </span>
-                    <button @click="runCode()" class="text-[#555] hover:text-black" title="Refresh Preview"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
+                    <button @click="runCode()" class="text-[#555] hover:text-black" title="Segarkan pratinjau"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
                 </div>
                 <iframe id="preview-frame" class="flex-1 w-full h-full border-0 bg-white"></iframe>
             </div>
@@ -249,7 +256,7 @@
                 <div class="h-8 px-4 flex items-center justify-between bg-vscode-bg border-b border-vscode-border cursor-pointer hover:bg-[#2a2d2e] shrink-0" @click="terminalOpen = !terminalOpen">
                     <div class="flex gap-6 text-[10px] uppercase font-bold text-gray-400">
                         <span class="text-white border-b border-white pb-1">Terminal</span>
-                        <span>Output</span>
+                        <span>Keluaran</span>
                     </div>
                     <svg class="w-3.5 h-3.5 text-white transition-transform" :class="!terminalOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </div>
@@ -289,7 +296,7 @@
                 class="flex-1 flex flex-col justify-center items-center gap-1 font-bold text-[10px] uppercase transition-colors"
                 :class="mobileTab === 'preview' ? 'text-vscode-accent border-t-2 border-vscode-accent bg-[#2a2d2e]' : 'text-gray-400 border-t-2 border-transparent'">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            Preview
+            Pratinjau
         </button>
     </div>
 
@@ -304,6 +311,66 @@
         </div>
     </footer>
 
+    {{-- PANDUAN LAB --}}
+    <div x-show="showGuideModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" style="display: none;" x-cloak>
+        <div class="absolute inset-0" @click="showGuideModal = false"></div>
+        <div class="relative bg-[#252526] border border-[#454545] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden">
+            <div class="bg-[#333333] px-5 py-3 border-b border-[#454545] flex justify-between items-center">
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest text-vscode-accent font-bold">Panduan Pengerjaan Lab</p>
+                    <h3 class="text-white text-base font-bold mt-0.5">{{ $lab->title }}</h3>
+                </div>
+                <button @click="showGuideModal = false" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div class="p-5 space-y-4 max-h-[72vh] overflow-y-auto custom-scrollbar">
+                <div class="rounded-xl border border-vscode-accent/30 bg-vscode-accent/10 p-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-vscode-accent font-bold">Nilai Lulus</p>
+                            <p class="text-xs leading-relaxed text-gray-300 mt-1">Kumpulkan lab setelah skor mencapai minimal <b x-text="passingGrade + '%'"></b> atau semua tugas penting tervalidasi.</p>
+                        </div>
+                        <span class="shrink-0 rounded-lg bg-[#1e1e1e] border border-vscode-accent/30 px-3 py-2 text-vscode-accent font-mono font-black text-sm" x-text="passingGrade + '%'"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Bahan yang diperlukan</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <div class="rounded-lg border border-[#3e3e42] bg-[#1e1e1e] px-3 py-2 text-xs text-gray-300">Materi bab terkait</div>
+                        <div class="rounded-lg border border-[#3e3e42] bg-[#1e1e1e] px-3 py-2 text-xs text-gray-300">Instruksi tugas aktif</div>
+                        <div class="rounded-lg border border-[#3e3e42] bg-[#1e1e1e] px-3 py-2 text-xs text-gray-300">Class Tailwind yang dipelajari</div>
+                        <div class="rounded-lg border border-[#3e3e42] bg-[#1e1e1e] px-3 py-2 text-xs text-gray-300">Koneksi stabil dan fokus</div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Langkah penggunaan</p>
+                    <div class="space-y-2">
+                        <div class="flex gap-3 rounded-lg border border-[#3e3e42] bg-[#1e1e1e] p-3">
+                            <span class="w-6 h-6 rounded bg-vscode-accent/20 text-vscode-accent flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                            <p class="text-xs leading-relaxed text-gray-300">Pilih tugas di sidebar, baca instruksi dan aturan validasinya.</p>
+                        </div>
+                        <div class="flex gap-3 rounded-lg border border-[#3e3e42] bg-[#1e1e1e] p-3">
+                            <span class="w-6 h-6 rounded bg-vscode-accent/20 text-vscode-accent flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                            <p class="text-xs leading-relaxed text-gray-300">Tulis kode di editor, lalu tekan <b>Simpan & Jalankan</b> atau <b>Ctrl+S</b>.</p>
+                        </div>
+                        <div class="flex gap-3 rounded-lg border border-[#3e3e42] bg-[#1e1e1e] p-3">
+                            <span class="w-6 h-6 rounded bg-vscode-accent/20 text-vscode-accent flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                            <p class="text-xs leading-relaxed text-gray-300">Cek pratinjau, klik <b>Verifikasi</b>, lalu perbaiki pesan error bila belum sesuai.</p>
+                        </div>
+                        <div class="flex gap-3 rounded-lg border border-[#3e3e42] bg-[#1e1e1e] p-3">
+                            <span class="w-6 h-6 rounded bg-vscode-success/20 text-vscode-success flex items-center justify-center text-[10px] font-black shrink-0">4</span>
+                            <p class="text-xs leading-relaxed text-gray-300">Kumpulkan setelah skor memenuhi nilai lulus. Jika di bawah standar, ulangi perbaikan tugas terlebih dahulu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-[#2d2d2d] border-t border-[#454545] flex justify-end">
+                <button @click="showGuideModal = false" class="px-4 py-2 rounded bg-vscode-accent hover:bg-[#0062a3] text-white text-xs font-bold">Mulai Mengerjakan</button>
+            </div>
+        </div>
+    </div>
+
     {{-- TOAST NOTIFICATION --}}
     <div x-show="showToast" x-transition:enter="toast-enter" class="fixed bottom-20 lg:bottom-10 right-5 z-50 bg-[#252526] border border-vscode-border shadow-2xl p-4 w-72 rounded flex gap-3 items-start">
         <div :class="toastType === 'success' ? 'text-vscode-success' : (toastType === 'info' ? 'text-vscode-accent' : 'text-vscode-error')">
@@ -312,7 +379,7 @@
             <svg x-show="toastType === 'info'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="flex-1">
-            <h4 class="text-white text-xs font-bold mb-1" x-text="toastTitle">Notification</h4>
+            <h4 class="text-white text-xs font-bold mb-1" x-text="toastTitle">Notifikasi</h4>
             <p class="text-gray-400 text-xs" x-text="toastMsg"></p>
         </div>
         <button @click="showToast = false" class="text-gray-500 hover:text-white">✕</button>
@@ -330,8 +397,8 @@
                 <p class="text-sm text-gray-300" x-text="modal.msg"></p>
             </div>
             <div class="p-4 flex gap-2 justify-center bg-[#2d2d2d] border-t border-[#454545]">
-                <button @click="modal.open = false" class="px-4 py-1.5 rounded text-white text-xs border border-gray-500 hover:bg-gray-700">Cancel</button>
-                <button x-show="modal.action" @click="handleModalAction()" class="px-4 py-1.5 rounded text-white text-xs bg-vscode-accent hover:bg-[#0062a3]">OK</button>
+                <button @click="modal.open = false" class="px-4 py-1.5 rounded text-white text-xs border border-gray-500 hover:bg-gray-700">Batal</button>
+                <button x-show="modal.action" @click="handleModalAction()" class="px-4 py-1.5 rounded text-white text-xs bg-vscode-accent hover:bg-[#0062a3]">Lanjutkan</button>
             </div>
         </div>
     </div>
@@ -342,6 +409,7 @@
                 // --- STATE DATA ---
                 readOnly: {{ $session->status === 'completed' ? 'true' : 'false' }},
                 score: {{ $session->current_score ?? 0 }},
+                passingGrade: {{ (int) ($lab->passing_grade ?? 70) }},
                 completed: @json(array_map('intval', $completedStepIds)),
                 
                 // Data Steps dari PHP
@@ -353,14 +421,14 @@
                 // --- UI CONTROL ---
                 mobileTab: 'editor', // Mobile View Switcher ('tasks', 'editor', 'preview')
                 terminalOpen: true, previewOpen: true, expandedTask: null, loadingId: null,
-                unsaved: false, showToast: false, toastTitle: '', toastMsg: '', toastType: 'info',
-                logs: [{time: 'INIT', msg: 'Environment loaded successfully.', color: 'text-vscode-success'}],
-                timer: 'LOADING', timeCritical: false,
+                unsaved: false, showToast: false, showGuideModal: false, toastTitle: '', toastMsg: '', toastType: 'info',
+                logs: [{time: 'INIT', msg: 'Lingkungan kerja berhasil dimuat.', color: 'text-vscode-success'}],
+                timer: 'MEMUAT', timeCritical: false,
                 modal: { open: false, title: '', msg: '', icon: '', action: null },
 
                 // --- INIT SEQUENCE ---
                 init() {
-                    this.log('System', 'Initializing Workspace...', 'text-gray-500');
+                    this.log('Sistem', 'Menyiapkan ruang kerja...', 'text-gray-500');
                     
                     // 1. Tentukan Task Aktif (Task pertama yang belum selesai)
                     const firstUnfinished = this.stepsData.find(s => !this.completed.includes(s.id));
@@ -375,7 +443,7 @@
                         if(currentStep && currentStep.initial_code) {
                             this.code = currentStep.initial_code;
                             this.editor.setValue(this.code, -1);
-                            this.log('System', 'Initial code template loaded.', 'text-[#cca700]');
+                            this.log('Sistem', 'Template kode awal dimuat.', 'text-[#cca700]');
                         }
                     }
 
@@ -383,12 +451,16 @@
                     if(!this.readOnly) {
                         this.startTimer();
                     } else {
-                        this.timer = "FINISHED";
-                        this.log('System', 'Review Mode Enabled.', 'text-[#007acc]');
+                        this.timer = "SELESAI";
+                        this.log('Sistem', 'Mode tinjau aktif.', 'text-[#007acc]');
                     }
                     
                     // 5. Initial Run
                     this.$nextTick(() => this.runCode());
+
+                    if (!this.readOnly && this.completed.length === 0) {
+                        this.$nextTick(() => { this.showGuideModal = true; });
+                    }
 
                     // 6. Handle Editor Resize when switching tabs on mobile
                     this.$watch('mobileTab', val => {
@@ -419,7 +491,7 @@
                 // --- CORE LOGIC: CHECK & AUTO NEXT ---
                 async checkTask(stepId) {
                     this.loadingId = stepId;
-                    this.log('Runner', `Verifying Task #${stepId}...`, 'text-[#007acc]');
+                    this.log('Pemeriksa', `Memverifikasi tugas #${stepId}...`, 'text-[#007acc]');
                     
                     try {
                         const res = await fetch('{{ route('lab.check', $session->id ?? 0) }}', {
@@ -436,18 +508,19 @@
                                 this.score = data.new_score;
                             }
                             
-                            this.log('Runner', `[SUCCESS] ${data.output}`, 'text-[#4ec9b0]');
-                            this.triggerToast('Success', 'Jawaban Anda benar! Lanjut ke task berikutnya.', 'success');
+                            this.log('Pemeriksa', `[BERHASIL] ${data.output}`, 'text-[#4ec9b0]');
+                            this.triggerToast('Berhasil', 'Jawaban Anda benar. Lanjut ke tugas berikutnya.', 'success');
 
                             // 2. AUTO NEXT TASK TRIGGER
                             this.handleNextTask(stepId);
 
                         } else {
-                            this.log('Runner', `[FAIL] ${data.message}`, 'text-[#f14c4c]');
-                            this.triggerToast('Failed', data.message, 'error');
+                            const failMsg = `${data.message || 'Tugas belum memenuhi aturan validasi.'} Baca ulang instruksi tugas aktif, cek class wajib atau struktur HTML, gunakan Reset Kode bila perlu, lalu klik Verifikasi lagi.`;
+                            this.log('Pemeriksa', `[GAGAL] ${failMsg}`, 'text-[#f14c4c]');
+                            this.triggerToast('Belum Memenuhi Syarat', failMsg, 'error');
                         }
                     } catch (e) {
-                        this.log('System', 'Network Error: ' + e.message, 'text-[#f14c4c]');
+                        this.log('Sistem', 'Gangguan jaringan: ' + e.message, 'text-[#f14c4c]');
                     }
                     this.loadingId = null;
                 },
@@ -465,15 +538,15 @@
 
                         // 2. Cek & Inject Initial Code (OTOMATIS)
                         if (nextStep.initial_code && nextStep.initial_code.trim() !== "") {
-                            this.log('System', `Loading environment for Task: ${nextStep.title}...`, 'text-gray-400');
+                            this.log('Sistem', `Memuat lingkungan untuk tugas: ${nextStep.title}...`, 'text-gray-400');
                             
                             setTimeout(() => {
                                 this.code = nextStep.initial_code;
                                 this.editor.setValue(this.code, -1);
                                 this.runCode(); 
                                 
-                                this.log('System', 'New boilerplate code injected.', 'text-[#cca700]');
-                                this.triggerToast('Environment Updated', 'Kode baru untuk task ini telah dimuat.', 'info');
+                                this.log('Sistem', 'Kode awal baru sudah dimasukkan.', 'text-[#cca700]');
+                                this.triggerToast('Lingkungan Diperbarui', 'Kode baru untuk tugas ini telah dimuat.', 'info');
                             }, 1000); 
                         }
                         
@@ -483,7 +556,7 @@
                         }
                     } else {
                         // Jika task habis
-                        this.log('System', 'All tasks completed. Ready to submit.', 'text-[#4ec9b0]');
+                        this.log('Sistem', 'Semua tugas selesai. Lab siap dikumpulkan.', 'text-[#4ec9b0]');
                         this.confirmFinish();
                     }
                 },
@@ -492,13 +565,13 @@
                 checkCurrentTask() { if (this.expandedTask && !this.isCompleted(this.expandedTask)) this.checkTask(this.expandedTask); },
                 
                 forceLoadCode(stepId) {
-                    if(!confirm("Reset kode editor ke template awal task ini? Kode Anda akan hilang.")) return;
+                    if(!confirm("Reset kode editor ke template awal tugas ini? Kode Anda akan hilang.")) return;
                     const step = this.stepsData.find(s => s.id === stepId);
                     if(step && step.initial_code) {
                         this.code = step.initial_code;
                         this.editor.setValue(this.code, -1);
                         this.runCode();
-                        this.log('System', 'Code reset to template.', 'text-[#cca700]');
+                    this.log('Sistem', 'Kode dikembalikan ke template awal.', 'text-[#cca700]');
                     }
                 },
 
@@ -538,14 +611,17 @@
 
                 confirmFinish() {
                     if (this.readOnly) return this.goBack();
-                    const msg = this.score < 50 ? `Skor Anda baru ${this.score}%. Yakin ingin mengumpulkan?` : `Skor Anda ${this.score}%. Siap dikumpulkan?`;
-                    this.modal = { open: true, icon: '🚀', title: 'Submit Lab?', msg: msg, action: 'submit' };
+                    const passing = this.passingGrade || 70;
+                    const msg = this.score < passing
+                        ? `Skor Anda baru ${Math.round(this.score)}%, belum mencapai nilai lulus ${passing}%. Pilih Batal untuk memperbaiki tugas yang belum tervalidasi, baca ulang instruksi, lalu verifikasi lagi. Tetap kumpulkan sekarang?`
+                        : `Skor Anda ${Math.round(this.score)}% dan sudah memenuhi nilai lulus ${passing}%. Siap dikumpulkan?`;
+                    this.modal = { open: true, icon: '✓', title: 'Kumpulkan Lab?', msg: msg, action: 'submit' };
                 },
 
                 async handleModalAction() {
                     if (this.modal.action === 'submit') {
                         this.modal.open = false;
-                        this.log('System', 'Submitting final result...', 'text-[#007acc]');
+                        this.log('Sistem', 'Mengirim hasil akhir...', 'text-[#007acc]');
                         try {
                             const res = await fetch('{{ route('lab.end', $session->id ?? 0) }}', {
                                 method: 'POST',
@@ -554,27 +630,27 @@
                             });
                             const data = await res.json();
                             if(data.status === 'success') window.location.href = data.redirect_url;
-                        } catch(e) { this.modal = {open: true, icon: '⚠️', title: 'Error', msg: 'Gagal submit.', action: null}; }
+                        } catch(e) { this.modal = {open: true, icon: '!', title: 'Galat', msg: 'Gagal mengumpulkan lab.', action: null}; }
                     } else {
                         this.modal.open = false;
                     }
                 },
 
-                manualSave() { this.runCode(); this.unsaved = false; this.triggerToast('Saved', 'File saved successfully.', 'success'); },
+                manualSave() { this.runCode(); this.unsaved = false; this.triggerToast('Tersimpan', 'Berkas berhasil disimpan.', 'success'); },
                 toggleTask(id) { if(!this.isLocked(id)) this.expandedTask = (this.expandedTask === id) ? null : id; },
                 isCompleted(id) { return this.completed.includes(parseInt(id)); },
                 isLocked(id) { if (this.readOnly) return false; const idx = this.stepsData.findIndex(s => s.id === id); return idx > 0 && !this.completed.includes(this.stepsData[idx - 1].id); },
-                goBack() { window.location.href = "{{ route('courses.htmldancss') }}"; },
+                goBack() { window.location.href = "{{ $session->review_result_url ?? route('courses.htmldancss') }}"; },
                 
                 log(source, msg, color) { 
-                    const t = new Date().toLocaleTimeString('en-GB', {hour12: false}); 
+                    const t = new Date().toLocaleTimeString('id-ID', {hour12: false}); 
                     this.logs.push({time: t, msg: `<span class="font-bold text-gray-500">[${source}]</span> ${msg}`, color}); 
                     this.$nextTick(() => { const el = document.getElementById('terminal-logs'); if(el) el.scrollTop = el.scrollHeight; }); 
                 },
                 
                 triggerToast(title, msg, type) {
                     this.toastTitle = title; this.toastMsg = msg; this.toastType = type; this.showToast = true;
-                    setTimeout(() => this.showToast = false, 3000);
+                    setTimeout(() => this.showToast = false, type === 'error' ? 6500 : 3000);
                 }
             }
         }

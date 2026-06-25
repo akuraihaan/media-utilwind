@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -208,7 +208,7 @@
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
                 <div>
                     <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
-                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Admin Panel</span>
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Panel Admin</span>
                 </div>
             </a>
             <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
@@ -216,39 +216,7 @@
             </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dasbor
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Manajemen Kuis
-                    </a>
-                    <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Konfigurasi Lab
-                    </a>
-                    <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Analitik Lab
-                    </a>
-                    <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Manajemen Kelas
-                    </a>
-                </div>
-            </div>
-        </nav>
+        @include('admin.partials.sidebar-nav')
 
         {{-- USER PROFILE Bawah Sidebar --}}
         <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
@@ -256,7 +224,7 @@
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
                 <div class="overflow-hidden">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">Administrator Sistem</p>
                 </div>
             </div>
             
@@ -271,7 +239,7 @@
                 @csrf
                 <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500 hover:text-red-700 dark:hover:text-white transition-colors text-xs font-bold border border-red-200 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500 group shadow-sm dark:shadow-none">
                     <svg class="w-3.5 h-3.5 transition group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    Logout
+                    Keluar
                 </button>
             </form>
         </div>
@@ -326,7 +294,7 @@
                                 </h2>
                                 <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 font-mono transition-colors">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                    {{ $user->email ?? 'No email recorded' }}
+                                    {{ $user->email ?? 'Email belum tercatat' }}
                                 </p>
                             </div>
                         </div>
@@ -334,10 +302,10 @@
                     
                     <div class="flex items-center gap-3 sm:gap-6">
                         {{-- Tombol Refresh & Fullscreen --}}
-                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 group hidden sm:block border border-transparent dark:hover:border-white/10" title="Refresh">
+                        <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 group hidden sm:block border border-transparent dark:hover:border-white/10" title="Segarkan">
                             <svg class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         </button>
-                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Fullscreen">
+                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Mode Layar Penuh">
                             <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
@@ -369,14 +337,14 @@
                     {{-- A. PERSONAL STATS (4 KARTU) --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 reveal" style="animation-delay: 0.1s;">
                         
-                        {{-- Card 1: Avg Score --}}
+                        {{-- Card 1: Rata-rata Nilai --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-yellow-500 cursor-pointer group transition-all" @click="showAvgScoreModal = true">
                             <div class="flex justify-between items-start">
                                 <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition-colors">Rata-rata Nilai</p>
                                 <div class="tooltip-container tooltip-yellow tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="block font-bold text-amber-600 dark:text-yellow-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Average Score</span>
+                                        <span class="block font-bold text-amber-600 dark:text-yellow-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Rata-rata Nilai</span>
                                         Rata-rata kalkulasi nilai dari semua modul lab dan kuis yang dikerjakan.
                                     </div>
                                 </div>
@@ -394,56 +362,56 @@
                                 <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="block font-bold text-indigo-600 dark:text-indigo-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Total Attempts</span>
+                                        <span class="block font-bold text-indigo-600 dark:text-indigo-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Total Percobaan</span>
                                         Jumlah kali siswa ini mengerjakan atau mengulang modul lab.
                                     </div>
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalLabsAttempted ?? 0 }}x</h3>
-                            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">View All Attempts &rarr;</p>
+                            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">Lihat Seluruh Percobaan &rarr;</p>
                         </div>
 
-                        {{-- Card 3: Passed Labs --}}
+                        {{-- Card 3: Lulus Labs --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 cursor-pointer group transition-all" @click="showPassedModal = true">
                             <div class="flex justify-between items-start">
                                 <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Modul Lulus</p>
                                 <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="block font-bold text-emerald-600 dark:text-emerald-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Passed Modules</span>
+                                        <span class="block font-bold text-emerald-600 dark:text-emerald-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Modul Lulus</span>
                                         Jumlah modul praktikum yang status akhirnya divalidasi Lulus.
                                     </div>
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $passedLabs ?? 0 }}</h3>
-                            <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">View Passed Data &rarr;</p>
+                            <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">Lihat Data Lulus &rarr;</p>
                         </div>
 
                         {{-- Card 4: Total Time Spent --}}
                         <div class="glass-card rounded-2xl p-5 border-l-4 border-l-cyan-500 cursor-pointer group transition-all" @click="showTimeModal = true">
                             <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Coding Time</p>
+                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Durasi Pengerjaan</p>
                                 <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
                                     <div class="tooltip-trigger">?</div>
                                     <div class="tooltip-content">
-                                        <span class="block font-bold text-cyan-600 dark:text-cyan-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Time Spent</span>
-                                        Total durasi jam terbang siswa selama mengerjakan coding praktikum.
+                                        <span class="block font-bold text-cyan-600 dark:text-cyan-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Waktu Terpakai</span>
+                                        Total durasi siswa selama mengerjakan praktikum pemrograman.
                                     </div>
                                 </div>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black text-cyan-600 dark:text-cyan-400 mt-2 font-mono tracking-tight transition-colors">{{ $totalTimeSpent ?? '00:00' }}</h3>
-                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">View Duration Logs &rarr;</p>
+                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">Lihat Riwayat Durasi &rarr;</p>
                         </div>
                     </div>
 
                     {{-- B. PERSONAL CHARTS --}}
                     <div class="grid md:grid-cols-3 gap-6 reveal" style="animation-delay: 0.2s;">
                         
-                        {{-- Score Trend --}}
+                        {{-- Tren Nilai --}}
                         <div class="md:col-span-2 glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden transition-colors">
                             <div class="flex justify-between items-center mb-6 relative z-10">
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white transition-colors">Riwayat Nilai Terakhir</h3>
-                                <span class="text-[10px] bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/20 font-bold tracking-widest uppercase transition-colors">Progression</span>
+                                <span class="text-[10px] bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/20 font-bold tracking-widest uppercase transition-colors">Perkembangan</span>
                             </div>
                             <div class="flex-1 w-full h-[280px] relative z-10">
                                 <canvas id="scoreChart"></canvas>
@@ -451,14 +419,14 @@
                             <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-indigo-100/50 dark:from-indigo-900/10 to-transparent pointer-events-none transition-colors"></div>
                         </div>
 
-                        {{-- Pass/Fail Ratio --}}
+                        {{-- Rasio Lulus/Gagal --}}
                         <div class="glass-card rounded-2xl p-6 flex flex-col justify-center items-center relative overflow-hidden transition-colors">
                              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 w-full text-left transition-colors">Rasio Keberhasilan</h3>
                             <div class="relative w-48 h-48">
                                 <canvas id="statusChart"></canvas>
                                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none flex-col">
                                     <span class="text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $totalLabsAttempted ?? 0 }}</span>
-                                    <span class="text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Attempts</span>
+                                    <span class="text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Percobaan</span>
                                 </div>
                             </div>
                             <div class="flex gap-4 mt-6 text-xs">
@@ -479,16 +447,16 @@
                         
                         {{-- Wrapper untuk Scrollable Table --}}
                         <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-[450px] relative">
-                            <table class="w-full text-sm text-left border-collapse min-w-[700px]">
+                            <table class="w-full text-sm text-left border-collapse min-w-[820px]">
                                 {{-- Sticky Header --}}
                                 <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold sticky top-0 z-20 shadow-sm dark:shadow-md transition-colors after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-slate-200 dark:after:border-white/5">
                                     <tr>
-                                        <th class="px-6 py-4 transition-colors">Module Name</th>
+                                        <th class="px-6 py-4 transition-colors">Nama Modul</th>
                                         <th class="px-6 py-4 text-center transition-colors">Status</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Score</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Duration</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Date</th>
-                                        <th class="px-6 py-4 text-right transition-colors">Code Snapshot</th>
+                                        <th class="px-6 py-4 text-center transition-colors">Skor</th>
+                                        <th class="px-6 py-4 text-center transition-colors">Durasi</th>
+                                        <th class="px-6 py-4 text-center transition-colors">Tanggal</th>
+                                        <th class="px-6 py-4 text-right transition-colors">Tinjauan</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 dark:divide-white/5 bg-white/50 dark:bg-[#0a0e17]/30 transition-colors">
@@ -500,7 +468,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-colors {{ ($h->status ?? '') == 'passed' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20' }}">
-                                                {{ $h->status ?? 'unknown' }}
+                                                {{ ($h->status ?? '') === 'passed' ? 'Lulus' : (($h->status ?? '') === 'failed' ? 'Belum Lulus' : 'Tidak Diketahui') }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
@@ -515,13 +483,17 @@
                                             {{ \Carbon\Carbon::parse($h->created_at)->format('d M Y, H:i') }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
+                                            <a href="{{ route('admin.labs.results.show', $h->id) }}"
+                                                class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-600/10 hover:bg-emerald-600 dark:hover:bg-emerald-600 text-emerald-700 dark:text-emerald-400 hover:text-white border border-emerald-200 dark:border-emerald-600/30 text-[10px] font-bold transition-all shadow-sm dark:shadow-inner transform hover:-translate-y-0.5 mr-2">
+                                                Tinjau Analisis
+                                            </a>
                                             @if(!empty($h->last_code_snapshot))
                                                 <button onclick="openCodeModal(`{{ base64_encode($h->last_code_snapshot) }}`, '{{ addslashes($h->lab_title ?? 'Lab') }}')" 
                                                     class="px-4 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-600/10 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white border border-indigo-200 dark:border-indigo-600/30 text-[10px] font-bold transition-all shadow-sm dark:shadow-inner transform hover:-translate-y-0.5">
-                                                    View Code
+                                                    Lihat Kode
                                                 </button>
                                             @else
-                                                <span class="text-[10px] text-slate-400 dark:text-white/20 italic transition-colors">No Snapshot</span>
+                                                <span class="text-[10px] text-slate-400 dark:text-white/20 italic transition-colors">Belum ada cuplikan</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -548,7 +520,7 @@
 
     {{-- ==================== HERO MODALS (INSIGHT DATA PER CARD) ==================== --}}
 
-    {{-- 1. Modal: Average Score Detail --}}
+    {{-- 1. Modal: Rincian Nilai Rata-rata --}}
     <div x-show="showAvgScoreModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showAvgScoreModal = false"></div>
         <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-amber-200 dark:border-yellow-500/40 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(234,179,8,0.15)] p-6 md:p-8 transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -556,7 +528,7 @@
                 <div>
                     <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                         <svg class="w-6 h-6 text-amber-500 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 001.902 0l1.519-4.674z"/></svg>
-                        Average Score Detail
+                        Rincian Rata-rata Nilai
                     </h3>
                     <p class="text-[10px] text-amber-600 dark:text-yellow-400 mt-1 font-mono uppercase tracking-widest transition-colors">Data keseluruhan untuk {{ $user->name ?? 'Siswa' }}</p>
                 </div>
@@ -571,7 +543,7 @@
         </div>
     </div>
 
-    {{-- 2. Modal: Total Labs Detail --}}
+    {{-- 2. Modal: Rincian Total Lab --}}
     <div x-show="showTotalLabsModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showTotalLabsModal = false"></div>
         <div class="relative w-full max-w-2xl bg-white dark:bg-[#0f141e] border border-indigo-200 dark:border-indigo-500/40 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(99,102,241,0.15)] p-6 md:p-8 transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -579,7 +551,7 @@
                 <div>
                     <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                         <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Semua Percobaan Lab
+                        Seluruh Percobaan Lab
                     </h3>
                     <p class="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 font-mono uppercase tracking-widest transition-colors">Riwayat percobaan lab lengkap</p>
                 </div>
@@ -594,9 +566,9 @@
                     </div>
                     <div class="text-right shrink-0">
                         <span class="inline-flex items-center px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest border transition-colors {{ ($h->status ?? '') == 'passed' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20' }}">
-                            {{ $h->status ?? 'unknown' }}
+                            {{ ($h->status ?? '') === 'passed' ? 'Lulus' : (($h->status ?? '') === 'failed' ? 'Belum Lulus' : 'Tidak Diketahui') }}
                         </span>
-                        <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">Score: {{ $h->final_score ?? 0 }}</p>
+                        <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 font-mono transition-colors">Skor: {{ $h->final_score ?? 0 }}</p>
                     </div>
                 </div>
                 @empty
@@ -608,7 +580,7 @@
         </div>
     </div>
 
-    {{-- 3. Modal: Passed Labs Detail --}}
+    {{-- 3. Modal: Lulus Labs Detail --}}
     <div x-show="showPassedModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showPassedModal = false"></div>
         <div class="relative w-full max-w-2xl bg-white dark:bg-[#0f141e] border border-emerald-200 dark:border-emerald-500/40 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(16,185,129,0.15)] p-6 md:p-8 transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -616,7 +588,7 @@
                 <div>
                     <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                         <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Passed Modules
+                        Modul yang Lulus
                     </h3>
                     <p class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-mono uppercase tracking-widest transition-colors">Modul yang berhasil divalidasi</p>
                 </div>
@@ -627,10 +599,10 @@
                 <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-colors group shadow-sm dark:shadow-inner">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">{{ $h->lab_title ?? 'Lab Modul' }}</p>
-                        <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-1 transition-colors">Score: {{ $h->final_score ?? 0 }}</p>
+                        <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-1 transition-colors">Skor: {{ $h->final_score ?? 0 }}</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 uppercase tracking-widest transition-colors"><svg class="w-3 h-3 inline-block mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Validated</span>
+                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 uppercase tracking-widest transition-colors"><svg class="w-3 h-3 inline-block mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Tervalidasi</span>
                     </div>
                 </div>
                 @empty
@@ -642,7 +614,7 @@
         </div>
     </div>
 
-    {{-- 4. Modal: Time Spent Detail --}}
+    {{-- 4. Modal: Rincian Waktu Pengerjaan --}}
     <div x-show="showTimeModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showTimeModal = false"></div>
         <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/40 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(6,182,212,0.15)] p-6 md:p-8 transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -650,7 +622,7 @@
                 <div>
                     <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                         <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Coding Duration Analysis
+                        Analisis Durasi Pengerjaan
                     </h3>
                 </div>
                 <button @click="showTimeModal = false" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition-colors bg-slate-100 dark:bg-white/5 hover:bg-red-100 dark:hover:bg-red-500/20 p-2 rounded-full border border-transparent hover:border-red-200 dark:hover:border-red-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -744,7 +716,7 @@
                 const trendPointBg = isDark ? '#0f141e' : '#ffffff';
                 const trendLineColor = isDark ? '#818cf8' : '#6366f1';
 
-                // 1. SCORE CHART (Line)
+                // 1. SCORE CHART (Garis)
                 if(ctxScore) {
                     const gradient = ctxScore.getContext('2d').createLinearGradient(0, 0, 0, 300);
                     gradient.addColorStop(0, isDark ? 'rgba(129, 140, 248, 0.4)' : 'rgba(99, 102, 241, 0.2)');
@@ -789,7 +761,7 @@
                     statusChart = new Chart(ctxStatus.getContext('2d'), {
                         type: 'doughnut',
                         data: {
-                            labels: ['Passed', 'Failed'],
+                            labels: ['Lulus', 'Belum Lulus'],
                             datasets: [{
                                 data: [{{ $passedLabs ?? 0 }}, {{ $failedLabs ?? 0 }}],
                                 backgroundColor: ['#10b981', '#ef4444'],
@@ -819,7 +791,7 @@
         function openCodeModal(encodedCode, title) {
             const code = atob(encodedCode); 
             document.getElementById('codeContainer').textContent = code;
-            document.getElementById('codeModalTitle').innerText = title + " - Snapshot";
+            document.getElementById('codeModalTitle').innerText = title + " - Cuplikan";
             
             const modal = document.getElementById('codeModal');
             const content = document.getElementById('codeModalContent');

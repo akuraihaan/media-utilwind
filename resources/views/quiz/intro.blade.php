@@ -4,176 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persiapan Evaluasi - Utilwind</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('color-theme');
+            const useDarkTheme = savedTheme === 'dark'
+                || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            document.documentElement.classList.toggle('dark', useDarkTheme);
+            document.documentElement.style.colorScheme = useDarkTheme ? 'dark' : 'light';
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@500;600&display=swap" rel="stylesheet">
+
     <style>
-        /* TEMA: COSMIC PURPLE */
-        body { font-family: 'Outfit', sans-serif; }
-        
-        /* Glassmorphism Card */
-        .glass-card {
-            background: rgba(30, 20, 60, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.15); /* Violet Border */
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Info Boxes */
-        .info-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        .info-box:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.3);
-            transform: translateY(-2px);
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* Checkbox Custom styling */
-        .checkbox-wrapper input:checked + div {
-            background-color: #d946ef; /* Fuchsia */
-            border-color: #d946ef;
-            box-shadow: 0 0 10px rgba(217, 70, 239, 0.5);
+        .font-mono {
+            font-family: 'Fira Code', monospace;
         }
-        .checkbox-wrapper input:checked + div svg {
+
+        .page-surface {
+            background-image:
+                radial-gradient(circle at 18% 16%, rgba(6, 182, 212, 0.10), transparent 28%),
+                radial-gradient(circle at 84% 84%, rgba(79, 70, 229, 0.08), transparent 26%);
+        }
+
+        .dark .page-surface {
+            background-image:
+                radial-gradient(circle at 18% 16%, rgba(6, 182, 212, 0.11), transparent 28%),
+                radial-gradient(circle at 84% 84%, rgba(79, 70, 229, 0.10), transparent 26%);
+        }
+
+        .start-button:not(:disabled):hover {
+            transform: translateY(-1px);
+        }
+
+        .agreement input:checked + .agreement-box {
+            border-color: #06b6d4;
+            background: #06b6d4;
+        }
+
+        .agreement input:checked + .agreement-box svg {
             display: block;
         }
-        
-        /* Glow Text */
-        .text-glow { text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+
+        .dark .agreement input:checked + .agreement-box {
+            border-color: #22d3ee;
+            background: #22d3ee;
+        }
     </style>
 </head>
-<body class="bg-[#0f0720] text-white h-full min-h-screen flex items-center justify-center p-4 overflow-x-hidden selection:bg-fuchsia-500/30">
+<body class="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-200 dark:bg-[#020617] dark:text-white">
+    <main class="page-surface flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:py-12">
+        <section class="w-full max-w-4xl overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white shadow-[0_20px_55px_rgba(15,23,42,0.10)] transition-colors duration-200 dark:border-white/10 dark:bg-[#0f141e] dark:shadow-[0_24px_70px_rgba(2,6,23,0.35)]">
+            <div class="h-1 w-full bg-cyan-500 dark:bg-cyan-400"></div>
 
-    <div class="fixed inset-0 -z-50 pointer-events-none overflow-hidden">
-        <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-violet-800/20 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-fuchsia-800/20 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]"></div>
-    </div>
+            <div class="border-b border-slate-200 px-5 py-6 sm:px-8 lg:px-10 dark:border-white/10">
+                <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="flex min-w-0 items-start gap-4">
+                      
 
-    <div class="max-w-3xl w-full relative z-10">
-        
-        <div class="glass-card rounded-3xl overflow-hidden relative">
-            
-            <div class="h-1 w-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 shadow-[0_0_15px_rgba(217,70,239,0.5)]"></div>
-
-            <div class="p-8 md:p-12">
-                
-                <div class="text-center mb-10">
-                    <div class="flex items-center justify-center gap-4 mb-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 p-[2px] shadow-[0_0_30px_rgba(139,92,246,0.4)]">
-                            <div class="w-full h-full bg-[#1a103c] rounded-2xl flex items-center justify-center p-3">
-                                <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain drop-shadow-lg">
-                            </div>
-                        </div>
-                        <div class="text-left">
-                            <h1 class="text-3xl font-bold text-white tracking-tight leading-none text-glow">
-                                Util<span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">wind</span>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300">Persiapan Evaluasi</p>
+                            <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl dark:text-white">
+                                {{ $chapterId == 99 ? 'Evaluasi Akhir' : 'Evaluasi Bab ' . $chapterId }}
                             </h1>
-                            <p class="text-xs text-violet-300 font-bold tracking-[0.3em] uppercase mt-1 opacity-70">LMS Evaluation</p>
+                            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+                                Bacalah ketentuan berikut sebelum memulai evaluasi. Pastikan Anda berada dalam kondisi siap dan dapat menyelesaikan seluruh soal.
+                            </p>
                         </div>
                     </div>
 
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">Evaluasi Bab {{ $chapterId }}</h2>
-                    <p class="text-violet-200/60 text-sm max-w-lg mx-auto leading-relaxed font-light">
-                        Ujian ini menggunakan sistem CBT (Computer Based Test). Harap baca instruksi di bawah ini dengan seksama sebelum memulai.
+                    
+                </div>
+            </div>
+
+            <div class="px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
+                <div>
+                    <h2 class="text-base font-extrabold text-slate-950 dark:text-white">Ketentuan Pengerjaan</h2>
+                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Informasi berikut berlaku selama evaluasi berlangsung.</p>
+                </div>
+
+                <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                    <article class="rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-cyan-200 hover:bg-cyan-50/40 dark:border-white/10 dark:bg-[#020617] dark:hover:border-cyan-400/20 dark:hover:bg-cyan-400/[0.04]">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-400/20 dark:bg-cyan-400/10 dark:text-cyan-300">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Durasi 20 Menit</h3>
+                                <p class="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">Waktu dimulai setelah evaluasi dibuka dan dihitung oleh sistem.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-emerald-200 hover:bg-emerald-50/40 dark:border-white/10 dark:bg-[#020617] dark:hover:border-emerald-400/20 dark:hover:bg-emerald-400/[0.04]">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Batas Ketuntasan 70</h3>
+                                <p class="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">Tinjau materi dan hasil evaluasi apabila nilai belum mencapai ketuntasan.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-rose-200 hover:bg-rose-50/40 dark:border-white/10 dark:bg-[#020617] dark:hover:border-rose-400/20 dark:hover:bg-rose-400/[0.04]">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-300">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 018 0v4m-10 0h12a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2z" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Tetap pada Halaman Evaluasi</h3>
+                                <p class="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">Jangan berpindah tab, memuat ulang halaman, atau kembali ke halaman sebelumnya.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-amber-200 hover:bg-amber-50/40 dark:border-white/10 dark:bg-[#020617] dark:hover:border-amber-400/20 dark:hover:bg-amber-400/[0.04]">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Penyimpanan Jawaban</h3>
+                                <p class="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">Jawaban disimpan otomatis setiap kali Anda memilih salah satu opsi.</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="mt-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 dark:border-amber-400/20 dark:bg-amber-400/[0.07]">
+                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z" />
+                    </svg>
+                    <p class="text-xs leading-5 text-amber-900 dark:text-amber-100/85">
+                        Setelah evaluasi dimulai, waktu tetap berjalan. Pastikan seluruh soal telah dijawab sebelum menggunakan tombol <strong>Kumpulkan</strong> pada halaman evaluasi.
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4 mb-10">
-                    <div class="info-box p-5 rounded-2xl flex items-start gap-4 group">
-                        <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:bg-violet-500 group-hover:text-white transition-colors shadow-inner border border-violet-500/20">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-violet-100 text-sm">Durasi 20 Menit</h4>
-                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Waktu berjalan server-side.</p>
-                        </div>
-                    </div>
-
-                    <div class="info-box p-5 rounded-2xl flex items-start gap-4 group">
-                        <div class="w-10 h-10 rounded-xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-400 group-hover:bg-fuchsia-500 group-hover:text-white transition-colors shadow-inner border border-fuchsia-500/20">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-violet-100 text-sm">KKM: 70 Poin</h4>
-                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Anda harus mencapai skor minimal 70 untuk lulus.</p>
-                        </div>
-                    </div>
-
-                    <div class="info-box p-5 rounded-2xl flex items-start gap-4 group">
-                        <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 group-hover:bg-red-500 group-hover:text-white transition-colors shadow-inner border border-red-500/20">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-violet-100 text-sm">Proteksi Ketat</h4>
-                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Dilarang pindah tab, refresh, atau kembali. Sistem mendeteksi kecurangan.</p>
-                        </div>
-                    </div>
-
-                    <div class="info-box p-5 rounded-2xl flex items-start gap-4 group">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors shadow-inner border border-amber-500/20">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-violet-100 text-sm">Real-time Save</h4>
-                            <p class="text-xs text-violet-300/50 mt-1 leading-relaxed">Jawaban tersimpan otomatis ke database setiap kali diklik.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <form action="{{ route('quiz.startSession') }}" method="POST">
+                <form action="{{ route('quiz.startSession') }}" method="POST" class="mt-8">
                     @csrf
                     <input type="hidden" name="chapter_id" value="{{ $chapterId }}">
 
-                    <label class="checkbox-wrapper flex items-start gap-4 p-4 rounded-2xl border border-violet-500/10 bg-[#1a103c]/50 cursor-pointer hover:bg-[#1a103c] hover:border-violet-500/30 transition mb-8 group select-none">
-                        <div class="relative flex items-center mt-0.5">
-                            <input type="checkbox" id="agreement" class="peer hidden">
-                            <div class="w-5 h-5 rounded-md border border-violet-500/50 bg-violet-900/20 flex items-center justify-center transition-all group-hover:border-fuchsia-500">
-                                <svg class="w-3.5 h-3.5 text-white hidden pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                        </div>
-                        <span class="text-sm text-violet-300 group-hover:text-white transition-colors font-light">
-                            Saya menyatakan siap mengerjakan ujian dengan jujur, tidak melakukan kecurangan, dan menerima konsekuensi jika melanggar aturan.
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-950 dark:text-white">Pernyataan Kesiapan</h2>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Centang pernyataan berikut untuk melanjutkan.</p>
+                    </div>
+
+                    <label class="agreement mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-cyan-200 hover:bg-cyan-50/40 dark:border-white/10 dark:bg-[#020617] dark:hover:border-cyan-400/20 dark:hover:bg-cyan-400/[0.04]">
+                        <input type="checkbox" id="agreement" class="sr-only">
+                        <span class="agreement-box mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 border-slate-400 bg-white text-slate-950 transition dark:border-slate-500 dark:bg-[#0f141e]">
+                            <svg class="hidden h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <span class="text-sm leading-6 text-slate-700 dark:text-slate-300">
+                            Saya menyatakan siap mengerjakan evaluasi secara jujur, tidak melakukan kecurangan, serta memahami seluruh ketentuan yang berlaku.
                         </span>
                     </label>
 
-                    <div class="flex gap-4">
-                        <a href="{{ route('dashboard') }}" class="flex-1 py-4 rounded-xl border border-violet-500/20 text-center text-sm font-bold text-violet-300 hover:bg-white/5 hover:text-white transition hover:border-violet-500/50">
-                            Kembali
+                    <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <a href="{{ route('dashboard') }}" class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950 dark:border-white/10 dark:bg-[#020617] dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white">
+                            Kembali ke Dashboard
                         </a>
-                        
-                        <button type="submit" id="startBtn" disabled class="flex-[2] py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] opacity-50 cursor-not-allowed transition-all transform flex items-center justify-center gap-2 border border-white/10">
+
+                        <button type="submit" id="startBtn" disabled class="start-button inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-3 text-sm font-extrabold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50 enabled:hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:enabled:hover:bg-slate-200">
                             <span>Mulai Mengerjakan</span>
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
                         </button>
                     </div>
                 </form>
-
             </div>
-        </div>
-        
-    </div>
+        </section>
+    </main>
 
     <script>
         const checkbox = document.getElementById('agreement');
-        const btn = document.getElementById('startBtn');
+        const startButton = document.getElementById('startBtn');
 
-        checkbox.addEventListener('change', function() {
-            if(this.checked) {
-                btn.disabled = false;
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btn.classList.add('hover:scale-[1.02]', 'hover:shadow-[0_0_30px_rgba(217,70,239,0.5)]');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.classList.remove('hover:scale-[1.02]', 'hover:shadow-[0_0_30px_rgba(217,70,239,0.5)]');
+        checkbox.addEventListener('change', function () {
+            startButton.disabled = !this.checked;
+        });
+
+        function syncThemeFromStorage() {
+            const savedTheme = localStorage.getItem('color-theme');
+            const useDarkTheme = savedTheme === 'dark'
+                || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            document.documentElement.classList.toggle('dark', useDarkTheme);
+            document.documentElement.style.colorScheme = useDarkTheme ? 'dark' : 'light';
+        }
+
+        window.addEventListener('storage', function (event) {
+            if (event.key === 'color-theme') {
+                syncThemeFromStorage();
             }
         });
+
+        window.addEventListener('focus', syncThemeFromStorage);
     </script>
 </body>
 </html>

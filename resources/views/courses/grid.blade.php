@@ -132,9 +132,9 @@
                     <div class="card-adaptive rounded-3xl border border-adaptive p-6 md:p-8 overflow-hidden relative">
                         <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
                         <p class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[.25em] mb-3">Subbab 2.2</p>
-                        <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight mb-4">Grid pada Tailwind CSS</h2>
+                        <h2 class="text-3xl md:text-5xl font-black text-heading leading-tight mb-4">Flexbox pada Tailwind CSS</h2>
                         <p class="text-sm md:text-base text-muted leading-relaxed max-w-3xl text-justify">
-                            Pada subbab ini, pembelajar mempelajari cara menyusun elemen menggunakan Grid di Tailwind CSS. Materi difokuskan pada penggunaan <code>grid</code>, <code>grid-cols-3</code>, <code>gap-4</code>, <code>col-span-2</code>, dan <code>col-span-full</code> untuk kebutuhan layout sederhana.
+                            Pada subbab ini, pembelajar mempelajari cara menyusun elemen menggunakan Flexbox di Tailwind CSS. Materi difokuskan pada penggunaan <code>flex</code>, <code>flex-row</code>, <code>flex-col</code>, <code>justify-*</code>, <code>items-*</code>, dan <code>flex-1</code> untuk kebutuhan layout satu arah.
                         </p>
                     </div>
                 </div>
@@ -383,7 +383,7 @@
                                 </div>
                                 <div>
                                     <div class="flex flex-wrap items-center gap-3 mb-1">
-                                        <h2 class="text-3xl font-black text-heading tracking-tight">Aktivitas 2.3: Pilih Susunan Class Grid</h2>
+                                        <h2 class="text-3xl font-black text-heading tracking-tight">Aktivitas 2.2: Pilih Susunan Class Flexbox</h2>
                                     </div>
                                     <p class="text-slate-600 dark:text-indigo-200/60 text-sm leading-relaxed max-w-2xl mt-2 text-justify">
                                         Pilih huruf jawaban yang sesuai dengan kebutuhan layout. Aktivitas ini membantu mencocokkan kebutuhan layout dengan susunan class Tailwind CSS yang tepat.
@@ -769,7 +769,7 @@
             unlockNextChapter();
         } else {
             msg.className = 'rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-4 text-xs text-amber-700 dark:text-amber-300 leading-relaxed mb-4';
-            msg.innerHTML = `<b>Skor ${score}/5.</b> Minimal benar 4. Perbaiki jawaban dengan menekan tombol ulangi.`;
+            msg.innerHTML = `<b>Skor ${score}/5.</b> Minimal benar 4. Baca ulang bagian Flexbox yang belum dipahami, tinjau pembahasan pada jawaban salah, lalu tekan tombol ulangi.`;
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed', 'shake');
             setTimeout(() => btn.classList.remove('shake'), 400);

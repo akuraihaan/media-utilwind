@@ -670,7 +670,7 @@
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/4. Minimal 3 benar. Pelajari pembahasan dan ulangi aktivitas.`;
+            result.innerText = `Skor ${score}/4. Minimal 3 benar. Pelajari pembahasan, baca ulang breakpoint responsif, lalu ulangi aktivitas.`;
             result.className = 'text-xs text-rose-600 dark:text-rose-400 mt-2 leading-relaxed font-bold';
         }
     }

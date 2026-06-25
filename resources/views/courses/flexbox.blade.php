@@ -809,7 +809,7 @@
         } else {
             const feedback = document.getElementById('activityFeedback');
             feedback.className = 'mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-500/10 p-4 text-amber-700 dark:text-amber-300';
-            feedback.textContent = `Skor Anda ${activityScore}/5. Minimal benar 4 soal. Aktivitas diulang dari awal.`;
+            feedback.textContent = `Skor Anda ${activityScore}/5. Minimal benar 4 soal. Baca ulang bagian padding, margin, gap, dan ruang fleksibel, lalu tekan ulangi untuk mencoba lagi.`;
             activityIndex = 0;
             activityScore = 0;
             setTimeout(renderActivityQuestion, 1200);

@@ -14,6 +14,8 @@ use App\Models\QuizQuestion;
 use App\Models\QuizAttempt;
 use App\Models\QuizAttemptAnswer;
 use App\Models\QuizOption;
+use App\Support\ChapterSummary;
+use App\Support\LearningOutcomeAnalytics;
 
 class QuizController extends Controller
 {
@@ -189,8 +191,13 @@ class QuizController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Evaluasi sudah dikumpulkan'], 422);
             }
 
+            $question = QuizQuestion::find($request->question_id);
+            if (!$question || (int) $question->chapter_id !== (int) $attempt->chapter_id) {
+                return response()->json(['status' => 'error', 'message' => 'Soal tidak valid'], 422);
+            }
+
             // 3. Persiapkan Data Jawaban
-            $optionId = $request->option_id; // Bisa null
+            $optionId = $request->option_id;
             $isCorrect = 0;
 
             // Jika user memilih jawaban (tidak kosong/null)
@@ -213,11 +220,14 @@ class QuizController extends Controller
                 ->first();
 
             $hasChangedAnswer = $existingAnswer
-                && !empty($existingAnswer->quiz_option_id)
-                && !empty($optionId)
-                && (int) $existingAnswer->quiz_option_id !== (int) $optionId;
+                && (
+                    !empty($existingAnswer->quiz_option_id)
+                    && !empty($optionId)
+                    && (int) $existingAnswer->quiz_option_id !== (int) $optionId
+                );
 
             $answerChangeCount = ($existingAnswer->answer_change_count ?? 0) + ($hasChangedAnswer ? 1 : 0);
+            $hasResponse = !empty($optionId);
 
             $answerPayload = $this->filterColumns('quiz_attempt_answers', [
                 'quiz_option_id' => $optionId,
@@ -225,8 +235,8 @@ class QuizController extends Controller
                 'is_correct'     => $isCorrect,
                 'answer_change_count' => $answerChangeCount,
                 'client_elapsed_seconds' => $request->client_elapsed_seconds,
-                'first_answered_at' => $existingAnswer?->first_answered_at ?? ($optionId ? Carbon::now() : null),
-                'last_answered_at' => $optionId ? Carbon::now() : ($existingAnswer?->last_answered_at),
+                'first_answered_at' => $existingAnswer?->first_answered_at ?? ($hasResponse ? Carbon::now() : null),
+                'last_answered_at' => $hasResponse ? Carbon::now() : ($existingAnswer?->last_answered_at),
             ]);
 
             // 4. SIMPAN KE DATABASE (Update jika ada, Create jika belum)
@@ -282,18 +292,16 @@ class QuizController extends Controller
 
             // --- LOGIKA PENILAIAN ---
             // Ambil semua jawaban yang tersimpan di DB untuk sesi ini
+            $questions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->get();
             $answers = QuizAttemptAnswer::where('quiz_attempt_id', $attempt->id)->get();
             
-            // Hitung jumlah yang is_correct = 1
-            $correctCount = $answers->where('is_correct', 1)->count();
-            
             // Hitung total soal (Ambil real dari tabel soal chapter ini)
-            $totalQuestions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->count();
+            $totalQuestions = $questions->count();
             if ($totalQuestions == 0) {
                 throw new \Exception("Soal evaluasi belum tersedia.");
             }
 
-            $answeredCount = $answers->filter(fn ($answer) => !empty($answer->quiz_option_id))
+            $answeredCount = $answers->filter(fn ($answer) => $this->answerHasResponse($answer))
                 ->unique('quiz_question_id')
                 ->count();
 
@@ -308,6 +316,7 @@ class QuizController extends Controller
             }
 
             // Kalkulasi Skor (Skala 100)
+            $correctCount = $answers->where('is_correct', 1)->count();
             $score = round(($correctCount / $totalQuestions) * 100);
             $metrics = $this->buildAttemptMetrics($answers, $totalQuestions, $score);
             $feedback = $this->buildEvaluationFeedback($score, $metrics);
@@ -359,6 +368,8 @@ class QuizController extends Controller
         $totalQuestions = max(1, $questions->count());
         $metrics = $this->buildAttemptMetrics($attempt->answers, $totalQuestions, (int) $attempt->score);
         $feedback = $this->buildEvaluationFeedback((int) $attempt->score, $metrics);
+        $chapterSummary = ChapterSummary::for($attempt->chapter_id);
+        $outcomeAnalytics = LearningOutcomeAnalytics::forQuizAttempt($questions, $answers, $attempt);
 
         $reviewItems = $questions->values()->map(function ($question, $index) use ($answers) {
             $answer = $answers->get($question->id);
@@ -366,6 +377,7 @@ class QuizController extends Controller
                 ? $question->options->firstWhere('id', $answer->quiz_option_id)
                 : null;
             $correctOption = $question->options->firstWhere('is_correct', true);
+            $hasAnswer = $answer ? $this->answerHasResponse($answer) : false;
 
             return [
                 'number' => $index + 1,
@@ -375,7 +387,8 @@ class QuizController extends Controller
                 'correct_option' => $correctOption,
                 'is_correct' => (bool) ($answer?->is_correct),
                 'is_flagged' => (bool) ($answer?->is_flagged),
-                'status' => $answer?->quiz_option_id ? (($answer?->is_correct) ? 'Benar' : 'Perlu ditinjau') : 'Belum dijawab',
+                'has_answer' => $hasAnswer,
+                'status' => $hasAnswer ? (($answer?->is_correct) ? 'Benar' : 'Perlu ditinjau') : 'Belum dijawab',
             ];
         });
 
@@ -385,6 +398,8 @@ class QuizController extends Controller
             'metrics' => $metrics,
             'feedback' => $feedback,
             'reviewItems' => $reviewItems,
+            'chapterSummary' => $chapterSummary,
+            'outcomeAnalytics' => $outcomeAnalytics,
         ]);
     }
 
@@ -415,11 +430,12 @@ class QuizController extends Controller
     // =========================================================================
     private function forceSubmit($attempt) {
         // Logika sama dengan submit, tapi tanpa request dari user
+        $questions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->get();
         $answers = QuizAttemptAnswer::where('quiz_attempt_id', $attempt->id)->get();
+        $totalQuestions = $questions->count();
         $correctCount = $answers->where('is_correct', 1)->count();
-        $totalQuestions = QuizQuestion::where('chapter_id', $attempt->chapter_id)->count();
         
-        $score = ($totalQuestions > 0) ? round(($correctCount / $totalQuestions) * 100) : 0;
+        $score = $totalQuestions > 0 ? round(($correctCount / $totalQuestions) * 100) : 0;
         $metrics = $this->buildAttemptMetrics($answers, max(1, $totalQuestions), $score);
         $feedback = $this->buildEvaluationFeedback($score, $metrics);
         $elapsed = Carbon::parse($attempt->created_at)->diffInSeconds(Carbon::now());
@@ -441,9 +457,12 @@ class QuizController extends Controller
 
     private function buildAttemptMetrics($answers, int $totalQuestions, int $score): array
     {
-        $answeredCount = $answers->filter(fn ($answer) => !empty($answer->quiz_option_id))->count();
+        $answeredCount = $answers->filter(fn ($answer) => $this->answerHasResponse($answer))->count();
         $flaggedCount = $answers->where('is_flagged', true)->count();
-        $wrongCount = $answers->where('is_correct', false)->filter(fn ($answer) => !empty($answer->quiz_option_id))->count();
+        $wrongCount = $answers
+            ->where('is_correct', false)
+            ->filter(fn ($answer) => $this->answerHasResponse($answer))
+            ->count();
         $changeCount = $answers->sum('answer_change_count');
 
         return [
@@ -457,6 +476,15 @@ class QuizController extends Controller
             'mastery_percent' => $score,
             'completion_percent' => $totalQuestions > 0 ? round(($answeredCount / $totalQuestions) * 100) : 0,
         ];
+    }
+
+    private function answerHasResponse(object|null $answer): bool
+    {
+        if (!$answer) {
+            return false;
+        }
+
+        return !empty($answer->quiz_option_id);
     }
 
     private function buildEvaluationFeedback(int $score, array $metrics): array

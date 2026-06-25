@@ -816,7 +816,7 @@
                 submit.disabled = false;
             }
         } else {
-            status.innerText = 'Masih ada jawaban yang belum tepat. Perbaiki jawaban lalu periksa lagi.';
+            status.innerText = 'Masih ada jawaban yang belum tepat. Baca ulang bagian ukuran teks, bobot huruf, dan leading, lalu perbaiki jawaban dan periksa lagi.';
             status.className = 'text-xs font-bold text-amber-600 dark:text-amber-400';
         }
     }

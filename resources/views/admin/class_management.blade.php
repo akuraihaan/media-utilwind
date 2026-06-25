@@ -148,11 +148,11 @@
     },
     confirmRegenerate(id) { 
         const t = this.getSwalTheme();
-        Swal.fire({ title: 'Perbarui Token?', text: 'Token yang lama tidak akan berlaku lagi.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#eab308', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-token-'+id).submit(); }) 
+        Swal.fire({ title: 'Perbarui Token?', text: 'Token lama tidak akan dapat digunakan lagi.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#eab308', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-token-'+id).submit(); })
     },
-    confirmDelete(id) { 
+    confirmHapus(id) {
         const t = this.getSwalTheme();
-        Swal.fire({ title: 'Hapus Kelas?', text: 'Semua data terkait kelas ini akan dihapus.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-delete-'+id).submit(); }) 
+        Swal.fire({ title: 'Hapus Kelas?', text: 'Semua data yang terkait dengan kelas ini akan dihapus.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-delete-'+id).submit(); })
     }
 }" @keydown.escape.window="showAddModal = false; showEditModal = false; showInsightModal = false; showDashboardInfoModal = false; isFullscreen = false; document.exitFullscreen();" :class="{'modal-open': showAddModal || showEditModal || showInsightModal || showDashboardInfoModal || sidebarOpen}">
 
@@ -170,7 +170,7 @@
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
                 <div>
                     <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
-                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Admin Panel</span>
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Panel Admin</span>
                 </div>
             </a>
             <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
@@ -178,39 +178,7 @@
             </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dasbor
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Manajemen Kuis
-                    </a>
-                    <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Konfigurasi Lab
-                    </a>
-                    <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Analitik Lab
-                    </a>
-                    <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Manajemen Kelas
-                    </a>
-                </div>
-            </div>
-        </nav>
+        @include('admin.partials.sidebar-nav')
 
         {{-- USER PROFILE Bawah Sidebar --}}
         <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
@@ -218,7 +186,7 @@
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg">AD</div>
                 <div class="overflow-hidden">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">Administrator Sistem</p>
                 </div>
             </div>
             
@@ -282,7 +250,7 @@
                         <button onclick="window.location.reload()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden sm:block border border-transparent dark:hover:border-white/10" title="Muat ulang">
                             <svg class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         </button>
-                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Layar penuh">
+                        <button @click="isFullscreen = !isFullscreen; isFullscreen ? document.documentElement.requestFullscreen() : document.exitFullscreen()" class="p-2.5 text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-white/5 hidden md:block border border-transparent dark:hover:border-white/10" title="Mode Layar Penuh">
                             <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
@@ -311,7 +279,7 @@
                         </div>
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-emerald-500 transition-colors">
                             <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Token Aktif</p>
-                            <h3 class="text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2 drop-shadow-sm dark:drop-shadow-[0_0_8px_#10b981] transition-colors">{{ $totalActive ?? 0 }}</h3>
+                            <h3 class="text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2 drop-shadow-sm dark:drop-shadow-[0_0_8px_#10b981] transition-colors">{{ $totalAktif ?? 0 }}</h3>
                         </div>
                         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-cyan-500 transition-colors">
                             <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Siswa Terhubung</p>
@@ -387,14 +355,14 @@
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end gap-2">
                                                 {{-- TOMBOL INSIGHT (DETAIL) --}}
-                                                <button @click="openInsight({{ is_array($class) ? json_encode($class) : collect($class)->toJson() }})" class="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 dark:hover:bg-cyan-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-transparent hover:border-cyan-400" title="Detail Analitik"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></button>
+                                                <button @click="openInsight({{ is_array($class) ? json_encode($class) : collect($class)->toJson() }})" class="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 dark:hover:bg-cyan-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-transparent hover:border-cyan-400" title="Rincian Analitik"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></button>
 
                                                 <form id="form-token-{{ $class['id'] ?? $class->id }}" action="{{ route('admin.classes.token', $class['id'] ?? $class->id) ?? '#' }}" method="POST">
                                                     @csrf <button type="button" @click="confirmRegenerate({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-amber-500 dark:text-yellow-500 hover:bg-amber-500 dark:hover:bg-yellow-500 hover:text-white dark:hover:text-black transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-amber-400 dark:hover:border-yellow-400" title="Buat Ulang Token"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
                                                 </form>
-                                                <button @click="openEdit({{ is_array($class) ? collect($class)->only(['id','name','major','is_active'])->toJson() : collect($class)->only(['id','name','major','is_active'])->toJson() }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-indigo-400" title="Edit"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                                                <button @click="openEdit({{ is_array($class) ? collect($class)->only(['id','name','major','is_active'])->toJson() : collect($class)->only(['id','name','major','is_active'])->toJson() }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-indigo-400" title="Ubah"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
                                                 <form id="form-delete-{{ $class['id'] ?? $class->id }}" action="{{ route('admin.classes.destroy', $class['id'] ?? $class->id) ?? '#' }}" method="POST">
-                                                    @csrf @method('DELETE') <button type="button" @click="confirmDelete({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-red-400" title="Hapus"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                                                    @csrf @method('DELETE') <button type="button" @click="confirmHapus({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-red-400" title="Hapus"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                                                 </form>
                                             </div>
                                         </td>
@@ -430,7 +398,7 @@
             <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Distribusi & Pengelolaan Pengguna</p>
             
             <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Modul administrasi ini dirancang secara sistematis bagi pengajar untuk melakukan pengelompokan peserta didik ke dalam struktur kelas yang terorganisir.</p>
+                <p>Halaman ini membantu pengajar mengelompokkan siswa ke dalam kelas yang rapi dan mudah dipantau.</p>
                 
                 <div class="space-y-3 mt-4 text-left">
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
@@ -520,7 +488,7 @@
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-16 text-center transition-colors">Peringkat</th>
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Profil Siswa</th>
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-[25%] transition-colors">Progres Keseluruhan</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Detail Pencapaian</th>
+                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Rincian Pencapaian</th>
                                     <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold text-right transition-colors">Rata-rata Nilai Kuis</th>
                                 </tr>
                             </thead>
@@ -621,7 +589,7 @@
                     <input type="text" name="major" placeholder="Contoh: Rekayasa Perangkat Lunak" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:ring-2 ring-indigo-500/20 shadow-inner">
                 </div>
                 
-                {{-- DETAIL: Dropdown Status Pendaftaran di Create Form --}}
+                {{-- DETAIL: Dropdown Status Pendaftaran di Buat Form --}}
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-2 transition-colors">Status Pendaftaran</label>
                     <div class="relative">
@@ -638,7 +606,7 @@
                 <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-xl p-4 mt-2 shadow-sm dark:shadow-inner transition-colors">
                     <p class="text-xs text-indigo-700 dark:text-indigo-300 flex items-start gap-2 leading-relaxed transition-colors">
                         <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Token akses unik (6 karakter) akan dibuatkan oleh sistem secara otomatis.
+                        Sistem akan membuat token akses unik 6 karakter secara otomatis.
                     </p>
                 </div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-white/5 mt-6 transition-colors">
@@ -657,7 +625,7 @@
                 <div class="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 transition-colors">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> 
                 </div>
-                Edit Kelas
+                Perbarui Kelas
             </h3>
 
             <form :action="`/admin/classes/${editData.id}`" method="POST" class="space-y-5">

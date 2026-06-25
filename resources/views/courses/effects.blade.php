@@ -615,7 +615,7 @@
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/5. Minimal 4 benar. Silakan pelajari pembahasan dan ulangi aktivitas.`;
+            result.innerText = `Skor ${score}/5. Minimal 4 benar. Pelajari pembahasan, baca ulang bagian bayangan dan efek visual, lalu ulangi aktivitas.`;
             result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
         }
     }

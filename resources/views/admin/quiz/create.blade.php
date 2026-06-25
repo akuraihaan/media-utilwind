@@ -1,292 +1,556 @@
 @extends('layouts.landing')
 
-@section('title', 'Studio Pembuat Kuis · Utilwind')
+@section('title', 'Buat Soal Kuis · Panel Admin Utilwind')
 
 @section('content')
-{{-- SETUP RESOURCES --}}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-    /* --- CUSTOM INPUT STYLING --- */
-    .glass-input {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .quiz-admin-bg {
+        background:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 1)),
+            radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 34%);
+    }
+    .dark .quiz-admin-bg {
+        background:
+            linear-gradient(180deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 1)),
+            radial-gradient(circle at top left, rgba(14, 165, 233, 0.10), transparent 34%);
+    }
+    .question-form-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+    }
+    @media (min-width: 1024px) {
+        .question-form-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+            align-items: start;
+        }
+    }
+    .question-panel,
+    .question-preview-panel {
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 1.25rem;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+    }
+    .dark .question-panel,
+    .dark .question-preview-panel {
+        border-color: rgba(255, 255, 255, 0.09);
+        background: rgba(15, 23, 42, 0.78);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+    }
+    .question-preview-panel { padding: 1rem; }
+    @media (min-width: 640px) { .question-preview-panel { padding: 1.25rem; } }
+    .question-kicker {
+        margin-bottom: 0.25rem;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #0891b2;
+    }
+    .dark .question-kicker { color: #67e8f9; }
+    .question-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #64748b;
+    }
+    .dark .question-label { color: rgba(255,255,255,0.48); }
+    .question-input {
+        width: 100%;
+        border-radius: 0.9rem;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        padding: 0.8rem 0.95rem;
+        color: #0f172a;
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .question-input:focus {
+        border-color: #0891b2;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+    }
+    .dark .question-input {
+        border-color: rgba(255,255,255,0.10);
+        background: rgba(2, 6, 23, 0.72);
+        color: #f8fafc;
+    }
+    .dark .question-input:focus {
+        border-color: #22d3ee;
+        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
+    }
+    .question-type-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        min-height: 92px;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        padding: 0.85rem;
+        text-align: left;
+        transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .question-type-card:hover {
+        border-color: #67e8f9;
+        transform: translateY(-1px);
+    }
+    .question-type-card.is-active {
+        border-color: #0891b2;
+        background: #ecfeff;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+    }
+    .dark .question-type-card {
+        border-color: rgba(255,255,255,0.10);
+        background: rgba(2, 6, 23, 0.58);
+    }
+    .dark .question-type-card:hover { border-color: rgba(103, 232, 249, 0.55); }
+    .dark .question-type-card.is-active {
+        border-color: rgba(103, 232, 249, 0.72);
+        background: rgba(8, 145, 178, 0.14);
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+    }
+    .answer-input-row { display: flex; align-items: center; gap: 0.75rem; }
+    .answer-letter,
+    .preview-letter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 0.8rem;
+        font-size: 0.75rem;
+        font-weight: 900;
+    }
+    .answer-letter {
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+    }
+    .dark .answer-letter {
+        border-color: rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.62);
+    }
+    .preview-option {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        border-radius: 0.9rem;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        padding: 0.7rem;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+    .preview-letter {
+        width: 2rem;
+        height: 2rem;
+        background: #e2e8f0;
+        color: #475569;
+    }
+    .preview-option.is-correct {
+        border-color: #86efac;
+        background: #f0fdf4;
+        color: #166534;
+    }
+    .preview-option.is-correct .preview-letter {
+        background: #16a34a;
         color: white;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .glass-input:focus {
-        border-color: #8b5cf6;
-        background: rgba(15, 23, 42, 0.9);
-        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+    .dark .preview-option {
+        border-color: rgba(255,255,255,0.09);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.68);
     }
-    
-    /* --- RADIO BUTTON CUSTOM --- */
-    input[type="radio"].custom-radio { appearance: none; -webkit-appearance: none; }
-    .radio-label { cursor: pointer; transition: all 0.3s; opacity: 0.4; filter: grayscale(100%); }
-    
-    input[type="radio"]:checked + .radio-label { opacity: 1; filter: grayscale(0%); transform: scale(1.1); }
-    input[type="radio"]:checked + .radio-label .check-icon {
-        background: #10b981; box-shadow: 0 0 15px #10b981; border-color: #10b981; color: white;
+    .dark .preview-option.is-correct {
+        border-color: rgba(74, 222, 128, 0.45);
+        background: rgba(34, 197, 94, 0.12);
+        color: #bbf7d0;
     }
-
-    /* --- ANIMATION --- */
-    .preview-bounce { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes bounceIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    
-    /* Custom Scrollbar for Preview */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .swal2-container.quiz-alert-layer { z-index: 2147483647 !important; }
+    .quiz-alert-popup { border-radius: 1.25rem !important; }
 </style>
 
-<div class="relative min-h-screen bg-[#020617] text-white font-sans selection:bg-indigo-500/30 pt-24 pb-20 overflow-hidden">
-
-    {{-- Background Atmosphere --}}
-    <div class="fixed inset-0 -z-50 pointer-events-none">
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay"></div>
-        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-fuchsia-900/10 rounded-full blur-[100px]"></div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 h-full">
-        
-        {{-- HEADER --}}
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <a href="{{ route('admin.analytics.questions') }}" class="text-xs font-bold text-white/40 hover:text-white transition uppercase tracking-widest flex items-center gap-2 mb-2">
-                    <span>←</span> Kembali ke Analitik
+<main class="quiz-admin-bg min-h-screen pt-20 pb-12 text-slate-900 dark:text-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="min-w-0">
+                <a href="{{ route('admin.analytics.questions') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-bold text-slate-600 shadow-sm transition hover:border-cyan-300 hover:text-cyan-700 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:text-cyan-200">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    Kembali ke Analitik
                 </a>
-                <h1 class="text-3xl md:text-4xl font-black text-white">Studio <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">Pembuat Kuis</span></h1>
+                <p class="mt-5 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Bank Soal Utilwind</p>
+                <h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-4xl">Buat Soal Kuis</h1>
+                <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-white/58">
+                    Susun soal, opsi jawaban, metadata pembelajaran, dan media gambar dari satu form yang sama dengan panel edit di analitik.
+                </p>
             </div>
-            
-            <button onclick="submitForm()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:scale-105 transition transform flex items-center gap-2 w-full md:w-auto justify-center">
-                <span id="btnText">Simpan Kuis</span>
-                <svg id="btnLoader" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+
+            <button id="submitQuestionBtn" type="button" onclick="submitForm()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/10 transition hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-300">
+                <span id="btnText">Simpan Soal</span>
+                <svg id="btnLoader" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
             </button>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-8 h-full">
-            
-            {{-- KOLOM KIRI: EDITOR FORM --}}
-            <div class="bg-[#0f141e]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl h-fit">
-                <form id="quizForm" action="{{ route('admin.questions.store') }}" method="POST">
-                    @csrf
-                    
-                    {{-- 1. Metadata --}}
-                    <div class="mb-6">
-                        <label class="block text-xs font-bold text-white/50 uppercase tracking-wider mb-2">Target Bab</label>
-                        <select name="chapter_id" class="w-full glass-input rounded-xl p-3.5 outline-none appearance-none cursor-pointer bg-[#0f141e]" onchange="updatePreview()">
-                            <option value="1">Bab 1 - Konsep Dasar Web</option>
-                            <option value="2">Bab 2 - Styling Layout</option>
-                            <option value="3">Bab 3 - Komponen Interaktif</option>
-                            <option value="4">Bab 4 - Advanced Utility</option>
-                        </select>
-                    </div>
-
-                    {{-- 2. Pertanyaan --}}
-                    <div class="mb-8">
-                        <label class="block text-xs font-bold text-white/50 uppercase tracking-wider mb-2">Pertanyaan Utama</label>
-                        <textarea id="inputQuestion" name="question_text" rows="4" 
-                            class="w-full glass-input rounded-xl p-4 outline-none resize-none text-lg font-medium placeholder-white/20" 
-                            placeholder="Ketik pertanyaan Anda di sini..." 
-                            oninput="updatePreview()"></textarea>
-                    </div>
-
-                    {{-- 3. Opsi Jawaban --}}
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="block text-xs font-bold text-white/50 uppercase tracking-wider">Opsi Jawaban & Kunci Benar</label>
-                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">Klik ikon centang untuk set kunci</span>
-                        </div>
-
-                        @foreach(['a', 'b', 'c', 'd'] as $opt)
-                        <div class="option-row relative flex items-center gap-4 group">
-                            {{-- Radio Button Custom (Kunci Jawaban) --}}
-                            <div class="relative">
-                                <input type="radio" name="correct_answer" value="option_{{ $opt }}" id="radio_{{ $opt }}" class="custom-radio hidden" {{ $opt == 'a' ? 'checked' : '' }} onchange="updatePreview()">
-                                <label for="radio_{{ $opt }}" class="radio-label flex flex-col items-center gap-1 w-10">
-                                    <div class="check-icon w-8 h-8 rounded-full border-2 border-white/20 flex items-center justify-center transition-all bg-[#020617]">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
-                                    </div>
-                                    <span class="text-[10px] font-bold uppercase text-white/50">{{ strtoupper($opt) }}</span>
-                                </label>
-                            </div>
-
-                            {{-- Input Text --}}
-                            <div class="flex-1 relative">
-                                <input type="text" name="option_{{ $opt }}" id="input_{{ $opt }}"
-                                    class="w-full glass-input rounded-xl pl-4 pr-4 py-3 outline-none focus:pl-6 transition-all" 
-                                    placeholder="Tulis opsi jawaban {{ strtoupper($opt) }}..." 
-                                    oninput="updatePreview()">
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </form>
-            </div>
-
-            {{-- KOLOM KANAN: LIVE PREVIEW (HP MOCKUP) --}}
-            <div class="relative hidden lg:flex justify-center items-start pt-10 sticky top-24">
-                
-                {{-- Label Preview --}}
-                <div class="absolute top-0 right-10 flex items-center gap-2 animate-pulse">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Pratinjau Tampilan Siswa</span>
-                </div>
-
-                {{-- Phone Frame --}}
-                <div class="relative w-[380px] h-[750px] bg-[#020617] border-8 border-[#1e293b] rounded-[3rem] shadow-2xl overflow-hidden ring-1 ring-white/10">
-                    
-                    {{-- Notch --}}
-                    <div class="absolute top-0 inset-x-0 h-7 bg-[#1e293b] z-20 flex justify-center">
-                        <div class="w-32 h-5 bg-[#020617] rounded-b-xl"></div>
-                    </div>
-                    
-                    {{-- Screen Content --}}
-                    <div class="h-full w-full bg-gradient-to-b from-[#0f141e] to-[#020617] p-6 pt-12 flex flex-col overflow-y-auto custom-scrollbar">
-                        
-                        {{-- Header App --}}
-                        <div class="flex justify-between items-center mb-8">
-                            <div class="flex items-center gap-2 text-white/50">
-                                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">←</div>
-                            </div>
-                            <div class="text-center">
-                                <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block" id="previewChapter">BAB 1</span>
-                                <span class="text-xs font-bold text-white">Sesi Kuis</span>
-                            </div>
-                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs">1/10</div>
-                        </div>
-
-                        {{-- Question Card --}}
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6 shadow-lg preview-bounce">
-                            <p class="text-white font-bold text-lg leading-relaxed" id="previewQuestion">
-                                Pratinjau pertanyaan akan muncul di sini secara real-time...
-                            </p>
-                        </div>
-
-                        {{-- Options List --}}
-                        <div class="space-y-3 flex-1">
-                            @foreach(['a', 'b', 'c', 'd'] as $opt)
-                            <div id="preview_{{ $opt }}" class="p-4 rounded-xl border border-white/10 bg-white/[0.02] flex items-center gap-3 transition-all duration-300">
-                                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/50 shrink-0 uppercase">{{ $opt }}</div>
-                                <span class="text-sm text-white/80 preview-text">Opsi {{ strtoupper($opt) }}</span>
-                            </div>
-                            @endforeach
-                        </div>
-
-                        {{-- Button App --}}
-                        <div class="mt-6 pt-4 border-t border-white/5">
-                            <div class="w-full py-3 bg-indigo-600 rounded-xl text-center text-sm font-bold text-white opacity-50">Lanjut</div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <form id="quizForm" action="{{ route('admin.questions.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @include('admin.quiz._question_form_fields')
+        </form>
     </div>
-</div>
+</main>
 
 <script>
-    // --- LIVE PREVIEW LOGIC ---
-    function updatePreview() {
-        // 1. Update Chapter
-        const chapter = document.querySelector('select[name="chapter_id"]').value;
-        document.getElementById('previewChapter').innerText = "BAB " + chapter;
+    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 
-        // 2. Update Question Text
-        const qText = document.getElementById('inputQuestion').value;
-        const previewQ = document.getElementById('previewQuestion');
-        previewQ.innerText = qText || "Pratinjau pertanyaan akan muncul di sini...";
-        
-        // Animasi ketik
-        previewQ.classList.remove('preview-bounce');
-        void previewQ.offsetWidth; // trigger reflow
-        previewQ.classList.add('preview-bounce');
+    const interactionMeta = {
+        multiple_choice: { label: 'Pilihan Ganda', status: 'Standar' },
+        image_context: { label: 'Soal Gambar', status: 'Media' },
+    };
+    let previewObjectUrl = null;
+    const quizAlertDefaults = {
+        customClass: {
+            container: 'quiz-alert-layer',
+            popup: 'quiz-alert-popup',
+        },
+    };
 
-        // 3. Update Options & Highlight Correct
-        const options = ['a', 'b', 'c', 'd'];
-        const selectedRadio = document.querySelector('input[name="correct_answer"]:checked');
-        const correctVal = selectedRadio ? selectedRadio.value : ''; // "option_a"
-
-        options.forEach(opt => {
-            // Get Text
-            const inputVal = document.getElementById('input_' + opt).value;
-            const previewEl = document.getElementById('preview_' + opt);
-            const textEl = previewEl.querySelector('.preview-text');
-            
-            textEl.innerText = inputVal || "Opsi " + opt.toUpperCase();
-
-            // Handle Highlight Correct Answer in Preview
-            if (correctVal === 'option_' + opt) {
-                // Style for Correct (Greenish Glow)
-                previewEl.className = "p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-center gap-3 transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] scale-[1.02]";
-                previewEl.querySelector('div').className = "w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-lg";
-                previewEl.querySelector('div').innerHTML = "✓";
-            } else {
-                // Style for Normal
-                previewEl.className = "p-4 rounded-xl border border-white/10 bg-white/[0.02] flex items-center gap-3 transition-all duration-300 opacity-60";
-                previewEl.querySelector('div').className = "w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/50 shrink-0 uppercase";
-                previewEl.querySelector('div').innerHTML = opt.toUpperCase();
-            }
+    function showQuizAlert(options = {}) {
+        return Swal.fire({
+            ...quizAlertDefaults,
+            ...options,
+            customClass: {
+                ...quizAlertDefaults.customClass,
+                ...(options.customClass || {}),
+            },
         });
     }
 
-    // --- AJAX SUBMISSION ---
-    function submitForm() {
+    function renderQuestionStudentInsight() {
+        $('#studentInsightTotal').text(0);
+        $('#studentInsightCorrect').text(0);
+        $('#studentInsightWrong').text(0);
+        $('#studentInsightBar').css('width', '0%');
+        $('#studentInsightStatus').text('Baru');
+        $('#studentInsightNote').text('Data siswa akan tampil setelah soal tersimpan dan dijawab.');
+    }
+
+    function getQuestionOutcomeOptions() {
+        const element = document.getElementById('question-outcome-options-json');
+        if (!element) return {};
+
+        try {
+            return JSON.parse(element.textContent || '{}') || {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    const questionOutcomeOptions = getQuestionOutcomeOptions();
+
+    function setLearningOutcomeFields(row = null) {
+        $('#inputLearningObjectiveCode').val(row?.code || '');
+        $('#inputLearningObjectiveTitle').val(row?.title || '');
+        $('#inputRemediationHint').val(row?.material || row?.title || '');
+        $('#selectedLearningObjectiveHint').text(row
+            ? `${row.code} - ${row.title}`
+            : 'Pilih TP sesuai bab. Kode dan arahan materi tersimpan otomatis.');
+    }
+
+    function populateLearningOutcomeSelect(selectedCode = '') {
+        const chapter = String($('#inputChapter').val() || '1');
+        const rows = questionOutcomeOptions[chapter] || [];
+        const currentCode = selectedCode || ($('#inputLearningObjectiveCode').val() || '').trim();
+        const select = $('#inputLearningObjectiveSelect');
+
+        if (!select.length) return;
+
+        select.empty().append($('<option>', {
+            value: '',
+            text: rows.length ? 'Pilih TP resmi' : 'TP belum tersedia',
+        }));
+
+        rows.forEach((row) => {
+            $('<option>', {
+                value: row.code,
+                text: `${row.code} - ${row.title}`,
+            })
+                .attr('data-title', row.title || '')
+                .attr('data-material', row.material || row.title || '')
+                .appendTo(select);
+        });
+
+        const selectedRow = rows.find((row) => row.code === currentCode) || null;
+        select.val(selectedRow ? selectedRow.code : '');
+
+        if (selectedRow) {
+            setLearningOutcomeFields(selectedRow);
+        } else if (!currentCode) {
+            setLearningOutcomeFields(null);
+        }
+    }
+
+    function applySelectedLearningOutcome() {
+        const selected = $('#inputLearningObjectiveSelect option:selected');
+        const code = selected.val() || '';
+        if (!code) {
+            setLearningOutcomeFields(null);
+            return;
+        }
+
+        setLearningOutcomeFields({
+            code,
+            title: selected.attr('data-title') || '',
+            material: selected.attr('data-material') || selected.attr('data-title') || '',
+        });
+    }
+
+    function syncLearningOutcomeSelectFromFields() {
+        const code = ($('#inputLearningObjectiveCode').val() || '').trim();
+        const title = ($('#inputLearningObjectiveTitle').val() || '').trim().toLowerCase();
+        const select = $('#inputLearningObjectiveSelect');
+        if (!select.length) return;
+
+        const matched = select.find('option').filter(function () {
+            const option = $(this);
+            return option.val() === code || (title && (option.attr('data-title') || '').trim().toLowerCase() === title);
+        }).first();
+
+        select.val(matched.length ? matched.val() : '');
+        if (matched.length) {
+            applySelectedLearningOutcome();
+        }
+    }
+
+    function renderExistingMediaPath(mediaPath = '') {
+        const currentValue = (mediaPath || '').trim();
+        const existingPath = ($('#inputMediaFile').attr('data-existing-path') || '').trim();
+        const existingUrl = ($('#inputMediaFile').attr('data-existing-url') || '').trim();
+        const value = existingPath && (!currentValue || currentValue === existingUrl)
+            ? existingPath
+            : currentValue;
+        const mediaFile = $('#inputMediaFile')[0]?.files?.[0] || null;
+        const removingMedia = $('#inputRemoveMedia').is(':checked');
+        let label = 'Pilih gambar';
+        let badge = 'Pilih File';
+
+        if (removingMedia) {
+            label = 'Media akan dihapus';
+            badge = 'Hapus';
+        } else if (mediaFile) {
+            label = mediaFile.name;
+            badge = 'File Baru';
+        } else if (value) {
+            label = value;
+            badge = 'Media Aktif';
+        }
+
+        $('#mediaFileDisplay').text(label).attr('title', label);
+        $('#mediaFileBadge').text(badge);
+    }
+
+    function checkImageUrlAvailable(url) {
+        return new Promise((resolve) => {
+            if (!url) {
+                resolve(false);
+                return;
+            }
+
+            const image = new Image();
+            const timer = window.setTimeout(() => {
+                image.onload = null;
+                image.onerror = null;
+                resolve(false);
+            }, 7000);
+
+            image.onload = () => {
+                window.clearTimeout(timer);
+                resolve(true);
+            };
+            image.onerror = () => {
+                window.clearTimeout(timer);
+                resolve(false);
+            };
+            image.src = url;
+        });
+    }
+
+    function setQuestionType(type) {
+        $('#inputInteractionType').val(type);
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    }
+
+    function updateQuestionTypeUI() {
+        const type = $('#inputInteractionType').val() || 'multiple_choice';
+        const needsMedia = type === 'image_context';
+        const hasFile = Boolean($('#inputMediaFile')[0]?.files?.length);
+        const isEditing = Boolean($('#questionId').val());
+
+        $('.question-type-card').removeClass('is-active');
+        $(`.question-type-card[data-type="${type}"]`).addClass('is-active');
+
+        $('#imageUploadField, #imageMetaFields').toggleClass('hidden', !needsMedia);
+        $('#removeMediaField').toggleClass('hidden', !needsMedia || !isEditing);
+        $('#inputMediaFile, #inputMediaUrl, #inputMediaCaption, #inputRemoveMedia').prop('disabled', !needsMedia);
+        $('#inputMediaUrl').prop('required', needsMedia && !hasFile);
+        $('#previewTypeLabel').text(interactionMeta[type]?.label || 'Pilihan Ganda');
+        $('#previewStatus').text(interactionMeta[type]?.status || 'Draft');
+    }
+
+    function renderQuestionPreview() {
+        const type = $('#inputInteractionType').val() || 'multiple_choice';
+        const question = ($('#inputQuestion').val() || '').trim();
+        const caption = ($('#inputMediaCaption').val() || '').trim();
+        const mediaUrl = ($('#inputMediaUrl').val() || '').trim();
+        const mediaFile = $('#inputMediaFile')[0]?.files?.[0] || null;
+        const isEditing = Boolean($('#questionId').val());
+
+        if (previewObjectUrl) {
+            URL.revokeObjectURL(previewObjectUrl);
+            previewObjectUrl = null;
+        }
+
+        const previewSrc = type === 'image_context' ? (mediaFile ? URL.createObjectURL(mediaFile) : mediaUrl) : '';
+        if (mediaFile) previewObjectUrl = previewSrc;
+
+        $('#previewQuestion').text(question || 'Teks pertanyaan akan tampil di sini.');
+        renderExistingMediaPath(type === 'image_context' ? mediaUrl : '');
+
+        if (previewSrc) {
+            $('#previewMedia').attr('src', previewSrc);
+            $('#previewMediaWrap').removeClass('hidden');
+        } else {
+            $('#previewMedia').attr('src', '');
+            $('#previewMediaWrap').addClass('hidden');
+        }
+
+        $('#previewCaption').text(caption).toggleClass('hidden', !caption);
+
+        const options = ['a', 'b', 'c', 'd'];
+        const correctVal = $('#inputCorrect').val() || 'option_a';
+        options.forEach((opt) => {
+            const value = ($('#inputOption_' + opt).val() || '').trim();
+            const previewEl = $('#preview_' + opt);
+            previewEl.find('.preview-text').text(value || 'Pilihan ' + opt.toUpperCase());
+            previewEl.toggleClass('is-correct', correctVal === 'option_' + opt);
+        });
+    }
+
+    $(document).on('change', '#inputInteractionType', () => {
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    });
+    $(document).on('change', '#inputChapter', () => {
+        setLearningOutcomeFields(null);
+        populateLearningOutcomeSelect();
+    });
+    $(document).on('change', '#inputLearningObjectiveSelect', () => {
+        applySelectedLearningOutcome();
+    });
+    $(document).on('input', '#inputLearningObjectiveCode, #inputLearningObjectiveTitle', () => {
+        syncLearningOutcomeSelectFromFields();
+    });
+    $(document).on('input change', '#inputQuestion, #inputCorrect, #inputOption_a, #inputOption_b, #inputOption_c, #inputOption_d, #inputInteractionPrompt, #inputMediaUrl, #inputMediaCaption, #inputMediaFile, #inputRemoveMedia', () => {
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    });
+
+    async function submitForm() {
         const form = $('#quizForm');
-        // Simple Validation
-        if(!form[0].checkValidity()) {
+        const interactionType = $('#inputInteractionType').val() || 'multiple_choice';
+        const mediaUrl = ($('#inputMediaUrl').val() || '').trim();
+        const mediaFile = $('#inputMediaFile')[0]?.files?.length || 0;
+
+        if (!($('#inputLearningObjectiveSelect').val() || '').trim()) {
+            showQuizAlert({
+                title: 'Pemetaan TP belum dipilih',
+                text: 'Pilih tujuan pembelajaran resmi sesuai bab sebelum menyimpan soal.',
+                icon: 'warning',
+                confirmButtonColor: '#0891b2',
+            });
+            return;
+        }
+        applySelectedLearningOutcome();
+
+        if (interactionType === 'image_context' && !mediaUrl && !mediaFile) {
+            showQuizAlert({
+                title: 'Media belum tersedia',
+                text: 'Soal gambar wajib memiliki upload gambar atau URL gambar. Pilih file gambar atau isi URL gambar terlebih dahulu.',
+                icon: 'warning',
+                confirmButtonColor: '#0891b2',
+            });
+            return;
+        }
+        if (interactionType === 'image_context' && mediaUrl && !mediaFile) {
+            const imageAvailable = await checkImageUrlAvailable(mediaUrl);
+            if (!imageAvailable) {
+                showQuizAlert({
+                    title: 'Gambar tidak dapat dimuat',
+                    text: 'URL gambar tidak dapat dibuka. Periksa kembali URL gambar atau gunakan upload file.',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444',
+                });
+                return;
+            }
+        }
+
+        if (!form[0].checkValidity()) {
             form[0].reportValidity();
             return;
         }
 
-        // Loading State
         $('#btnText').text('Menyimpan...');
         $('#btnLoader').removeClass('hidden');
-        $('button').prop('disabled', true);
+        $('#submitQuestionBtn').prop('disabled', true).addClass('opacity-70');
 
         $.ajax({
             url: form.attr('action'),
             method: 'POST',
-            data: form.serialize(),
-            success: function(res) {
-                // Success Alert
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Kuis baru telah ditambahkan ke database.',
-                    icon: 'success',
-                    background: '#0f141e',
-                    color: '#fff',
-                    confirmButtonColor: '#4f46e5'
-                }).then(() => {
-                    // Reset Form & Preview
-                    form[0].reset();
-                    updatePreview();
-                    $('#btnText').text('Simpan Kuis');
-                    $('#btnLoader').addClass('hidden');
-                    $('button').prop('disabled', false);
-                });
-            },
-            error: function(err) {
-                console.error(err);
-                Swal.fire({
-                    title: 'Gagal!',
-                    text: 'Terjadi kesalahan saat menyimpan. Cek koneksi atau input.',
-                    icon: 'error',
-                    background: '#0f141e',
-                    color: '#fff',
-                    confirmButtonColor: '#ef4444'
-                });
-                $('#btnText').text('Simpan Kuis');
-                $('#btnLoader').addClass('hidden');
-                $('button').prop('disabled', false);
-            }
+            data: new FormData(form[0]),
+            processData: false,
+            contentType: false,
+        }).done((res) => {
+            showQuizAlert({
+                title: 'Berhasil',
+                text: res.message || 'Soal baru berhasil disimpan.',
+                icon: 'success',
+                confirmButtonColor: '#0891b2'
+            }).then(() => {
+                const target = new URL("{{ route('admin.analytics.questions') }}", window.location.origin);
+                target.searchParams.set('chapter', $('#inputChapter').val() || '1');
+                window.location.href = target.toString();
+            });
+        }).fail((err) => {
+            showQuizAlert({
+                title: 'Gagal',
+                text: err.responseJSON?.message || 'Terjadi kesalahan saat menyimpan soal.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+            $('#btnText').text('Simpan Soal');
+            $('#btnLoader').addClass('hidden');
+            $('#submitQuestionBtn').prop('disabled', false).removeClass('opacity-70');
         });
     }
 
-    // Initialize Preview on Load
-    document.addEventListener('DOMContentLoaded', updatePreview);
+    document.addEventListener('DOMContentLoaded', () => {
+        $('#inputCorrect').val('option_a');
+        populateLearningOutcomeSelect();
+        syncLearningOutcomeSelectFromFields();
+        renderExistingMediaPath('');
+        renderQuestionStudentInsight();
+        updateQuestionTypeUI();
+        renderQuestionPreview();
+    });
 </script>
 @endsection

@@ -101,6 +101,169 @@
         @keyframes revealAnim { to { opacity: 1; transform: translateY(0); } }
         [x-cloak] { display: none !important; }
 
+
+        /* ==========================================================
+           PENYEMPURNAAN DETAIL INTERAKSI — DISAMAKAN DENGAN DIREKTORI
+           ========================================================== */
+        html { scroll-behavior: smooth; }
+        .smooth-student-scroll {
+            scroll-behavior: auto;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable both-edges;
+            scroll-padding-top: 8rem;
+            will-change: scroll-position;
+        }
+        .smooth-student-scroll:focus { outline: none; }
+        .smooth-student-scroll.is-wheel-smoothing { cursor: default; }
+
+        .glass-card {
+            transition-property: transform, border-color, box-shadow, background-color, opacity;
+            transition-duration: .28s;
+            transition-timing-function: cubic-bezier(.22,.61,.36,1);
+            will-change: transform;
+        }
+        .glass-card:hover {
+            transform: translate3d(0,-2px,0);
+            box-shadow: 0 14px 36px -18px rgba(15,23,42,.28);
+        }
+        .dark .glass-card:hover { box-shadow: 0 18px 46px -20px rgba(0,0,0,.72); }
+
+        .soft-hover,
+        .tab-btn,
+        .table-row,
+        .glass-input,
+        button,
+        a {
+            transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+            transition-duration: .22s;
+            transition-timing-function: cubic-bezier(.22,.61,.36,1);
+        }
+        .tab-btn:hover { transform: translateY(-1px); }
+        .table-row:hover { background: rgba(99,102,241,.045); }
+        .dark .table-row:hover { background: rgba(129,140,248,.055); }
+        .nav-link:hover { transform: translateX(2px); }
+        button:hover, a:hover { will-change: transform; }
+        button:active, a:active { transform: scale(.985); }
+
+        .metric-card-quiet:hover { transform: translate3d(0,-2px,0); }
+        .metric-card-quiet:hover .metric-icon-quiet { transform: scale(1.06); }
+        .metric-icon-quiet { transition: transform .28s cubic-bezier(.22,.61,.36,1); }
+
+        .la-pulse-card {
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(15,23,42,.08);
+            box-shadow: 0 10px 32px -24px rgba(15,23,42,.30);
+            transition: transform .24s cubic-bezier(.22,.61,.36,1), border-color .24s ease, background-color .24s ease, box-shadow .24s ease;
+        }
+        .dark .la-pulse-card { background: rgba(255,255,255,.035); border-color: rgba(255,255,255,.08); box-shadow: none; }
+        .la-pulse-card:hover { transform: translate3d(0,-2px,0); border-color: rgba(99,102,241,.28); box-shadow: 0 16px 34px -26px rgba(79,70,229,.42); }
+        .dark .la-pulse-card:hover { border-color: rgba(129,140,248,.22); box-shadow: 0 16px 42px -30px rgba(0,0,0,.9); }
+        .la-mini-bar { overflow: hidden; border-radius: 999px; background: rgba(148,163,184,.20); }
+        .dark .la-mini-bar { background: rgba(255,255,255,.075); }
+        .la-mini-bar > span { display: block; height: 100%; border-radius: inherit; transition: width 1s cubic-bezier(.22,.61,.36,1); }
+
+
+        /* ==========================================================
+           PRESENTASI LEARNING ANALYTICS
+           Kelas berikut hanya mengatur tampilan. Seluruh data tetap
+           memakai variabel dan koleksi yang sama dari controller.
+           ========================================================== */
+        .analytics-panel,
+        .analytics-metric-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(15,23,42,.08);
+            background: rgba(255,255,255,.76);
+            box-shadow: 0 12px 32px -26px rgba(15,23,42,.34);
+            transition: transform .24s cubic-bezier(.22,.61,.36,1), border-color .24s ease, box-shadow .24s ease, background-color .24s ease;
+        }
+        .dark .analytics-panel,
+        .dark .analytics-metric-card {
+            border-color: rgba(255,255,255,.09);
+            background: rgba(255,255,255,.035);
+            box-shadow: none;
+        }
+        .analytics-panel:hover,
+        .analytics-metric-card:hover {
+            transform: translate3d(0,-1px,0);
+            border-color: rgba(99,102,241,.28);
+            box-shadow: 0 18px 38px -28px rgba(79,70,229,.42);
+        }
+        .dark .analytics-panel:hover,
+        .dark .analytics-metric-card:hover {
+            border-color: rgba(129,140,248,.24);
+            box-shadow: 0 18px 46px -30px rgba(0,0,0,.9);
+        }
+        .analytics-ring {
+            --progress: 0%;
+            width: 96px;
+            height: 96px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: conic-gradient(#6366f1 var(--progress), rgba(148,163,184,.18) 0);
+            flex: 0 0 auto;
+            transition: background .45s ease;
+        }
+        .dark .analytics-ring { background: conic-gradient(#818cf8 var(--progress), rgba(255,255,255,.10) 0); }
+        .analytics-ring__inner {
+            width: 76px;
+            height: 76px;
+            border-radius: inherit;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.96);
+            box-shadow: inset 0 0 0 1px rgba(15,23,42,.05);
+        }
+        .dark .analytics-ring__inner { background: #0f141e; box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+        .analytics-track { height: 6px; overflow: hidden; border-radius: 999px; background: rgba(148,163,184,.20); }
+        .dark .analytics-track { background: rgba(255,255,255,.075); }
+        .analytics-track > span { display: block; height: 100%; border-radius: inherit; transition: width 1s cubic-bezier(.22,.61,.36,1); }
+        .analytics-signal {
+            border-left: 3px solid currentColor;
+            background: rgba(99,102,241,.045);
+        }
+        .dark .analytics-signal { background: rgba(255,255,255,.035); }
+        .analytics-metric-card {
+            width: 100%;
+            min-height: 178px;
+            text-align: left;
+            padding: 1.15rem;
+            border-radius: 1rem;
+        }
+        .analytics-metric-card:focus-visible {
+            outline: 3px solid rgba(99,102,241,.28);
+            outline-offset: 3px;
+        }
+        .analytics-metric-card .analytics-metric-icon {
+            transition: transform .24s cubic-bezier(.22,.61,.36,1), background-color .24s ease;
+        }
+        .analytics-metric-card:hover .analytics-metric-icon { transform: scale(1.05); }
+        .analytics-performance-row {
+            transition: background-color .2s ease, transform .2s cubic-bezier(.22,.61,.36,1), border-color .2s ease;
+        }
+        .analytics-performance-row:hover {
+            transform: translateX(2px);
+            background: rgba(99,102,241,.045);
+            border-color: rgba(99,102,241,.18);
+        }
+        .dark .analytics-performance-row:hover { background: rgba(129,140,248,.055); border-color: rgba(129,140,248,.16); }
+
+        .insight-trigger { transition-duration: .2s; }
+        .insight-tooltip:hover .insight-trigger { transform: scale(1.06); }
+        .insight-content { z-index: 2147483000 !important; transition-duration: .18s; }
+        .sticky, .glass-header { transform: translateZ(0); }
+
+        .chart-container canvas { transition: opacity .22s ease; }
+        .chart-container:hover canvas { opacity: .96; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html,
+            .smooth-student-scroll { scroll-behavior: auto !important; }
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+        }
+
         /* --- TOOLTIP INSIGHT (PETUNJUK HALAMAN) --- */
         .insight-tooltip { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; margin-left: 6px; }
         .insight-tooltip:hover { z-index: 99999; }
@@ -147,7 +310,7 @@
           searchLesson: '',
           showProgress: false,
           
-          // State Modals Insight Database Absolut
+          // State modal ringkasan analitik
           showLessonModal: false,
           showLabModal: false,
           showQuizModal: false,
@@ -157,7 +320,7 @@
           showQuizReviewModal: false,
           selectedQuizReview: null,
 
-          confirmDelete() {
+          confirmHapus() {
               Swal.fire({ title: 'Hapus Siswa?', text: 'Tindakan ini tidak dapat dibatalkan. Semua data riwayat akan terhapus.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Hapus Permanen', cancelButtonText: 'Batal', reverseButtons: true })
               .then((result) => { if (result.isConfirmed) document.getElementById('delete-student-form').submit(); })
           }
@@ -199,11 +362,11 @@
             ],
             [
                 'id' => 2, 'number' => '02', 'title' => 'LAYOUTING', 'color' => 'indigo', 'lab_id' => 2, 'lab_name' => 'Building Grid Layout', 'quiz_key' => '2',
-                'topics' => [['name' => '2.1 Flexbox Architecture', 'ids' => range(29, 33)], ['name' => '2.2 Grid System Mastery', 'ids' => range(34, 40)], ['name' => '2.3 Layout Management', 'ids' => range(41, 45)]]
+                'topics' => [['name' => '2.1 Arsitektur Flexbox', 'ids' => range(29, 33)], ['name' => '2.2 Penguasaan Sistem Grid', 'ids' => range(34, 40)], ['name' => '2.3 Pengelolaan Layout', 'ids' => range(41, 45)]]
             ],
             [
                 'id' => 3, 'number' => '03', 'title' => 'STYLING', 'color' => 'fuchsia', 'lab_id' => 3, 'lab_name' => 'Styling Components', 'quiz_key' => '3',
-                'topics' => [['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)], ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)], ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)], ['name' => '3.4 Effects & Filters', 'ids' => range(60, 64)]]
+                'topics' => [['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)], ['name' => '3.2 Latar Belakang', 'ids' => range(52, 55)], ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)], ['name' => '3.4 Efek dan Filter', 'ids' => range(60, 64)]]
             ]
         ];
 
@@ -262,7 +425,7 @@
         if (($totalLessons ?? 0) > 0 && $lessonsCompleted < ceil(($totalLessons ?? 0) * 0.75)) {
             $adminRecommendations->push([
                 'title' => 'Dorong penyelesaian materi',
-                'body' => 'Progress bacaan belum tinggi. Minta siswa menyelesaikan materi prasyarat sebelum evaluasi berikutnya.',
+                'body' => 'Progres bacaan belum tinggi. Minta siswa menyelesaikan materi prasyarat sebelum evaluasi berikutnya.',
                 'tone' => 'cyan',
             ]);
         }
@@ -290,6 +453,90 @@
                 : ['label' => 'Stabil', 'class' => 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20']);
 
         $adminRecommendations = $adminRecommendations->take(4)->values();
+
+
+        $latestActivityCandidates = collect();
+        if ($latestQuizForAdvice) {
+            $latestActivityCandidates->push($latestQuizForAdvice->completed_at ?? $latestQuizForAdvice->created_at ?? null);
+        }
+        $latestLabForPulse = $labHistories->sortByDesc('created_at')->first();
+        if ($latestLabForPulse) {
+            $latestActivityCandidates->push($latestLabForPulse->completed_at ?? $latestLabForPulse->created_at ?? null);
+        }
+        $latestLessonForPulse = $lessonHistories->sortByDesc('created_at')->first();
+        if ($latestLessonForPulse) {
+            $latestActivityCandidates->push($latestLessonForPulse->created_at ?? null);
+        }
+        $latestActivityAt = $latestActivityCandidates->filter()->map(fn($date) => \Carbon\Carbon::parse($date))->sortDesc()->first();
+        $quizPassedCountForPulse = count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70));
+        $totalAcademicItemsForPulse = max(1, (int)($totalLessons ?? 65) + (int)($totalLabs ?? 4) + (int)($totalQuizzes ?? 4));
+        $completedAcademicItemsForPulse = (int)($lessonsCompleted ?? count($completedLessonIds ?? [])) + (int)($labsCompleted ?? ($labStats['total'] ?? 0)) + (int)$quizPassedCountForPulse;
+        $academicCoverageForPulse = min(100, round(($completedAcademicItemsForPulse / $totalAcademicItemsForPulse) * 100));
+
+
+        // RINGKASAN PRESENTASI ANALITIK — dihitung dari data yang telah tersedia.
+        $lessonsDoneForAnalytics = (int) ($lessonsCompleted ?? count($completedLessonIds ?? []));
+        $lessonsTotalForAnalytics = max(1, (int) ($totalLessons ?? 65));
+        $labsDoneForAnalytics = (int) ($labsCompleted ?? ($labStats['total'] ?? 0));
+        $labsTotalForAnalytics = max(1, (int) ($totalLabs ?? 4));
+        $quizzesPassedForAnalytics = (int) $quizPassedCountForPulse;
+        $quizzesTotalForAnalytics = max(1, (int) ($totalQuizzes ?? 4));
+
+        $lessonProgressForAnalytics = min(100, round(($lessonsDoneForAnalytics / $lessonsTotalForAnalytics) * 100));
+        $labProgressForAnalytics = min(100, round(($labsDoneForAnalytics / $labsTotalForAnalytics) * 100));
+        $quizProgressForAnalytics = min(100, round(($quizzesPassedForAnalytics / $quizzesTotalForAnalytics) * 100));
+        $quizAverageForAnalytics = (float) ($quizAverage ?? ($quizStats['avg_score'] ?? 0));
+        $labAverageForAnalytics = (float) ($labAverage ?? ($labStats['avg_score'] ?? 0));
+
+        $quizInteractionSignalsForAnalytics = (int) data_get($studentAnalyticsSummary ?? [], 'quiz_focus_lost_total', 0)
+            + (int) data_get($studentAnalyticsSummary ?? [], 'quiz_flagged_total', 0)
+            + (int) data_get($studentAnalyticsSummary ?? [], 'quiz_unanswered_total', 0);
+        $activityRecordCountForAnalytics = $lessonHistories->count() + $labHistories->count() + $quizAttempts->count();
+
+        if ($activityRecordCountForAnalytics === 0) {
+            $learningStateForAnalytics = [
+                'label' => 'Belum mulai',
+                'headline' => 'Belum ada aktivitas belajar yang tercatat',
+                'description' => 'Siswa belum memiliki rekam materi, praktik lab, atau evaluasi. Langkah awalnya adalah memastikan siswa masuk kelas dan memulai materi pendahuluan.',
+                'class' => 'border-slate-200 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-white/60',
+            ];
+        } elseif ($adminAdviceScore >= 3) {
+            $learningStateForAnalytics = [
+                'label' => 'Prioritas tinggi',
+                'headline' => 'Perlu pendampingan pada evaluasi dan penyelesaian belajar',
+                'description' => 'Aktivitas sudah tercatat, tetapi terdapat beberapa sinyal yang perlu segera ditindaklanjuti agar siswa tidak tertinggal.',
+                'class' => 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300',
+            ];
+        } elseif ($adminAdviceScore >= 1) {
+            $learningStateForAnalytics = [
+                'label' => 'Perlu perhatian',
+                'headline' => 'Belajar berjalan, tetapi masih ada indikator yang perlu diperkuat',
+                'description' => 'Fokuskan tindak lanjut pada rekomendasi prioritas agar progres materi, praktik, dan evaluasi berkembang secara seimbang.',
+                'class' => 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300',
+            ];
+        } elseif ($academicCoverageForPulse >= 80 && $quizzesPassedForAnalytics >= $quizzesTotalForAnalytics && $labsDoneForAnalytics >= $labsTotalForAnalytics) {
+            $learningStateForAnalytics = [
+                'label' => 'Tuntas',
+                'headline' => 'Capaian pembelajaran telah terpenuhi dengan baik',
+                'description' => 'Siswa telah menunjukkan penyelesaian materi, praktik, dan evaluasi yang konsisten. Pertahankan ritme belajar dan lakukan pengayaan bila diperlukan.',
+                'class' => 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300',
+            ];
+        } else {
+            $learningStateForAnalytics = [
+                'label' => 'Berkembang',
+                'headline' => 'Proses belajar berjalan secara bertahap',
+                'description' => 'Siswa sudah aktif belajar. Lanjutkan penyelesaian indikator yang tersisa agar capaian materi, praktik, dan evaluasi semakin seimbang.',
+                'class' => 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300',
+            ];
+        }
+
+        $latestActivityLabelForAnalytics = $latestActivityAt ? $latestActivityAt->diffForHumans() : 'Belum tercatat';
+        $latestActivityDateForAnalytics = $latestActivityAt ? $latestActivityAt->translatedFormat('d M Y, H:i') : 'Belum ada riwayat aktivitas';
+        $priorityRecommendationForAnalytics = $adminRecommendations->first() ?? [
+            'title' => 'Pertahankan ritme belajar',
+            'body' => 'Siswa berada pada jalur yang stabil.',
+            'tone' => 'emerald',
+        ];
     @endphp
 
      {{-- ==================== 1. SIDEBAR ==================== --}}
@@ -304,7 +551,7 @@
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
                 <div>
                     <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none transition-colors">Util<span class="text-indigo-600 dark:text-indigo-400">wind</span></h1>
-                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Admin Panel</span>
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-white/40 tracking-[0.2em] uppercase transition-colors">Panel Admin</span>
                 </div>
             </a>
             <button @click="sidebarOpen = false" class="md:hidden text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white relative z-10 transition-colors">
@@ -312,39 +559,7 @@
             </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Ikhtisar</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        Dasbor
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <p class="px-4 text-[10px] font-extrabold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3 transition-colors">Akademik</p>
-                <div class="space-y-1">
-                    <a href="{{ route('admin.analytics.questions') }}" class="nav-link {{ request()->routeIs('admin.analytics.questions') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.analytics.questions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Manajemen Kuis
-                    </a>
-                    <a href="{{ route('admin.labs.index') }}" class="nav-link {{ request()->routeIs('admin.labs.index') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.labs.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        Konfigurasi Lab
-                    </a>
-                    <a href="{{ route('admin.lab.analytics') }}" class="nav-link {{ request()->routeIs('admin.lab.analytics') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.lab.analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        Analitik Lab
-                    </a>
-                    <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 {{ request()->routeIs('admin.classes.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Manajemen Kelas
-                    </a>
-                </div>
-            </div>
-        </nav>
+        @include('admin.partials.sidebar-nav')
 
         {{-- USER PROFILE Bawah Sidebar --}}
         <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#05080f]/50 transition-colors">
@@ -352,7 +567,7 @@
                 <img src="{{ $adminAvatarUrl }}" alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover shadow-lg border border-slate-200 dark:border-white/10 bg-indigo-500">
                 <div class="overflow-hidden">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate transition-colors">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">System Admin</p>
+                    <p class="text-[10px] text-slate-500 dark:text-white/40 truncate transition-colors">Administrator Sistem</p>
                 </div>
             </div>
             
@@ -412,10 +627,10 @@
                 </div>
                 
                 <div class="flex items-center gap-3 sm:gap-6 mt-1">
-                    {{-- Global Progress (Interactive) --}}
+                    {{-- Progres keseluruhan --}}
                     <div class="hidden xl:flex flex-col items-end mr-2 cursor-pointer hover:opacity-80 transition-opacity" @click="showGlobalProgressModal = true">
                         <div class="flex items-center gap-1.5 mb-1.5">
-                            <p class="text-[9px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-widest transition-colors">Global Progress</p>
+                            <p class="text-[9px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-widest transition-colors">Progres Keseluruhan</p>
                             {{-- TOOLTIP INSIGHT MENGGUNAKAN BAWAAN ANDA --}}
                             
                         </div>
@@ -427,7 +642,7 @@
                         </div>
                     </div>
 
-                    {{-- Export Dropdown --}}
+                    {{-- Menu Ekspor --}}
                     <div class="relative" x-data="{ exportOpen: false }">
                         <div class="flex items-center gap-1.5">
                             <button @click="exportOpen = !exportOpen" @click.away="exportOpen = false" class="p-2.5 sm:px-4 sm:py-2.5 rounded-full sm:rounded-xl bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-transparent dark:border-white/10 text-slate-700 dark:text-white text-xs font-bold transition flex items-center gap-2 shadow-sm dark:shadow-lg">
@@ -459,16 +674,16 @@
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg> Ikhtisar
                 </button>
                 <button @click="activeTab = 'curriculum'" :class="activeTab === 'curriculum' ? 'active text-slate-900 dark:text-white' : 'text-slate-500'" class="tab-btn pb-3 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Curriculum Tracker
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Pelacakan Kurikulum
                 </button>
                 <button @click="activeTab = 'history'" :class="activeTab === 'history' ? 'active text-slate-900 dark:text-white' : 'text-slate-500'" class="tab-btn pb-3 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> History Log
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Riwayat Aktivitas
                 </button>
             </div>
         </header>
 
         {{-- CONTENT BODY --}}
-        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 z-10 scroll-smooth">
+        <div data-smooth-student-scroll class="smooth-student-scroll flex-1 overflow-y-auto custom-scrollbar p-5 md:p-8 z-10" tabindex="-1">
             <div class="max-w-7xl mx-auto pb-20 relative">
 
                 {{-- =========================================================
@@ -508,11 +723,11 @@
                                         @endif
                                         <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1" title="Tanggal Mendaftar: {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}">
                                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> 
-                                            Joined {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('M Y') }}
+                                            Bergabung {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('M Y') }}
                                         </span>
-                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1" title="Terakhir Update: {{ \Carbon\Carbon::parse($user->updated_at)->translatedFormat('d F Y, H:i') }}">
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1" title="Terakhir diperbarui: {{ \Carbon\Carbon::parse($user->updated_at)->translatedFormat('d F Y, H:i') }}">
                                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                            Upd. {{ \Carbon\Carbon::parse($user->updated_at)->diffForHumans() }}
+                                            Diperbarui {{ \Carbon\Carbon::parse($user->updated_at)->diffForHumans() }}
                                         </span>
                                     </div>
                                 </div>
@@ -530,7 +745,7 @@
                                             <span class="flex items-center gap-2 font-bold"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Kelas: {{ $user->class_group }}</span>
                                             <div class="flex items-center gap-3">
                                                 @if(isset($classGroup))
-                                                    <span class="{{ $classGroup->is_active ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black">{{ $classGroup->is_active ? 'Active' : 'Closed' }}</span>
+                                                    <span class="{{ $classGroup->is_active ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black">{{ $classGroup->is_active ? 'Aktif' : 'Ditutup' }}</span>
                                                 @endif
                                                 <div class="p-1 rounded-md bg-emerald-200/50 dark:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -548,125 +763,252 @@
                         </div>
                     </div>
 
-                    {{-- VISUAL SEPARATOR --}}
-                    <div class="flex items-center gap-4 py-4">
-                        <div class="h-px bg-slate-200 dark:bg-white/10 flex-1 transition-colors"></div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] bg-white dark:bg-[#020617] px-3 py-1 border border-slate-200 dark:border-white/5 rounded-full transition-colors">Analitik Akademik</span>
-                            <div class="insight-tooltip insight-right">
-                                <span class="insight-trigger">?</span>
-                                <div class="insight-content">Kartu-kartu di bawah ini dapat diklik untuk memunculkan modal detail berisi rincian data metrik akademik.</div>
-                            </div>
-                        </div>
-                        <div class="h-px bg-slate-200 dark:bg-white/10 flex-1 transition-colors"></div>
-                    </div>
 
-                    {{-- ZONA AKADEMIK CARDS --}}
-                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-                        
-                        {{-- 1. Materi Dibaca --}}
-                        <div class="glass-card p-5 rounded-2xl relative group hover:border-cyan-400 dark:hover:border-cyan-500/40 cursor-pointer transition-colors" @click="showLessonModal = true">
-                            <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Materi Dibaca</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="p-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+
+                    {{-- RINGKASAN ANALITIK PEMBELAJARAN --}}
+                    <section class="space-y-4" aria-labelledby="learning-analytics-heading">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-300">Learning Analytics</p>
+                                <h2 id="learning-analytics-heading" class="mt-1 text-lg font-black tracking-tight text-slate-900 dark:text-white">Gambaran belajar {{ $user->name }}</h2>
+                                <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-white/45">Baca kondisi, kemajuan, hasil evaluasi, dan keterlibatan siswa dari data yang sudah tercatat.</p>
+                            </div>
+                            <span class="inline-flex w-fit items-center rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest {{ $learningStateForAnalytics['class'] }}">{{ $learningStateForAnalytics['label'] }}</span>
+                        </div>
+
+                        <div class="grid gap-4 xl:grid-cols-12">
+                            <article class="analytics-panel xl:col-span-5 rounded-2xl p-5 md:p-6">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Kondisi pembelajaran</p>
+                                        <h3 class="mt-2 text-base font-black leading-6 text-slate-900 dark:text-white">{{ $learningStateForAnalytics['headline'] }}</h3>
+                                    </div>
+                                    <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border {{ $learningStateForAnalytics['class'] }}">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.3 3.86l-8.1 14A2 2 0 003.92 21h16.16a2 2 0 001.72-3.14l-8.1-14a2 2 0 00-3.4 0z"/></svg>
                                     </span>
                                 </div>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors" x-data="{ count: 0 }" x-init="let target = {{ $lessonsCompleted ?? count($completedLessonIds ?? []) }}; let i = setInterval(() => { if(count < target) count++; else clearInterval(i); }, 30);" x-text="count"></p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ {{ $totalLessons ?? 65 }}</p>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full bg-cyan-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ ($totalLessons ?? 65) > 0 ? (($lessonsCompleted ?? count($completedLessonIds ?? [])) / ($totalLessons ?? 65)) * 100 : 0 }}%' : 'width: 0%'"></div>
-                            </div>
-                        </div>
-
-                        {{-- 2. Labs Passed --}}
-                        <div class="glass-card p-5 rounded-2xl relative group hover:border-indigo-400 dark:hover:border-indigo-500/40 cursor-pointer transition-colors" @click="showLabModal = true">
-                            <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Labs Lulus</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                    </span>
+                                <p class="mt-3 text-xs font-semibold leading-5 text-slate-600 dark:text-white/55">{{ $learningStateForAnalytics['description'] }}</p>
+                                <div class="analytics-signal mt-4 rounded-r-xl px-3 py-3 text-indigo-700 dark:text-indigo-300">
+                                    <p class="text-[9px] font-black uppercase tracking-widest opacity-70">Prioritas tindak lanjut</p>
+                                    <p class="mt-1 text-xs font-black text-slate-900 dark:text-white">{{ $priorityRecommendationForAnalytics['title'] }}</p>
+                                    <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/50">{{ $priorityRecommendationForAnalytics['body'] }}</p>
                                 </div>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]">{{ $labsCompleted ?? ($labStats['total'] ?? 0) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ {{ $totalLabs ?? 4 }}</p>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full bg-indigo-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ ($totalLabs ?? 4) > 0 ? (($labsCompleted ?? ($labStats['total'] ?? 0)) / ($totalLabs ?? 4)) * 100 : 0 }}%' : 'width: 0%'"></div>
-                            </div>
-                        </div>
+                            </article>
 
-                        {{-- 3. Quiz Lulus --}}
-                        <div class="glass-card p-5 rounded-2xl relative group hover:border-fuchsia-400 dark:hover:border-fuchsia-500/40 cursor-pointer transition-colors" @click="showQuizModal = true">
-                            <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">Quiz Lulus</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="p-1.5 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                                    </span>
+                            <article class="analytics-panel xl:col-span-4 rounded-2xl p-5 md:p-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="analytics-ring" style="--progress: {{ $globalProgress ?? 0 }}%;">
+                                        <div class="analytics-ring__inner text-center">
+                                            <strong class="text-lg font-black text-slate-900 dark:text-white">{{ $globalProgress ?? 0 }}%</strong>
+                                            <span class="-mt-1 text-[8px] font-black uppercase tracking-widest text-slate-400">Progres</span>
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Cakupan pembelajaran</p>
+                                        <h3 class="mt-2 text-base font-black text-slate-900 dark:text-white">{{ $completedAcademicItemsForPulse }} dari {{ $totalAcademicItemsForPulse }} indikator tercapai</h3>
+                                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-500 dark:text-white/45">Progres kumulatif dari penyelesaian materi, praktik lab, dan evaluasi yang lulus.</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(217,70,239,0.3)]">{{ count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70)) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ {{ $totalQuizzes ?? 4 }}</p>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full bg-fuchsia-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ ($totalQuizzes ?? 4) > 0 ? (count(array_filter($quizScoresMap ?? [], fn($s) => $s >= 70)) / ($totalQuizzes ?? 4)) * 100 : 0 }}%' : 'width: 0%'"></div>
-                            </div>
-                        </div>
-
-                        {{-- 4. Avg Lab Score --}}
-                        <div class="glass-card p-5 rounded-2xl relative group hover:border-emerald-400 dark:hover:border-emerald-500/40 cursor-pointer transition-colors" @click="showAvgLabModal = true">
-                            <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Rata Rata nilai Labs</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
-                                    </span>
+                                <div class="mt-5 space-y-3">
+                                    <div>
+                                        <div class="mb-1 flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-white/45"><span>Materi</span><span>{{ $lessonsDoneForAnalytics }}/{{ $lessonsTotalForAnalytics }}</span></div>
+                                        <div class="analytics-track"><span class="bg-cyan-500" style="width: {{ $lessonProgressForAnalytics }}%"></span></div>
+                                    </div>
+                                    <div>
+                                        <div class="mb-1 flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-white/45"><span>Praktik lab</span><span>{{ $labsDoneForAnalytics }}/{{ $labsTotalForAnalytics }}</span></div>
+                                        <div class="analytics-track"><span class="bg-indigo-500" style="width: {{ $labProgressForAnalytics }}%"></span></div>
+                                    </div>
+                                    <div>
+                                        <div class="mb-1 flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-white/45"><span>Evaluasi lulus</span><span>{{ $quizzesPassedForAnalytics }}/{{ $quizzesTotalForAnalytics }}</span></div>
+                                        <div class="analytics-track"><span class="bg-fuchsia-500" style="width: {{ $quizProgressForAnalytics }}%"></span></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">{{ number_format($labAverage ?? ($labStats['avg_score'] ?? 0), 1) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ 100</p>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full bg-emerald-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ $labAverage ?? ($labStats['avg_score'] ?? 0) }}%' : 'width: 0%'"></div>
-                            </div>
-                        </div>
+                            </article>
 
-                        {{-- 5. Avg Quiz Score --}}
-                        <div class="glass-card p-5 rounded-2xl relative group hover:border-amber-400 dark:hover:border-amber-500/40 cursor-pointer transition-colors" @click="showAvgQuizModal = true">
-                            <div class="flex justify-between items-start mb-3">
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Rata Rata nilai Kuis</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/10 shadow-sm dark:shadow-inner group-hover:scale-110 transition duration-300">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                    </span>
+                            <article class="analytics-panel xl:col-span-3 rounded-2xl p-5 md:p-6">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Hasil & keterlibatan</p>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <div class="rounded-xl border border-amber-100 bg-amber-50/70 p-3 dark:border-amber-500/20 dark:bg-amber-500/[0.08]">
+                                        <p class="text-[9px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300">Rata-rata kuis</p>
+                                        <p class="mt-2 text-xl font-black text-slate-900 dark:text-white">{{ number_format($quizAverageForAnalytics, 1) }}<span class="ml-1 text-[10px] text-slate-400">/100</span></p>
+                                    </div>
+                                    <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 p-3 dark:border-emerald-500/20 dark:bg-emerald-500/[0.08]">
+                                        <p class="text-[9px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300">Rata-rata lab</p>
+                                        <p class="mt-2 text-xl font-black text-slate-900 dark:text-white">{{ number_format($labAverageForAnalytics, 1) }}<span class="ml-1 text-[10px] text-slate-400">/100</span></p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <p class="text-3xl font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]">{{ number_format($quizAverage ?? ($quizStats['avg_score'] ?? 0), 1) }}</p>
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 font-mono transition-colors">/ 100</p>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-200 dark:bg-[#0f141e] rounded-full mt-4 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full bg-amber-500 rounded-full shadow-[0_0_10px_currentColor] transition-all duration-[1500ms] ease-out" :style="showProgress ? 'width: {{ $quizAverage ?? ($quizStats['avg_score'] ?? 0) }}%' : 'width: 0%'"></div>
-                            </div>
+                                <div class="mt-4 space-y-3 border-t border-slate-100 pt-4 dark:border-white/5">
+                                    <div class="flex items-start gap-2.5">
+                                        <span class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-white/55"><svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+                                        <div><p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Aktivitas terakhir</p><p class="mt-0.5 text-xs font-black text-slate-900 dark:text-white">{{ $latestActivityLabelForAnalytics }}</p><p class="mt-0.5 text-[10px] font-semibold text-slate-500 dark:text-white/45">{{ $latestActivityDateForAnalytics }}</p></div>
+                                    </div>
+                                    <div class="flex items-start gap-2.5">
+                                        <span class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300"><svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01"/></svg></span>
+                                        <div><p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Sinyal pengerjaan</p><p class="mt-0.5 text-xs font-black text-slate-900 dark:text-white">{{ $quizInteractionSignalsForAnalytics }} penanda perlu ditinjau</p><p class="mt-0.5 text-[10px] font-semibold text-slate-500 dark:text-white/45">Gabungan ragu-ragu, kehilangan fokus, dan jawaban kosong pada kuis.</p></div>
+                                    </div>
+                                </div>
+                            </article>
                         </div>
-                    </div>
+                    </section>
 
-                    {{-- REKOMENDASI OTOMATIS ADMIN --}}
+                    {{-- INDIKATOR AKADEMIK UTAMA --}}
+                    <section class="space-y-4" aria-labelledby="academic-indicators-heading">
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 dark:text-white/35">Indikator utama</p>
+                                <h3 id="academic-indicators-heading" class="mt-1 text-base font-black text-slate-900 dark:text-white">Rincian capaian akademik</h3>
+                            </div>
+                            <p class="text-[11px] font-semibold text-slate-500 dark:text-white/45">Pilih indikator untuk membuka riwayat data yang terkait.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                            <button type="button" @click="showLessonModal = true" class="analytics-metric-card group" aria-label="Lihat detail materi yang diselesaikan">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Materi diselesaikan</p>
+                                    <span class="analytics-metric-icon inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-100 bg-cyan-50 text-cyan-600 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-300"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></span>
+                                </div>
+                                <p class="mt-5 text-2xl font-black text-slate-900 dark:text-white">{{ $lessonsDoneForAnalytics }}<span class="ml-1 text-sm text-slate-400">/ {{ $lessonsTotalForAnalytics }}</span></p>
+                                <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">{{ max(0, $lessonsTotalForAnalytics - $lessonsDoneForAnalytics) }} materi masih dapat diselesaikan.</p>
+                                <div class="analytics-track mt-4"><span class="bg-cyan-500" style="width: {{ $lessonProgressForAnalytics }}%"></span></div>
+                            </button>
+
+                            <button type="button" @click="showLabModal = true" class="analytics-metric-card group" aria-label="Lihat detail praktik lab tuntas">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Praktik lab tuntas</p>
+                                    <span class="analytics-metric-icon inline-flex h-9 w-9 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-600 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
+                                </div>
+                                <p class="mt-5 text-2xl font-black text-slate-900 dark:text-white">{{ $labsDoneForAnalytics }}<span class="ml-1 text-sm text-slate-400">/ {{ $labsTotalForAnalytics }}</span></p>
+                                <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">{{ max(0, $labsTotalForAnalytics - $labsDoneForAnalytics) }} praktik belum dinyatakan lulus.</p>
+                                <div class="analytics-track mt-4"><span class="bg-indigo-500" style="width: {{ $labProgressForAnalytics }}%"></span></div>
+                            </button>
+
+                            <button type="button" @click="showQuizModal = true" class="analytics-metric-card group" aria-label="Lihat detail evaluasi yang lulus">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Evaluasi memenuhi KKM</p>
+                                    <span class="analytics-metric-icon inline-flex h-9 w-9 items-center justify-center rounded-xl border border-fuchsia-100 bg-fuchsia-50 text-fuchsia-600 dark:border-fuchsia-500/20 dark:bg-fuchsia-500/10 dark:text-fuchsia-300"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></span>
+                                </div>
+                                <p class="mt-5 text-2xl font-black text-slate-900 dark:text-white">{{ $quizzesPassedForAnalytics }}<span class="ml-1 text-sm text-slate-400">/ {{ $quizzesTotalForAnalytics }}</span></p>
+                                <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">{{ max(0, $quizzesTotalForAnalytics - $quizzesPassedForAnalytics) }} evaluasi masih perlu penguatan.</p>
+                                <div class="analytics-track mt-4"><span class="bg-fuchsia-500" style="width: {{ $quizProgressForAnalytics }}%"></span></div>
+                            </button>
+
+                            <button type="button" @click="showAvgLabModal = true" class="analytics-metric-card group" aria-label="Lihat rata-rata nilai lab">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Rata-rata nilai lab</p>
+                                    <span class="analytics-metric-icon inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg></span>
+                                </div>
+                                <p class="mt-5 text-2xl font-black text-slate-900 dark:text-white">{{ number_format($labAverageForAnalytics, 1) }}<span class="ml-1 text-sm text-slate-400">/100</span></p>
+                                <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">{{ $labAverageForAnalytics >= 70 ? 'Rata-rata telah mencapai KKM.' : 'Rata-rata masih di bawah KKM 70.' }}</p>
+                                <div class="analytics-track mt-4"><span class="bg-emerald-500" style="width: {{ min(100, max(0, $labAverageForAnalytics)) }}%"></span></div>
+                            </button>
+
+                            <button type="button" @click="showAvgQuizModal = true" class="analytics-metric-card group" aria-label="Lihat rata-rata nilai kuis">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Rata-rata nilai kuis</p>
+                                    <span class="analytics-metric-icon inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-600 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></span>
+                                </div>
+                                <p class="mt-5 text-2xl font-black text-slate-900 dark:text-white">{{ number_format($quizAverageForAnalytics, 1) }}<span class="ml-1 text-sm text-slate-400">/100</span></p>
+                                <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">{{ $quizAverageForAnalytics >= 70 ? 'Rata-rata telah mencapai KKM.' : 'Rata-rata masih di bawah KKM 70.' }}</p>
+                                <div class="analytics-track mt-4"><span class="bg-amber-500" style="width: {{ min(100, max(0, $quizAverageForAnalytics)) }}%"></span></div>
+                            </button>
+                        </div>
+                    </section>
+
+                    @php
+                        $analytics = $studentAnalyticsSummary ?? [];
+                        $chapterRows = collect($chapterPerformance ?? [])->take(4);
+                        $strongestTp = $analytics['strongest_outcome'] ?? ($outcomeSummary['strongest'] ?? null);
+                        $weakestTp = $analytics['weakest_outcome'] ?? ($outcomeSummary['weakest'] ?? null);
+                        $quizAverageDurationForAnalytics = $analytics['quiz_avg_duration_label'] ?? 'Belum ada data';
+                        $labAverageDurationForAnalytics = $analytics['lab_avg_duration_label'] ?? 'Belum ada data';
+                        $outcomesNeedReviewForAnalytics = (int) ($analytics['outcomes_need_review'] ?? 0);
+                    @endphp
+
+                    {{-- ANALISIS HASIL PEMBELAJARAN --}}
+                    <section class="grid gap-4 xl:grid-cols-[1.35fr_.65fr]" aria-label="Analisis hasil pembelajaran">
+                        <article class="analytics-panel rounded-2xl p-5 md:p-6">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 dark:text-white/35">Analisis hasil pembelajaran</p>
+                                    <h3 class="mt-1 text-base font-black text-slate-900 dark:text-white">Capaian evaluasi per bab</h3>
+                                    <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-white/45">Skor terbaik menunjukkan capaian tertinggi pada setiap bab; status lulus menggunakan KKM 70.</p>
+                                </div>
+                                <span class="inline-flex w-fit rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-white/45">{{ $chapterRows->count() }} bab terukur</span>
+                            </div>
+
+                            <div class="mt-5 space-y-2.5">
+                                @forelse($chapterRows as $row)
+                                    @php
+                                        $rowScore = (float) ($row['best_score'] ?? 0);
+                                        $rowPassed = (bool) ($row['passed'] ?? false);
+                                        $rowAttempts = (int) ($row['attempts'] ?? 0);
+                                    @endphp
+                                    <div class="analytics-performance-row rounded-xl border border-slate-100 p-3 dark:border-white/5">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="truncate text-xs font-black text-slate-800 dark:text-white">{{ $row['label'] ?? 'Bab' }}</p>
+                                                <p class="mt-0.5 text-[10px] font-semibold text-slate-500 dark:text-white/45">{{ $rowAttempts }} percobaan · {{ $rowPassed ? 'Memenuhi KKM' : 'Belum memenuhi KKM' }}</p>
+                                            </div>
+                                            <div class="shrink-0 text-right">
+                                                <p class="font-mono text-sm font-black {{ $rowPassed ? 'text-emerald-600 dark:text-emerald-300' : 'text-amber-600 dark:text-amber-300' }}">{{ number_format($rowScore, 0) }}</p>
+                                                <p class="text-[9px] font-bold text-slate-400">/100</p>
+                                            </div>
+                                        </div>
+                                        <div class="analytics-track mt-3"><span class="{{ $rowPassed ? 'bg-emerald-500' : 'bg-amber-500' }}" style="width: {{ min(100, max(0, $rowScore)) }}%"></span></div>
+                                    </div>
+                                @empty
+                                    <div class="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-white/10">
+                                        <p class="text-xs font-black text-slate-700 dark:text-white">Belum ada evaluasi yang selesai</p>
+                                        <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/45">Data per bab akan muncul setelah siswa mengumpulkan kuis.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </article>
+
+                        <div class="space-y-4">
+                            <article class="analytics-panel rounded-2xl p-5">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Fokus pemahaman</p>
+                                        <h3 class="mt-1 text-sm font-black text-slate-900 dark:text-white">Konsep terkuat dan perlu penguatan</h3>
+                                    </div>
+                                    <span class="rounded-lg bg-slate-100 px-2.5 py-1 text-[9px] font-black text-slate-500 dark:bg-white/5 dark:text-white/50">{{ $outcomesNeedReviewForAnalytics }} perlu review</span>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                                        <p class="text-[9px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300">Terkuat</p>
+                                        <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">{{ data_get($strongestTp, 'display_code', 'Belum ada data') }}</p>
+                                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/55">{{ Str::limit(data_get($strongestTp, 'title', 'Belum ada data tujuan pembelajaran.'), 90) }}</p>
+                                    </div>
+                                    <div class="rounded-xl border border-amber-200 bg-amber-50/70 p-3 dark:border-amber-500/20 dark:bg-amber-500/10">
+                                        <p class="text-[9px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300">Perlu penguatan</p>
+                                        <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">{{ data_get($weakestTp, 'display_code', 'Belum ada data') }}</p>
+                                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/55">{{ Str::limit(data_get($weakestTp, 'title', 'Belum ada data tujuan pembelajaran.'), 90) }}</p>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="analytics-panel rounded-2xl p-5">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Pola pengerjaan</p>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-white/5"><p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Durasi kuis</p><p class="mt-1 text-sm font-black text-slate-900 dark:text-white">{{ $quizAverageDurationForAnalytics }}</p><p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-white/45">Rata-rata</p></div>
+                                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-white/5"><p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Durasi lab</p><p class="mt-1 text-sm font-black text-slate-900 dark:text-white">{{ $labAverageDurationForAnalytics }}</p><p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-white/45">Rata-rata</p></div>
+                                </div>
+                                <div class="mt-3 rounded-xl border border-rose-100 bg-rose-50/60 px-3 py-3 dark:border-rose-500/20 dark:bg-rose-500/[0.07]">
+                                    <p class="text-[10px] font-black text-rose-700 dark:text-rose-300">{{ $quizInteractionSignalsForAnalytics }} sinyal pengerjaan perlu ditinjau</p>
+                                    <p class="mt-1 text-[10px] font-semibold leading-5 text-slate-600 dark:text-white/50">Sinyal diperoleh dari ragu-ragu, kehilangan fokus, dan jawaban kosong pada evaluasi.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+
+                    {{-- ARAHAN OTOMATIS ADMIN --}}
                     <div class="glass-card rounded-2xl p-5 md:p-6 transition-colors">
                         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
                             <div>
-                                <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Arahan Tindak Lanjut</p>
-                                <h3 class="text-base font-black text-slate-900 dark:text-white transition-colors">Rekomendasi untuk {{ $user->name }}</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dibuat dari progress materi, kuis, lab, dan ringkasan pengerjaan terakhir.</p>
+                                <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Tindak lanjut yang disarankan</p>
+                                <h3 class="text-base font-black text-slate-900 dark:text-white transition-colors">Langkah berikutnya untuk {{ $user->name }}</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Disusun dari progres materi, hasil kuis, praktik lab, dan sinyal pengerjaan yang tercatat.</p>
                             </div>
                             <span class="px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest {{ $adminRisk['class'] }}">
                                 {{ $adminRisk['label'] }}
@@ -778,7 +1120,7 @@
                                 @else
                                     <div class="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-white/[0.01] transition-colors">
                                         <svg class="w-8 h-8 text-slate-400 dark:text-slate-600 mb-3 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 transition-colors">Belum Ada Data Grafik</p>
+                                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 transition-colors">Belum ada data grafik</p>
                                         <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 transition-colors">Siswa belum menyelesaikan praktik lab dengan status lulus.</p>
                                     </div>
                                 @endif
@@ -901,7 +1243,7 @@
                         <h2 class="text-lg font-black text-slate-800 dark:text-white tracking-tight">Log Aktivitas</h2>
                         <div class="insight-tooltip insight-right">
                             <span class="insight-trigger">?</span>
-                            <div class="insight-content text-left">Tabel di bawah ini berisi rekaman absolut dan transparan dari setiap percobaan praktik lab dan evaluasi kuis yang telah dikumpulkan.</div>
+                            <div class="insight-content text-left">Tabel ini menampilkan riwayat lengkap dari setiap percobaan praktik lab dan evaluasi kuis yang telah dikumpulkan.</div>
                         </div>
                     </div>
 
@@ -939,13 +1281,13 @@
                                                 Status
                                                 <div class="insight-tooltip insight-right">
                                                     <span class="insight-trigger" style="width: 13px; height: 13px; font-size: 8px;">?</span>
-                                                    <div class="insight-content font-normal text-left">Passed (Lulus), Failed (Gagal), atau Timeout (Sesi Habis secara paksa).</div>
+                                                    <div class="insight-content font-normal text-left">Lulus, gagal, atau waktu habis (Sesi secara paksa).</div>
                                                 </div>
                                             </div>
                                         </th>
                                         <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5" title="Skor dalam rentang 0-100">Skor</th>
                                         <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Waktu Pengumpulan</th>
-                                        <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Aksi Panel</th>
+                                        <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Aksi</th>
                                     </tr>
                                 </thead>
                                 @forelse($labHistories as $idx => $h)
@@ -958,12 +1300,12 @@
                                         
                                         @php
                                             $labStatusStr = strtolower($h->status ?? '');
-                                            // Deteksi Waktu Habis
+                                            // Deteksi batas waktu
                                             $limitLabSec = isset($h->lab->time_limit) ? $h->lab->time_limit * 60 : (isset($h->lab->duration) ? $h->lab->duration * 60 : 0);
                                             $isLabTimeout = $labStatusStr === 'timeout' || $labStatusStr === 'waktu habis' || (isset($h->is_timeout) && $h->is_timeout == 1) || ($limitLabSec > 0 && $h->duration_seconds >= $limitLabSec) || $h->duration_seconds > 43200;
-                                            $isLabPassed = $labStatusStr === 'passed' || $labStatusStr === 'lulus';
+                                            $isLabLulus = $labStatusStr === 'passed' || $labStatusStr === 'lulus';
                                             
-                                            if ($isLabPassed) {
+                                            if ($isLabLulus) {
                                                 $lStatClass = 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20';
                                             } elseif ($isLabTimeout) {
                                                 $lStatClass = 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20';
@@ -988,7 +1330,7 @@
                                             <div class="flex items-center justify-end gap-1.5 mt-0.5">
                                                 <span class="text-[9px] opacity-70" title="Total durasi yang dihabiskan siswa">Durasi: {{ formatTime($h->duration_seconds) }}</span>
                                                 @if($isLabTimeout)
-                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu">Sesi Habis</span>
+                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu">Sesi</span>
                                                 @endif
                                             </div>
                                         </td>
@@ -1017,7 +1359,7 @@
                                                     <div class="rounded-xl overflow-hidden border border-slate-300/80 dark:border-slate-800 shadow-xl bg-[#0d1117] transition-colors relative" x-data="{ copied: false }">
                                                         {{-- Copy Button Overlay --}}
                                                         <button @click="navigator.clipboard.writeText(`{{ addslashes($h->last_code_snapshot) }}`); copied = true; setTimeout(() => copied = false, 2000)" 
-                                                                class="absolute top-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/50 hover:text-white transition-all z-10 flex items-center justify-center" title="Salin Kode ke Clipboard">
+                                                                class="absolute top-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/50 hover:text-white transition-all z-10 flex items-center justify-center" title="Salin kode">
                                                             <svg x-show="!copied" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                                             <svg x-show="copied" style="display:none;" class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                                         </button>
@@ -1107,9 +1449,10 @@
                                         $limitQuizSec = isset($q->time_limit) ? $q->time_limit * 60 : 0;
                                         $qDuration = $q->time_spent_seconds ?? 0;
                                         $isQuizTimeout = $quizStatusStr === 'timeout' || $quizStatusStr === 'waktu habis' || (isset($q->is_timeout) && $q->is_timeout == 1) || ($limitQuizSec > 0 && $qDuration >= $limitQuizSec) || $qDuration > 43200;
-                                        $isQuizPassed = $q->score >= 70;
+                                        $isQuizLulus = $q->score >= 70;
+                                        $quizOutcomeAnalytics = $quizOutcomeAnalyticsByAttempt[$q->id] ?? [];
 
-                                        if ($isQuizPassed) {
+                                        if ($isQuizLulus) {
                                             $qStatClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400';
                                         } elseif ($isQuizTimeout) {
                                             $qStatClass = 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400';
@@ -1121,16 +1464,19 @@
                                             'student' => $user->name,
                                             'title' => $qName,
                                             'score' => $q->score ?? 0,
-                                            'status' => $isQuizPassed ? 'Lulus' : ($isQuizTimeout ? 'Waktu Habis' : 'Remedial'),
+                                            'status' => $isQuizLulus ? 'Lulus' : ($isQuizTimeout ? 'Waktu Habis' : 'Remedial'),
                                             'date' => \Carbon\Carbon::parse($q->completed_at ?? $q->created_at)->format('d M Y, H:i'),
                                             'duration' => formatTime($qDuration),
                                             'answered' => (int) ($q->answered_count ?? 0),
                                             'unanswered' => (int) ($q->unanswered_count ?? 0),
                                             'flagged' => (int) ($q->flagged_count ?? 0),
                                             'focusLost' => (int) ($q->focus_lost_count ?? 0),
-                                            'feedbackLevel' => $q->feedback_level ?? ($isQuizPassed ? 'Lulus' : 'Perlu Penguatan'),
-                                            'feedbackMessage' => $q->feedback_message ?? ($isQuizPassed ? 'Siswa sudah mencapai KKM. Tinjauan ulang tetap dapat membantu memperkuat bagian yang masih salah.' : 'Siswa belum mencapai KKM. Perlu penguatan materi dan percobaan ulang.'),
+                                            'feedbackLevel' => $q->feedback_level ?? ($isQuizLulus ? 'Lulus' : 'Perlu Penguatan'),
+                                            'feedbackMessage' => $q->feedback_message ?? ($isQuizLulus ? 'Siswa sudah mencapai KKM. Tinjauan ulang tetap dapat membantu memperkuat bagian yang masih salah.' : 'Siswa belum mencapai KKM. Perlu penguatan materi dan percobaan ulang.'),
                                             'reflectionNote' => $q->reflection_note ?? '',
+                                            'outcomeDecision' => $quizOutcomeAnalytics['decision'] ?? 'Belum ada data TP.',
+                                            'outcomeSummary' => $quizOutcomeAnalytics['summary_text'] ?? 'Belum ada analitik tujuan pembelajaran.',
+                                            'outcomes' => collect($quizOutcomeAnalytics['outcomes'] ?? [])->values()->all(),
                                         ];
                                     @endphp
                                     <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group table-row" x-show="searchQuiz === '' || '{{ addslashes(strtolower($qName)) }}'.includes(searchQuiz.toLowerCase())">
@@ -1140,7 +1486,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span class="px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider transition-colors {{ $qStatClass }}">
-                                                {{ $isQuizTimeout ? 'TIMEOUT' : ($isQuizPassed ? 'LULUS' : 'GAGAL') }}
+                                                {{ $isQuizTimeout ? 'TIMEOUT' : ($isQuizLulus ? 'LULUS' : 'GAGAL') }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
@@ -1158,7 +1504,7 @@
                                             <div class="flex items-center justify-end gap-1.5 mt-0.5">
                                                 <span class="text-[9px] opacity-70" title="Total durasi yang dihabiskan siswa">Durasi: {{ formatTime($qDuration) }}</span>
                                                 @if($isQuizTimeout)
-                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu evaluasi">Sesi Habis</span>
+                                                    <span class="px-1 py-[1px] rounded-[4px] bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[8px] font-bold tracking-wider uppercase border border-amber-200 dark:border-amber-500/30" title="Sesi ditinggalkan atau melebihi batas waktu evaluasi">Sesi</span>
                                                 @endif
                                             </div>
                                         </td>
@@ -1314,7 +1660,7 @@
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Analisis Praktik</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($labHistories) }} Kali</span></p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($labHistories) }} kali</span></p>
                 </div>
                 <button @click="showAvgLabModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2" title="Tutup">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1356,7 +1702,7 @@
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Analisis Evaluasi</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($quizAttempts) }} Kali</span></p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Total percobaan: <span class="font-bold text-slate-900 dark:text-white">{{ count($quizAttempts) }} kali</span></p>
                 </div>
                 <button @click="showAvgQuizModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2" title="Tutup">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1439,6 +1785,55 @@
                         <div class="text-slate-500 dark:text-slate-400">Soal Kosong<br><span class="font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.unanswered ?? 0"></span></div>
                         <div class="text-slate-500 dark:text-slate-400">Fokus Terganggu<br><span class="font-bold text-slate-900 dark:text-white" x-text="selectedQuizReview?.focusLost ?? 0"></span></div>
                     </div>
+                    <div class="mt-5 rounded-xl border border-fuchsia-200 dark:border-fuchsia-500/20 bg-fuchsia-50/70 dark:bg-fuchsia-500/10 p-4">
+                        <p class="text-[10px] uppercase tracking-widest font-black text-fuchsia-700 dark:text-fuchsia-300">Keputusan TP</p>
+                        <p class="text-sm font-black text-slate-900 dark:text-white mt-1" x-text="selectedQuizReview?.outcomeDecision || 'Belum ada data TP.'"></p>
+                        <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2" x-text="selectedQuizReview?.outcomeSummary || 'Belum ada analitik tujuan pembelajaran.'"></p>
+                    </div>
+                    <template x-if="selectedQuizReview?.outcomes?.length">
+                        <div class="mt-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] p-4">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500">Analitik TP Siswa</p>
+                                    <h4 class="text-sm font-black text-slate-900 dark:text-white mt-1">Capaian per Tujuan Pembelajaran</h4>
+                                </div>
+                                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500" x-text="selectedQuizReview.outcomes.length + ' TP'"></span>
+                            </div>
+                            <template x-for="tp in selectedQuizReview.outcomes" :key="tp.key">
+                                <div class="rounded-xl border p-3 mb-3 last:mb-0 transition-colors"
+                                     :class="{
+                                        'border-emerald-200 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-500/10': tp.tone === 'emerald',
+                                        'border-cyan-200 bg-cyan-50 dark:border-cyan-500/20 dark:bg-cyan-500/10': tp.tone === 'cyan',
+                                        'border-amber-200 bg-amber-50 dark:border-amber-500/20 dark:bg-amber-500/10': tp.tone === 'amber',
+                                        'border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10': tp.tone === 'red',
+                                        'border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.03]': !['emerald','cyan','amber','red'].includes(tp.tone)
+                                     }">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="min-w-0">
+                                            <p class="text-[10px] uppercase tracking-widest font-black text-slate-500 dark:text-slate-400" x-text="tp.display_code || tp.code || 'TP'"></p>
+                                            <h4 class="text-sm font-black text-slate-900 dark:text-white mt-1 leading-snug" x-text="tp.title || 'Tujuan Pembelajaran'"></h4>
+                                        </div>
+                                        <span class="text-2xl font-black text-slate-900 dark:text-white" x-text="(tp.mastery_percent ?? 0) + '%'"></span>
+                                    </div>
+                                    <div class="mt-3 h-1.5 rounded-full bg-white/70 dark:bg-black/20 overflow-hidden">
+                                        <div class="h-full rounded-full"
+                                             :class="{
+                                                'bg-emerald-500': tp.tone === 'emerald',
+                                                'bg-cyan-500': tp.tone === 'cyan',
+                                                'bg-amber-500': tp.tone === 'amber',
+                                                'bg-red-500': tp.tone === 'red',
+                                                'bg-slate-400': !['emerald','cyan','amber','red'].includes(tp.tone)
+                                             }"
+                                             :style="'width: ' + Math.min(100, Math.max(0, tp.mastery_percent ?? 0)) + '%'"></div>
+                                    </div>
+                                    <div class="mt-3 grid gap-2 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+                                        <p><span class="font-black">Data:</span> <span x-text="tp.activity_data || '-'"></span></p>
+                                        <p><span class="font-black">Arahan Materi:</span> <span x-text="tp.material_direction || '-'"></span></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                     <template x-if="selectedQuizReview?.reflectionNote">
                         <div class="mt-5 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] p-4">
                             <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-2">Catatan Siswa</p>
@@ -1456,7 +1851,7 @@
         <div class="relative w-full max-w-lg bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Progres Global</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Progres Keseluruhan</h3>
                     <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Kalkulasi tingkat penyelesaian akhir.</p>
                 </div>
                 <button @click="showGlobalProgressModal = false" class="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white transition-colors p-2" title="Tutup">
@@ -1516,7 +1911,7 @@
         <div class="relative w-full max-w-xl bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 transition-colors shadow-2xl" @click.stop>
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Edit Data Siswa</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Perbarui Data Siswa</h3>
                 </div>
                 <button @click="showEdit = false" class="text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white transition bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 p-2 rounded-full" title="Tutup">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1578,12 +1973,12 @@
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Reset Password <span class="text-slate-400 dark:text-slate-500 font-normal">(Kosongkan jika tidak diubah)</span></label>
+                    <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 block transition-colors">Atur Ulang Kata Sandi <span class="text-slate-400 dark:text-slate-500 font-normal">(Kosongkan jika tidak diubah)</span></label>
                     <input type="password" name="password" placeholder="Masukkan password baru..." class="w-full bg-slate-50 dark:bg-[#1d1d1f] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-colors">
                 </div>
                 
                 <div class="flex justify-between items-center mt-10 pt-6 border-t border-slate-200 dark:border-white/5 transition-colors">
-                    <button type="button" @click="confirmDelete()" class="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10">
+                    <button type="button" @click="confirmHapus()" class="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10">
                         Hapus Akun
                     </button>
 
@@ -1704,6 +2099,60 @@
 
         document.addEventListener('DOMContentLoaded', renderCharts);
         window.addEventListener('theme-toggled', renderCharts);
+
+
+        // SCROLL HALUS KHUSUS HALAMAN DETAIL SISWA
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroller = document.querySelector('[data-smooth-student-scroll]');
+            const finePointer = window.matchMedia('(pointer: fine)').matches;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!scroller || !finePointer || reducedMotion) return;
+
+            let target = scroller.scrollTop;
+            let current = scroller.scrollTop;
+            let rafId = null;
+            let lastWheelAt = 0;
+
+            const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+            const maxScroll = () => scroller.scrollHeight - scroller.clientHeight;
+
+            const render = () => {
+                current += (target - current) * 0.18;
+                if (Math.abs(target - current) < 0.45) {
+                    current = target;
+                    scroller.scrollTop = current;
+                    rafId = null;
+                    scroller.classList.remove('is-wheel-smoothing');
+                    return;
+                }
+                scroller.scrollTop = current;
+                rafId = requestAnimationFrame(render);
+            };
+
+            scroller.addEventListener('wheel', (event) => {
+                const nativeZone = event.target.closest('[data-native-scroll], textarea, select, input, .overflow-auto, .overflow-x-auto');
+                if (nativeZone && nativeZone !== scroller) return;
+                if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+
+                event.preventDefault();
+                const now = performance.now();
+                if (now - lastWheelAt > 180) {
+                    current = scroller.scrollTop;
+                    target = current;
+                }
+                lastWheelAt = now;
+                target = clamp(target + event.deltaY, 0, maxScroll());
+                scroller.classList.add('is-wheel-smoothing');
+                if (!rafId) rafId = requestAnimationFrame(render);
+            }, { passive: false });
+
+            scroller.addEventListener('scroll', () => {
+                if (!rafId) {
+                    current = scroller.scrollTop;
+                    target = current;
+                }
+            }, { passive: true });
+        });
     </script>
 </body>
 </html>

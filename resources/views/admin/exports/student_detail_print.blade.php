@@ -28,7 +28,7 @@
         .badge-fail { color: #dc2626; font-weight: bold; }
         .badge-warn { color: #d97706; font-weight: bold; }
         
-        /* Progress Bar Sederhana */
+        /* Bilah Progres Sederhana */
         .progress-container { width: 100%; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 5px;}
         .progress-bar { height: 12px; background-color: #6366f1; text-align: center; color: white; font-size: 9px; line-height: 12px; font-weight: bold; }
 
@@ -62,7 +62,7 @@
         <tr>
             <th>Nama Lengkap</th>
             <td style="font-size: 14px; font-weight: bold; color: #0f141e;">{{ $user->name }}</td>
-            <th>Global Progress</th>
+            <th>Progres Keseluruhan</th>
             <td rowspan="2" style="vertical-align: top; text-align: center;">
                 <div style="font-size: 24px; font-weight: bold; color: #6366f1;">{{ $globalProgress }}%</div>
                 <div class="progress-container">
@@ -96,7 +96,7 @@
     </table>
 
     <div style="page-break-inside: avoid;">
-        <div class="section-title">B. Rincian Curriculum Tracker</div>
+        <div class="section-title">B. Rincian Pelacakan Kurikulum</div>
         
         @php
             // Struktur Kurikulum (Sama seperti di UI)
@@ -117,9 +117,9 @@
                     'id' => 2, 'number' => '02', 'title' => 'LAYOUTING',
                     'lab_id' => 2, 'lab_name' => 'Building Grid Layout', 'quiz_key' => '2',
                     'topics' => [
-                        ['name' => '2.1 Flexbox Architecture', 'ids' => range(29, 33)],
-                        ['name' => '2.2 Grid System Mastery', 'ids' => range(34, 40)],
-                        ['name' => '2.3 Layout Management', 'ids' => range(41, 45)],
+                        ['name' => '2.1 Arsitektur Flexbox', 'ids' => range(29, 33)],
+                        ['name' => '2.2 Penguasaan Sistem Grid', 'ids' => range(34, 40)],
+                        ['name' => '2.3 Pengelolaan Layout', 'ids' => range(41, 45)],
                     ]
                 ],
                 [
@@ -127,13 +127,13 @@
                     'lab_id' => 3, 'lab_name' => 'Styling Components', 'quiz_key' => '3',
                     'topics' => [
                         ['name' => '3.1 Tipografi & Font', 'ids' => range(46, 51)],
-                        ['name' => '3.2 Backgrounds', 'ids' => range(52, 55)],
+                        ['name' => '3.2 Latar Belakang', 'ids' => range(52, 55)],
                         ['name' => '3.3 Borders & Rings', 'ids' => range(56, 59)],
-                        ['name' => '3.4 Effects & Filters', 'ids' => range(60, 64)],
+                        ['name' => '3.4 Efek dan Filter', 'ids' => range(60, 64)],
                     ]
                 ]
             ];
-            $allChaptersPassed = true;
+            $allChaptersLulus = true;
         @endphp
 
         <table>
@@ -161,7 +161,7 @@
                             <td>Membaca: {{ $topic['name'] }}</td>
                             <td style="text-align: center;">
                                 @if($isTopicDone) <span class="badge-pass">Selesai</span>
-                                @elseif($partial > 0) <span class="badge-warn">In Progress</span>
+                                @elseif($partial > 0) <span class="badge-warn">Sedang Berjalan</span>
                                 @else <span style="color:#94a3b8">Belum</span> @endif
                             </td>
                             <td style="text-align: center;">{{ $partial }} / {{ $total }} Slide Dibaca</td>
@@ -172,7 +172,7 @@
                         $labDone = in_array($chapter['lab_id'], $passedLabIds);
                         $quizScore = $quizScoresMap['quiz_' . $chapter['quiz_key']] ?? null;
                         $quizPass = ($quizScore !== null && $quizScore >= 70);
-                        if(!$quizPass) $allChaptersPassed = false;
+                        if(!$quizPass) $allChaptersLulus = false;
                     @endphp
                     
                     <tr class="tracker-eval">

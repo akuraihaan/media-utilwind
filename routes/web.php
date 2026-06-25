@@ -19,6 +19,8 @@ use App\Http\Middleware\EnsureHasActiveClass; // <-- IMPORT MIDDLEWARE BARU
 // 1. PUBLIC ROUTES
 // ====================================================
 Route::get('/', fn () => view('landing'))->name('landing');
+Route::get('/learning-path', [CourseController::class, 'showSyllabus'])->name('courses.curriculum');
+Route::redirect('/courses/tailwind', '/learning-path')->name('courses.tailwind');
 
 // Authentication
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
@@ -67,10 +69,7 @@ Route::middleware(['auth'])->group(function () {
 // Siswa yang belum join kelas akan dilempar ke Dasbor.
 // ====================================================
 Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
-    
-    // Peta Konsep
-    Route::get('/learning-path', [CourseController::class, 'showSyllabus'])->name('courses.curriculum');
-    
+
     // Progress Utilities
     Route::post('/activity/complete', [ActivityProgressController::class, 'store'])->name('activity.complete');
     Route::post('/lesson/complete', [CourseController::class, 'completeLesson'])->name('lesson.complete');
@@ -86,10 +85,13 @@ Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
     Route::get('/courses/background-story', [CourseController::class, 'background'])->name('courses.latarbelakang');
     Route::get('/courses/implementation', [CourseController::class, 'implementation'])->name('courses.implementation');
     Route::get('/courses/advantages', [CourseController::class, 'advantages'])->name('courses.advantages');
+    Route::redirect('/courses/implementasi', '/courses/implementation')->name('courses.implementasi');
+    Route::redirect('/courses/keunggulan', '/courses/advantages')->name('courses.keunggulan');
 
 
     // BAB 2
     Route::get('/courses/layout-basics', [CourseController::class, 'layoutBasics'])->name('courses.layout-basics');
+    Route::get('/courses/layout-spacing', [CourseController::class, 'layoutSpacing'])->name('courses.layout-spacing');
     Route::get('/courses/flexbox', [CourseController::class, 'flexbox'])->name('courses.flexbox');
     Route::get('/courses/grid', [CourseController::class, 'grid'])->name('courses.grid');
     Route::redirect('/courses/layout-management', '/courses/grid')->name('courses.layout-mgmt');
@@ -98,14 +100,17 @@ Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
     // BAB 3
     Route::get('/courses/typography', [CourseController::class, 'typography'])->name('courses.typography');
     Route::get('/courses/backgrounds', [CourseController::class, 'backgrounds'])->name('courses.backgrounds');
+    Route::redirect('/courses/background', '/courses/backgrounds')->name('courses.background');
     Route::get('/courses/borders', [CourseController::class, 'borders'])->name('courses.borders');
     Route::get('/courses/effects', [CourseController::class, 'effects'])->name('courses.effects');
 
     // --- HANDS-ON LAB SYSTEM ---
     Route::get('/labs/start/{id}', [LabController::class, 'start'])->name('lab.start');
     Route::get('/labs/workspace/{id}', [LabController::class, 'workspace'])->name('lab.workspace');
+    Route::get('/labs/workspace/history/{historyId}', [LabController::class, 'workspaceHistory'])->name('lab.workspace.history');
     Route::post('/labs/session/{id}/check', [LabController::class, 'check'])->name('lab.check');
     Route::post('/labs/session/{id}/end', [LabController::class, 'end'])->name('lab.end');
+    Route::get('/labs/result/{historyId}', [LabController::class, 'result'])->name('lab.result');
 });
 
 // ====================================================
@@ -128,6 +133,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // 1. Dasbor Utama
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/guide', function () {
+        return view('admin.guide');
+    })->name('guide');
     
     // User Actions
     Route::post('/dashboard/user/store', [AdminDashboardController::class, 'storeUser'])->name('user.store');
@@ -135,6 +143,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard/user/export-csv', [AdminDashboardController::class, 'exportUsers'])->name('user.export.csv');
     Route::get('/dashboard/user/export-pdf', [AdminDashboardController::class, 'exportPdf'])->name('user.export.pdf');
     
+    Route::get('/students', [AdminDashboardController::class, 'students'])->name('students.index');
     Route::get('/student/{id}', [AdminDashboardController::class, 'studentDetail'])->name('student.detail');
     Route::put('/student/{id}/update', [AdminDashboardController::class, 'updateStudent'])->name('student.update');
     Route::get('/student/{id}/export/csv', [AdminDashboardController::class, 'exportStudentCsv'])->name('student.export.csv');
@@ -147,6 +156,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // 2. Analitik & Manajemen Kuis
     Route::get('/analytics/questions', [AdminDashboardController::class, 'questionAnalytics'])->name('analytics.questions');
+    Route::get('/learning-outcomes', [AdminDashboardController::class, 'learningOutcomes'])->name('learning-outcomes.index');
     Route::get('/questions/create', [AdminDashboardController::class, 'createQuestion'])->name('questions.create');
     Route::post('/questions/store', [AdminDashboardController::class, 'storeQuestion'])->name('questions.store');
     Route::post('/questions/update/{id}', [AdminDashboardController::class, 'updateQuestion'])->name('questions.update');
@@ -166,6 +176,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/analytics/lab/{labId?}', [LabController::class, 'analytics'])->name('lab.analytics');
     Route::get('/analytics/student/{userId}', [LabController::class, 'studentAnalytics'])->name('student.analytics');
+    Route::get('/labs/results/{historyId}', [LabController::class, 'adminResult'])->name('labs.results.show');
 
     // 4. CLASS & TOKEN MANAGEMENT
     Route::get('/classes', [ClassManagementController::class, 'index'])->name('classes.index');

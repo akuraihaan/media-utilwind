@@ -33,4 +33,9 @@ class QuizAttemptAnswer extends Model
     public function attempt() {
         return $this->belongsTo(QuizAttempt::class, 'quiz_attempt_id');
     }
+
+    public function option()
+    {
+        return $this->belongsTo(QuizOption::class, 'quiz_option_id');
+    }
 }

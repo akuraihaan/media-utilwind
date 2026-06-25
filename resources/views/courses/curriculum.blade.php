@@ -23,6 +23,12 @@
     $passedLabsMap = $passedLabsMap ?? [];
     $progressPercent = $progressPercent ?? 0;
     $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+    $canAccessLearning = $canAccessLearning ?? $isAdmin;
+    $accessRequirement = $accessRequirement ?? [
+        'title' => 'Akses Materi Terkunci',
+        'message' => 'Silabus dapat dibaca bebas, tetapi materi, lab, dan evaluasi membutuhkan akun belajar dan akses kelas aktif.',
+        'action' => 'Masuk atau gabung kelas untuk membuka materi.',
+    ];
 
     $chapters = [
         [
@@ -60,7 +66,7 @@
             'quiz_id' => 2,
             'quiz_key_db' => 'quiz_2',
             'topics' => [
-                ['code' => '2.1', 'name' => 'Dasar Layout dan Ruang', 'route' => ['courses.layout-spacing', 'courses.layout-basics'], 'time' => '20 min', 'range' => '26-30'],
+                ['code' => '2.1', 'name' => 'Dasar Layout dan Ruang', 'route' => ['courses.layout-basics', 'courses.layout-spacing'], 'time' => '20 min', 'range' => '26-30'],
                 ['code' => '2.2', 'name' => 'Flexbox', 'route' => 'courses.flexbox', 'time' => '25 min', 'range' => '31-35'],
                 ['code' => '2.3', 'name' => 'Grid', 'route' => 'courses.grid', 'time' => '25 min', 'range' => '36-40'],
                 ['code' => '2.4', 'name' => 'Responsif', 'route' => 'courses.responsive', 'time' => '20 min', 'range' => '41-45'],
@@ -216,6 +222,20 @@
                     <div class="inline-block mt-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">
                         Mode Admin : Semua akses terbuka
                     </div>
+                @elseif(!$canAccessLearning)
+                    <div class="mt-4 max-w-2xl rounded-2xl border border-cyan-200/80 dark:border-cyan-500/20 bg-white/70 dark:bg-cyan-500/10 px-5 py-4 shadow-sm backdrop-blur-md">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-0.5 w-9 h-9 rounded-xl bg-cyan-100 dark:bg-cyan-500/15 border border-cyan-200 dark:border-cyan-400/20 flex items-center justify-center text-cyan-700 dark:text-cyan-300 font-black shrink-0">
+                                i
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-widest text-cyan-700 dark:text-cyan-300">Silabus Publik</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+                                    {{ $accessRequirement['message'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 @endif
             </div>
 
@@ -312,7 +332,7 @@
                                 <div class="relative pl-6 py-2.5 group/lesson">
                                     <div class="absolute left-[3px] top-[18px] w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a] z-10 transition-all duration-300 {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 shadow-sm dark:shadow-[0_0_10px_#10b981]' : ($isAccessible ? $chapterTheme['dot'] . ' animate-pulse' : 'bg-slate-300 dark:bg-slate-700 border-slate-300 dark:border-slate-700') }}"></div>
 
-                                    @if($isAccessible)
+                                    @if($isAccessible && $canAccessLearning)
                                         <a href="{{ $topicUrl }}" class="flex items-center justify-between group-hover/lesson:translate-x-1 transition-transform duration-300">
                                             <div>
                                                 <div class="text-sm font-bold transition-colors {{ $isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-200 group-hover/lesson:text-slate-900 dark:group-hover/lesson:text-white' }}">
@@ -330,6 +350,20 @@
                                                 <svg class="w-4 h-4 text-slate-300 dark:text-white/20 group-hover/lesson:text-slate-500 dark:group-hover/lesson:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                             @endif
                                         </a>
+                                    @elseif($isAccessible)
+                                        <button type="button" onclick="openAccessModal()" class="w-full text-left flex items-center justify-between group-hover/lesson:translate-x-1 transition-transform duration-300">
+                                            <div>
+                                                <div class="text-sm font-bold transition-colors text-slate-700 dark:text-slate-200 group-hover/lesson:text-slate-900 dark:group-hover/lesson:text-white">
+                                                    <span class="font-mono text-[10px] opacity-60 dark:opacity-40 mr-2">{{ $topic['code'] }}</span>
+                                                    {{ $topic['name'] }}
+                                                </div>
+                                                <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 ml-8 transition-colors">{{ $topic['time'] }} · Lesson {{ $topic['range'] }}</div>
+                                            </div>
+
+                                            <div class="bg-cyan-50 dark:bg-cyan-500/10 px-2 py-1 rounded-full border border-cyan-200 dark:border-cyan-500/20 text-[9px] font-black text-cyan-700 dark:text-cyan-300 uppercase tracking-widest">
+                                                Login
+                                            </div>
+                                        </button>
                                     @else
                                         <div class="flex items-center justify-between opacity-50 dark:opacity-40 cursor-not-allowed">
                                             <div>
@@ -372,7 +406,7 @@
                     @endphp
 
                     <div class="px-6 pb-2">
-                        <button type="button" onclick="{{ $canAccessLab ? "location.href='" . e($labLink) . "'" : 'return false;' }}" class="w-full flex items-center gap-4 p-3 rounded-xl border transition-all duration-300 group/lab {{ $labBorder }}">
+                        <button type="button" onclick="{{ ($canAccessLab && $canAccessLearning) ? "location.href='" . e($labLink) . "'" : ($canAccessLab ? 'openAccessModal()' : 'return false;') }}" class="w-full flex items-center gap-4 p-3 rounded-xl border transition-all duration-300 group/lab {{ $labBorder }}">
                             <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shadow-md transition-transform group-hover/lab:scale-105 {{ $labIconBg }}">
                                 {{ $labIcon }}
                             </div>
@@ -397,11 +431,16 @@
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 <span>Bab Terselesaikan</span>
                             </div>
-                        @elseif($canTakeQuiz)
+                        @elseif($canTakeQuiz && $canAccessLearning)
                             <a href="{{ $routeUrl('quiz.intro', ['chapterId' => $chapter['quiz_id']]) }}" class="group/btn w-full py-3.5 rounded-xl bg-gradient-to-r {{ $chapterTheme['button'] }} hover:scale-[1.02] active:scale-[0.98] text-white text-xs font-bold uppercase tracking-widest shadow-md dark:shadow-lg transition-all flex justify-center items-center gap-2">
                                 <span>Mulai Kuis</span>
                                 <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             </a>
+                        @elseif($canTakeQuiz)
+                            <button type="button" onclick="openAccessModal()" class="group/btn w-full py-3.5 rounded-xl bg-gradient-to-r {{ $chapterTheme['button'] }} hover:scale-[1.02] active:scale-[0.98] text-white text-xs font-bold uppercase tracking-widest shadow-md dark:shadow-lg transition-all flex justify-center items-center gap-2">
+                                <span>Buka Akses Kuis</span>
+                                <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                            </button>
                         @else
                             <button disabled class="w-full py-3.5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest flex justify-center items-center gap-2 cursor-not-allowed transition-colors">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -448,6 +487,60 @@
                         <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Penguat konsep struktur HTML, CSS dasar, box model, dan styling antarmuka.</p>
                     </div>
                 </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="accessModal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" onclick="closeAccessModal()"></div>
+
+    <div id="accessContent" class="relative w-full max-w-lg transform scale-95 translate-y-4 transition-all duration-300 ease-out">
+        <div class="relative glass-card rounded-[2rem] p-8 md:p-9 border border-cyan-200 dark:border-cyan-500/20 shadow-2xl overflow-hidden">
+            <div class="absolute -top-20 -right-16 w-56 h-56 bg-cyan-300/25 dark:bg-cyan-500/10 rounded-full blur-[70px] pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-16 w-56 h-56 bg-indigo-300/20 dark:bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+            <button onclick="closeAccessModal()" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <div class="relative z-10">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/20 flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.657 0 3-1.343 3-3V7a3 3 0 10-6 0v1c0 1.657 1.343 3 3 3zm-7 2.5A2.5 2.5 0 017.5 11h9a2.5 2.5 0 012.5 2.5v4A2.5 2.5 0 0116.5 20h-9A2.5 2.5 0 015 17.5v-4z"/></svg>
+                </div>
+
+                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300 mb-2">Akses Pembelajaran</p>
+                <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                    {{ $accessRequirement['title'] }}
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-4">
+                    {{ $accessRequirement['message'] }}
+                </p>
+
+                <div class="mt-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] p-4">
+                    <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Yang perlu dilakukan</p>
+                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">{{ $accessRequirement['action'] }}</p>
+                </div>
+
+                <div class="mt-7 flex flex-col sm:flex-row gap-3">
+                    @guest
+                        <a href="{{ route('login') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 px-5 py-3 text-sm font-black text-white dark:text-slate-950 transition-colors">
+                            Login
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                        <a href="{{ route('register') }}" class="flex-1 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-5 py-3 text-sm font-black text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">
+                            Buat Akun
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 px-5 py-3 text-sm font-black text-white dark:text-slate-950 transition-colors">
+                            Buka Dasbor
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    @endguest
+                    <button type="button" onclick="closeAccessModal()" class="flex-1 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-5 py-3 text-sm font-black text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">
+                        Tetap Lihat Silabus
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -514,6 +607,32 @@
 </div>
 
 <script>
+    function openAccessModal() {
+        const modal = document.getElementById('accessModal');
+        const content = document.getElementById('accessContent');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95', 'translate-y-4');
+        }, 10);
+    }
+
+    function closeAccessModal() {
+        const modal = document.getElementById('accessModal');
+        const content = document.getElementById('accessContent');
+
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95', 'translate-y-4');
+
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
     function openInfoModal() {
         const modal = document.getElementById('infoModal');
         const content = document.getElementById('infoContent');

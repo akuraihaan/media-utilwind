@@ -24,7 +24,7 @@
   <td>{{ $c->title }}</td>
   <td class="flex gap-3">
     @if(\Illuminate\Support\Facades\Route::has('admin.courses.edit'))
-      <a href="{{ route('admin.courses.edit',$c) }}">Edit</a>
+      <a href="{{ route('admin.courses.edit',$c) }}">Ubah</a>
     @endif
     @if(\Illuminate\Support\Facades\Route::has('admin.courses.destroy'))
       <form method="POST" action="{{ route('admin.courses.destroy',$c) }}">

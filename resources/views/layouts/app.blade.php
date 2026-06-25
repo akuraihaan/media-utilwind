@@ -85,7 +85,7 @@
                         Dashboard
                     </a>
 
-                    <a href="{{ route('courses.tailwind') }}" class="hover:text-primary transition">
+                    <a href="{{ route('courses.curriculum') }}" class="hover:text-primary transition">
                         Course
                     </a>
 
