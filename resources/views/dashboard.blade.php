@@ -702,10 +702,10 @@
                 {{-- =========================================================
                      2. GRID STATISTIK AKADEMIK (ULTIMATE CARDS)
                      ========================================================= --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 reveal-up delay-300">
+                <div class="dashboard-metrics-bento grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-12 xl:gap-6 reveal-up delay-300">
                     
                     {{-- CARD 1: MATERI --}}
-                    <div class="academic-card group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-fuchsia-300 dark:hover:border-fuchsia-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showLessonModal = true">
+                    <div class="academic-card bento-card bento-metric bento-metric--lesson group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-fuchsia-300 dark:hover:border-fuchsia-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showLessonModal = true">
                         <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-50/50 dark:from-fuchsia-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none rounded-[1.5rem]"></div>
                         <div class="relative z-10">
                             <div class="flex justify-between items-start mb-2">
@@ -731,7 +731,7 @@
                     </div>
 
                     {{-- CARD 2: HANDS-ON LABS --}}
-                    <div class="academic-card group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-blue-300 dark:hover:border-blue-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showLabModal = true">
+                    <div class="academic-card bento-card bento-metric bento-metric--lab group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-blue-300 dark:hover:border-blue-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showLabModal = true">
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 dark:from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none rounded-[1.5rem]"></div>
                         <div class="relative z-10">
                             <div class="flex justify-between items-start mb-2">
@@ -757,7 +757,7 @@
                     </div>
 
                     {{-- CARD 3: RATA-RATA KUIS --}}
-                    <div class="academic-card group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-cyan-300 dark:hover:border-cyan-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showQuizModal = true">
+                    <div class="academic-card bento-card bento-metric bento-metric--quiz group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-cyan-300 dark:hover:border-cyan-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showQuizModal = true">
                         <div class="absolute inset-0 bg-gradient-to-br from-cyan-50/50 dark:from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none rounded-[1.5rem]"></div>
                         <div class="relative z-10 h-full flex flex-col justify-between">
                             <div>
@@ -782,7 +782,7 @@
                     </div>
 
                     {{-- CARD 4: BAB LULUS --}}
-                    <div class="academic-card group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-emerald-300 dark:hover:border-emerald-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showChapterModal = true">
+                    <div class="academic-card bento-card bento-metric bento-metric--chapter group bg-white dark:bg-[#0f141e] rounded-[1.5rem] p-5 relative flex flex-col justify-between border border-slate-200/80 dark:border-white/[0.05] hover:border-emerald-300 dark:hover:border-emerald-500/30 shadow-sm hover:shadow-md dark:shadow-none transition-all duration-300 cursor-pointer" @click="showChapterModal = true">
                         <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none rounded-[1.5rem]"></div>
                         <div class="relative z-10 h-full flex flex-col justify-between">
                             <div>
@@ -811,13 +811,13 @@
                 {{-- =========================================================
                      3. CHART & LOGS PURE ACADEMIC
                      ========================================================= --}}
-                <div class="grid lg:grid-cols-3 gap-6 md:gap-8 reveal-up delay-400 mt-2">
+                <div class="academic-bento-grid grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-12 reveal-up delay-400 mt-2">
                     
                     {{-- KIRI: GRAFIK & TABEL (2 Kolom) --}}
-                    <div class="lg:col-span-2 space-y-6 md:space-y-8">
+                    <div class="bento-main-column lg:col-span-2 space-y-6 md:space-y-8">
                         
                         {{-- GRAFIK PERKEMBANGAN NILAI KUIS DAN LAB - Data Valid + Adaptasi Chart ZIP --}}
-                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] overflow-hidden shadow-sm dark:shadow-none transition-colors duration-500"
+                        <div class="academic-card bento-card bento-chart-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] overflow-hidden shadow-sm dark:shadow-none transition-colors duration-500"
                              x-data="{ chartView: 'all', chartType: 'line' }">
 
                             {{-- Header chart mengikuti adaptasi template ZIP/Notus, warna tetap desain Utilwind --}}
@@ -976,7 +976,7 @@
                         </div>
 
                         {{-- TABEL HISTORY EVALUASI --}}
-                        <div class="rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 flex flex-col h-[400px] shadow-sm dark:shadow-none transition-colors duration-500" x-data="{ filterTable: 'all' }">
+                        <div class="academic-card bento-card bento-history-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 flex flex-col h-[400px] shadow-sm dark:shadow-none transition-colors duration-500" x-data="{ filterTable: 'all' }">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 shrink-0 border-b border-slate-100 dark:border-white/[0.05] pb-4 transition-colors">
                                 <h3 class="text-[15px] md:text-[16px] font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                                     Riwayat Evaluasi
@@ -1113,10 +1113,10 @@
                     </div>
 
                     {{-- KANAN: AKTIVITAS PIE CHART & LIVE LOG (1 Kolom) --}}
-                    <div class="lg:col-span-1 space-y-6 md:space-y-8">
+                    <div class="bento-side-column lg:col-span-1 space-y-6 md:space-y-8">
 
                         {{-- Rekomendasi Belajar Otomatis --}}
-                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500">
+                        <div class="academic-card bento-card bento-recommendation-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500">
                             <div class="flex items-start justify-between gap-3 mb-5">
                                 <div>
                                     <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-1">Learning Analytics</p>
@@ -1167,7 +1167,7 @@
                         </div>
                         
                         {{-- Komposisi Aktivitas --}}
-                        <div class="academic-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500 relative">
+                        <div class="academic-card bento-card bento-activity-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 shadow-sm dark:shadow-none transition-colors duration-500 relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-[14px] md:text-[15px] font-bold text-slate-900 dark:text-white transition-colors">
                                     Komposisi Aktivitas
@@ -1199,7 +1199,7 @@
                         </div>
 
                         {{-- Log Real-time Aktivitas --}}
-                        <div class="rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 h-[400px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-500" x-data="{ logFilter: 'all' }">
+                        <div class="academic-card bento-card bento-log-card rounded-[1.5rem] bg-white dark:bg-[#0f141e] border border-slate-200/80 dark:border-white/[0.05] p-5 md:p-6 h-[400px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-500" x-data="{ logFilter: 'all' }">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-slate-100 dark:border-white/[0.05] pb-4 shrink-0 gap-3 transition-colors">
                                 <h3 class="text-[14px] md:text-[15px] font-bold text-slate-900 dark:text-white transition-colors">
                                     Log Terkini
@@ -1219,7 +1219,7 @@
                 </div>
 
                 <div class="border-t border-slate-200 dark:border-white/5 pt-6 mt-8 text-center transition-colors">
-                    <p class="text-slate-500 dark:text-slate-500 text-[11px] font-medium">&copy; {{ date('Y') }} Utilwind CSS Academic Platform</p>
+                    {{-- <p class="text-slate-500 dark:text-slate-500 text-[11px] font-medium">&copy; {{ date('Y') }} Utilwind CSS Academic Platform</p> --}}
                 </div>
             </div>
 
@@ -1627,6 +1627,149 @@
     .tooltip-fuchsia .tooltip-trigger { background-color: #d946ef; box-shadow: 0 0 10px rgba(217,70,239,0.3); } .tooltip-fuchsia .tooltip-trigger:hover { background-color: #e879f9; box-shadow: 0 0 15px rgba(217,70,239,0.6); } 
     .tooltip-cyan .tooltip-trigger { background-color: #06b6d4; box-shadow: 0 0 10px rgba(6,182,212,0.3); } .tooltip-cyan .tooltip-trigger:hover { background-color: #22d3ee; box-shadow: 0 0 15px rgba(6,182,212,0.6); } 
     .tooltip-emerald .tooltip-trigger { background-color: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.3); } .tooltip-emerald .tooltip-trigger:hover { background-color: #34d399; box-shadow: 0 0 15px rgba(16,185,129,0.6); } 
+
+    /* ======================================================
+       BENTO GRID AKADEMIK
+       Struktur data, modal, filter, grafik, dan log tetap sama.
+       ====================================================== */
+    .dashboard-metrics-bento,
+    .academic-bento-grid {
+        align-items: start;
+    }
+
+    .bento-card {
+        min-width: 0;
+        isolation: isolate;
+        transform: translateZ(0);
+        will-change: transform;
+    }
+
+    .bento-metric {
+        min-height: 172px;
+    }
+
+    .bento-chart-card,
+    .bento-history-card,
+    .bento-recommendation-card,
+    .bento-activity-card,
+    .bento-log-card {
+        overflow: hidden !important;
+    }
+
+    .bento-chart-card {
+        min-height: 540px;
+    }
+
+    .bento-recommendation-card {
+        min-height: 100%;
+    }
+
+    .bento-activity-card {
+        min-height: 318px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .bento-card {
+            transition: transform 220ms cubic-bezier(.22, 1, .36, 1), border-color 220ms ease, box-shadow 220ms ease;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(6, 182, 212, .28);
+            box-shadow: 0 16px 36px -24px rgba(15, 23, 42, .30);
+        }
+
+        .dark .bento-card:hover {
+            border-color: rgba(103, 232, 249, .22);
+            box-shadow: 0 18px 44px -26px rgba(0, 0, 0, .78);
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .dashboard-metrics-bento {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            grid-auto-rows: minmax(172px, auto);
+        }
+
+        .bento-metric--lesson,
+        .bento-metric--lab {
+            grid-column: span 3 / span 3;
+        }
+
+        .bento-metric--quiz {
+            grid-column: span 4 / span 4;
+        }
+
+        .bento-metric--chapter {
+            grid-column: span 2 / span 2;
+        }
+
+        .academic-bento-grid {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            grid-auto-flow: row dense;
+            align-items: start;
+        }
+
+        .bento-main-column,
+        .bento-side-column {
+            display: contents;
+        }
+
+        .bento-main-column > *,
+        .bento-side-column > * {
+            margin-top: 0 !important;
+        }
+
+        .bento-chart-card,
+        .bento-history-card {
+            grid-column: span 8 / span 8;
+        }
+
+        .bento-recommendation-card,
+        .bento-activity-card {
+            grid-column: span 4 / span 4;
+        }
+
+        .bento-log-card {
+            grid-column: 1 / -1;
+            min-height: 390px;
+        }
+
+        .bento-chart-card {
+            min-height: 548px;
+        }
+
+        .bento-history-card {
+            min-height: 400px;
+        }
+
+        .bento-recommendation-card {
+            min-height: 548px;
+        }
+
+        .bento-activity-card {
+            min-height: 400px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .bento-metric {
+            min-height: 156px;
+        }
+
+        .bento-chart-card {
+            min-height: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .bento-card,
+        .bento-card:hover {
+            transform: none !important;
+            transition: none !important;
+        }
+    }
+
 </style>
 
 {{-- ======================================================================

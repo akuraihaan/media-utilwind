@@ -89,10 +89,8 @@
         .score-ring { --progress:0; width:154px; height:154px; border-radius:50%; padding:10px; display:grid; place-items:center; background:conic-gradient(var(--ring-color) calc(var(--progress) * 1%), var(--ring-track) 0); box-shadow:inset 0 0 0 1px var(--ring-line), 0 18px 34px rgba(15,23,42,.10); }
         .score-ring__inner { width:100%; height:100%; display:grid; place-items:center; border-radius:50%; text-align:center; background:var(--surface-solid); border:1px solid var(--line); }
         .metric-tile { background:var(--surface-muted); border:1px solid var(--line); transition:transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
-        .metric-tile:hover { transform:translateY(-2px); border-color:var(--line-strong); box-shadow:var(--shadow-soft); }
         .soft-panel { background:var(--surface-muted); border:1px solid var(--line); }
         .review-item { border-bottom:1px solid var(--line); transition:background-color 180ms ease; }
-        .review-item:hover { background:color-mix(in srgb, var(--surface-muted) 88%, transparent); }
         .review-item:last-child { border-bottom:0; }
         .answer-panel { background:var(--surface-muted); border:1px solid var(--line); }
         .answer-correct { background:rgba(16,185,129,.06); border-color:rgba(16,185,129,.28); }
@@ -100,19 +98,183 @@
         .outcome-card { position:relative; overflow:hidden; background:var(--surface-muted); border:1px solid var(--line); }
         .outcome-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--outcome-color, var(--accent)); }
         .action-primary { background:var(--accent); color:white; box-shadow:0 12px 24px color-mix(in srgb, var(--accent) 25%, transparent); }
-        .action-primary:hover { background:var(--accent-strong); transform:translateY(-1px); }
         .action-secondary { background:var(--surface-solid); color:var(--text); border:1px solid var(--line-strong); }
-        .action-secondary:hover { color:var(--accent-strong); border-color:var(--accent-line); transform:translateY(-1px); }
         .progress-track { background:color-mix(in srgb, var(--line) 72%, transparent); }
         .progress-fill { background:linear-gradient(90deg, var(--accent), #6366f1); }
         .custom-scrollbar::-webkit-scrollbar { width:8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background:transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background:color-mix(in srgb, var(--subtle) 42%, transparent); border-radius:999px; }
         .theme-ready, .theme-ready * { transition:background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
-        @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } .theme-ready, .theme-ready *, .metric-tile, .review-item, .action-primary, .action-secondary { transition:none !important; } }
+
+        @property --progress {
+            syntax: '<number>';
+            inherits: false;
+            initial-value: 0;
+        }
+
+        /* ==========================================================
+           POLA INTERAKSI DIREKTORI — HASIL EVALUASI
+           Satu host menangani gulir halaman. Panel jawaban memakai
+           gulir mandiri dan menyerahkan kembali gulir ke halaman saat
+           sudah mencapai batas atas atau bawah.
+           ========================================================== */
+        :root {
+            --result-ease: cubic-bezier(.22, .61, .36, 1);
+            --result-soft-ease: cubic-bezier(.16, 1, .3, 1);
+            --result-motion-fast: 180ms;
+            --result-motion-base: 220ms;
+        }
+
+        html, body { height: 100%; scroll-behavior: auto; }
+        body { overscroll-behavior: none; }
+
+        .page-shell {
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .smooth-result-scroll {
+            scroll-behavior: auto;
+            scroll-padding: 1.25rem 0 3rem;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            scrollbar-gutter: stable both-edges;
+            scrollbar-width: thin;
+            scrollbar-color: color-mix(in srgb, var(--accent) 34%, transparent) transparent;
+        }
+        .smooth-result-scroll:focus { outline: none; }
+        .smooth-result-scroll.is-smooth-scrolling { cursor: default; }
+
+        [data-native-scroll] {
+            scroll-behavior: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: color-mix(in srgb, var(--subtle) 42%, transparent) transparent;
+        }
+        .review-scroll {
+            scroll-padding-block: 1rem;
+            overscroll-behavior-y: contain;
+        }
+        #reviewAnswers { scroll-margin-block: 1.25rem; }
+
+        [data-native-scroll]::-webkit-scrollbar,
+        .smooth-result-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        [data-native-scroll]::-webkit-scrollbar-track,
+        .smooth-result-scroll::-webkit-scrollbar-track { background: transparent; }
+        [data-native-scroll]::-webkit-scrollbar-thumb,
+        .smooth-result-scroll::-webkit-scrollbar-thumb {
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--subtle) 42%, transparent);
+            background-clip: padding-box;
+            transition: background-color var(--result-motion-fast) var(--result-ease);
+        }
+        [data-native-scroll]::-webkit-scrollbar-thumb:hover,
+        .smooth-result-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: color-mix(in srgb, var(--accent) 58%, transparent);
+        }
+
+        .ui-card,
+        .ui-card-strong,
+        .metric-tile,
+        .outcome-card,
+        .review-item,
+        .priority-card,
+        .action-primary,
+        .action-secondary,
+        .score-ring {
+            transition-timing-function: var(--result-ease);
+        }
+
+        .metric-tile,
+        .outcome-card,
+        .priority-card {
+            transition-property: transform, border-color, box-shadow, background-color;
+            transition-duration: var(--result-motion-base);
+        }
+        .review-item {
+            transition-property: background-color, box-shadow;
+            transition-duration: 200ms;
+        }
+        .action-primary,
+        .action-secondary {
+            transition-property: transform, background-color, color, border-color, box-shadow;
+            transition-duration: var(--result-motion-fast);
+        }
+        .score-ring {
+            transition: transform var(--result-motion-base) var(--result-ease), box-shadow var(--result-motion-base) var(--result-ease);
+        }
+        .progress-fill {
+            width: 0;
+            transition: width 900ms var(--result-soft-ease);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .metric-tile,
+            .outcome-card,
+            .priority-card,
+            .score-ring,
+            .action-primary,
+            .action-secondary { will-change: transform; }
+
+            .metric-tile:hover {
+                transform: translateY(-2px);
+                border-color: var(--line-strong);
+                box-shadow: var(--shadow-soft);
+            }
+            .outcome-card:hover {
+                transform: translateY(-2px);
+                border-color: var(--line-strong);
+                box-shadow: 0 14px 28px rgba(15,23,42,.06);
+            }
+            .dark .outcome-card:hover { box-shadow: 0 14px 28px rgba(0,0,0,.20); }
+            .priority-card:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 20px rgba(15,23,42,.05);
+            }
+            .review-item:hover {
+                background: color-mix(in srgb, var(--surface-muted) 88%, transparent);
+                box-shadow: inset 3px 0 0 color-mix(in srgb, var(--accent) 52%, transparent);
+            }
+            .score-ring:hover {
+                transform: scale(1.018);
+                box-shadow: inset 0 0 0 1px var(--ring-line), 0 20px 38px rgba(15,23,42,.13);
+            }
+            .action-primary:hover {
+                background: var(--accent-strong);
+                transform: translateY(-1px);
+            }
+            .action-secondary:hover {
+                color: var(--accent-strong);
+                border-color: var(--accent-line);
+                transform: translateY(-1px);
+            }
+        }
+        .action-primary:active,
+        .action-secondary:active { transform: translateY(0) scale(.985); }
+
+        @media (hover: none), (pointer: coarse) {
+            .metric-tile:hover,
+            .outcome-card:hover,
+            .priority-card:hover,
+            .score-ring:hover { transform: none; }
+            .review-item:hover { background: transparent; box-shadow: none; }
+            .action-primary:hover { background: var(--accent); transform: none; }
+            .action-secondary:hover { color: var(--text); border-color: var(--line-strong); transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html, .smooth-result-scroll, [data-native-scroll] { scroll-behavior: auto; }
+            .theme-ready, .theme-ready *, .metric-tile, .review-item, .outcome-card, .priority-card, .action-primary, .action-secondary, .score-ring, .progress-fill { transition: none !important; }
+        }
     </style>
 </head>
-<body class="min-h-screen selection:bg-cyan-200/70 dark:selection:bg-cyan-300/20">
+<body class="h-full overflow-hidden selection:bg-cyan-200/70 dark:selection:bg-cyan-300/20">
 @php
     $score = (int) $attempt->score;
     $passingScore = 70;
@@ -163,8 +325,8 @@
     ];
 @endphp
 
-<div class="page-shell min-h-screen">
-    <main class="mx-auto w-full max-w-[1320px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+<div class="page-shell h-full min-h-0">
+    <main data-smooth-scroll class="smooth-result-scroll custom-scrollbar mx-auto h-full w-full max-w-[1320px] overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10" tabindex="-1">
         <header class="ui-card-strong overflow-hidden rounded-[28px]">
             <div class="flex flex-col gap-6 px-5 py-6 sm:px-7 lg:flex-row lg:items-center lg:justify-between lg:px-8 lg:py-7">
                 <div class="min-w-0">
@@ -205,7 +367,7 @@
         <section class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.42fr)_minmax(370px,.58fr)]">
             <article class="ui-card-strong rounded-[28px] p-5 sm:p-6 lg:p-7">
                 <div class="grid items-center gap-6 sm:grid-cols-[154px_minmax(0,1fr)]">
-                    <div class="score-ring mx-auto sm:mx-0" style="--progress: {{ min(100, max(0, $score)) }}; --ring-color: {{ $scoreStyle['ring'] }}; --ring-track: {{ $scoreStyle['track'] }}; --ring-line: {{ $scoreStyle['line'] }};">
+                    <div class="score-ring js-score-ring mx-auto sm:mx-0" data-progress="{{ min(100, max(0, $score)) }}" style="--progress: 0; --ring-color: {{ $scoreStyle['ring'] }}; --ring-track: {{ $scoreStyle['track'] }}; --ring-line: {{ $scoreStyle['line'] }};">
                         <div class="score-ring__inner"><span class="font-mono text-4xl font-medium {{ $scoreStyle['text'] }}">{{ $score }}</span><span class="subtle -mt-1 text-[10px] font-bold uppercase tracking-[.16em]">dari 100</span></div>
                     </div>
                     <div class="min-w-0 text-center sm:text-left">
@@ -230,7 +392,7 @@
                     <div class="soft-panel flex items-center justify-between rounded-xl px-4 py-3"><span class="muted text-sm">Ditandai ragu-ragu</span><span class="section-heading text-sm font-extrabold">{{ $metrics['flagged_count'] }}</span></div>
                     <div class="soft-panel flex items-center justify-between rounded-xl px-4 py-3"><span class="muted text-sm">Perubahan jawaban</span><span class="section-heading text-sm font-extrabold">{{ $metrics['answer_change_count'] }}</span></div>
                 </div>
-                <div class="mt-5"><div class="mb-2 flex items-center justify-between"><span class="subtle text-[10px] font-extrabold uppercase tracking-[.14em]">Kelengkapan jawaban</span><span class="text-xs font-extrabold text-cyan-700 dark:text-cyan-200">{{ $metrics['completion_percent'] }}%</span></div><div class="progress-track h-2 overflow-hidden rounded-full"><div class="progress-fill h-full rounded-full" style="width: {{ min(100, max(0, $metrics['completion_percent'])) }}%"></div></div></div>
+                <div class="mt-5"><div class="mb-2 flex items-center justify-between"><span class="subtle text-[10px] font-extrabold uppercase tracking-[.14em]">Kelengkapan jawaban</span><span class="text-xs font-extrabold text-cyan-700 dark:text-cyan-200">{{ $metrics['completion_percent'] }}%</span></div><div class="progress-track h-2 overflow-hidden rounded-full"><div class="progress-fill js-progress h-full rounded-full" data-progress="{{ min(100, max(0, $metrics['completion_percent'])) }}" style="width: 0%"></div></div></div>
             </aside>
         </section>
 
@@ -258,7 +420,7 @@
         <section class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
             <section id="reviewAnswers" class="ui-card overflow-hidden rounded-[28px]">
                 <div class="flex flex-col gap-3 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6" style="border-color:var(--line)"><div><p class="eyebrow text-[10px] font-extrabold uppercase">Tinjauan jawaban</p><h2 class="section-heading mt-1 text-xl font-extrabold">Lihat kembali setiap jawaban</h2><p class="muted mt-1 text-xs leading-5">Bandingkan jawaban Anda dengan kunci untuk menentukan bagian yang perlu diulang.</p></div><span class="soft-panel shrink-0 rounded-lg px-3 py-2 font-mono text-[11px] font-medium">{{ $metrics['flagged_count'] }} ragu / {{ $metrics['unanswered_count'] }} kosong</span></div>
-                <div class="custom-scrollbar max-h-[760px] overflow-y-auto">
+                <div data-native-scroll tabindex="0" aria-label="Daftar tinjauan jawaban" class="review-scroll custom-scrollbar max-h-[min(760px,calc(100dvh-12rem))] overflow-y-auto">
                     @foreach($reviewItems as $item)
                         @php
                             $interactionType = $item['question']->interaction_type ?? 'multiple_choice';
@@ -282,18 +444,197 @@
 
             <aside class="space-y-5">
                 <section class="ui-card rounded-[24px] p-5"><p class="eyebrow text-[10px] font-extrabold uppercase">Ringkasan materi</p><h2 class="section-heading mt-1 text-lg font-extrabold">{{ $summary['title'] ?? 'Materi Tailwind CSS' }}</h2>@if(!empty($summary['subtitle']))<span class="mt-3 inline-flex rounded-lg border px-2.5 py-1 text-[10px] font-extrabold text-cyan-700 dark:text-cyan-200" style="border-color:var(--accent-line);background:var(--accent-soft)">{{ $summary['subtitle'] }}</span>@endif<p class="muted mt-4 text-sm leading-6">{{ $summary['summary'] ?? 'Ringkasan materi belum tersedia.' }}</p>@if(!empty($summary['key_points']))<div class="mt-4 space-y-3">@foreach($summary['key_points'] as $point)<div class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-500 dark:bg-cyan-300"></span><p class="muted text-sm leading-6">{{ $point }}</p></div>@endforeach</div>@endif<div class="soft-panel mt-5 rounded-2xl px-4 py-3.5"><p class="subtle text-[10px] font-extrabold uppercase tracking-[.13em]">Langkah berikutnya</p><p class="section-heading mt-1 text-sm leading-6">{{ $summary['next_step'] ?? 'Tinjau bagian yang belum stabil lalu lanjutkan latihan.' }}</p></div></section>
-                <section class="ui-card rounded-[24px] p-5"><div class="flex items-start justify-between gap-3"><div><p class="eyebrow text-[10px] font-extrabold uppercase">Fokus tindak lanjut</p><h2 class="section-heading mt-1 text-lg font-extrabold">Prioritas belajar</h2></div><span class="soft-panel rounded-lg px-2.5 py-1 text-[10px] font-extrabold">{{ $priorityItems->count() }} poin</span></div><div class="mt-4 space-y-3">@foreach($priorityItems->take(3) as $priority)<div class="rounded-xl border px-4 py-3 {{ $priorityTone[$priority['tone']] ?? $priorityTone['slate'] }}"><p class="text-sm font-extrabold">{{ $priority['title'] }}</p><p class="mt-1 text-xs leading-5 opacity-80">{{ $priority['detail'] }}</p></div>@endforeach</div></section>
+                <section class="ui-card rounded-[24px] p-5"><div class="flex items-start justify-between gap-3"><div><p class="eyebrow text-[10px] font-extrabold uppercase">Fokus tindak lanjut</p><h2 class="section-heading mt-1 text-lg font-extrabold">Prioritas belajar</h2></div><span class="soft-panel rounded-lg px-2.5 py-1 text-[10px] font-extrabold">{{ $priorityItems->count() }} poin</span></div><div class="mt-4 space-y-3">@foreach($priorityItems->take(3) as $priority)<div class="priority-card rounded-xl border px-4 py-3 {{ $priorityTone[$priority['tone']] ?? $priorityTone['slate'] }}"><p class="text-sm font-extrabold">{{ $priority['title'] }}</p><p class="mt-1 text-xs leading-5 opacity-80">{{ $priority['detail'] }}</p></div>@endforeach</div></section>
                 <section class="ui-card rounded-[24px] p-5"><p class="eyebrow text-[10px] font-extrabold uppercase">Catatan refleksi</p><h2 class="section-heading mt-1 text-lg font-extrabold">Simpan rencana belajar</h2><p class="muted mt-2 text-xs leading-5">Tuliskan konsep yang perlu diperkuat atau strategi yang akan digunakan pada pembelajaran berikutnya.</p>@if(session('success'))<div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs font-bold text-emerald-700 dark:border-emerald-300/20 dark:bg-emerald-400/[.08] dark:text-emerald-200">{{ session('success') }}</div>@endif<form action="{{ route('quiz.reflection', $attempt->id) }}" method="POST" class="mt-4 space-y-3">@csrf<textarea name="reflection_note" rows="5" maxlength="1000" class="w-full resize-none rounded-2xl border p-4 text-sm leading-6 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 dark:focus:border-cyan-300 dark:focus:ring-cyan-400/10" style="border-color:var(--line);background:var(--surface-muted);color:var(--text)" placeholder="Contoh: Saya perlu mengulang konsep grid dan meninjau soal yang belum tepat.">{{ old('reflection_note', $attempt->reflection_note) }}</textarea>@error('reflection_note')<p class="text-xs font-bold text-rose-600 dark:text-rose-300">{{ $message }}</p>@enderror<button type="submit" class="action-primary w-full rounded-xl px-4 py-3 text-xs font-extrabold uppercase tracking-[.12em] transition">Simpan Refleksi</button></form></section>
             </aside>
         </section>
     </main>
 </div>
 <script>
-    window.addEventListener('DOMContentLoaded', function () {
-        requestAnimationFrame(function () {
-            document.documentElement.classList.add('theme-ready');
+    (function () {
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const finePointer = window.matchMedia('(pointer: fine)');
+        const scrollHost = document.querySelector('[data-smooth-scroll]');
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+        const scrollState = {
+            target: scrollHost ? scrollHost.scrollTop : 0,
+            frame: null,
+            previousTime: 0,
+            animating: false,
+        };
+
+        function maxHostScroll() {
+            return scrollHost ? Math.max(0, scrollHost.scrollHeight - scrollHost.clientHeight) : 0;
+        }
+
+        function canUseSmoothWheel() {
+            return !!scrollHost && finePointer.matches && !reducedMotion.matches;
+        }
+
+        function normaliseWheelDelta(event) {
+            if (!scrollHost) return 0;
+            if (event.deltaMode === 1) return event.deltaY * 18;
+            if (event.deltaMode === 2) return event.deltaY * scrollHost.clientHeight;
+            return event.deltaY;
+        }
+
+        function getNativeScrollTarget(target) {
+            return target instanceof Element
+                ? target.closest('[data-native-scroll], textarea, input, select, [contenteditable="true"]')
+                : null;
+        }
+
+        function nativeTargetCanConsume(target, delta) {
+            if (!target || !(target instanceof Element)) return false;
+            if (target.scrollHeight <= target.clientHeight + 1) return false;
+
+            const max = Math.max(0, target.scrollHeight - target.clientHeight);
+            return (delta < 0 && target.scrollTop > 0) || (delta > 0 && target.scrollTop < max - 1);
+        }
+
+        function stopSmoothScroll() {
+            if (scrollState.frame) window.cancelAnimationFrame(scrollState.frame);
+            scrollState.frame = null;
+            scrollState.previousTime = 0;
+            scrollState.animating = false;
+
+            if (scrollHost) {
+                scrollState.target = scrollHost.scrollTop;
+                scrollHost.classList.remove('is-smooth-scrolling');
+            }
+        }
+
+        function runSmoothScroll(timestamp) {
+            if (!scrollHost) return;
+
+            scrollState.animating = true;
+            const elapsed = clamp(timestamp - (scrollState.previousTime || timestamp - 16), 8, 48);
+            scrollState.previousTime = timestamp;
+
+            const max = maxHostScroll();
+            scrollState.target = clamp(scrollState.target, 0, max);
+
+            const current = scrollHost.scrollTop;
+            const distance = scrollState.target - current;
+            const blend = 1 - Math.exp(-elapsed / 34);
+
+            if (Math.abs(distance) <= 0.35) {
+                scrollHost.scrollTop = scrollState.target;
+                stopSmoothScroll();
+                return;
+            }
+
+            scrollHost.scrollTop = current + (distance * blend);
+            scrollState.frame = window.requestAnimationFrame(runSmoothScroll);
+        }
+
+        function scrollHostTo(top, immediate = false) {
+            if (!scrollHost) return;
+            scrollState.target = clamp(top, 0, maxHostScroll());
+
+            if (immediate || reducedMotion.matches) {
+                scrollHost.scrollTop = scrollState.target;
+                stopSmoothScroll();
+                return;
+            }
+
+            scrollHost.classList.add('is-smooth-scrolling');
+            if (!scrollState.frame) {
+                scrollState.previousTime = performance.now();
+                scrollState.frame = window.requestAnimationFrame(runSmoothScroll);
+            }
+        }
+
+        function enableSmoothWheel() {
+            if (!scrollHost) return;
+
+            scrollHost.addEventListener('wheel', (event) => {
+                if (!canUseSmoothWheel() || event.ctrlKey || event.metaKey || event.shiftKey || !event.deltaY) return;
+
+                const delta = normaliseWheelDelta(event);
+                const nativeTarget = getNativeScrollTarget(event.target);
+
+                // Input dan textarea mempertahankan perilaku bawaan. Panel review
+                // tetap menggulir sendiri sampai mencapai ujungnya.
+                if (nativeTarget) {
+                    if (nativeTargetCanConsume(nativeTarget, delta)) return;
+                    if (!nativeTarget.matches('[data-native-scroll]')) return;
+                }
+
+                const max = maxHostScroll();
+                if (!max) return;
+
+                const base = scrollState.frame ? scrollState.target : scrollHost.scrollTop;
+                const cappedDelta = Math.sign(delta) * Math.min(Math.abs(delta), 190);
+                const multiplier = Math.abs(cappedDelta) > 96 ? .74 : .62;
+                const next = clamp(base + (cappedDelta * multiplier), 0, max);
+
+                if (Math.abs(next - base) < .1) return;
+
+                event.preventDefault();
+                scrollHostTo(next);
+            }, { passive: false });
+
+            scrollHost.addEventListener('scroll', () => {
+                if (!scrollState.animating) scrollState.target = scrollHost.scrollTop;
+            }, { passive: true });
+
+            scrollHost.addEventListener('pointerdown', stopSmoothScroll, { passive: true });
+            scrollHost.addEventListener('touchstart', stopSmoothScroll, { passive: true });
+            scrollHost.addEventListener('keydown', stopSmoothScroll, { passive: true });
+            window.addEventListener('blur', stopSmoothScroll, { passive: true });
+            window.addEventListener('resize', stopSmoothScroll, { passive: true });
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) stopSmoothScroll();
+            }, { passive: true });
+        }
+
+        function enableAnchors() {
+            document.querySelectorAll('a[href^="#"]').forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    const selector = link.getAttribute('href');
+                    if (!selector || selector === '#') return;
+
+                    const target = document.querySelector(selector);
+                    if (!target || !scrollHost) return;
+
+                    event.preventDefault();
+                    const hostBounds = scrollHost.getBoundingClientRect();
+                    const targetBounds = target.getBoundingClientRect();
+                    const desiredTop = scrollHost.scrollTop + targetBounds.top - hostBounds.top - 20;
+                    scrollHostTo(desiredTop);
+                });
+            });
+        }
+
+        function animateIndicators() {
+            const apply = () => {
+                document.querySelectorAll('.js-score-ring').forEach((ring) => {
+                    ring.style.setProperty('--progress', clamp(Number(ring.dataset.progress || 0), 0, 100));
+                });
+                document.querySelectorAll('.js-progress').forEach((bar) => {
+                    bar.style.width = clamp(Number(bar.dataset.progress || 0), 0, 100) + '%';
+                });
+            };
+
+            if (reducedMotion.matches) {
+                apply();
+                return;
+            }
+
+            window.requestAnimationFrame(() => window.requestAnimationFrame(apply));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            window.requestAnimationFrame(() => {
+                document.documentElement.classList.add('theme-ready');
+                animateIndicators();
+                enableSmoothWheel();
+                enableAnchors();
+            });
         });
-    });
+    })();
 </script>
 </body>
 </html>

@@ -18,7 +18,7 @@
     @include('layouts.partials.navbar')
     
     {{-- WRAPPER UTAMA DENGAN ALPINEJS --}}
-    <div class="flex flex-1 overflow-hidden relative" x-data="{ sidebarOpen: false, showInfoModal: false, activeVisualGuide: 'beranda' }" @keydown.escape.window="sidebarOpen = false; showInfoModal = false">
+    <div class="flex flex-1 overflow-hidden relative" x-data="{ sidebarOpen: false, activeVisualGuide: 'beranda' }" @keydown.escape.window="sidebarOpen = false">
 
         {{-- Overlay Mobile --}}
         <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] lg:hidden transition-colors" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
@@ -113,11 +113,6 @@
 
                         <div class="flex items-center gap-4">
                             <h2 class="text-slate-900 dark:text-white font-black text-3xl md:text-4xl tracking-tight transition-colors">Informasi Sistem & Panduan Media</h2>
-                            
-                            {{-- TOMBOL TRIGGER HERO MODAL --}}
-                            <button @click="showInfoModal = true" class="w-7 h-7 md:w-8 md:h-8 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-sm md:text-base font-black text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-cyan-200 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-1" title="Filosofi Platform">
-                                ?
-                            </button>
                         </div>
                         <p class="text-[14px] text-slate-600 dark:text-slate-400 mt-2 transition-colors">Pusat informasi pengembang, identitas penelitian, dan tampilan utama media pembelajaran.</p>
                     </div>
@@ -135,9 +130,6 @@
                             <a href="#panduan-media" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[11px] font-bold hover:-translate-y-0.5 transition-transform shadow-sm">
                                 Lihat Panduan
                             </a>
-                            <button @click="showInfoModal = true" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/70 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
-                                Filosofi Platform
-                            </button>
                         </div>
                     </div>
                 </section>
@@ -231,8 +223,8 @@
                             </div>
                         </div>
 
-                        {{-- Dosen & CTA Row --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+                        {{-- Dosen Pembimbing --}}
+                        <div class="grid grid-cols-1 gap-5 md:gap-6">
                             
                             {{-- Card Dosen --}}
                             <div class="bg-white dark:bg-[#0f141e] rounded-[2rem] p-6 md:p-8 flex flex-col justify-center relative overflow-hidden transition-colors duration-500 border border-slate-200/80 dark:border-white/[0.05] shadow-sm dark:shadow-none">
@@ -248,20 +240,6 @@
                                         <p class="text-[12px] font-semibold text-slate-800 dark:text-white leading-tight transition-colors">Muhammad Hifdzi Adini, S.Kom., M.T.</p>
                                     </div>
                                 </div>
-                            </div>
-
-                            {{-- Card Action --}}
-                            <div class="bg-white dark:bg-[#0f141e] rounded-[2rem] p-6 md:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group transition-colors duration-500 border border-slate-200/80 dark:border-white/[0.05] shadow-sm dark:shadow-none">
-                                <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-center mb-4 text-cyan-600 dark:text-cyan-400 group-hover:scale-105 transition-transform duration-300">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                                </div>
-                                
-                                <h4 class="text-[15px] font-bold text-slate-900 dark:text-white mb-1.5 transition-colors">Eksplorasi Media</h4>
-                                <p class="text-[12px] text-slate-500 dark:text-slate-400 mb-5 leading-relaxed max-w-[200px] transition-colors">Lihat hasil implementasi langsung dari platform ini.</p>
-                                
-                                <a href="https://utilwind.research-media.web.id/" target="_blank" class="w-full relative z-10 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-[#020617] font-semibold text-[12px] hover:-translate-y-0.5 transition-transform shadow-sm focus:outline-none">
-                                    Kunjungi Situs
-                                </a>
                             </div>
 
                         </div>
@@ -503,40 +481,6 @@
                         </div>
                     </div>
                 </section>
-            </div>
-            
-            {{-- HERO MODAL POPUP: FILOSOFI PLATFORM --}}
-            <div x-show="showInfoModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" x-cloak>
-                <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showInfoModal = false" x-transition.opacity></div>
-                
-                <div class="relative w-full max-w-lg bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
-                    
-                    <button @click="showInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-
-                    <div class="relative w-24 h-24 mx-auto mb-6">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-indigo-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
-                        <div class="relative w-full h-full bg-white dark:bg-[#0f141e] rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center p-4 shadow-inner">
-                            <img src="{{ asset('images/logo.png') }}" alt="Utilwind Logo" class="w-full h-full object-contain">
-                        </div>
-                    </div>
-                    
-                    <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Filosofi <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Utilwind</span></h3>
-                    <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Landasan Konseptual Platform</p>
-                    
-                    <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                        <p>Nomenklatur <strong>"Utilwind"</strong> merupakan konjungsi linguistik yang merangkai lema <em>Utility</em> (nilai guna/manfaat) dan <em>Wind</em> (angin).</p>
-                        <p>Pemilihan terminologi ini merepresentasikan landasan filosofis dari sistem yang diusung: menghadirkan fungsionalitas yang berdaya guna tinggi, sembari memfasilitasi proses pembelajaran yang dinamis, adaptif, serta responsif layaknya pergerakan aliran angin.</p>
-                        <p>Adapun representasi visual dari logo ini menjadi pengejawantahan visi platform dalam menyajikan pengalaman belajar yang terstruktur, terpadu, dan berorientasi langsung pada peningkatkan kompetensi peserta didik.</p>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
-                        <button @click="showInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
-                            Tutup Informasi
-                        </button>
-                    </div>
-                </div>
             </div>
 
         </main>

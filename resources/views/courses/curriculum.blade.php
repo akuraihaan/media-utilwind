@@ -452,43 +452,130 @@
             @endforeach
         </div>
 
-        <div class="mt-32 pt-20 border-t border-slate-200 dark:border-white/5 reveal-up delay-500 transition-colors">
-            <div class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
+        @php
+            /*
+            |--------------------------------------------------------------------------
+            | Referensi PDF Nyata
+            |--------------------------------------------------------------------------
+            | Simpan tiga file PDF yang diunggah pada folder:
+            | public/references/
+            | dengan nama file persis seperti nilai `file` di bawah.
+            */
+            $referenceBooks = [
+                [
+                    'title' => 'Modern CSS with Tailwind',
+                    'subtitle' => 'Flexible Styling Without the Fuss',
+                    'author' => 'Noel Rappin',
+                    'year' => '2021',
+                    'publisher' => 'The Pragmatic Bookshelf',
+                    'pages' => '90 halaman',
+                    'description' => 'Membahas utility-first, tipografi, layout, animasi, desain responsif, dan konfigurasi Tailwind CSS.',
+                    'file' => 'references/Modern CSS with Tailwind_ Flexible Styling Without the Fuss(4).pdf',
+                    'tone' => 'cyan',
+                    'cover' => 'from-cyan-500 to-blue-600 dark:from-cyan-500 dark:to-blue-500',
+                    'ring' => 'border-cyan-200 dark:border-cyan-400/20',
+                    'text' => 'text-cyan-700 dark:text-cyan-300',
+                    'soft' => 'bg-cyan-50 dark:bg-cyan-500/10',
+                ],
+                [
+                    'title' => 'Tailwind CSS',
+                    'subtitle' => 'Craft Beautiful, Flexible, and Responsive Designs',
+                    'author' => 'Ivaylo Gerchev',
+                    'year' => '2022',
+                    'publisher' => 'SitePoint',
+                    'pages' => '108 halaman',
+                    'description' => 'Rujukan untuk memahami utility class, desain responsif, design system, dan penerapan Tailwind CSS dalam antarmuka web.',
+                    'file' => 'references/Tailwind CSS(4).pdf',
+                    'tone' => 'indigo',
+                    'cover' => 'from-indigo-500 to-violet-600 dark:from-indigo-500 dark:to-violet-500',
+                    'ring' => 'border-indigo-200 dark:border-indigo-400/20',
+                    'text' => 'text-indigo-700 dark:text-indigo-300',
+                    'soft' => 'bg-indigo-50 dark:bg-indigo-500/10',
+                ],
+                [
+                    'title' => 'Ultimate Tailwind CSS Handbook',
+                    'subtitle' => 'Build Sleek and Modern Websites with Immersive UIs',
+                    'author' => 'Kartik Bhat',
+                    'year' => '2023',
+                    'publisher' => 'Orange Education / AVA',
+                    'pages' => '298 halaman',
+                    'description' => 'Buku pendamping untuk HTML, CSS, konfigurasi Tailwind, layout, styling komponen, praktik pengembangan web, dan best practice.',
+                    'file' => 'references/Ultimate Tailwind CSS Handbook_ Build sleek and modern websites with immersive UIs using Tailwind CSS(4).pdf',
+                    'tone' => 'fuchsia',
+                    'cover' => 'from-fuchsia-500 to-rose-600 dark:from-fuchsia-500 dark:to-rose-500',
+                    'ring' => 'border-fuchsia-200 dark:border-fuchsia-400/20',
+                    'text' => 'text-fuchsia-700 dark:text-fuchsia-300',
+                    'soft' => 'bg-fuchsia-50 dark:bg-fuchsia-500/10',
+                ],
+            ];
+        @endphp
+
+        <section class="mt-32 border-t border-slate-200 pt-20 transition-colors dark:border-white/5 reveal-up delay-500" aria-labelledby="reference-title">
+            <div class="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-widest uppercase transition-colors">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors dark:border-white/10 dark:bg-slate-800 dark:text-slate-400">
                         Sumber Belajar
                     </div>
-                    <h2 class="text-3xl font-black text-slate-900 dark:text-white transition-colors">Referensi Pembelajaran</h2>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-2xl transition-colors">
-                        Materi disusun dari dokumentasi resmi dan bahan pendukung agar sesuai dengan pembelajaran Tailwind CSS tingkat dasar.
+                    <h2 id="reference-title" class="mt-4 text-3xl font-black text-slate-900 transition-colors dark:text-white">Referensi Pembelajaran</h2>
+                    <p class="mt-2 max-w-2xl text-sm text-slate-500 transition-colors dark:text-slate-400">
+                        Tiga buku PDF berikut tersedia sebagai bahan pendukung pembelajaran. Pilih <strong class="font-bold text-slate-700 dark:text-slate-200">Buka PDF</strong> untuk membaca dokumen pada tab baru.
                     </p>
+                </div>
+
+                <div class="inline-flex items-center gap-2 self-start rounded-xl border border-slate-200 bg-white/70 px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 shadow-sm backdrop-blur-sm transition-colors dark:border-white/10 dark:bg-white/5 dark:text-slate-400 md:self-auto">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    3 Dokumen PDF
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300">
-                    <div class="w-16 h-20 bg-gradient-to-br from-slate-200 to-slate-400 dark:from-slate-700 dark:to-slate-900 rounded-lg shadow-md dark:shadow-xl shrink-0 flex items-center justify-center border border-slate-300 dark:border-white/10 group-hover:scale-105 transition-transform">
-                        <span class="text-[10px] font-bold text-slate-600 dark:text-white/20 writing-vertical-rl rotate-180">BOOK</span>
-                    </div>
-                    <div>
-                        <h4 class="text-slate-900 dark:text-white font-bold text-sm leading-tight group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Dokumentasi Tailwind CSS</h4>
-                        <p class="text-[11px] text-slate-500 mt-1 font-mono">tailwindcss.com</p>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Rujukan utama sintaks utility class, instalasi, konfigurasi, dan responsif.</p>
-                    </div>
-                </a>
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                @foreach($referenceBooks as $book)
+                    <article class="glass-card group flex h-full flex-col rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-slate-50 hover:shadow-lg dark:hover:bg-white/5">
+                        <div class="flex items-start gap-4">
+                            <div class="relative grid h-24 w-[72px] shrink-0 place-items-center overflow-hidden rounded-xl border {{ $book['ring'] }} bg-gradient-to-br {{ $book['cover'] }} shadow-md transition-transform duration-300 group-hover:scale-[1.03]">
+                                <svg class="h-8 w-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 2.5H6.75A1.75 1.75 0 005 4.25v15.5c0 .966.784 1.75 1.75 1.75h10.5A1.75 1.75 0 0019 19.75V7.5L14 2.5z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 2.5V7.5h5M8.5 12h7M8.5 15.5h7"/>
+                                </svg>
+                                <span class="absolute bottom-2 rounded-full bg-slate-950/20 px-1.5 py-0.5 text-[8px] font-black tracking-[.16em] text-white">PDF</span>
+                            </div>
 
-                <a href="#" class="group glass-card p-6 rounded-2xl flex items-start gap-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300">
-                    <div class="w-16 h-20 bg-gradient-to-br from-fuchsia-200 to-slate-300 dark:from-fuchsia-900 dark:to-slate-900 rounded-lg shadow-md dark:shadow-xl shrink-0 flex items-center justify-center border border-slate-300 dark:border-white/10 group-hover:scale-105 transition-transform">
-                        <span class="text-[10px] font-bold text-fuchsia-700 dark:text-white/20 writing-vertical-rl rotate-180">BOOK</span>
-                    </div>
-                    <div>
-                        <h4 class="text-slate-900 dark:text-white font-bold text-sm leading-tight group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">Referensi HTML dan CSS Dasar</h4>
-                        <p class="text-[11px] text-slate-500 mt-1 font-mono">Bahan Ajar Web Dasar</p>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-3 leading-relaxed line-clamp-2 transition-colors">Penguat konsep struktur HTML, CSS dasar, box model, dan styling antarmuka.</p>
-                    </div>
-                </a>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] font-bold uppercase tracking-[.14em] {{ $book['text'] }}">Buku Referensi</p>
+                                <h3 class="mt-1 text-[15px] font-black leading-5 text-slate-900 transition-colors dark:text-white">{{ $book['title'] }}</h3>
+                                <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500 transition-colors dark:text-slate-400">{{ $book['subtitle'] }}</p>
+                                <p class="mt-2 text-[11px] font-mono text-slate-500 transition-colors dark:text-slate-400">{{ $book['author'] }} · {{ $book['year'] }}</p>
+                            </div>
+                        </div>
+
+                        <p class="mt-5 text-[11px] leading-5 text-slate-600 transition-colors dark:text-slate-400">{{ $book['description'] }}</p>
+
+                        <div class="mt-5 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 text-[10px] font-bold text-slate-500 transition-colors dark:border-white/10 dark:text-slate-400">
+                            <span>{{ $book['pages'] }}</span>
+                            <span class="truncate text-right">{{ $book['publisher'] }}</span>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-[minmax(0,1fr)_42px] gap-2">
+                            <a href="{{ asset($book['file']) }}" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 text-[11px] font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 {{ $book['cover'] }}">
+                                <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m0 0l-4-4m4 4l4-4M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                                </svg>
+                                Buka PDF
+                            </a>
+
+                            <a href="{{ asset($book['file']) }}" download
+                               class="inline-flex min-h-10 items-center justify-center rounded-xl border {{ $book['ring'] }} {{ $book['soft'] }} {{ $book['text'] }} transition-all duration-200 hover:-translate-y-0.5"
+                               title="Unduh {{ $book['title'] }}" aria-label="Unduh {{ $book['title'] }}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16.5v2A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5v-2M12 4v11m0 0l-4-4m4 4l4-4"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+                @endforeach
             </div>
-        </div>
+        </section>
     </div>
 </div>
 

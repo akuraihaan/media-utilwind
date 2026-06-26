@@ -759,6 +759,550 @@
             .ambient-orb,
             .topbar::after { animation: none !important; }
         }
+
+
+        /* ==========================================================
+           PENYEMPURNAAN RUANG PENGERJAAN KUIS
+           Fokus: keterbacaan, media yang lentur, kontras yang tenang,
+           dan interaksi yang ringan pada tema terang maupun gelap.
+           ========================================================== */
+        :root {
+            --reading-surface: rgba(255, 255, 255, .78);
+            --reading-line: rgba(148, 163, 184, .30);
+            --media-surface: #eef5f8;
+            --media-stage: linear-gradient(145deg, rgba(255,255,255,.9), rgba(236,248,250,.86));
+            --media-shadow: 0 16px 34px rgba(15, 23, 42, .09);
+            --soft-elevation: 0 10px 26px rgba(15, 23, 42, .055);
+        }
+
+        html.dark {
+            --reading-surface: rgba(15, 25, 42, .78);
+            --reading-line: rgba(148, 163, 184, .20);
+            --media-surface: #0c1726;
+            --media-stage: linear-gradient(145deg, rgba(16, 31, 49, .96), rgba(10, 23, 38, .90));
+            --media-shadow: 0 18px 40px rgba(2, 6, 23, .34);
+            --soft-elevation: 0 12px 30px rgba(2, 6, 23, .20);
+        }
+
+        /* Latar dibuat tenang agar perhatian tetap berada pada soal. */
+        .quiz-app {
+            background:
+                radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--brand-one) 10%, transparent), transparent 28rem),
+                radial-gradient(circle at 96% 100%, color-mix(in srgb, var(--brand-two) 8%, transparent), transparent 30rem),
+                linear-gradient(155deg, var(--canvas), var(--canvas-deep)) !important;
+        }
+
+        .grid-layer { opacity: .23 !important; background-size: 56px 56px !important; }
+        html.dark .grid-layer { opacity: .13 !important; }
+        .ambient-orb { opacity: .18 !important; filter: blur(34px) !important; animation: none !important; }
+        .topbar::after { display: none !important; }
+
+        /* Header, panel, dan kartu soal memakai tingkat kontras yang konsisten. */
+        .topbar,
+        .bottom-bar,
+        .side-panel {
+            background: var(--header) !important;
+            box-shadow: 0 8px 26px rgba(15, 23, 42, .035);
+        }
+        html.dark .topbar,
+        html.dark .bottom-bar,
+        html.dark .side-panel { box-shadow: 0 8px 28px rgba(2, 6, 23, .16); }
+
+        .question-card {
+            background: var(--surface) !important;
+            border-color: var(--line) !important;
+            box-shadow: 0 18px 46px rgba(15, 23, 42, .075), inset 0 1px 0 rgba(255,255,255,.44) !important;
+        }
+        html.dark .question-card {
+            box-shadow: 0 20px 48px rgba(2, 6, 23, .28), inset 0 1px 0 rgba(255,255,255,.035) !important;
+        }
+        .question-card::before { height: 3px !important; opacity: .82; }
+        .question-header {
+            background: linear-gradient(115deg, color-mix(in srgb, var(--surface-subtle) 92%, var(--brand-one)), var(--surface)) !important;
+        }
+        html.dark .question-header {
+            background: linear-gradient(115deg, color-mix(in srgb, var(--surface-subtle) 90%, var(--brand-one)), var(--surface)) !important;
+        }
+
+        /* Satu area gulir utama, dengan ruang aman agar header/footer tidak menutupi isi. */
+        .question-scroll {
+            scroll-behavior: smooth;
+            overscroll-behavior-y: contain;
+            scroll-padding: 1rem 0 1.25rem;
+            scrollbar-gutter: stable;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            scrollbar-color: color-mix(in srgb, var(--muted) 42%, transparent) transparent;
+        }
+        .question-scroll::-webkit-scrollbar { width: 7px; }
+        .question-scroll::-webkit-scrollbar-track { background: transparent; }
+        .question-scroll::-webkit-scrollbar-thumb {
+            background: color-mix(in srgb, var(--muted) 35%, transparent);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-radius: 999px;
+        }
+        .question-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 56%, transparent); }
+
+        /* Media diberi panggung khusus supaya gambar tetap proporsional dan tidak terasa kaku. */
+        .question-media-frame {
+            overflow: hidden;
+            border: 1px solid var(--reading-line);
+            border-radius: 1.15rem;
+            background: var(--media-surface);
+            box-shadow: var(--media-shadow);
+        }
+        .question-media-stage {
+            display: grid;
+            min-height: clamp(11rem, 31dvh, 24rem);
+            place-items: center;
+            padding: clamp(.7rem, 1.8vw, 1.35rem);
+            background:
+                radial-gradient(circle at 50% 15%, color-mix(in srgb, var(--brand-one) 11%, transparent), transparent 15rem),
+                var(--media-stage);
+        }
+        .question-media {
+            display: block;
+            width: auto !important;
+            max-width: 100%;
+            height: auto;
+            max-height: min(470px, 43dvh) !important;
+            object-fit: contain;
+            border-radius: .85rem;
+            box-shadow: 0 10px 24px rgba(15,23,42,.12);
+        }
+        html.dark .question-media { box-shadow: 0 12px 28px rgba(2,6,23,.36); }
+        .question-media-caption {
+            border-top: 1px solid var(--reading-line);
+            background: color-mix(in srgb, var(--surface) 92%, transparent);
+            color: var(--muted);
+        }
+
+        /* Teks soal lebih lapang dan tetap rapi untuk paragraf, daftar, tabel, maupun kode. */
+        .question-copy {
+            background: var(--reading-surface) !important;
+            border-color: var(--reading-line) !important;
+            box-shadow: var(--soft-elevation) !important;
+        }
+        .question-copy::before {
+            width: 32px !important;
+            height: 2px !important;
+            margin-bottom: .9rem !important;
+            opacity: .82;
+        }
+        .question-copy :where(p, ul, ol, blockquote) { margin-block: .65rem; }
+        .question-copy :where(ul, ol) { padding-left: 1.25rem; }
+        .question-copy li + li { margin-top: .35rem; }
+        .question-copy :where(h1,h2,h3,h4) { color: var(--text-strong); font-weight: 800; line-height: 1.35; margin-block: .8rem .45rem; }
+        .question-copy blockquote {
+            border-left: 3px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+            padding-left: .9rem;
+            color: var(--muted);
+        }
+        .question-copy table {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            border-collapse: collapse;
+            border-radius: .85rem;
+            border: 1px solid var(--reading-line);
+            background: var(--surface);
+        }
+        .question-copy th,
+        .question-copy td { border: 1px solid var(--reading-line); padding: .65rem .75rem; text-align: left; }
+        .question-copy th { background: var(--surface-subtle); font-weight: 800; }
+        .question-copy img { max-width: 100%; height: auto; border-radius: .85rem; }
+        .question-copy pre,
+        .question-context pre {
+            border-color: color-mix(in srgb, var(--line-strong) 76%, transparent) !important;
+            box-shadow: 0 10px 24px rgba(15,23,42,.12) !important;
+        }
+
+        /* Konteks adalah pendukung, bukan pesaing utama dari pertanyaan. */
+        .question-context,
+        .question-context.context-media {
+            background: color-mix(in srgb, var(--accent-soft) 44%, var(--surface)) !important;
+            border-color: color-mix(in srgb, var(--accent) 20%, var(--line)) !important;
+            box-shadow: none !important;
+        }
+
+        /* Pilihan jawaban memakai warna yang seragam; warna aksen hanya muncul saat dipilih. */
+        .answer-card,
+        .answer-tone-sky,
+        .answer-tone-indigo,
+        .answer-tone-rose,
+        .answer-tone-emerald {
+            --option-tone: var(--accent) !important;
+            min-height: 80px !important;
+            background: var(--surface) !important;
+            border-color: var(--line) !important;
+            box-shadow: var(--soft-elevation) !important;
+            transition: transform 180ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease !important;
+        }
+        .answer-card::before {
+            inset: 15px auto 15px 0 !important;
+            width: 3px !important;
+            background: color-mix(in srgb, var(--accent) 55%, transparent) !important;
+            box-shadow: none !important;
+            opacity: .45 !important;
+        }
+        .answer-card::after { opacity: 0 !important; }
+        .answer-card:hover {
+            transform: translateY(-1px) !important;
+            border-color: color-mix(in srgb, var(--accent) 30%, var(--line)) !important;
+            background: color-mix(in srgb, var(--surface) 94%, var(--accent-soft)) !important;
+            box-shadow: 0 13px 24px rgba(15,23,42,.08) !important;
+        }
+        html.dark .answer-card:hover { box-shadow: 0 14px 28px rgba(2,6,23,.25) !important; }
+        .answer-selected {
+            border-color: color-mix(in srgb, var(--accent) 72%, var(--line)) !important;
+            background: color-mix(in srgb, var(--accent-soft) 76%, var(--surface)) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent), 0 13px 26px rgba(15,23,42,.09) !important;
+        }
+        .answer-selected::before { background: var(--accent) !important; opacity: 1 !important; }
+        .answer-card .option-circle {
+            background: var(--surface-subtle) !important;
+            border-color: var(--line-strong) !important;
+            color: var(--muted) !important;
+            box-shadow: none !important;
+        }
+        .answer-selected .option-circle,
+        .answer-key-selected {
+            background: var(--accent) !important;
+            color: var(--accent-ink) !important;
+            box-shadow: 0 7px 16px color-mix(in srgb, var(--accent) 20%, transparent) !important;
+        }
+
+        /* Hover tidak dipaksakan pada layar sentuh. */
+        @media (hover: none), (pointer: coarse) {
+            .answer-card:hover,
+            .nav-button:hover,
+            .timer-chip:hover,
+            .primary-action:hover:not(:disabled),
+            .page-item:hover { transform: none !important; box-shadow: inherit !important; }
+        }
+
+        @media (max-width: 639px) {
+            .question-scroll { scroll-padding-block: .7rem 1rem; }
+            .question-media-stage { min-height: clamp(9.5rem, 27dvh, 17rem); padding: .65rem; }
+            .question-media { max-height: min(350px, 38dvh) !important; border-radius: .7rem; }
+            .question-copy { padding: 1.1rem !important; }
+            .answer-card { min-height: 76px !important; }
+        }
+
+
+
+        /* ==========================================================
+           SISTEM ANGKA TENANG
+           Angka berfungsi sebagai penanda orientasi, bukan aksen utama.
+           ========================================================== */
+        :root {
+            --number-surface: #f8fafc;
+            --number-line: #dbe5f0;
+            --number-ink: #334155;
+            --number-active-surface: #e8f7fa;
+            --number-active-line: #82d9e7;
+            --number-active-ink: #0e7490;
+        }
+
+        html.dark {
+            --number-surface: #111d2d;
+            --number-line: rgba(148, 163, 184, .23);
+            --number-ink: #d4deeb;
+            --number-active-surface: rgba(34, 211, 238, .12);
+            --number-active-line: rgba(103, 232, 249, .46);
+            --number-active-ink: #a5f3fc;
+        }
+
+        /* Nomor soal utama: tenang, terbaca, dan tidak memakai gradasi. */
+        .question-number {
+            background: var(--number-surface) !important;
+            border: 1px solid var(--number-line) !important;
+            color: var(--number-ink) !important;
+            box-shadow: none !important;
+        }
+        .question-number::after { display: none !important; }
+        .question-number span:first-child { color: var(--number-ink) !important; }
+        .question-number span:last-child { color: var(--muted) !important; }
+
+        /* Angka waktu tetap menjadi informasi, bukan elemen dekoratif. */
+        .timer-chip {
+            background: var(--number-surface) !important;
+            border-color: var(--number-line) !important;
+            box-shadow: none !important;
+        }
+
+        /* Persentase ringkasan dibuat ringan agar tidak bersaing dengan isi soal. */
+        .progress-orb {
+            background: var(--number-active-surface) !important;
+            border: 1px solid var(--number-active-line) !important;
+            color: var(--number-active-ink) !important;
+            box-shadow: none !important;
+        }
+        .progress-orb::after { display: none !important; }
+
+        /* Navigasi angka memakai status yang ringkas: aktif, terjawab, ragu, atau kosong. */
+        .question-page-item {
+            background: var(--number-surface) !important;
+            border: 1px solid var(--number-line) !important;
+            color: var(--number-ink) !important;
+            box-shadow: none !important;
+        }
+        .question-page-item.is-current {
+            background: var(--number-active-surface) !important;
+            border-color: var(--number-active-line) !important;
+            color: var(--number-active-ink) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--number-active-line) 24%, transparent) !important;
+        }
+        .question-page-item.is-answered {
+            background: var(--number-surface) !important;
+            border-color: color-mix(in srgb, var(--success) 34%, var(--number-line)) !important;
+            color: var(--success) !important;
+        }
+        .question-page-item.is-flagged {
+            background: var(--number-surface) !important;
+            border-color: color-mix(in srgb, var(--warning) 40%, var(--number-line)) !important;
+            color: var(--warning) !important;
+        }
+        .question-page-item.is-empty { color: var(--muted) !important; }
+
+        @media (hover: hover) and (pointer: fine) {
+            .question-page-item:hover:not(.is-current) {
+                transform: translateY(-1px) !important;
+                border-color: var(--line-strong) !important;
+                background: color-mix(in srgb, var(--number-surface) 92%, var(--surface)) !important;
+                box-shadow: 0 6px 14px rgba(15, 23, 42, .055) !important;
+            }
+            html.dark .question-page-item:hover:not(.is-current) {
+                box-shadow: 0 7px 16px rgba(2, 6, 23, .20) !important;
+            }
+        }
+
+
+        /* ==========================================================
+           SISTEM TOMBOL TENANG
+           Tombol dibedakan melalui peran, bukan banyak warna.
+           ========================================================== */
+        :root {
+            --button-primary: #0f766e;
+            --button-primary-hover: #115e59;
+            --button-primary-line: #0f766e;
+            --button-primary-ink: #ffffff;
+            --button-quiet: rgba(255, 255, 255, .84);
+            --button-quiet-hover: #f1f5f9;
+            --button-quiet-line: #dbe5f0;
+            --button-quiet-ink: #475569;
+            --button-flag: #fffaf0;
+            --button-flag-hover: #fff7df;
+            --button-flag-line: #f3d49a;
+            --button-flag-ink: #a16207;
+            --button-disabled: #f1f5f9;
+        }
+
+        html.dark {
+            --button-primary: #0f766e;
+            --button-primary-hover: #115e59;
+            --button-primary-line: rgba(94, 234, 212, .24);
+            --button-primary-ink: #ecfeff;
+            --button-quiet: rgba(15, 23, 42, .84);
+            --button-quiet-hover: #18263a;
+            --button-quiet-line: rgba(148, 163, 184, .24);
+            --button-quiet-ink: #cbd5e1;
+            --button-flag: rgba(120, 53, 15, .18);
+            --button-flag-hover: rgba(120, 53, 15, .29);
+            --button-flag-line: rgba(251, 191, 36, .32);
+            --button-flag-ink: #fcd34d;
+            --button-disabled: rgba(148, 163, 184, .10);
+        }
+
+        /* Navigasi sekunder tetap netral agar fokus berada pada pertanyaan. */
+        .nav-button {
+            background: var(--button-quiet) !important;
+            border-color: var(--button-quiet-line) !important;
+            color: var(--button-quiet-ink) !important;
+            box-shadow: none !important;
+        }
+        .nav-button:hover {
+            background: var(--button-quiet-hover) !important;
+            border-color: color-mix(in srgb, var(--button-quiet-ink) 22%, var(--button-quiet-line)) !important;
+            color: var(--text-strong) !important;
+            box-shadow: 0 7px 16px rgba(15, 23, 42, .055) !important;
+        }
+        html.dark .nav-button:hover { box-shadow: 0 8px 18px rgba(2, 6, 23, .20) !important; }
+
+        /* Tombol ragu hanya menjadi penanda halus, bukan aksen kuning yang dominan. */
+        .flag-button.is-flagged {
+            background: var(--button-flag) !important;
+            border-color: var(--button-flag-line) !important;
+            color: var(--button-flag-ink) !important;
+            box-shadow: none !important;
+        }
+        .flag-button.is-flagged:hover {
+            background: var(--button-flag-hover) !important;
+            box-shadow: 0 7px 16px rgba(15, 23, 42, .045) !important;
+        }
+
+        /* Aksi utama menggunakan satu warna teal yang solid dan tidak memakai gradasi. */
+        .primary-action:not(:disabled),
+        .next-action:not(:disabled) {
+            background: var(--button-primary) !important;
+            border: 1px solid var(--button-primary-line) !important;
+            color: var(--button-primary-ink) !important;
+            box-shadow: 0 8px 18px color-mix(in srgb, var(--button-primary) 17%, transparent) !important;
+        }
+        .primary-action:hover:not(:disabled),
+        .next-action:hover:not(:disabled) {
+            background: var(--button-primary-hover) !important;
+            border-color: var(--button-primary-hover) !important;
+            box-shadow: 0 11px 22px color-mix(in srgb, var(--button-primary) 22%, transparent) !important;
+            transform: translateY(-1px) !important;
+        }
+        .primary-action:disabled {
+            background: var(--button-disabled) !important;
+            border: 1px solid var(--line) !important;
+            color: var(--muted) !important;
+            box-shadow: none !important;
+        }
+
+        /* Tombol pada modal fokus tetap jelas, namun tidak menyilaukan. */
+        .focus-dialog button {
+            background: #be123c !important;
+            border: 1px solid rgba(251, 113, 133, .32) !important;
+            box-shadow: 0 8px 18px rgba(190, 18, 60, .18) !important;
+        }
+        .focus-dialog button:hover { background: #9f1239 !important; }
+
+        @media (hover: none), (pointer: coarse) {
+            .nav-button:hover,
+            .flag-button.is-flagged:hover,
+            .primary-action:hover:not(:disabled),
+            .next-action:hover:not(:disabled) {
+                transform: none !important;
+                box-shadow: none !important;
+            }
+        }
+
+        /* ==========================================================
+           NAVIGASI SOAL & HEADER RINGKAS
+           Transisi diarahkan untuk memberi orientasi tanpa mengganggu fokus.
+           ========================================================== */
+        .question-stage {
+            isolation: isolate;
+            will-change: transform, opacity, filter;
+            transform: translate3d(0, 0, 0) scale(1);
+            transform-origin: 50% 42%;
+            opacity: 1;
+            filter: blur(0) saturate(1);
+            transition:
+                transform 420ms cubic-bezier(.16, 1, .3, 1),
+                opacity 280ms cubic-bezier(.16, 1, .3, 1),
+                filter 420ms cubic-bezier(.16, 1, .3, 1),
+                box-shadow 420ms cubic-bezier(.16, 1, .3, 1);
+        }
+        .question-stage::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            pointer-events: none;
+            border-radius: inherit;
+            opacity: 0;
+            background: linear-gradient(102deg, transparent 22%, color-mix(in srgb, var(--accent) 5%, transparent) 49%, transparent 76%);
+            transform: translate3d(-12%, 0, 0);
+            transition:
+                opacity 260ms cubic-bezier(.16, 1, .3, 1),
+                transform 520ms cubic-bezier(.16, 1, .3, 1);
+        }
+        .question-stage.is-leave-next {
+            opacity: 0;
+            transform: translate3d(-14px, 3px, 0) scale(.997);
+            filter: blur(.55px) saturate(.98);
+        }
+        .question-stage.is-leave-prev {
+            opacity: 0;
+            transform: translate3d(14px, 3px, 0) scale(.997);
+            filter: blur(.55px) saturate(.98);
+        }
+        .question-stage.is-enter-next {
+            opacity: 0;
+            transform: translate3d(18px, 5px, 0) scale(.996);
+            filter: blur(.7px) saturate(.98);
+        }
+        .question-stage.is-enter-prev {
+            opacity: 0;
+            transform: translate3d(-18px, 5px, 0) scale(.996);
+            filter: blur(.7px) saturate(.98);
+        }
+        .question-stage.is-enter-next::after,
+        .question-stage.is-enter-prev::after {
+            opacity: 1;
+            transform: translate3d(12%, 0, 0);
+        }
+        .question-stage.is-enter-next .question-number,
+        .question-stage.is-enter-prev .question-number {
+            animation: question-number-arrival 430ms cubic-bezier(.16, 1, .3, 1) both;
+        }
+        @keyframes question-number-arrival {
+            0% { opacity: .72; transform: translateY(4px) scale(.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .question-page-item {
+            will-change: transform, background-color, border-color, color;
+            transition:
+                transform 200ms cubic-bezier(.22, 1, .36, 1),
+                background-color 180ms ease,
+                border-color 180ms ease,
+                color 180ms ease,
+                box-shadow 180ms ease !important;
+        }
+        .question-page-item.is-current {
+            animation: question-current-pulse 360ms cubic-bezier(.22, 1, .36, 1);
+        }
+        @keyframes question-current-pulse {
+            0% { transform: scale(.88); opacity: .72; }
+            65% { transform: scale(1.06); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Identitas peserta disederhanakan agar header lebih fokus pada waktu dan progres. */
+        .session-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            min-height: 38px;
+            padding: .45rem .68rem;
+            border: 1px solid var(--line);
+            border-radius: .75rem;
+            background: var(--surface-soft);
+            color: var(--muted);
+            box-shadow: none;
+            transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+        }
+        .session-chip__dot {
+            width: .46rem;
+            height: .46rem;
+            border-radius: 999px;
+            background: var(--success);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 12%, transparent);
+        }
+        .session-chip:hover {
+            border-color: color-mix(in srgb, var(--success) 28%, var(--line));
+            background: color-mix(in srgb, var(--success-soft) 52%, var(--surface-soft));
+            color: var(--text-strong);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .question-stage,
+            .question-stage::after,
+            .question-page-item,
+            .session-chip { transition: none !important; }
+            .question-stage.is-enter-next .question-number,
+            .question-stage.is-enter-prev .question-number,
+            .question-page-item.is-current { animation: none !important; }
+        }
+
     </style>
 </head>
 <body class="quiz-app h-[100dvh] min-h-screen overflow-hidden no-select"
@@ -810,14 +1354,9 @@
             </div>
 
 
-            <div class="user-chip flex items-center gap-2 rounded-xl p-1.5 pr-2.5">
-                <div class="user-avatar grid h-7 w-7 place-items-center rounded-lg text-xs font-black">
-                    {{ substr(Auth::user()->name, 0, 1) }}
-                </div>
-                <div class="hidden min-w-0 sm:block">
-                    <p class="max-w-[124px] truncate text-xs font-bold" style="color: var(--text-strong);">{{ Auth::user()->name }}</p>
-                    <p class="text-[9px]" style="color: var(--muted);">Peserta #{{ Auth::id() }}</p>
-                </div>
+            <div class="session-chip hidden sm:inline-flex" title="Sesi evaluasi aktif" aria-label="Sesi evaluasi aktif">
+                <span class="session-chip__dot" aria-hidden="true"></span>
+                <span class="text-[10px] font-bold uppercase tracking-[.12em]">Sesi aktif</span>
             </div>
         </div>
 
@@ -834,7 +1373,8 @@
                     </div>
 
                     <div x-show="ready" x-transition.opacity.duration.250ms class="space-y-4">
-                        <section class="question-card question-stage overflow-hidden rounded-3xl" :class="{ 'is-changing': questionTransitioning }">
+                        <p class="sr-only" aria-live="polite" x-text="questionTransitioning ? 'Berpindah ke soal ' + (currentIndex + 1) : 'Soal ' + (currentIndex + 1) + ' aktif'"></p>
+                        <section class="question-card question-stage overflow-hidden rounded-3xl" :class="questionAnimation ? 'is-' + questionAnimation : ''">
                             <div class="question-header flex items-center gap-4 border-b px-5 py-5 sm:px-7 sm:py-6" style="border-color: var(--line);">
                                 <div class="question-number flex h-14 min-w-14 shrink-0 flex-col items-center justify-center rounded-2xl px-2">
                                     <span class="text-lg font-black leading-none" x-text="String(currentIndex + 1).padStart(2, '0')"></span>
@@ -852,21 +1392,23 @@
                             <div class="p-5 sm:p-7">
                                 <div x-show="hasQuestionContext(currentQuestion)" class="mb-5 space-y-4">
                                     <template x-if="currentQuestion && currentQuestion.media_url">
-                                        <figure class="overflow-hidden rounded-2xl border" style="border-color: var(--line); background: var(--surface-subtle);">
-                                            <img :src="currentQuestion.media_url" :alt="currentQuestion.media_caption || 'Media soal'" loading="lazy" x-on:error="$event.target.closest('figure').classList.add('hidden')" class="question-media">
-                                            <figcaption x-show="currentQuestion.media_caption" class="border-t px-4 py-3 text-xs leading-6" style="border-color: var(--line); color: var(--muted);" x-text="currentQuestion.media_caption"></figcaption>
+                                        <figure class="question-media-frame">
+                                            <div class="question-media-stage">
+                                                <img :src="currentQuestion.media_url" :alt="currentQuestion.media_caption || 'Media soal'" loading="lazy" x-on:error="$event.target.closest('figure').classList.add('hidden')" class="question-media">
+                                            </div>
+                                            <figcaption x-show="currentQuestion.media_caption" class="question-media-caption px-4 py-3 text-xs leading-6" x-text="currentQuestion.media_caption"></figcaption>
                                         </figure>
                                     </template>
 
                                     <template x-if="currentQuestion && currentQuestion.interaction_prompt">
-                                        <div class="question-context rounded-2xl p-4 sm:p-5" :class="contextCardClass(currentQuestion.interaction_type)">
+                                        <div class="question-context question-context-panel rounded-2xl p-4 sm:p-5" :class="contextCardClass(currentQuestion.interaction_type)">
                                             <p class="text-[10px] font-black uppercase tracking-[.16em]" style="color: var(--accent-strong);" x-text="interactionPromptLabel(currentQuestion.interaction_type)"></p>
                                             <p class="mt-2 text-sm leading-6 sm:text-[15px]" style="color: var(--text);" x-text="currentQuestion.interaction_prompt"></p>
                                         </div>
                                     </template>
                                 </div>
 
-                                <div class="question-copy rounded-2xl px-5 py-5 sm:px-6 sm:py-6">
+                                <div class="question-copy question-reading-surface rounded-2xl px-5 py-5 sm:px-6 sm:py-6">
                                     <div class="text-[15px] font-semibold leading-7 sm:text-base sm:leading-8">
                                         <span x-html="currentQuestion.question_text"></span>
                                     </div>
@@ -911,14 +1453,13 @@
                     <div class="mobile-question-scroll mb-3 overflow-x-auto lg:hidden">
                         <div class="flex w-max min-w-full gap-2">
                             <template x-for="(q, index) in questions" :key="q.id">
-                                <button @click="goToQuestion(index)" class="page-item relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-black"
+                                <button @click="goToQuestion(index)" :data-question-index="index" class="page-item question-page-item relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-black"
                                     :class="{
-                                        'text-white shadow-sm': currentIndex === index,
-                                        'border text-amber-700 dark:text-amber-200': flags[q.id] && currentIndex !== index,
-                                        'border text-emerald-700 dark:text-emerald-200': answers[q.id] && !flags[q.id] && currentIndex !== index,
-                                        'nav-button': !answers[q.id] && !flags[q.id] && currentIndex !== index
-                                    }"
-                                    :style="currentIndex === index ? 'background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);' : (flags[q.id] ? 'background: var(--warning-soft); border-color: color-mix(in srgb, var(--warning) 30%, var(--line)); color: var(--warning);' : (answers[q.id] ? 'background: var(--success-soft); border-color: color-mix(in srgb, var(--success) 28%, var(--line)); color: var(--success);' : 'color: var(--muted);'))">
+                                        'is-current': currentIndex === index,
+                                        'is-flagged': flags[q.id] && currentIndex !== index,
+                                        'is-answered': answers[q.id] && !flags[q.id] && currentIndex !== index,
+                                        'is-empty': !answers[q.id] && !flags[q.id] && currentIndex !== index
+                                    }">
                                     <span x-text="index + 1"></span>
                                     <span x-show="flags[q.id]" class="absolute right-1 top-1 h-1.5 w-1.5 rounded-full" style="background: var(--warning);"></span>
                                 </button>
@@ -945,7 +1486,7 @@
                         </template>
 
                         <template x-if="currentIndex === questions.length - 1">
-                            <button @click="confirmSubmit()" :disabled="!isComplete || questionTransitioning" class="primary-action inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black disabled:cursor-not-allowed disabled:opacity-60 sm:px-5" :style="isComplete ? 'background: var(--success); color: #fff;' : 'background: var(--surface-soft); border: 1px solid var(--line); color: var(--muted); cursor: not-allowed;'">
+                            <button @click="confirmSubmit()" :disabled="!isComplete || questionTransitioning" class="primary-action inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black disabled:cursor-not-allowed disabled:opacity-60 sm:px-5" :style="isComplete ? 'background: var(--button-primary); border: 1px solid var(--button-primary-line); color: var(--button-primary-ink);' : 'background: var(--button-disabled); border: 1px solid var(--line); color: var(--muted); cursor: not-allowed;'">
                                 <span>Kumpulkan</span>
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </button>
@@ -982,9 +1523,13 @@
 
                 <div class="grid grid-cols-5 gap-2">
                     <template x-for="(q, index) in questions" :key="q.id">
-                        <button @click="goToQuestion(index)" class="page-item relative flex aspect-square items-center justify-center rounded-lg text-xs font-black"
-                            :class="{ 'shadow-sm': currentIndex === index, 'nav-button': currentIndex !== index }"
-                            :style="currentIndex === index ? 'background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);' : (flags[q.id] ? 'background: var(--warning-soft); color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 30%, var(--line));' : (answers[q.id] ? 'background: var(--success-soft); color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 28%, var(--line));' : 'color: var(--muted);'))">
+                        <button @click="goToQuestion(index)" :data-question-index="index" class="page-item question-page-item relative flex aspect-square items-center justify-center rounded-lg text-xs font-black"
+                            :class="{
+                                'is-current': currentIndex === index,
+                                'is-flagged': flags[q.id] && currentIndex !== index,
+                                'is-answered': answers[q.id] && !flags[q.id] && currentIndex !== index,
+                                'is-empty': !answers[q.id] && !flags[q.id] && currentIndex !== index
+                            }">
                             <span x-text="index + 1"></span>
                             <span x-show="flags[q.id]" class="absolute right-1 top-1 h-1.5 w-1.5 rounded-full" style="background: var(--warning);"></span>
                         </button>
@@ -1023,6 +1568,7 @@
                 feedbackTimer: null,
                 timerInterval: null,
                 questionTransitioning: false,
+                questionAnimation: '',
                 questionSwitchTimer: null,
 
                 get currentQuestion() { return this.questions[this.currentIndex]; },
@@ -1093,6 +1639,7 @@
                     });
 
                     this.ready = true;
+                    this.$nextTick(() => this.syncNavigationToActive());
                     this.startTimer();
                     this.activateStrictMode();
                 },
@@ -1158,10 +1705,26 @@
                     }, 1000);
                 },
 
-                scrollQuestionToTop() {
+                prefersReducedMotion() {
+                    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                },
+
+                scrollQuestionToTop(behavior = 'auto') {
+                    const scroller = this.$refs.questionScroll;
+                    if (!scroller) return;
+                    scroller.scrollTo({ top: 0, behavior: this.prefersReducedMotion() ? 'auto' : behavior });
+                },
+
+                syncNavigationToActive() {
                     this.$nextTick(() => {
-                        const scroller = this.$refs.questionScroll;
-                        if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
+                        const reduceMotion = this.prefersReducedMotion();
+                        document.querySelectorAll(`[data-question-index="${this.currentIndex}"]`).forEach((button) => {
+                            button.scrollIntoView({
+                                behavior: reduceMotion ? 'auto' : 'smooth',
+                                block: 'nearest',
+                                inline: 'center'
+                            });
+                        });
                     });
                 },
 
@@ -1178,19 +1741,35 @@
                         return;
                     }
 
+                    const direction = targetIndex > this.currentIndex ? 'next' : 'prev';
+                    const reduceMotion = this.prefersReducedMotion();
+                    const exitDuration = reduceMotion ? 0 : 155;
+                    const enterDuration = reduceMotion ? 0 : 430;
+
                     this.questionTransitioning = true;
+                    this.questionAnimation = reduceMotion ? '' : `leave-${direction}`;
                     window.clearTimeout(this.questionSwitchTimer);
 
                     this.questionSwitchTimer = window.setTimeout(() => {
+                        // Kartu lama diberi waktu mereda sebelum data soal berganti.
+                        this.scrollQuestionToTop('auto');
                         this.currentIndex = targetIndex;
-                        this.scrollQuestionToTop();
+                        this.questionAnimation = reduceMotion ? '' : `enter-${direction}`;
+                        this.syncNavigationToActive();
 
                         this.$nextTick(() => {
+                            // Dua frame memastikan posisi awal kartu baru benar-benar tergambar
+                            // sebelum kartu kembali ke posisi normal secara halus.
                             requestAnimationFrame(() => {
-                                this.questionTransitioning = false;
+                                requestAnimationFrame(() => {
+                                    this.questionAnimation = '';
+                                    window.setTimeout(() => {
+                                        this.questionTransitioning = false;
+                                    }, enterDuration);
+                                });
                             });
                         });
-                    }, 150);
+                    }, exitDuration);
                 },
 
                 nextQuestion() {
