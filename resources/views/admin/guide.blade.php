@@ -101,6 +101,11 @@
         .dark .admin-guide-subtitle { color: #94a3b8; }
         .admin-guide-content { padding: 0 1rem 1rem; }
         .guide-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.82fr); gap: 1.25rem; align-items: stretch; }
+        .guide-story-intro {
+            border-radius: 1.25rem; border: 1px solid #e2e8f0; background: #f8fafc;
+            padding: 1rem 1.1rem; color: #475569; font-size: 0.9rem; line-height: 1.75;
+        }
+        .dark .guide-story-intro { border-color: rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); color: #cbd5e1; }
 
         .admin-shot {
             position: relative; min-height: 390px; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 1.15rem;
@@ -172,6 +177,14 @@
         .dark .guide-note-list p { color: #cbd5e1; }
         .guide-note-list strong { color: #0f172a; }
         .dark .guide-note-list strong { color: #fff; }
+        .guide-page-link {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+            margin-top: 0.25rem; border-radius: 0.9rem; border: 1px solid #c7d2fe;
+            background: #eef2ff; color: #4f46e5; padding: 0.75rem 0.9rem;
+            font-size: 0.75rem; font-weight: 900; transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .guide-page-link:hover { transform: translateY(-1px); background: #e0e7ff; }
+        .dark .guide-page-link { border-color: rgba(129,140,248,0.25); background: rgba(99,102,241,0.12); color: #c7d2fe; }
 
         .mock-bar, .mock-line, .mock-pill, .mock-input, .mock-row, .mock-token, .mock-mini-card { border-radius: 999px; background: #e2e8f0; }
         .dark .mock-bar, .dark .mock-line, .dark .mock-pill, .dark .mock-input, .dark .mock-row, .dark .mock-token, .dark .mock-mini-card { background: rgba(255,255,255,0.12); }
@@ -338,8 +351,8 @@
                     </nav>
                     <div class="mt-3 flex flex-wrap items-center gap-3">
                         <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white transition-colors">Panduan Admin</h2>
-                      
                     </div>
+                    <p class="mt-2 max-w-2xl text-xs font-semibold leading-relaxed text-slate-500 dark:text-slate-400">Pilih halaman yang ingin dipahami, buka gambarnya, lalu ikuti catatan bernomor sesuai area yang ditandai.</p>
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0">
@@ -360,25 +373,27 @@
                 </div>
             </div>
 
-            {{-- <nav class="guide-quick-nav custom-scrollbar mt-4" aria-label="Navigasi Panduan">
+            <nav class="guide-quick-nav custom-scrollbar mt-4" aria-label="Navigasi Panduan">
                 <button type="button" @click="activeAdminGuide = 'dashboard'; document.getElementById('guide-dashboard')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'dashboard' ? 'active' : ''">Dasbor</button>
                 <button type="button" @click="activeAdminGuide = 'students'; document.getElementById('guide-students')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'students' ? 'active' : ''">Siswa</button>
                 <button type="button" @click="activeAdminGuide = 'classes'; document.getElementById('guide-classes')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'classes' ? 'active' : ''">Kelas</button>
                 <button type="button" @click="activeAdminGuide = 'quiz'; document.getElementById('guide-quiz')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'quiz' ? 'active' : ''">Kuis</button>
+                <button type="button" @click="activeAdminGuide = 'quiz-review'; document.getElementById('guide-quiz-review')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'quiz-review' ? 'active' : ''">Tinjau Kuis</button>
+                <button type="button" @click="activeAdminGuide = 'question-create'; document.getElementById('guide-question-create')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'question-create' ? 'active' : ''">Buat Soal</button>
                 <button type="button" @click="activeAdminGuide = 'lab'; document.getElementById('guide-lab')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'lab' ? 'active' : ''">Lab</button>
                 <button type="button" @click="activeAdminGuide = 'analytics'; document.getElementById('guide-analytics')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'analytics' ? 'active' : ''">Analitik</button>
-            </nav> --}}
+                <button type="button" @click="activeAdminGuide = 'student-detail'; document.getElementById('guide-student-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'student-detail' ? 'active' : ''">Detail Siswa</button>
+                <button type="button" @click="activeAdminGuide = 'lab-review'; document.getElementById('guide-lab-review')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="guide-chip" :class="activeAdminGuide === 'lab-review' ? 'active' : ''">Review Lab</button>
+            </nav>
         </div>
     </header>
 
-    <main class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 pt-3 md:px-6 md:pb-12">
+    <main id="admin-main-content" class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 pt-3 md:px-6 md:pb-12">
 
             <section class="glass-card rounded-[2rem] p-5 md:p-8 reveal">
                 <div class="mb-6">
-                    <div>
-                       
-                        {{-- <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">Panduan Interaktif Panel Admin</h3> --}}
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-3 max-w-3xl leading-relaxed">Buka bagian panduan, lalu arahkan kursor pada area bernomor 1-6 untuk melihat fungsi tombol, tabel, grafik, dan alur pengelolaan.</p>
+                    <div class="guide-story-intro">
+                        Panduan ini disusun mengikuti alur kerja admin sehari-hari: mulai dari melihat kondisi kelas, mencari siswa, membagikan token, meninjau kuis, mengatur lab, sampai membaca analitik. Setiap bagian memakai gambar panduan terkini agar posisi menu, tabel, tombol, dan grafik sesuai dengan tampilan panel sekarang.
                     </div>
                 </div>
 
@@ -388,22 +403,23 @@
                             <span class="admin-guide-no bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">01</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Dasbor Admin</span>
-                                <span class="admin-guide-subtitle">Memantau ringkasan siswa, kuis, lab, performa, dan aktivitas terbaru.</span>
+                                <span class="admin-guide-subtitle">Tempat pertama untuk melihat kondisi belajar hari ini sebelum mengambil tindakan.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'dashboard' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'dashboard'" x-transition.opacity class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-dashboard.png') }}" alt="Tampilan asli dasbor admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-dashboard.png') }}" alt="Tampilan asli dasbor admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot" style="--x: 0%; --y: 0%; --w: 22.5%; --h: 100%;"><span>1</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18.5%; --w: 71.5%; --h: 58.5%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 81.5%; --w: 71.5%; --h: 17%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Navigasi panel</strong> menjadi jalur menuju dasbor, kuis, lab, analitik, kelas, dan panduan.</p></div>
-                                    <div><span>2</span><p><strong>Kartu statistik</strong> menampilkan jumlah siswa, rata-rata nilai, progres lab, dan aktivitas sistem.</p></div>
-                                    <div><span>3</span><p><strong>Grafik dan aktivitas</strong> digunakan untuk membaca performa belajar serta riwayat tindakan admin.</p></div>
+                                    <div><span>1</span><p><strong>Mulai dari menu kiri</strong> untuk berpindah ke kuis, lab, kelas, siswa, atau kembali ke panduan saat membutuhkan bantuan.</p></div>
+                                    <div><span>2</span><p><strong>Baca kartu utama</strong> untuk melihat siswa yang sudah tuntas, yang perlu pendampingan, dan aktivitas lab terbaru.</p></div>
+                                    <div><span>3</span><p><strong>Lanjutkan ke grafik dan log</strong> saat ingin melihat pola nilai, aktivitas terbaru, atau sinyal yang perlu segera ditindaklanjuti.</p></div>
+                                    <a href="{{ route('admin.dashboard') }}" class="guide-page-link">Buka Dasbor Admin</a>
                                 </div>
                             </div>
                         </div>
@@ -414,22 +430,23 @@
                             <span class="admin-guide-no bg-cyan-100 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300">02</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Manajemen Siswa</span>
-                                <span class="admin-guide-subtitle">Menambah akun, impor data, ekspor laporan, dan melihat detail progres siswa.</span>
+                                <span class="admin-guide-subtitle">Mencari, menyaring, dan membuka ringkasan belajar siswa tanpa bolak-balik halaman.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'students' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'students'" x-transition.opacity style="display: none;" class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-students.png') }}" alt="Tampilan asli direktori siswa admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-students.png') }}" alt="Tampilan asli direktori siswa admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot marker-right" style="--x: 51.5%; --y: 15.5%; --w: 43.5%; --h: 10.5%;"><span>1</span></div>
                                     <div class="guide-hotspot" style="--x: 27.5%; --y: 28.5%; --w: 67.5%; --h: 69%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 76.5%; --y: 37%; --w: 16.5%; --h: 55%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Toolbar data</strong> dipakai untuk mencari siswa, menambah akun, mengimpor daftar, atau mengekspor laporan.</p></div>
-                                    <div><span>2</span><p><strong>Tabel siswa</strong> menampilkan akun, kelas, status, dan tombol aksi pengelolaan.</p></div>
-                                    <div><span>3</span><p><strong>Aksi panel</strong> membuka insight siswa atau menghapus akun jika data perlu dibersihkan.</p></div>
+                                    <div><span>1</span><p><strong>Cari siswa lebih dulu</strong> menggunakan nama, email, kelas, atau status agar daftar yang terlihat langsung sesuai kebutuhan.</p></div>
+                                    <div><span>2</span><p><strong>Periksa tabel siswa</strong> untuk melihat akun, kelas, status belajar, dan informasi dasar sebelum membuka detail.</p></div>
+                                    <div><span>3</span><p><strong>Gunakan tombol aksi</strong> untuk melihat insight, membuka profil, atau membersihkan akun yang memang tidak lagi dipakai.</p></div>
+                                    <a href="{{ route('admin.students.index') }}" class="guide-page-link">Buka Direktori Siswa</a>
                                 </div>
                             </div>
                         </div>
@@ -440,22 +457,23 @@
                             <span class="admin-guide-no bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">03</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Kelas dan Token</span>
-                                <span class="admin-guide-subtitle">Membuat kelas, mengatur status, dan membagikan token gabung kepada siswa.</span>
+                                <span class="admin-guide-subtitle">Mengatur ruang belajar dan membagikan kode masuk yang mudah dipakai siswa.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'classes' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'classes'" x-transition.opacity style="display: none;" class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-classes.png') }}" alt="Tampilan asli manajemen kelas dan token admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-classes.png') }}" alt="Tampilan asli manajemen kelas dan token admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18.5%; --w: 71.5%; --h: 16%;"><span>1</span></div>
                                     <div class="guide-hotspot" style="--x: 25.5%; --y: 41%; --w: 71.5%; --h: 43%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 81.5%; --y: 64.5%; --w: 12.5%; --h: 17%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Ringkasan kelas</strong> memperlihatkan total kelas, token aktif, dan jumlah siswa terhubung.</p></div>
-                                    <div><span>2</span><p><strong>Database kelas</strong> menampilkan nama kelas, jumlah siswa, nilai rata-rata, token akses, dan status.</p></div>
-                                    <div><span>3</span><p><strong>Tombol aksi</strong> dipakai untuk melihat analitik, memperbarui token, mengedit, atau menghapus kelas.</p></div>
+                                    <div><span>1</span><p><strong>Lihat kondisi kelas</strong> melalui ringkasan total kelas, token aktif, dan jumlah siswa yang sudah tersambung.</p></div>
+                                    <div><span>2</span><p><strong>Bagikan token kelas</strong> kepada siswa yang tepat. Token ini dipakai siswa untuk masuk ke kelasnya masing-masing.</p></div>
+                                    <div><span>3</span><p><strong>Kelola akses seperlunya</strong> dengan memperbarui token, mengedit data kelas, menutup pendaftaran, atau membuka analitik kelas.</p></div>
+                                    <a href="{{ route('admin.classes.index') }}" class="guide-page-link">Buka Kelas & Token</a>
                                 </div>
                             </div>
                         </div>
@@ -466,22 +484,77 @@
                             <span class="admin-guide-no bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/10 dark:text-fuchsia-300">04</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Manajemen Kuis</span>
-                                <span class="admin-guide-subtitle">Mengelola bank soal, opsi jawaban, kunci, dan analitik hasil kuis.</span>
+                                <span class="admin-guide-subtitle">Meninjau kualitas soal dan menentukan butir mana yang perlu diperbaiki.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'quiz' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'quiz'" x-transition.opacity style="display: none;" class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-quiz.png') }}" alt="Tampilan asli bank soal dan analisis evaluasi admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-question-analytics.png') }}" alt="Tampilan asli bank soal dan analisis evaluasi admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18.5%; --w: 71.5%; --h: 18%;"><span>1</span></div>
                                     <div class="guide-hotspot" style="--x: 25.5%; --y: 40%; --w: 47%; --h: 58.5%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 74.5%; --y: 40%; --w: 22.5%; --h: 58.5%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Kartu evaluasi</strong> merangkum total soal, peserta ujian, akurasi soal, dan jumlah soal sulit.</p></div>
-                                    <div><span>2</span><p><strong>Direktori bank soal</strong> menampilkan kumpulan soal per bab untuk ditinjau dan dikembangkan.</p></div>
-                                    <div><span>3</span><p><strong>Rasio kesulitan</strong> membantu admin membaca distribusi soal mudah, sedang, dan sulit.</p></div>
+                                    <div><span>1</span><p><strong>Mulai dari ringkasan</strong> untuk melihat jumlah soal, partisipan, akurasi jawaban, dan soal yang mulai terlihat sulit.</p></div>
+                                    <div><span>2</span><p><strong>Pilih kelompok soal</strong> untuk memperbaiki pertanyaan, opsi, kunci, media, atau TP.</p></div>
+                                    <div><span>3</span><p><strong>Cek soal lemah</strong> untuk menentukan materi yang perlu dijelaskan ulang.</p></div>
+                                    <a href="{{ route('admin.analytics.questions') }}" class="guide-page-link">Buka Manajemen Kuis</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="guide-quiz-review" class="admin-guide-item scroll-mt-44">
+                        <button @click="activeAdminGuide = activeAdminGuide === 'quiz-review' ? null : 'quiz-review'" class="admin-guide-trigger" type="button">
+                            <span class="admin-guide-no bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">05</span>
+                            <span class="flex-1">
+                                <span class="admin-guide-title">Tinjauan Kuis Siswa</span>
+                                <span class="admin-guide-subtitle">Membuka hasil kuis siswa dari tabel analitik yang lebih ringkas.</span>
+                            </span>
+                            <svg :class="activeAdminGuide === 'quiz-review' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="activeAdminGuide === 'quiz-review'" x-transition.opacity style="display: none;" class="admin-guide-content">
+                            <div class="guide-grid">
+                                <div class="admin-shot real-admin-shot">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-question-analytics.png') }}" alt="Tampilan asli analitik kuis dan tinjauan siswa admin Utilwind" loading="eager" decoding="async">
+                                    <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18.5%; --w: 71.5%; --h: 19%;"><span>1</span></div>
+                                    <div class="guide-hotspot" style="--x: 25.5%; --y: 41%; --w: 71.5%; --h: 16%;"><span>2</span></div>
+                                    <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 62%; --w: 71.5%; --h: 36%;"><span>3</span></div>
+                                </div>
+                                <div class="guide-note-list">
+                                    <div><span>1</span><p><strong>Baca ringkasan kuis</strong> untuk melihat partisipan, akurasi, dan soal yang perlu ditinjau.</p></div>
+                                    <div><span>2</span><p><strong>Gunakan filter kuis</strong> agar tabel siswa sesuai periode atau kelas yang ingin dianalisis.</p></div>
+                                    <div><span>3</span><p><strong>Tinjau siswa</strong> untuk membuka halaman hasil kuis berdasarkan nama siswa tersebut.</p></div>
+                                    <a href="{{ route('admin.analytics.questions') }}#quiz-students" class="guide-page-link">Buka Tinjauan Kuis</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="guide-question-create" class="admin-guide-item scroll-mt-44">
+                        <button @click="activeAdminGuide = activeAdminGuide === 'question-create' ? null : 'question-create'" class="admin-guide-trigger" type="button">
+                            <span class="admin-guide-no bg-cyan-100 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300">06</span>
+                            <span class="flex-1">
+                                <span class="admin-guide-title">Buat Soal</span>
+                                <span class="admin-guide-subtitle">Menyusun soal, opsi jawaban, tujuan pembelajaran, dan media pendukung.</span>
+                            </span>
+                            <svg :class="activeAdminGuide === 'question-create' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="activeAdminGuide === 'question-create'" x-transition.opacity style="display: none;" class="admin-guide-content">
+                            <div class="guide-grid">
+                                <div class="admin-shot real-admin-shot">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-question-create.png') }}" alt="Tampilan asli halaman buat soal admin Utilwind" loading="eager" decoding="async">
+                                    <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18.5%; --w: 71.5%; --h: 20%;"><span>1</span></div>
+                                    <div class="guide-hotspot" style="--x: 25.5%; --y: 42%; --w: 46%; --h: 56%;"><span>2</span></div>
+                                    <div class="guide-hotspot marker-right" style="--x: 73.5%; --y: 42%; --w: 23.5%; --h: 56%;"><span>3</span></div>
+                                </div>
+                                <div class="guide-note-list">
+                                    <div><span>1</span><p><strong>Isi identitas soal</strong> seperti bab, tipe interaksi, teks pertanyaan, dan TP yang diukur.</p></div>
+                                    <div><span>2</span><p><strong>Lengkapi opsi jawaban</strong> dan pastikan kunci jawaban sesuai sebelum menyimpan.</p></div>
+                                    <div><span>3</span><p><strong>Cek pratinjau</strong> untuk memastikan soal dan media mudah dibaca siswa.</p></div>
+                                    <a href="{{ route('admin.questions.create') }}" class="guide-page-link">Buka Buat Soal</a>
                                 </div>
                             </div>
                         </div>
@@ -489,25 +562,26 @@
 
                     <div id="guide-lab" class="admin-guide-item scroll-mt-44">
                         <button @click="activeAdminGuide = activeAdminGuide === 'lab' ? null : 'lab'" class="admin-guide-trigger" type="button">
-                            <span class="admin-guide-no bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">05</span>
+                            <span class="admin-guide-no bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">07</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Konfigurasi Lab</span>
-                                <span class="admin-guide-subtitle">Mengatur modul praktik, langkah tugas, validasi kode, dan status lab.</span>
+                                <span class="admin-guide-subtitle">Menyusun praktik yang jelas, bertahap, dan bisa diperiksa otomatis.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'lab' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'lab'" x-transition.opacity style="display: none;" class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-lab.png') }}" alt="Tampilan asli konfigurasi lab admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-lab.png') }}" alt="Tampilan asli konfigurasi lab admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 19%; --w: 71.5%; --h: 34%;"><span>1</span></div>
                                     <div class="guide-hotspot" style="--x: 25.5%; --y: 58%; --w: 71.5%; --h: 40%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 76%; --y: 61%; --w: 19%; --h: 37%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Ringkasan konfigurasi</strong> memperlihatkan jumlah modul dan fungsi halaman pengaturan lab.</p></div>
-                                    <div><span>2</span><p><strong>Direktori lab</strong> memuat judul modul, slug, durasi, nilai lulus, dan tombol pengelolaan.</p></div>
-                                    <div><span>3</span><p><strong>Aksi lab</strong> membuka pengaturan langkah, validasi, atau penghapusan modul praktik.</p></div>
+                                    <div><span>1</span><p><strong>Pastikan modulnya jelas</strong> dengan judul, slug, deskripsi, durasi, dan nilai minimum yang mudah dipahami siswa.</p></div>
+                                    <div><span>2</span><p><strong>Susun langkah praktik</strong> dari tugas paling awal sampai validasi akhir agar siswa tahu urutan pengerjaannya.</p></div>
+                                    <div><span>3</span><p><strong>Kelola modul dengan hati-hati</strong> melalui tombol langkah, pengaturan, atau hapus jika modul sudah tidak dipakai.</p></div>
+                                    <a href="{{ route('admin.labs.index') }}" class="guide-page-link">Buka Konfigurasi Lab</a>
                                 </div>
                             </div>
                         </div>
@@ -515,25 +589,80 @@
 
                     <div id="guide-analytics" class="admin-guide-item scroll-mt-44">
                         <button @click="activeAdminGuide = activeAdminGuide === 'analytics' ? null : 'analytics'" class="admin-guide-trigger" type="button">
-                            <span class="admin-guide-no bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">06</span>
+                            <span class="admin-guide-no bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">08</span>
                             <span class="flex-1">
                                 <span class="admin-guide-title">Analitik dan Tinjauan</span>
-                                <span class="admin-guide-subtitle">Membaca performa kelas, meninjau hasil lab, dan mengekspor laporan.</span>
+                                <span class="admin-guide-subtitle">Membaca pola praktik sebelum memberi penguatan atau laporan.</span>
                             </span>
                             <svg :class="activeAdminGuide === 'analytics' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="activeAdminGuide === 'analytics'" x-transition.opacity style="display: none;" class="admin-guide-content">
                             <div class="guide-grid">
                                 <div class="admin-shot real-admin-shot">
-                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/admin-analytics.png') }}" alt="Tampilan asli pusat analitik lab admin Utilwind" loading="eager" decoding="async">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-lab-analytics.png') }}" alt="Tampilan asli pusat analitik lab admin Utilwind" loading="eager" decoding="async">
                                     <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 19%; --w: 71.5%; --h: 19%;"><span>1</span></div>
                                     <div class="guide-hotspot" style="--x: 25.5%; --y: 44%; --w: 71.5%; --h: 54.5%;"><span>2</span></div>
                                     <div class="guide-hotspot marker-right" style="--x: 84%; --y: 48.5%; --w: 11%; --h: 7%;"><span>3</span></div>
                                 </div>
                                 <div class="guide-note-list">
-                                    <div><span>1</span><p><strong>Ringkasan analitik</strong> menampilkan total percobaan, rasio kelulusan, rata-rata nilai, dan durasi.</p></div>
-                                    <div><span>2</span><p><strong>Grafik perkembangan</strong> memperlihatkan pergerakan nilai lab pada setiap modul yang dianalisis.</p></div>
-                                    <div><span>3</span><p><strong>Mode tampilan</strong> mengganti grafik garis atau batang untuk membaca pola data dengan cepat.</p></div>
+                                    <div><span>1</span><p><strong>Baca ringkasan dulu</strong> untuk mengetahui total percobaan, rasio lulus, rata-rata nilai, dan durasi pengerjaan.</p></div>
+                                    <div><span>2</span><p><strong>Perhatikan grafik</strong> untuk melihat modul mana yang stabil, menurun, atau membutuhkan pendampingan tambahan.</p></div>
+                                    <div><span>3</span><p><strong>Ubah tampilan grafik</strong> saat pola lebih mudah dibaca dalam bentuk garis atau batang.</p></div>
+                                    <a href="{{ route('admin.lab.analytics') }}" class="guide-page-link">Buka Analitik Lab</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="guide-student-detail" class="admin-guide-item scroll-mt-44">
+                        <button @click="activeAdminGuide = activeAdminGuide === 'student-detail' ? null : 'student-detail'" class="admin-guide-trigger" type="button">
+                            <span class="admin-guide-no bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300">09</span>
+                            <span class="flex-1">
+                                <span class="admin-guide-title">Detail Siswa</span>
+                                <span class="admin-guide-subtitle">Membaca profil, capaian, dan riwayat aktivitas sebelum memberi tindak lanjut.</span>
+                            </span>
+                            <svg :class="activeAdminGuide === 'student-detail' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="activeAdminGuide === 'student-detail'" x-transition.opacity style="display: none;" class="admin-guide-content">
+                            <div class="guide-grid">
+                                <div class="admin-shot real-admin-shot">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-student-detail.png') }}" alt="Tampilan asli detail siswa admin Utilwind" loading="eager" decoding="async">
+                                    <div class="guide-hotspot marker-right" style="--x: 25.5%; --y: 18%; --w: 71.5%; --h: 20%;"><span>1</span></div>
+                                    <div class="guide-hotspot" style="--x: 25.5%; --y: 43%; --w: 71.5%; --h: 17%;"><span>2</span></div>
+                                    <div class="guide-hotspot marker-right" style="--x: 62.5%; --y: 62%; --w: 34.5%; --h: 32%;"><span>3</span></div>
+                                </div>
+                                <div class="guide-note-list">
+                                    <div><span>1</span><p><strong>Pastikan identitas siswa</strong> seperti nama, email, kelas, dan progres keseluruhan sudah sesuai.</p></div>
+                                    <div><span>2</span><p><strong>Baca capaian utama</strong> untuk melihat materi, praktik lab, kuis, dan jumlah indikator yang perlu dicek.</p></div>
+                                    <div><span>3</span><p><strong>Gunakan riwayat aktivitas</strong> untuk meninjau percobaan terbaru sebelum memberi arahan ke siswa.</p></div>
+                                    <a href="{{ route('admin.students.index') }}" class="guide-page-link">Buka Direktori Siswa</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="guide-lab-review" class="admin-guide-item scroll-mt-44">
+                        <button @click="activeAdminGuide = activeAdminGuide === 'lab-review' ? null : 'lab-review'" class="admin-guide-trigger" type="button">
+                            <span class="admin-guide-no bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">10</span>
+                            <span class="flex-1">
+                                <span class="admin-guide-title">Review Hasil Lab</span>
+                                <span class="admin-guide-subtitle">Memvalidasi skor, TP praktik, catatan risiko, dan bukti kode akhir siswa.</span>
+                            </span>
+                            <svg :class="activeAdminGuide === 'lab-review' ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="w-5 h-5 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="activeAdminGuide === 'lab-review'" x-transition.opacity style="display: none;" class="admin-guide-content">
+                            <div class="guide-grid">
+                                <div class="admin-shot real-admin-shot">
+                                    <img class="admin-guide-screenshot" src="{{ asset('images/guides/current-admin-lab-result-review.png') }}" alt="Tampilan asli review hasil lab admin Utilwind" loading="eager" decoding="async">
+                                    <div class="guide-hotspot" style="--x: 5%; --y: 17%; --w: 52%; --h: 25%;"><span>1</span></div>
+                                    <div class="guide-hotspot marker-right" style="--x: 5%; --y: 59%; --w: 91%; --h: 20%;"><span>2</span></div>
+                                    <div class="guide-hotspot marker-right" style="--x: 5%; --y: 81%; --w: 91%; --h: 16%;"><span>3</span></div>
+                                </div>
+                                <div class="guide-note-list">
+                                    <div><span>1</span><p><strong>Mulai dari status dan skor</strong> untuk memahami apakah siswa sudah mencapai target lab.</p></div>
+                                    <div><span>2</span><p><strong>Cocokkan validasi TP</strong> dengan catatan risiko dan rekomendasi agar tindak lanjut lebih tepat.</p></div>
+                                    <div><span>3</span><p><strong>Baca bukti pengerjaan</strong> melalui tugas, riwayat percobaan, dan cuplikan kode akhir.</p></div>
+                                    <a href="{{ route('admin.lab.analytics') }}" class="guide-page-link">Buka Analitik Lab</a>
                                 </div>
                             </div>
                         </div>

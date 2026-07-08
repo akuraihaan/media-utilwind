@@ -234,7 +234,7 @@
                         ],
                     ],
                     [
-                        'id' => '3.2', 'title' => 'Warna dan Latar Belakang', 'route' => ['courses.backgrounds', 'courses.background'],
+                        'id' => '3.2', 'title' => 'Warna dan Latar Belakang', 'route' => ['courses.background', 'courses.backgrounds'],
                         'anchors' => [
                             ['id' => 'section-51', 'label' => 'Pola Class Warna'],
                             ['id' => 'section-52', 'label' => 'Latar Halaman'],

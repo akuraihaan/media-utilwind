@@ -939,7 +939,7 @@
         </div>
     </aside>
 
-    <main data-smooth-scroll class="smooth-directory-scroll relative z-10 flex h-full flex-1 flex-col overflow-y-auto overflow-x-hidden custom-scrollbar" tabindex="-1">
+    <main id="admin-main-content" data-smooth-scroll class="smooth-directory-scroll relative z-10 flex h-full flex-1 flex-col overflow-y-auto overflow-x-hidden custom-scrollbar" tabindex="-1">
         <div class="pointer-events-none fixed inset-0 z-0">
             <div class="absolute left-[20%] top-[8%] h-[500px] w-[500px] rounded-full bg-indigo-300/20 blur-[120px] transition-colors duration-500 dark:bg-indigo-600/10"></div>
             <div class="absolute bottom-[10%] right-[8%] h-[400px] w-[400px] rounded-full bg-cyan-300/20 blur-[120px] transition-colors duration-500 dark:bg-cyan-600/10"></div>
@@ -957,8 +957,7 @@
                         <nav class="mb-1.5 hidden text-[10px] font-bold text-slate-500 transition-colors sm:flex dark:text-white/50" aria-label="Breadcrumb">
                             <ol class="inline-flex items-center gap-1.5">
                                 <li><a href="{{ route('admin.dashboard') }}" class="transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">Dasbor</a></li>
-                                <li class="text-slate-300 dark:text-white/20">/</li>
-                                <li class="text-slate-500 dark:text-white/50">Manajemen Siswa</li>
+                                
                                 <li class="text-slate-300 dark:text-white/20">/</li>
                                 <li aria-current="page" class="text-slate-700 dark:text-white">Direktori Siswa</li>
                             </ol>
@@ -970,7 +969,7 @@
                                 <button type="button" @click.stop="showDirectoryGuide = true" class="tooltip-trigger" aria-label="Buka panduan Direktori Siswa" title="Panduan Direktori Siswa">?</button>
                                 <div class="tooltip-content" role="tooltip">
                                     <span class="mb-1 block font-bold text-indigo-600 dark:text-indigo-300">Panduan Direktori</span>
-                                    Cari, saring, lalu klik nama siswa untuk melihat ringkasan aktivitasnya.
+                                    Cari, saring, lalu gunakan tombol aksi untuk membuka insight atau detail siswa.
                                 </div>
                             </div>
                         </div>
@@ -1013,85 +1012,23 @@
 
         <section class="relative z-10 p-4 md:p-8 lg:p-10">
             <div class="mx-auto max-w-7xl space-y-6">
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <article class="glass-card metric-card dashboard-metric-card group/card reveal rounded-2xl p-5">
-                    <div class="card-bg-gfx">
-                        <div class="metric-icon absolute -right-3 -top-3 opacity-[.07] dark:opacity-10">
-                            <svg class="h-24 w-24 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.55" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2m18 0v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75M14 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-indigo-300/15 blur-3xl dark:bg-indigo-500/10"></div>
-                    </div>
-                    <div class="relative z-10 flex h-full flex-col justify-between">
-                        <div class="flex items-start justify-between gap-3">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Total Siswa</p>
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-600 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H2v-2a4 4 0 015-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"/></svg>
-                            </span>
-                        </div>
-                        <div>
-                            <p class="mt-5 text-3xl font-black tracking-tight text-slate-900 dark:text-white">{{ number_format($summary['total_students'] ?? 0) }}</p>
-                            
-                        </div>
-                    </div>
-                </article>
-
-                <article class="glass-card metric-card dashboard-metric-card group/card reveal rounded-2xl p-5" style="animation-delay: .05s">
-                    <div class="card-bg-gfx">
-                        <div class="metric-icon absolute -right-3 -top-3 opacity-[.07] dark:opacity-10">
-                            <svg class="h-24 w-24 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.55" d="M3 7h18M5 7l1 14h12l1-14M9 11v6m6-6v6M8 4h8l1 3H7l1-3z"/></svg>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-cyan-300/15 blur-3xl dark:bg-cyan-500/10"></div>
-                    </div>
-                    <div class="relative z-10 flex h-full flex-col justify-between">
-                        <div class="flex items-start justify-between gap-3">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Masuk Kelas</p>
-                            
-                        </div>
-                        <div>
-                            <p class="mt-5 text-3xl font-black tracking-tight text-indigo-600 dark:text-indigo-300">{{ number_format($summary['with_class'] ?? 0) }}</p>
-                            
-                        </div>
-                    </div>
-                </article>
-
-                <article class="glass-card metric-card dashboard-metric-card group/card reveal rounded-2xl p-5" style="animation-delay: .1s">
-                    <div class="card-bg-gfx">
-                        <div class="metric-icon absolute -right-3 -top-3 opacity-[.07] dark:opacity-10">
-                            <svg class="h-24 w-24 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.55" d="M12 20V10m0 0l-4 4m4-4l4 4M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/></svg>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-emerald-300/15 blur-3xl dark:bg-emerald-500/10"></div>
-                    </div>
-                    <div class="relative z-10 flex h-full flex-col justify-between">
-                        <div class="flex items-start justify-between gap-3">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Aktif Belajar</p>
-                            
-                        </div>
-                        <div>
-                            <p class="mt-5 text-3xl font-black tracking-tight text-emerald-600 dark:text-emerald-300">{{ number_format($summary['active_students'] ?? 0) }}</p>
-                            
-                        </div>
-                    </div>
-                </article>
-
-                <article class="glass-card metric-card dashboard-metric-card group/card reveal rounded-2xl p-5" style="animation-delay: .15s">
-                    <div class="card-bg-gfx">
-                        <div class="metric-icon absolute -right-3 -top-3 opacity-[.07] dark:opacity-10">
-                            <svg class="h-24 w-24 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.55" d="M12 9v4m0 4h.01M10.3 3.86l-8.1 14A2 2 0 003.92 21h16.16a2 2 0 001.72-3.14l-8.1-14a2 2 0 00-3.4 0z"/></svg>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-rose-300/15 blur-3xl dark:bg-rose-500/10"></div>
-                    </div>
-                    <div class="relative z-10 flex h-full flex-col justify-between">
-                        <div class="flex items-start justify-between gap-3">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Perlu Penguatan</p>
-                            
-                        </div>
-                        <div>
-                            <p class="mt-5 text-3xl font-black tracking-tight text-rose-600 dark:text-rose-300">{{ number_format($summary['need_attention'] ?? 0) }}</p>
-                            
-                        </div>
-                    </div>
-                </article>
-            </div>
+            @php
+                $studentTotal = (int) ($summary['total_students'] ?? 0);
+                $studentWithClass = (int) ($summary['with_class'] ?? 0);
+                $studentActive = (int) ($summary['active_students'] ?? 0);
+                $studentNeedAttention = (int) ($summary['need_attention'] ?? 0);
+                $studentAvgProgress = $summary['avg_progress'] ?? 0;
+                $analyticsTitle = 'Ringkasan Siswa';
+                $analyticsSubtitle = null;
+                $analyticsItems = [
+                    ['label' => 'Siswa', 'value' => number_format($studentTotal), 'hint' => 'total', 'tone' => 'indigo'],
+                    ['label' => 'Kelas', 'value' => number_format($studentWithClass), 'hint' => number_format(max(0, $studentTotal - $studentWithClass)) . ' kosong', 'tone' => $studentWithClass > 0 ? 'cyan' : 'amber'],
+                    ['label' => 'Aktif', 'value' => number_format($studentActive), 'hint' => $studentAvgProgress . '% progres', 'tone' => 'emerald'],
+                    ['label' => 'Cek', 'value' => number_format($studentNeedAttention), 'hint' => 'remedial', 'tone' => $studentNeedAttention > 0 ? 'rose' : 'emerald'],
+                ];
+                $analyticsActions = [];
+            @endphp
+            @include('admin.partials.compact_analytics_strip')
 
             <div class="glass-card directory-toolbar reveal rounded-2xl p-4 md:p-5" style="animation-delay: .2s">
                 <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center">
@@ -1105,21 +1042,24 @@
                             <input id="studentSearch" type="text" placeholder="Cari nama, email, atau kelas" class="glass-input w-full rounded-xl py-3 pl-10 pr-4 text-sm font-semibold placeholder:text-slate-400 dark:placeholder:text-white/25">
                             <svg class="absolute left-3 top-3.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 011 0z"/></svg>
                         </label>
-                        <select id="statusFilter" class="glass-input rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest">
-                            <option value="all">Semua Status</option>
-                            <option value="active">Aktif Belajar</option>
-                            <option value="attention">Perlu Penguatan</option>
-                            <option value="complete">Tuntas</option>
-                            <option value="idle">Belum Mulai</option>
-                            <option value="unassigned">Belum Masuk Kelas</option>
-                        </select>
+                        <label class="block">
+                            <span class="sr-only">Saring berdasarkan status belajar</span>
+                            <select id="statusFilter" class="glass-input rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest" aria-label="Saring berdasarkan status belajar">
+                                <option value="all">Semua Status</option>
+                                <option value="active">Aktif Belajar</option>
+                                <option value="attention">Perlu Penguatan</option>
+                                <option value="complete">Tuntas</option>
+                                <option value="idle">Belum Mulai</option>
+                                <option value="unassigned">Belum Masuk Kelas</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
 
                 <div data-native-scroll class="relative z-10 mt-4 flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                    <button type="button" data-class-filter="all" class="class-filter active shrink-0 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest">Semua Kelas</button>
+                    <button type="button" data-class-filter="all" class="class-filter active shrink-0 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest" aria-pressed="true">Semua Kelas</button>
                     @foreach($classSummaries as $class)
-                        <button type="button" data-class-filter="{{ $class['name'] }}" class="class-filter shrink-0 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest">
+                        <button type="button" data-class-filter="{{ $class['name'] }}" class="class-filter shrink-0 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest" aria-pressed="false">
                             {{ $class['name'] }} <span class="ml-1 font-mono opacity-60">{{ $class['total'] }}</span>
                         </button>
                     @endforeach
@@ -1130,7 +1070,7 @@
                 <div class="directory-panel-header relative flex flex-col gap-3 border-b border-slate-200 px-5 py-4 transition-colors sm:flex-row sm:items-center sm:justify-between dark:border-white/5">
                     <div class="relative min-w-0">
                         <h3 class="text-sm font-black text-slate-900 dark:text-white">Daftar Siswa</h3>
-                        <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/40"><span id="visibleCount" class="font-black text-slate-700 dark:text-white">{{ $students->count() }}</span> siswa tampil</p>
+                        <p class="mt-1 text-[11px] font-semibold text-slate-500 dark:text-white/40" aria-live="polite" aria-atomic="true"><span id="visibleCount" class="font-black text-slate-700 dark:text-white">{{ $students->count() }}</span> siswa tampil</p>
                     </div>
                     <div class="relative flex flex-wrap gap-2">
                         <a href="{{ route('admin.user.export.csv') }}" class="dashboard-action-button inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300">
@@ -1183,7 +1123,6 @@
                                         'status' => $learningCondition['label'],
                                         'progress' => $progress,
                                         'avg_score' => $student['avg_score'],
-                                        'best_score' => $student['best_score'],
                                         'quiz_attempts' => $quizAttempts,
                                         'quiz_passed_attempts' => $quizPassed,
                                         'quiz_failed_attempts' => $student['quiz_failed_attempts'],
@@ -1194,7 +1133,6 @@
                                         'learning_coverage_pct' => $coverage,
                                         'strongest_chapter' => $student['strongest_chapter'],
                                         'weakest_chapter' => $student['weakest_chapter'],
-                                        'avg_quiz_duration_label' => $student['avg_quiz_duration_label'],
                                         'focus_lost_total' => $student['focus_lost_total'],
                                         'flagged_total' => $student['flagged_total'],
                                         'unanswered_total' => $student['unanswered_total'],
@@ -1313,7 +1251,6 @@
                                 'status' => $learningCondition['label'],
                                 'progress' => $progress,
                                 'avg_score' => $student['avg_score'],
-                                'best_score' => $student['best_score'],
                                 'quiz_attempts' => $quizAttempts,
                                 'quiz_passed_attempts' => $quizPassed,
                                 'quiz_failed_attempts' => $student['quiz_failed_attempts'],
@@ -1324,7 +1261,6 @@
                                 'learning_coverage_pct' => $coverage,
                                 'strongest_chapter' => $student['strongest_chapter'],
                                 'weakest_chapter' => $student['weakest_chapter'],
-                                'avg_quiz_duration_label' => $student['avg_quiz_duration_label'],
                                 'focus_lost_total' => $student['focus_lost_total'],
                                 'flagged_total' => $student['flagged_total'],
                                 'unanswered_total' => $student['unanswered_total'],
@@ -1398,42 +1334,27 @@
 
     {{-- Modal Panduan Header / Insight Hero --}}
     <div x-show="showDirectoryGuide" x-cloak class="fixed inset-0 z-[2147483500] flex items-center justify-center p-4 sm:p-6" style="display: none;" x-transition.opacity>
-        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md dark:bg-[#020617]/90" @click="showDirectoryGuide = false"></div>
-        <section class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-white/15 bg-white shadow-2xl custom-scrollbar dark:bg-[#0f141e]" @click.stop x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-6 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-4 scale-95">
-            <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-600 to-cyan-500 px-6 py-7 text-white sm:px-8">
-                <div class="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/15 blur-3xl"></div>
-                <button type="button" @click="showDirectoryGuide = false" class="absolute right-5 top-5 rounded-full border border-white/15 bg-white/10 p-2 text-white/80 transition hover:bg-white/20 hover:text-white" aria-label="Tutup panduan">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <div class="relative pr-10">
-                    <p class="text-[10px] font-black uppercase tracking-[0.24em] text-indigo-100">Panduan</p>
-                    <h3 class="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Direktori Siswa</h3>
-                    <p class="mt-2 text-sm font-medium text-indigo-50/90">Cari, saring, dan lihat insight siswa dari satu halaman.</p>
-                </div>
-            </div>
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md dark:bg-[#020617]/80" @click="showDirectoryGuide = false"></div>
+        <section class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-slate-200 bg-white/95 p-6 shadow-2xl custom-scrollbar dark:border-white/10 dark:bg-[#0f141e]/95 sm:p-8" @click.stop x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-6 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-4 scale-95">
+            <button type="button" @click="showDirectoryGuide = false" class="absolute right-5 top-5 z-10 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Tutup panduan">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
 
-            <div class="p-6 sm:p-8">
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <article class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4 dark:border-indigo-500/20 dark:bg-indigo-500/10">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-300">01</p>
-                        <h4 class="mt-2 text-sm font-black text-slate-900 dark:text-white">Cari</h4>
-                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/55">Gunakan nama, email, atau kelas.</p>
-                    </article>
-                    <article class="rounded-2xl border border-cyan-100 bg-cyan-50/70 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/10">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-cyan-600 dark:text-cyan-300">02</p>
-                        <h4 class="mt-2 text-sm font-black text-slate-900 dark:text-white">Saring</h4>
-                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/55">Pilih status atau kelas yang dibutuhkan.</p>
-                    </article>
-                    <article class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/10">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-300">03</p>
-                        <h4 class="mt-2 text-sm font-black text-slate-900 dark:text-white">Lihat Insight</h4>
-                        <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-600 dark:text-white/55">Klik nama siswa untuk membuka ringkasan.</p>
-                    </article>
-                </div>
+            @php
+                $guideTitle = 'Panduan Direktori Siswa';
+                $guideSubtitle = 'Mencari dan membaca insight';
+                $guideImage = 'images/guides/current-admin-students.png';
+                $guideIntro = 'Gunakan nomor pada gambar untuk membaca posisi pencarian, tabel siswa, dan tombol aksi yang biasa dipakai saat meninjau data siswa.';
+                $guidePoints = [
+                    ['x' => 72, 'y' => 21, 'title' => 'Cari dan saring', 'description' => 'Gunakan kolom pencarian, filter kelas, atau status agar daftar siswa langsung lebih mudah dibaca.'],
+                    ['x' => 58, 'y' => 58, 'title' => 'Tabel siswa', 'description' => 'Periksa nama, email, kelas, progres, dan status sebelum membuka detail siswa.'],
+                    ['x' => 85, 'y' => 58, 'title' => 'Aksi siswa', 'description' => 'Buka insight atau detail siswa dari tombol aksi, lalu gunakan hapus hanya bila akun memang tidak dipakai.'],
+                ];
+            @endphp
+            @include('admin.partials.analytics_guide_mockup')
 
-                <div class="mt-6 flex justify-end border-t border-slate-200 pt-5 dark:border-white/5">
-                    <button type="button" @click="showDirectoryGuide = false" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-black text-white shadow-md transition hover:bg-indigo-500">Mengerti</button>
-                </div>
+            <div class="mt-8 border-t border-slate-200 pt-6 dark:border-white/5">
+                <button type="button" @click="showDirectoryGuide = false" class="w-full rounded-xl bg-slate-900 py-3 text-sm font-bold text-white shadow-md transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">Mengerti, Tutup Panduan</button>
             </div>
         </section>
     </div>
@@ -1451,14 +1372,12 @@
                 <p id="insightMeta" class="mt-1 text-xs font-semibold text-indigo-100">Email dan kelas</p>
             </div>
             <div class="space-y-5 p-6">
-                <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Progres</p><p id="insightProgress" class="mt-2 text-2xl font-black text-indigo-600 dark:text-indigo-300">0%</p></div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Rata-rata</p><p id="insightAverage" class="mt-2 text-2xl font-black text-emerald-600 dark:text-emerald-300">0</p></div>
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Skor Terbaik</p><p id="insightBest" class="mt-2 text-2xl font-black text-slate-900 dark:text-white">0</p></div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Cakupan</p><p id="insightCoverage" class="mt-2 text-2xl font-black text-cyan-600 dark:text-cyan-300">0%</p></div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Kuis</p><p id="insightQuizBreakdown" class="mt-2 text-sm font-black text-slate-900 dark:text-white">0 lulus / 0 ulang</p></div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab</p><p id="insightLabBreakdown" class="mt-2 text-sm font-black text-slate-900 dark:text-white">0 lulus / 0 ulang</p></div>
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Durasi Kuis</p><p id="insightDuration" class="mt-2 text-sm font-black text-slate-900 dark:text-white">0s</p></div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#020617]"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Perlu Dicek</p><p id="insightLearningFlags" class="mt-2 text-sm font-black text-slate-900 dark:text-white">0 data</p></div>
                 </div>
                 <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#020617]">
@@ -1766,8 +1685,8 @@
             $('#statusFilter').on('change', applyFilters);
             $('.class-filter').on('click', function () {
                 activeClass = $(this).data('class-filter');
-                $('.class-filter').removeClass('active');
-                $(this).addClass('active');
+                $('.class-filter').removeClass('active').attr('aria-pressed', 'false');
+                $(this).addClass('active').attr('aria-pressed', 'true');
                 applyFilters();
             });
 
@@ -1784,11 +1703,9 @@
                 $('#insightMeta').text((data.email || '-') + ' - ' + (data.class_group || '-'));
                 $('#insightProgress').text(progress + '%');
                 $('#insightAverage').text(data.avg_score || 0);
-                $('#insightBest').text(data.best_score || 0);
                 $('#insightCoverage').text((data.learning_coverage_pct || 0) + '%');
                 $('#insightQuizBreakdown').text(quizPassed + ' lulus / ' + quizFailed + ' ulang');
                 $('#insightLabBreakdown').text(labPassed + ' lulus / ' + labFailed + ' ulang');
-                $('#insightDuration').text(data.avg_quiz_duration_label || '0s');
                 $('#insightLearningFlags').text(learningFlags + ' data');
                 $('#insightStrongest').text(data.strongest_chapter || 'Belum ada data');
                 $('#insightWeakest').text(data.weakest_chapter || 'Belum ada data');

@@ -35,7 +35,7 @@ class CourseController extends Controller
         '2.4' => ['range' => [41, 45], 'activity' => 9,  'view' => 'courses.responsive',     'required' => '2.3'],
 
         '3.1' => ['range' => [46, 50], 'activity' => 10, 'view' => 'courses.typography',     'required' => 'quiz_2'],
-        '3.2' => ['range' => [51, 55], 'activity' => 11, 'view' => 'courses.backgrounds',    'required' => '3.1'],
+        '3.2' => ['range' => [51, 55], 'activity' => 11, 'view' => 'courses.background',     'required' => '3.1'],
         '3.3' => ['range' => [56, 60], 'activity' => 12, 'view' => 'courses.borders',        'required' => '3.2'],
         '3.4' => ['range' => [61, 65], 'activity' => 13, 'view' => 'courses.effects',        'required' => '3.3'],
     ];

@@ -112,6 +112,8 @@
     .activity-option.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -525,7 +527,7 @@
                             </div>
 
                             <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
-                                <p>Aktivitas ini digunakan untuk mengecek pemahaman dasar. Pilih jawaban yang paling tepat berdasarkan situasi tampilan yang diberikan. Soal disusun dari pemahaman dasar sampai analisis sederhana.</p>
+                                <p>Aktivitas ini menggunakan editor kode dan live preview. Lengkapi struktur HTML, CSS kartu, padding, warna latar, dan susunan tombol sesuai materi!</p>
                             </div>
 
                             <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
@@ -538,8 +540,8 @@
                                 </div>
 
                                 <div class="bg-purple-600/95 dark:bg-purple-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <div class="text-xs font-bold uppercase tracking-widest">Editor Kode HTML dan CSS</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Tulis kode pada editor, amati perubahan pada live preview, lalu tekan tombol periksa!</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
@@ -603,13 +605,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> Konten utama yang tampil pada browser berada di dalam <code>&lt;body&gt;</code>.</p>
-                                        <p><strong>2.</strong> Selector <code>p</code> memilih elemen paragraf, lalu properti <code>color</code> mengubah warna teksnya.</p>
-                                        <p><strong>3.</strong> File CSS eksternal dihubungkan menggunakan tag <code>&lt;link rel="stylesheet" href="..."&gt;</code>.</p>
-                                        <p><strong>4.</strong> Teks yang terlalu menempel pada tepi kartu diperbaiki dengan <code>padding</code> karena padding mengatur ruang bagian dalam.</p>
-                                        <p><strong>5.</strong> <code>display: flex</code> pada pembungkus elemen cocok untuk menyusun tombol dalam satu baris dengan jarak yang teratur.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Gunakan hasil skor sebagai penanda pemahaman, lalu lanjutkan setelah merasa siap.</p>
                                     </div>
                                 </div>
                             </div>
@@ -655,6 +654,7 @@
 
     const htmlState = { h1: false, p: false, img: false, button: false };
     const activityAnswers = {};
+    let activityWidget = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
@@ -664,6 +664,7 @@
         updateBasicCssSim();
         updateExternalCssSim();
         updateBoxSim();
+        initHtmlCssActivity();
 
         if (activityCompleted) {
             lockActivityUI();
@@ -878,50 +879,82 @@ ${active ? `<span class="tag">.kartu</span> {
         btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
     }
 
+    function initHtmlCssActivity() {
+        activityWidget = CourseActivityKit.mountCodeActivity({
+            root: '#activityForm',
+            badge: 'Editor HTML dan CSS',
+            title: 'Bangun kartu profil sederhana',
+            description: 'Lengkapi struktur HTML dan CSS agar kartu memiliki judul, deskripsi, ruang dalam, warna latar, dan susunan tombol yang rapi!',
+            fileLabel: 'index.html',
+            useTailwind: false,
+            minScore: 4,
+            initialCode: `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Kartu Profil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+    }
+
+    .card {
+      width: 320px;
+      margin: 40px auto;
+      /* tambahkan padding dan warna latar */
+    }
+
+    .actions {
+      /* susun tombol sejajar */
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Profil Siswa</h1>
+    <p>HTML membentuk struktur, CSS mengatur tampilan.</p>
+    <div class="actions">
+      <button>Detail</button>
+      <button>Simpan</button>
+    </div>
+  </main>
+</body>
+</html>`,
+            tests: [
+                { label: 'Struktur halaman memiliki elemen body dan area konten utama.', check: code => /<body[\s>]/i.test(code) && /<main[\s>]/i.test(code) },
+                { label: 'Kartu memuat judul dan paragraf sebagai isi halaman.', check: code => /<h1[\s>]/i.test(code) && /<p[\s>]/i.test(code) },
+                { label: 'Kartu diberi ruang dalam menggunakan properti padding.', regex: 'padding\\s*:' },
+                { label: 'Kartu memiliki warna latar yang berbeda dari halaman.', check: code => /\.card[\s\S]*background(?:-color)?\s*:/i.test(code) },
+                { label: 'Area tombol disusun sejajar menggunakan display flex.', check: code => /\.actions[\s\S]*display\s*:\s*flex/i.test(code) }
+            ]
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'b', q2:'c', q3:'a', q4:'d', q5:'b' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        const percent = Math.round((result.score / result.total) * 100);
+        scoreLabel.innerText = `Skor: ${result.score}/${result.total} (${percent}%)`;
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
 
-        let score = 0;
-        Object.keys(correct).forEach((q, idx) => {
-            const question = document.querySelectorAll('.activity-question')[idx];
-            const options = question.querySelectorAll('.activity-option');
-            options.forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                const clickAttr = opt.getAttribute('onclick') || '';
-                if (clickAttr.includes(`'${correct[q]}'`)) opt.classList.add('correct');
-                if (clickAttr.includes(`'${activityAnswers[q]}'`) && activityAnswers[q] !== correct[q]) opt.classList.add('wrong');
-            });
-            if (activityAnswers[q] === correct[q]) score++;
-        });
-
-        const percent = Math.round((score / total) * 100);
-        scoreLabel.innerText = `Skor: ${score}/${total} (${percent}%)`;
-        document.getElementById('activity-analysis').classList.remove('hidden');
-
-        if (percent >= 80) {
-            status.innerText = 'Aktivitas berhasil. Pemahaman dasar HTML dan CSS sudah sesuai.';
+        if (result.passed) {
+            status.innerText = 'Aktivitas berhasil. Struktur HTML dan CSS sudah sesuai dengan kebutuhan.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI(false);
             unlockNextChapter();
         } else {
-            status.innerText = 'Skor belum cukup. Baca pembahasan, lalu perbaiki jawaban yang salah.';
+            status.innerText = 'Skor belum cukup. Perbaiki kode berdasarkan kebutuhan aktivitas, lalu periksa kembali.';
             status.className = 'text-xs font-bold text-orange-600 dark:text-orange-400';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
@@ -942,6 +975,7 @@ ${active ? `<span class="tag">.kartu</span> {
             b.disabled = true;
             b.classList.add('cursor-not-allowed');
         });
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

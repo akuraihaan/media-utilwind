@@ -23,6 +23,7 @@ use App\Models\Lab;
 use App\Models\CourseLesson;
 use App\Models\UserActivityProgress;
 use App\Models\ClassGroup;
+use App\Support\ChapterSummary;
 use App\Support\LearningOutcomeAnalytics;
 
 class AdminDashboardController extends Controller
@@ -264,24 +265,83 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
+        $minimumScore = 70;
+
         // 1. DATA STATISTIK SISWA & KUIS
         $totalStudents = User::where('role', 'student')->count();
-        $totalAttempts = DB::table('quiz_attempts')->count();
-        $globalAverage = round(DB::table('quiz_attempts')->avg('score') ?? 0, 1);
-        $remedialCount = DB::table('quiz_attempts')->where('score', '<', 70)->count();
+        $completedQuizQuery = DB::table('quiz_attempts')->whereNotNull('completed_at');
+        $totalAttempts = (clone $completedQuizQuery)->count();
+        $globalAverage = round((float) ((clone $completedQuizQuery)->avg('score') ?? 0), 1);
+        $totalPassedQuizzesCount = (clone $completedQuizQuery)->where('score', '>=', $minimumScore)->count();
+        $passRate = $totalAttempts > 0 ? round(($totalPassedQuizzesCount / $totalAttempts) * 100) : 0;
+        $highestGlobalScore = $totalAttempts > 0 ? round((float) ((clone $completedQuizQuery)->max('score') ?? 0), 1) : 0;
+        $lowestGlobalScore = $totalAttempts > 0 ? round((float) ((clone $completedQuizQuery)->min('score') ?? 0), 1) : 0;
+        $avgQuizDuration = (int) round((float) ((clone $completedQuizQuery)->avg('time_spent_seconds') ?? 0));
+
+        $passedQuizzesDetail = DB::table('quiz_attempts')
+            ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+            ->select('users.name', 'quiz_attempts.score', 'quiz_attempts.chapter_id', 'quiz_attempts.completed_at as created_at')
+            ->whereNotNull('quiz_attempts.completed_at')
+            ->where('quiz_attempts.score', '>=', $minimumScore)
+            ->orderByDesc('quiz_attempts.completed_at')
+            ->take(50)
+            ->get();
+
+        $quizBestPerStudentChapter = DB::table('quiz_attempts')
+            ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+            ->select(
+                'quiz_attempts.user_id',
+                'users.name',
+                'quiz_attempts.chapter_id',
+                DB::raw('MAX(quiz_attempts.score) as score'),
+                DB::raw('MAX(quiz_attempts.completed_at) as created_at')
+            )
+            ->whereNotNull('quiz_attempts.completed_at')
+            ->groupBy('quiz_attempts.user_id', 'users.name', 'quiz_attempts.chapter_id')
+            ->get();
+
+        $trueRemedialList = $quizBestPerStudentChapter
+            ->filter(fn ($row) => (float) ($row->score ?? 0) < $minimumScore)
+            ->sortByDesc('created_at')
+            ->values();
+        $realRemedialCount = $trueRemedialList->pluck('user_id')->unique()->count();
+        $remedialTopicCount = $trueRemedialList->count();
+        $remedialRate = $totalStudents > 0 ? round(($realRemedialCount / $totalStudents) * 100) : 0;
+        $remedialCount = $realRemedialCount;
 
         // 2. DATA PENYELESAIAN LAB
-        $totalLabsCompleted = 0;
+        $realLabCount = 0;
+        $avgLabScore = 0;
+        $avgLabDuration = 0;
+        $passedLabsDetail = collect();
         try {
-            $totalLabsCompleted = DB::table('lab_sessions')->where('status', 'completed')->count();
+            $labHistoryQuery = DB::table('lab_histories');
+            $realLabCount = (clone $labHistoryQuery)->where('status', 'passed')->count();
+            $avgLabScore = round((float) ((clone $labHistoryQuery)->avg('final_score') ?? 0), 1);
+            $avgLabDuration = (int) round((float) ((clone $labHistoryQuery)->avg('duration_seconds') ?? 0));
+            $passedLabsDetail = DB::table('lab_histories')
+                ->join('users', 'lab_histories.user_id', '=', 'users.id')
+                ->leftJoin('labs', 'lab_histories.lab_id', '=', 'labs.id')
+                ->select(
+                    'users.name as student_name',
+                    'labs.title as lab_title',
+                    'lab_histories.final_score',
+                    'lab_histories.created_at'
+                )
+                ->where('lab_histories.status', 'passed')
+                ->orderByDesc('lab_histories.created_at')
+                ->take(50)
+                ->get();
         } catch (\Exception $e) {
             // Abaikan jika tabel opsional
         }
+        $totalLabsCompleted = $realLabCount;
 
         // 3. DATA CHART TREN (7 Hari Terakhir)
         $chartDataRaw = DB::table('quiz_attempts')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('AVG(score) as avg_score'))
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
+            ->select(DB::raw('DATE(completed_at) as date'), DB::raw('AVG(score) as avg_score'))
+            ->where('completed_at', '>=', Carbon::now()->subDays(7))
+            ->whereNotNull('completed_at')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -289,27 +349,48 @@ class AdminDashboardController extends Controller
         $chartLabels = $chartDataRaw->pluck('date')->map(fn($d) => Carbon::parse($d)->format('d M'));
         $chartScores = $chartDataRaw->pluck('avg_score')->map(fn($s) => round($s));
 
+        $activityTrendLabels = [];
+        $activityQuizCounts = [];
+        $activityLabCounts = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $activityTrendLabels[] = $date->translatedFormat('d M');
+
+            $activityQuizCounts[] = (int) DB::table('quiz_attempts')
+                ->whereNotNull('completed_at')
+                ->whereDate('completed_at', $date->toDateString())
+                ->count();
+
+            try {
+                $activityLabCounts[] = (int) DB::table('lab_histories')
+                    ->whereDate('created_at', $date->toDateString())
+                    ->count();
+            } catch (\Exception $e) {
+                $activityLabCounts[] = 0;
+            }
+        }
+
         // 4. ANALISIS SOAL (Top 10)
         $questionStats = collect([]);
         try {
-            $questionStats = DB::table('quiz_questions as q')
-                ->leftJoin('quiz_attempt_answers as a', 'q.id', '=', 'a.quiz_question_id')
-                ->select(
-                    'q.id', 'q.question_text', 'q.chapter_id',
-                    DB::raw('count(a.id) as total_answers'),
-                    DB::raw('sum(case when a.is_correct = 1 then 1 else 0 end) as correct_count')
-                )
-                ->groupBy('q.id', 'q.question_text', 'q.chapter_id')
-                ->orderByDesc('total_answers')
-                ->limit(10)
+            $questionStats = QuizQuestion::with(['answers.attempt'])
                 ->get()
-                ->map(function($q) {
-                    $q->accuracy = $q->total_answers > 0 ? round(($q->correct_count / $q->total_answers) * 100) : 0;
-                    if($q->accuracy >= 80) $q->difficulty = 'Mudah';
-                    elseif($q->accuracy >= 50) $q->difficulty = 'Sedang';
+                ->map(function ($q) {
+                    $answerBreakdown = $this->splitQuizAnswerStudentCounts($q->answers);
+                    $q->total_answers = $answerBreakdown['total_count'];
+                    $q->correct_count = $answerBreakdown['correct_count'];
+                    $q->accuracy = $answerBreakdown['correct_percent'];
+                    if ($q->total_answers === 0) $q->difficulty = 'Belum Ada Data';
+                    elseif ($q->accuracy >= 80) $q->difficulty = 'Mudah';
+                    elseif ($q->accuracy >= 50) $q->difficulty = 'Sedang';
                     else $q->difficulty = 'Sulit';
+
                     return $q;
-                });
+                })
+                ->sortByDesc('total_answers')
+                ->take(10)
+                ->values();
         } catch (\Exception $e) {}
 
         // 5. DATA ADMIN & AUDIT LOGS (Menggantikan Leaderboard)
@@ -344,12 +425,71 @@ class AdminDashboardController extends Controller
         // 6. AKTIVITAS TERBARU
         $recentActivities = QuizAttempt::with('user')->latest()->take(5)->get();
         $availableClasses = ClassGroup::where('is_active', true)->orderBy('name', 'asc')->get();
+        $chapterAverages = DB::table('quiz_attempts')
+            ->select('chapter_id', DB::raw('ROUND(AVG(score),1) as avg_score'), DB::raw('COUNT(*) as total'))
+            ->whereNotNull('completed_at')
+            ->groupBy('chapter_id')
+            ->orderBy('chapter_id')
+            ->get();
+        $unifiedActivities = collect();
+
+        try {
+            $recentQuizzes = DB::table('quiz_attempts')
+                ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+                ->select('users.name', 'quiz_attempts.score', 'quiz_attempts.chapter_id', 'quiz_attempts.time_spent_seconds', 'quiz_attempts.completed_at as created_at')
+                ->whereNotNull('quiz_attempts.completed_at')
+                ->orderByDesc('quiz_attempts.completed_at')
+                ->limit(20)
+                ->get();
+
+            foreach ($recentQuizzes as $q) {
+                $unifiedActivities->push([
+                    'type' => 'kuis',
+                    'user_name' => $q->name,
+                    'title' => $q->chapter_id == 99 ? 'Evaluasi Akhir' : 'Kuis Bab ' . $q->chapter_id,
+                    'score' => $q->score,
+                    'is_passed' => $q->score >= $minimumScore,
+                    'duration' => $q->time_spent_seconds,
+                    'created_at' => $q->created_at,
+                    'timestamp' => strtotime($q->created_at),
+                ]);
+            }
+
+            $recentLabs = DB::table('lab_histories')
+                ->join('users', 'lab_histories.user_id', '=', 'users.id')
+                ->leftJoin('labs', 'lab_histories.lab_id', '=', 'labs.id')
+                ->select('users.name', 'lab_histories.final_score as score', 'labs.title as lab_title', 'lab_histories.status', 'lab_histories.duration_seconds', 'lab_histories.created_at')
+                ->orderByDesc('lab_histories.created_at')
+                ->limit(20)
+                ->get();
+
+            foreach ($recentLabs as $l) {
+                $unifiedActivities->push([
+                    'type' => 'lab',
+                    'user_name' => $l->name,
+                    'title' => $l->lab_title ?? 'Sesi Lab Virtual',
+                    'score' => $l->score,
+                    'is_passed' => $l->status === 'passed',
+                    'duration' => $l->duration_seconds,
+                    'created_at' => $l->created_at,
+                    'timestamp' => strtotime($l->created_at),
+                ]);
+            }
+
+            $unifiedActivities = $unifiedActivities->sortByDesc('timestamp')->take(25)->values();
+        } catch (\Exception $e) {}
 
         return view('admin.dashboard', compact(
             'totalStudents', 'totalAttempts', 'globalAverage', 'remedialCount', 'totalLabsCompleted',
             'chartLabels', 'chartScores', 'questionStats', 
             'totalAdmins', 'auditLogs', // Data Audit
-            'recentActivities', 'availableClasses'
+            'recentActivities', 'availableClasses',
+            'minimumScore', 'totalPassedQuizzesCount', 'passRate', 'highestGlobalScore',
+            'lowestGlobalScore', 'avgQuizDuration', 'passedQuizzesDetail', 'trueRemedialList',
+            'realRemedialCount', 'remedialTopicCount', 'remedialRate', 'realLabCount',
+            'avgLabScore', 'avgLabDuration', 'passedLabsDetail', 'chapterAverages',
+            'unifiedActivities', 'activityTrendLabels', 'activityQuizCounts',
+            'activityLabCounts'
         ));
     }
 
@@ -1204,6 +1344,173 @@ class AdminDashboardController extends Controller
         ));
     }
 
+    public function studentQuizAnalytics($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $attempts = QuizAttempt::where('user_id', $userId)
+            ->whereNotNull('completed_at')
+            ->latest('completed_at')
+            ->get()
+            ->map(function (QuizAttempt $attempt) {
+                $attempt->quiz_title = $this->quizChapterLabel($attempt->chapter_id);
+                $attempt->status_label = ((float) ($attempt->score ?? 0)) >= 70 ? 'Tuntas' : 'Belum Tuntas';
+                $attempt->duration_label = $this->formatDurationShort($attempt->time_spent_seconds ?? 0);
+                $attempt->completed_label = $attempt->completed_at
+                    ? $attempt->completed_at->timezone(config('app.timezone'))->format('d M Y, H:i')
+                    : '-';
+
+                return $attempt;
+            });
+
+        $totalQuizAttempts = $attempts->count();
+        $passedQuizzes = $attempts->filter(fn ($attempt) => (float) ($attempt->score ?? 0) >= 70)->count();
+        $failedQuizzes = max(0, $totalQuizAttempts - $passedQuizzes);
+        $globalAvgScore = $totalQuizAttempts > 0 ? round((float) $attempts->avg('score'), 1) : 0;
+        $quizCompletionRate = $totalQuizAttempts > 0 ? round(($passedQuizzes / $totalQuizAttempts) * 100) : 0;
+        $totalTimeSpent = $this->formatDurationShort($attempts->sum('time_spent_seconds'));
+        $totalFocusLost = (int) $attempts->sum('focus_lost_count');
+        $totalFlagged = (int) $attempts->sum('flagged_count');
+        $totalUnanswered = (int) $attempts->sum('unanswered_count');
+
+        $chartData = $attempts
+            ->sortBy('completed_at')
+            ->take(-10)
+            ->values();
+        $chartLabels = $chartData
+            ->map(fn ($attempt) => Str::limit($attempt->quiz_title, 12))
+            ->values();
+        $chartScores = $chartData
+            ->map(fn ($attempt) => round((float) ($attempt->score ?? 0), 1))
+            ->values();
+
+        return view('admin.student_quiz_analytics', compact(
+            'user',
+            'attempts',
+            'totalQuizAttempts',
+            'passedQuizzes',
+            'failedQuizzes',
+            'globalAvgScore',
+            'quizCompletionRate',
+            'totalTimeSpent',
+            'totalFocusLost',
+            'totalFlagged',
+            'totalUnanswered',
+            'chartLabels',
+            'chartScores'
+        ));
+    }
+
+    public function quizResultReview($attemptId)
+    {
+        $attempt = QuizAttempt::with(['user', 'answers'])
+            ->where('id', $attemptId)
+            ->whereNotNull('completed_at')
+            ->firstOrFail();
+
+        $student = $attempt->user;
+
+        $questions = QuizQuestion::where('chapter_id', $attempt->chapter_id)
+            ->with('options')
+            ->get();
+
+        $answers = $attempt->answers->keyBy('quiz_question_id');
+        $totalQuestions = max(1, $questions->count());
+        $metrics = $this->buildAdminQuizMetrics($attempt->answers, $totalQuestions, (int) $attempt->score);
+        $feedback = $this->buildAdminQuizFeedback((int) $attempt->score, $metrics);
+        $chapterSummary = ChapterSummary::for($attempt->chapter_id);
+        $outcomeAnalytics = LearningOutcomeAnalytics::forQuizAttempt($questions, $answers, $attempt);
+
+        $reviewItems = $questions->values()->map(function ($question, $index) use ($answers) {
+            $answer = $answers->get($question->id);
+            $selectedOption = $answer?->quiz_option_id
+                ? $question->options->firstWhere('id', $answer->quiz_option_id)
+                : null;
+            $correctOption = $question->options->firstWhere('is_correct', true);
+            $hasAnswer = $answer ? $this->adminQuizAnswerHasResponse($answer) : false;
+
+            return [
+                'number' => $index + 1,
+                'question' => $question,
+                'answer' => $answer,
+                'selected_option' => $selectedOption,
+                'correct_option' => $correctOption,
+                'is_correct' => (bool) ($answer?->is_correct),
+                'is_flagged' => (bool) ($answer?->is_flagged),
+                'has_answer' => $hasAnswer,
+                'status' => $hasAnswer ? (($answer?->is_correct) ? 'Benar' : 'Perlu ditinjau') : 'Belum dijawab',
+            ];
+        });
+
+        return view('admin.quiz_result_review', compact(
+            'attempt',
+            'student',
+            'questions',
+            'answers',
+            'metrics',
+            'feedback',
+            'reviewItems',
+            'chapterSummary',
+            'outcomeAnalytics'
+        ));
+    }
+
+    private function buildAdminQuizMetrics($answers, int $totalQuestions, int $score): array
+    {
+        $answeredCount = $answers->filter(fn ($answer) => $this->adminQuizAnswerHasResponse($answer))->count();
+        $flaggedCount = $answers->where('is_flagged', true)->count();
+        $wrongCount = $answers
+            ->where('is_correct', false)
+            ->filter(fn ($answer) => $this->adminQuizAnswerHasResponse($answer))
+            ->count();
+        $changeCount = $answers->sum('answer_change_count');
+
+        return [
+            'total_questions' => $totalQuestions,
+            'answered_count' => $answeredCount,
+            'unanswered_count' => max(0, $totalQuestions - $answeredCount),
+            'correct_count' => $answers->where('is_correct', true)->count(),
+            'wrong_count' => $wrongCount,
+            'flagged_count' => $flaggedCount,
+            'answer_change_count' => $changeCount,
+            'mastery_percent' => $score,
+            'completion_percent' => $totalQuestions > 0 ? round(($answeredCount / $totalQuestions) * 100) : 0,
+        ];
+    }
+
+    private function adminQuizAnswerHasResponse(object|null $answer): bool
+    {
+        if (!$answer) {
+            return false;
+        }
+
+        return !empty($answer->quiz_option_id);
+    }
+
+    private function buildAdminQuizFeedback(int $score, array $metrics): array
+    {
+        if ($score >= 85) {
+            $level = 'Sangat Baik';
+            $message = 'Penguasaan materi siswa sudah kuat. Pertahankan ritme belajar dan gunakan hasil ini untuk memperdalam bagian soal yang masih sempat ditandai ragu-ragu.';
+        } elseif ($score >= 70) {
+            $level = 'Lulus';
+            $message = 'Siswa sudah mencapai KKM. Tinjau kembali soal yang salah atau belum dijawab agar pemahaman lebih stabil.';
+        } else {
+            $level = 'Perlu Penguatan';
+            $message = 'Skor siswa belum mencapai KKM. Arahkan siswa mempelajari kembali materi bab ini lalu mengulang evaluasi setelah latihan singkat.';
+        }
+
+        if (($metrics['unanswered_count'] ?? 0) > 0) {
+            $message .= ' Masih ada ' . $metrics['unanswered_count'] . ' soal kosong yang perlu diperhatikan.';
+        }
+
+        if (($metrics['flagged_count'] ?? 0) > 0) {
+            $message .= ' Terdapat ' . $metrics['flagged_count'] . ' soal ditandai ragu-ragu sehingga dapat dijadikan bahan diskusi.';
+        }
+
+        return compact('level', 'message');
+    }
+
     public function labAnalytics(Request $request) 
     {
         $labId = $request->get('labId'); 
@@ -1303,7 +1610,7 @@ class AdminDashboardController extends Controller
                 DB::raw('COUNT(quiz_attempts.id) as total_attempts'),
                 DB::raw('ROUND(AVG(quiz_attempts.score), 1) as avg_score'),
                 DB::raw('MAX(quiz_attempts.score) as highest_score'),
-                DB::raw('ROUND(AVG(TIMESTAMPDIFF(MINUTE, quiz_attempts.created_at, quiz_attempts.updated_at)), 0) as avg_time')
+                DB::raw('ROUND(AVG(COALESCE(quiz_attempts.time_spent_seconds, 0)) / 60, 0) as avg_time')
             )
             ->whereNotNull('completed_at')
             ->groupBy('users.id', 'users.name', 'users.email', 'users.class_group')
@@ -1326,6 +1633,9 @@ class AdminDashboardController extends Controller
 
     public function learningOutcomes()
     {
+        $minimumQuestionsPerOutcome = 2;
+        $minimumMasteryPercent = 70;
+
         $questions = QuizQuestion::with(['answers.attempt', 'options'])
             ->get()
             ->map(function ($question) {
@@ -1352,57 +1662,97 @@ class AdminDashboardController extends Controller
         ];
 
         $chapters = $blueprints
-            ->map(function (array $objectives, int $chapterId) use ($questions, $chapterMeta) {
+            ->map(function (array $objectives, int $chapterId) use ($questions, $chapterMeta, $minimumQuestionsPerOutcome, $minimumMasteryPercent) {
                 $chapterQuestions = $questions->where('chapter_id', $chapterId);
-                $objectiveRows = collect($objectives)->map(function (array $objective, int $index) use ($chapterQuestions, $chapterId) {
+                $objectiveRows = collect($objectives)->map(function (array $objective, int $index) use ($chapterQuestions, $chapterId, $minimumQuestionsPerOutcome, $minimumMasteryPercent) {
                     $objectiveQuestions = $chapterQuestions->filter(function ($question) use ($objective) {
                         return ($question->outcome_meta['code'] ?? '') === $objective['code'];
                     })->values();
 
+                    $questionCount = $objectiveQuestions->count();
                     $totalAnswers = $objectiveQuestions->sum('total_attempts');
                     $correctCount = $objectiveQuestions->sum('correct_count');
                     $wrongCount = $objectiveQuestions->sum('wrong_count');
                     $masteryPercent = $totalAnswers > 0 ? round(($correctCount / max(1, $totalAnswers)) * 100, 1) : 0;
-                    $statusKey = $objectiveQuestions->count() === 0
-                        ? 'empty'
-                        : ($totalAnswers === 0 ? 'waiting' : ($masteryPercent < 70 ? 'attention' : 'stable'));
+                    $studentCount = $objectiveQuestions
+                        ->flatMap(fn ($question) => $question->answers)
+                        ->filter(fn ($answer) => $answer->attempt && $answer->attempt->completed_at && $answer->attempt->user_id)
+                        ->pluck('attempt.user_id')
+                        ->unique()
+                        ->count();
+                    $missingQuestionCount = max(0, $minimumQuestionsPerOutcome - $questionCount);
+                    $hasEnoughQuestions = $questionCount >= $minimumQuestionsPerOutcome;
+
+                    $statusKey = match (true) {
+                        $questionCount === 0 => 'empty',
+                        ! $hasEnoughQuestions => 'thin',
+                        $totalAnswers === 0 => 'waiting',
+                        $masteryPercent < $minimumMasteryPercent => 'attention',
+                        default => 'stable',
+                    };
+                    $statusGroup = match ($statusKey) {
+                        'empty' => 'empty',
+                        'stable' => 'stable',
+                        default => 'attention',
+                    };
                     $statusLabel = [
                         'empty' => 'Belum Ada Soal',
+                        'thin' => 'Soal Kurang',
                         'waiting' => 'Menunggu Data',
                         'attention' => 'Perlu Penguatan',
                         'stable' => 'Tercukupi',
                     ][$statusKey];
+                    $statusReason = match ($statusKey) {
+                        'empty' => 'Belum ada soal evaluasi yang terhubung ke TP ini.',
+                        'thin' => 'Soal terhubung belum mencapai minimal ' . $minimumQuestionsPerOutcome . ' soal.',
+                        'waiting' => 'Soal sudah cukup, tetapi belum ada jawaban siswa yang tercatat.',
+                        'attention' => 'Soal sudah cukup dan sudah dijawab, tetapi akurasi masih di bawah ' . $minimumMasteryPercent . '%.',
+                        default => 'Soal sudah cukup, sudah dijawab siswa, dan akurasi memenuhi batas ' . $minimumMasteryPercent . '%.',
+                    };
+                    $activityData = sprintf(
+                        '%s: %s soal, %s jawaban, %s benar, %s salah (%s%%).',
+                        $statusLabel,
+                        number_format($questionCount),
+                        number_format($totalAnswers),
+                        number_format($correctCount),
+                        number_format($wrongCount),
+                        $masteryPercent
+                    );
 
                     return [
                         'code' => $objective['code'],
                         'display_code' => ($chapterId === 99 ? 'Evaluasi Akhir' : 'Bab ' . $chapterId) . ' - TP' . ($index + 1),
                         'title' => $objective['title'],
                         'material' => $objective['material'],
-                        'question_count' => $objectiveQuestions->count(),
+                        'question_count' => $questionCount,
+                        'minimum_question_count' => $minimumQuestionsPerOutcome,
+                        'missing_question_count' => $missingQuestionCount,
+                        'has_enough_questions' => $hasEnoughQuestions,
+                        'student_count' => $studentCount,
                         'total_answers' => $totalAnswers,
                         'correct_count' => $correctCount,
                         'wrong_count' => $wrongCount,
                         'mastery_percent' => $masteryPercent,
                         'status_key' => $statusKey,
+                        'status_group' => $statusGroup,
                         'status_label' => $statusLabel,
-                        'needs_questions' => $objectiveQuestions->count() === 0,
-                        'needs_attention' => $totalAnswers > 0 && $masteryPercent < 70,
+                        'status_reason' => $statusReason,
+                        'needs_questions' => $questionCount === 0,
+                        'needs_more_questions' => $missingQuestionCount > 0,
+                        'needs_attention' => $statusGroup === 'attention',
                         'student_breakdown' => [
+                            'student_count' => $studentCount,
+                            'question_count' => $questionCount,
                             'correct_count' => $correctCount,
                             'wrong_count' => $wrongCount,
                             'total_count' => $totalAnswers,
                             'correct_percent' => $totalAnswers > 0 ? round(($correctCount / max(1, $totalAnswers)) * 100, 1) : 0,
                             'wrong_percent' => $totalAnswers > 0 ? round(($wrongCount / max(1, $totalAnswers)) * 100, 1) : 0,
                         ],
-                        'activity_data' => sprintf(
-                            '%s soal, %s jawaban terkumpul, %s benar, %s salah.',
-                            $objectiveQuestions->count(),
-                            $totalAnswers,
-                            $correctCount,
-                            $wrongCount
-                        ),
+                        'activity_data' => $activityData,
                         'direction' => match ($statusKey) {
                             'empty' => 'Tambahkan soal yang mengukur ' . $objective['title'] . ' pada bank soal bab ini.',
+                            'thin' => 'Tambahkan minimal ' . $missingQuestionCount . ' soal lagi agar data TP lebih kuat.',
                             'waiting' => 'Kumpulkan pengerjaan siswa terlebih dahulu agar capaian TP terbaca.',
                             'attention' => 'Arahkan siswa kembali ke ' . $objective['material'] . ' sebelum evaluasi berikutnya.',
                             default => 'Pertahankan penguatan singkat dan siapkan variasi soal pada ' . $objective['material'] . '.',
@@ -1419,6 +1769,7 @@ class AdminDashboardController extends Controller
                                     'multiple_choice' => 'Pilihan Ganda',
                                     'image_context' => 'Gambar',
                                 ][$question->interaction_type ?? 'multiple_choice'] ?? 'Pilihan Ganda',
+                                'answer_count' => $question->total_attempts,
                                 'has_media' => !empty($question->media_url),
                             ])
                             ->values()
@@ -1434,7 +1785,7 @@ class AdminDashboardController extends Controller
                     'question_count' => $chapterQuestions->count(),
                     'mapped_question_count' => $objectiveRows->sum('question_count'),
                     'objective_count' => $objectiveRows->count(),
-                    'attention_count' => $objectiveRows->filter(fn ($row) => $row['needs_questions'] || $row['needs_attention'])->count(),
+                    'attention_count' => $objectiveRows->where('status_group', '!=', 'stable')->count(),
                     'average_mastery' => $objectiveRows->count() > 0 ? round($objectiveRows->avg('mastery_percent'), 1) : 0,
                     'empty_count' => $objectiveRows->where('status_key', 'empty')->count(),
                     'objectives' => $objectiveRows,
@@ -1446,8 +1797,12 @@ class AdminDashboardController extends Controller
         $totals = [
             'chapters' => $chapters->count(),
             'objectives' => $chapters->sum('objective_count'),
-            'questions' => $questions->count(),
+            'questions' => $chapters->sum('mapped_question_count'),
+            'all_questions' => $questions->count(),
+            'answers' => $chapters->flatMap(fn ($chapter) => $chapter['objectives'])->sum('total_answers'),
             'attention' => $chapters->sum('attention_count'),
+            'minimum_questions_per_outcome' => $minimumQuestionsPerOutcome,
+            'minimum_mastery_percent' => $minimumMasteryPercent,
         ];
 
         return view('admin.learning_outcomes', compact('chapters', 'totals'));

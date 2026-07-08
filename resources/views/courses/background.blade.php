@@ -112,6 +112,8 @@
     .activity-option.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -419,10 +421,10 @@
                                 </div>
                                 <div>
                                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mb-2">
-                                        <h2 class="text-xl sm:text-3xl font-black text-heading tracking-tight">Aktivitas 3.2: Pilih Warna yang Tepat</h2>
-                                        <span class="px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 uppercase tracking-wider">Centang Jawaban</span>
+                                        <h2 class="text-xl sm:text-3xl font-black text-heading tracking-tight">Aktivitas 3.2: Palette Builder</h2>
+                                        <span class="px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 uppercase tracking-wider">Swatch Warna</span>
                                     </div>
-                                    <p class="text-muted text-xs sm:text-sm leading-relaxed max-w-3xl text-justify">Pilihlah jawaban yang paling tepat sesuai materi. Aktivitas selesai jika semua jawaban benar.</p>
+                                    <p class="text-muted text-xs sm:text-sm leading-relaxed max-w-3xl text-justify">Pilih swatch warna untuk latar halaman, kartu, teks, dan tombol, lalu amati preview kartu!</p>
                                 </div>
                             </div>
 
@@ -470,19 +472,17 @@
 
                             <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
                                 <div class="lg:col-span-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5">
-                                    <h3 class="text-sm font-black text-indigo-800 dark:text-indigo-300 mb-2">Pembahasan Singkat</h3>
+                                    <h3 class="text-sm font-black text-indigo-800 dark:text-indigo-300 mb-2">Status Aktivitas</h3>
                                     <div id="activity-analysis" class="hidden space-y-2 text-xs text-indigo-900 dark:text-indigo-100/80 leading-relaxed">
-                                        <p>1. <code>bg-*</code> digunakan untuk warna latar.</p>
-                                        <p>2. <code>bg-slate-100</code> cocok untuk latar halaman yang lembut.</p>
-                                        <p>3. <code>bg-white</code> membuat kartu mudah dibedakan dari latar abu-abu muda.</p>
-                                        <p>4. <code>bg-green-600 text-white</code> sesuai untuk tindakan berhasil.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Jika ingin memperkuat pemahaman, ulangi pengamatan preview pada materi sebelum melanjutkan.</p>
                                     </div>
-                                    <p id="activity-hint" class="text-xs text-indigo-900 dark:text-indigo-100/80 leading-relaxed">Pembahasan akan muncul setelah jawaban diperiksa.</p>
+                                    <p id="activity-hint" class="text-xs text-indigo-900 dark:text-indigo-100/80 leading-relaxed">Status tambahan akan muncul setelah aktivitas memenuhi skor.</p>
                                 </div>
                                 <div class="card-adaptive border rounded-2xl p-5 flex flex-col justify-between gap-4">
                                     <div>
                                         <p class="text-[10px] uppercase tracking-widest font-bold text-muted mb-2">Hasil Aktivitas</p>
-                                        <p id="activity-score" class="text-3xl font-black text-heading">0/4</p>
+                                        <p id="activity-score" class="text-3xl font-black text-heading">0/5</p>
                                         <p id="activity-status" class="text-xs font-bold text-muted mt-2">Belum diperiksa.</p>
                                     </div>
                                     <div class="space-y-2">
@@ -529,6 +529,7 @@
     const ACTIVITY_LESSON_ID = 55;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     let activityAnswers = {};
+    let activityWidget = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         updateProgressUI(false);
@@ -539,6 +540,7 @@
         setPageBackground('bg-slate-100');
         updateCardColorCode();
         setActionButton('primary');
+        initBackgroundActivity();
 
         if (activityCompleted) {
             lockActivityUI(true);
@@ -766,42 +768,103 @@
         if (square) square.innerText = '✓';
     }
 
+    function initBackgroundActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#activityForm',
+            badge: 'Palette Builder',
+            title: 'Rancang palet warna antarmuka',
+            description: 'Pilih kombinasi warna yang membedakan latar halaman, kartu, teks, dan tombol aksi!',
+            previewLabel: 'Preview Palet',
+            minScore: 4,
+            groups: [
+                {
+                    id: 'page',
+                    label: 'Latar halaman',
+                    desc: 'Halaman perlu latar lembut agar kartu menonjol.',
+                    correct: 'soft',
+                    default: 'blank',
+                    options: [
+                        { id: 'blank', label: 'Putih polos', classText: 'bg-white', color: '#ffffff' },
+                        { id: 'soft', label: 'Abu-abu lembut', classText: 'bg-slate-100', color: '#f1f5f9' },
+                        { id: 'strong', label: 'Biru kuat', classText: 'bg-blue-600', color: '#2563eb' }
+                    ]
+                },
+                {
+                    id: 'card',
+                    label: 'Permukaan kartu',
+                    desc: 'Kartu harus terbaca jelas di atas latar.',
+                    correct: 'white',
+                    default: 'same',
+                    options: [
+                        { id: 'same', label: 'Sama dengan latar', classText: 'bg-slate-100', color: '#f1f5f9' },
+                        { id: 'white', label: 'Kartu putih', classText: 'bg-white', color: '#ffffff' },
+                        { id: 'dark', label: 'Kartu gelap', classText: 'bg-slate-900', color: '#0f172a' }
+                    ]
+                },
+                {
+                    id: 'title',
+                    label: 'Teks utama',
+                    desc: 'Judul perlu warna paling kuat.',
+                    correct: 'dark',
+                    default: 'muted',
+                    options: [
+                        { id: 'muted', label: 'Pendukung', classText: 'text-slate-500', color: '#64748b' },
+                        { id: 'dark', label: 'Utama', classText: 'text-slate-900', color: '#0f172a' },
+                        { id: 'light', label: 'Terlalu terang', classText: 'text-white', color: '#ffffff' }
+                    ]
+                },
+                {
+                    id: 'body',
+                    label: 'Teks pendukung',
+                    desc: 'Deskripsi perlu lebih lembut dari judul.',
+                    correct: 'muted',
+                    default: 'dark',
+                    options: [
+                        { id: 'dark', label: 'Terlalu kuat', classText: 'text-slate-900', color: '#0f172a' },
+                        { id: 'muted', label: 'Lembut', classText: 'text-slate-600', color: '#475569' },
+                        { id: 'accent', label: 'Aksen', classText: 'text-indigo-600', color: '#4f46e5' }
+                    ]
+                },
+                {
+                    id: 'button',
+                    label: 'Tombol aksi',
+                    desc: 'Aksi berhasil memakai warna kuat dengan teks kontras.',
+                    correct: 'success',
+                    default: 'secondary',
+                    options: [
+                        { id: 'secondary', label: 'Sekunder', classText: 'bg-slate-100 text-slate-700', color: '#f1f5f9' },
+                        { id: 'success', label: 'Berhasil', classText: 'bg-green-600 text-white', color: '#16a34a' },
+                        { id: 'flat', label: 'Terlalu datar', classText: 'bg-white text-slate-900', color: '#ffffff' }
+                    ]
+                }
+            ],
+            renderPreview: (state, selected) => `
+                <section class="w-full min-h-[300px] ${selected.page.classText} p-6 grid place-items-center">
+                    <article class="max-w-sm ${selected.card.classText} border border-slate-200 rounded-2xl p-6 shadow-md">
+                        <p class="text-sm ${selected.body.classText}">Status pesanan</p>
+                        <h1 class="mt-1 text-2xl font-bold ${selected.title.classText}">Pesanan berhasil dibuat</h1>
+                        <p class="mt-3 ${selected.body.classText}">Gunakan warna untuk membedakan informasi utama dan pendukung.</p>
+                        <button class="mt-5 px-4 py-3 rounded-xl font-bold ${selected.button.classText}">Lihat Detail</button>
+                    </article>
+                </section>
+            `
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'a', q2:'a', q3:'a', q4:'a' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        scoreLabel.innerText = `${result.score}/${result.total}`;
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
+        document.getElementById('activity-hint')?.classList.toggle('hidden', result.passed);
 
-        let score = 0;
-        Object.keys(correct).forEach((q, idx) => {
-            const question = document.querySelectorAll('.activity-question')[idx];
-            const options = question.querySelectorAll('.activity-option');
-            options.forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                const clickAttr = opt.getAttribute('onclick') || '';
-                if (clickAttr.includes(`'${correct[q]}'`)) opt.classList.add('correct');
-                if (clickAttr.includes(`'${activityAnswers[q]}'`) && activityAnswers[q] !== correct[q]) opt.classList.add('wrong');
-            });
-            if (activityAnswers[q] === correct[q]) score++;
-        });
-
-        scoreLabel.innerText = `${score}/${total}`;
-        document.getElementById('activity-analysis').classList.remove('hidden');
-        document.getElementById('activity-hint').classList.add('hidden');
-
-        if (score === total) {
-            status.innerText = 'Aktivitas berhasil. Progress disimpan.';
+        if (result.passed) {
+            status.innerText = 'Aktivitas berhasil. Kombinasi warna dan latar sudah sesuai.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             const saved = await saveLessonToDB(ACTIVITY_LESSON_ID);
             if (saved) {
@@ -809,24 +872,21 @@
                 lockActivityUI(false);
                 unlockNextChapter();
             } else {
-                status.innerText = 'Jawaban benar, tetapi progress belum berhasil disimpan. Periksa koneksi atau route penyimpanan.';
+                status.innerText = 'Aktivitas valid, tetapi progress belum berhasil disimpan. Periksa koneksi atau route penyimpanan.';
                 status.className = 'text-xs font-bold text-orange-600 dark:text-orange-400';
             }
         } else {
-            status.innerText = 'Jawaban belum tepat. Perbaiki pilihan yang salah, lalu periksa kembali.';
+            status.innerText = 'Skor belum cukup. Ubah pilihan pada panel, lalu amati kembali preview.';
             status.className = 'text-xs font-bold text-orange-600 dark:text-orange-400';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
     function resetActivity() {
         if (activityCompleted) return;
-        activityAnswers = {};
-        document.querySelectorAll('.activity-option').forEach(btn => {
-            btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500', 'correct', 'wrong');
-            const square = btn.querySelector('span');
-            if (square) square.innerText = '□';
-        });
-        document.getElementById('activity-score').innerText = '0/4';
+        if (activityWidget) activityWidget.reset();
+        document.getElementById('activity-score').innerText = '0/5';
         document.getElementById('activity-status').innerText = 'Belum diperiksa.';
         document.getElementById('activity-status').className = 'text-xs font-bold text-muted mt-2';
         document.getElementById('activity-analysis').classList.add('hidden');
@@ -850,6 +910,7 @@
             b.disabled = true;
             b.classList.add('cursor-not-allowed');
         });
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

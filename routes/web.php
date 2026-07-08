@@ -100,7 +100,7 @@ Route::middleware(['auth', EnsureHasActiveClass::class])->group(function () {
     // BAB 3
     Route::get('/courses/typography', [CourseController::class, 'typography'])->name('courses.typography');
     Route::get('/courses/backgrounds', [CourseController::class, 'backgrounds'])->name('courses.backgrounds');
-    Route::redirect('/courses/background', '/courses/backgrounds')->name('courses.background');
+    Route::get('/courses/background', [CourseController::class, 'backgrounds'])->name('courses.background');
     Route::get('/courses/borders', [CourseController::class, 'borders'])->name('courses.borders');
     Route::get('/courses/effects', [CourseController::class, 'effects'])->name('courses.effects');
 
@@ -145,6 +145,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/students', [AdminDashboardController::class, 'students'])->name('students.index');
     Route::get('/student/{id}', [AdminDashboardController::class, 'studentDetail'])->name('student.detail');
+    Route::get('/analytics/quiz/student/{userId}', [AdminDashboardController::class, 'studentQuizAnalytics'])->name('quiz.student.analytics');
+    Route::get('/quiz/results/{attemptId}', [AdminDashboardController::class, 'quizResultReview'])->name('quiz.results.show');
     Route::put('/student/{id}/update', [AdminDashboardController::class, 'updateStudent'])->name('student.update');
     Route::get('/student/{id}/export/csv', [AdminDashboardController::class, 'exportStudentCsv'])->name('student.export.csv');
     Route::get('/student/{id}/export/pdf', [AdminDashboardController::class, 'exportStudentPdf'])->name('student.export.pdf');
@@ -156,7 +158,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // 2. Analitik & Manajemen Kuis
     Route::get('/analytics/questions', [AdminDashboardController::class, 'questionAnalytics'])->name('analytics.questions');
-    Route::get('/learning-outcomes', [AdminDashboardController::class, 'learningOutcomes'])->name('learning-outcomes.index');
+    Route::get('/learning-outcomes', fn () => redirect(route('admin.analytics.questions')))->name('learning-outcomes.index');
     Route::get('/questions/create', [AdminDashboardController::class, 'createQuestion'])->name('questions.create');
     Route::post('/questions/store', [AdminDashboardController::class, 'storeQuestion'])->name('questions.store');
     Route::post('/questions/update/{id}', [AdminDashboardController::class, 'updateQuestion'])->name('questions.update');

@@ -19,6 +19,9 @@ protected $fillable = [
     'final_score', 
     'duration_seconds',
     'completed_steps', // <--- TAMBAHKAN INI
+    'save_count',
+    'validation_attempt_count',
+    'code_change_count',
     'completed_at'
 ];
     // Relasi ke tabel Labs (judul lab, slug, dll)

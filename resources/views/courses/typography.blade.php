@@ -115,6 +115,8 @@
     .choice-card.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -425,7 +427,7 @@
                             </div>
 
                             <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
-                                <p>Pilihlah jawaban yang paling tepat dengan memberi tanda silang pada pilihan A, B, C, atau D. Soal dibuat sesuai materi tipografi, yaitu ukuran dan ketebalan judul, jarak antarbaris paragraf, serta warna teks pada informasi produk.</p>
+                                <p>Aktivitas ini menggunakan panel tipografi. Pilih ukuran, ketebalan, leading, dan warna teks agar hierarki informasi terlihat jelas!</p>
                             </div>
 
                             <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
@@ -438,8 +440,8 @@
                                 </div>
 
                                 <div class="bg-cyan-600/95 dark:bg-cyan-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <div class="text-xs font-bold uppercase tracking-widest">Panel Tipografi</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih pengaturan teks pada panel, amati preview, lalu tekan tombol periksa!</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
@@ -486,11 +488,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> <code>text-3xl font-bold</code> paling tepat karena judul utama perlu ukuran besar dan ketebalan kuat.</p>
-                                        <p><strong>2.</strong> <code>leading-7</code> memperbaiki jarak antarbaris sehingga paragraf panjang lebih nyaman dibaca.</p>
-                                        <p><strong>3.</strong> Jika harga diminta berwarna hitam atau gelap, <code>text-slate-900</code> paling sesuai. <code>text-slate-600</code> lebih cocok untuk deskripsi, sedangkan <code>text-base</code> hanya mengatur ukuran.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Gunakan tampilan preview sebagai bahan refleksi sebelum melanjutkan.</p>
                                     </div>
                                 </div>
                             </div>
@@ -542,6 +543,7 @@
     let priceColorClass = 'text-slate-900';
     let fontFamilyClass = 'font-sans';
     const activityAnswers = {};
+    let activityWidget = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
@@ -552,6 +554,7 @@
         updateSizePreview();
         updateLeadingPreview();
         updateColorPreview();
+        initTypographyActivity();
 
         if (activityCompleted) {
             lockActivityUI();
@@ -759,49 +762,109 @@
 
     function resetActivity() {
         if (activityCompleted) return;
-        Object.keys(activityAnswers).forEach(key => delete activityAnswers[key]);
-        document.querySelectorAll('.choice-card').forEach(btn => btn.classList.remove('selected', 'correct', 'wrong'));
+        if (activityWidget) activityWidget.reset();
         document.getElementById('activity-status').innerText = 'Belum diperiksa.';
         document.getElementById('activity-status').className = 'text-xs font-bold text-muted';
         document.getElementById('activity-score').innerText = 'Skor: -';
         document.getElementById('activity-analysis').classList.add('hidden');
     }
 
+    function initTypographyActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#activityForm',
+            badge: 'Panel Tipografi',
+            title: 'Atur hierarki teks kartu produk',
+            description: 'Pilih pengaturan tipografi yang membuat judul, deskripsi, dan harga mudah dibaca!',
+            previewLabel: 'Preview Tipografi',
+            minScore: 4,
+            groups: [
+                {
+                    id: 'titleSize',
+                    label: 'Ukuran judul',
+                    desc: 'Judul utama perlu paling menonjol.',
+                    correct: 'large',
+                    default: 'small',
+                    options: [
+                        { id: 'small', label: 'Kecil', classText: 'text-base' },
+                        { id: 'medium', label: 'Sedang', classText: 'text-xl' },
+                        { id: 'large', label: 'Menonjol', classText: 'text-3xl' }
+                    ]
+                },
+                {
+                    id: 'titleWeight',
+                    label: 'Ketebalan judul',
+                    desc: 'Judul produk perlu lebih kuat dari deskripsi.',
+                    correct: 'bold',
+                    default: 'regular',
+                    options: [
+                        { id: 'regular', label: 'Normal', classText: 'font-normal' },
+                        { id: 'medium', label: 'Sedang', classText: 'font-medium' },
+                        { id: 'bold', label: 'Tebal', classText: 'font-bold' }
+                    ]
+                },
+                {
+                    id: 'bodyLeading',
+                    label: 'Jarak antarbaris',
+                    desc: 'Deskripsi panjang harus nyaman dibaca.',
+                    correct: 'relaxed',
+                    default: 'tight',
+                    options: [
+                        { id: 'tight', label: 'Rapat', classText: 'leading-4' },
+                        { id: 'normal', label: 'Normal', classText: 'leading-6' },
+                        { id: 'relaxed', label: 'Lega', classText: 'leading-7' }
+                    ]
+                },
+                {
+                    id: 'bodyColor',
+                    label: 'Warna deskripsi',
+                    desc: 'Deskripsi lebih baik memakai warna pendukung.',
+                    correct: 'muted',
+                    default: 'dark',
+                    options: [
+                        { id: 'dark', label: 'Terlalu kuat', classText: 'text-slate-900', color: '#0f172a' },
+                        { id: 'muted', label: 'Pendukung', classText: 'text-slate-600', color: '#475569' },
+                        { id: 'accent', label: 'Terlalu menonjol', classText: 'text-cyan-600', color: '#0891b2' }
+                    ]
+                },
+                {
+                    id: 'price',
+                    label: 'Penekanan harga',
+                    desc: 'Harga perlu mudah ditemukan.',
+                    correct: 'strong',
+                    default: 'plain',
+                    options: [
+                        { id: 'plain', label: 'Biasa', classText: 'text-slate-600 font-normal', color: '#475569' },
+                        { id: 'strong', label: 'Jelas', classText: 'text-slate-900 font-bold', color: '#0f172a' },
+                        { id: 'soft', label: 'Terlalu lembut', classText: 'text-slate-400 font-medium', color: '#94a3b8' }
+                    ]
+                }
+            ],
+            renderPreview: (state, selected) => `
+                <article class="w-full max-w-sm bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <p class="text-sm text-cyan-600 font-semibold">Produk Lokal</p>
+                    <h1 class="mt-1 ${selected.titleSize.classText} ${selected.titleWeight.classText} text-slate-900">Tas Belajar</h1>
+                    <p class="mt-3 ${selected.bodyColor.classText} ${selected.bodyLeading.classText}">
+                        Tas ringan dengan ruang penyimpanan yang cukup untuk kebutuhan sekolah dan aktivitas harian.
+                    </p>
+                    <p class="mt-4 ${selected.price.classText}">Rp150.000</p>
+                </article>
+            `
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'c', q2:'a', q3:'a' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        scoreLabel.innerText = `Skor: ${result.score}/${result.total}`;
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
 
-        let score = 0;
-        Object.keys(correct).forEach((qKey, index) => {
-            const group = document.querySelectorAll('.activity-question')[index];
-            const answer = correct[qKey];
-            group.querySelectorAll('.choice-card').forEach(btn => {
-                const onclickValue = btn.getAttribute('onclick') || '';
-                btn.classList.remove('correct', 'wrong');
-                if (onclickValue.includes(`'${answer}'`)) btn.classList.add('correct');
-                if (onclickValue.includes(`'${activityAnswers[qKey]}'`) && activityAnswers[qKey] !== answer) btn.classList.add('wrong');
-            });
-            if (activityAnswers[qKey] === answer) score++;
-        });
-
-        scoreLabel.innerText = `Skor: ${score}/${total}`;
-        document.getElementById('activity-analysis').classList.remove('hidden');
-
-        if (score === total) {
-            status.innerText = 'Jawaban benar semua. Progress aktivitas disimpan.';
+        if (result.passed) {
+            status.innerText = 'Tipografi sudah sesuai. Progress aktivitas disimpan.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             submit.innerText = 'Menyimpan...';
             submit.disabled = true;
@@ -811,13 +874,15 @@
                 lockActivityUI();
                 unlockNextChapter();
             } else {
-                status.innerText = 'Jawaban benar, tetapi progress gagal disimpan. Coba periksa koneksi.';
+                status.innerText = 'Aktivitas valid, tetapi progress gagal disimpan. Coba periksa koneksi.';
                 submit.innerText = 'Periksa Jawaban';
                 submit.disabled = false;
             }
         } else {
-            status.innerText = 'Masih ada jawaban yang belum tepat. Baca ulang bagian ukuran teks, bobot huruf, dan leading, lalu perbaiki jawaban dan periksa lagi.';
+            status.innerText = 'Masih ada bagian tipografi yang belum sesuai. Ubah pengaturan panel, lalu periksa lagi.';
             status.className = 'text-xs font-bold text-amber-600 dark:text-amber-400';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
@@ -835,6 +900,7 @@
             reset.disabled = true;
             reset.classList.add('cursor-not-allowed', 'opacity-50');
         }
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {
@@ -849,7 +915,7 @@
             icon.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
             icon.classList.remove('bg-slate-100', 'dark:bg-white/5');
             icon.classList.add('bg-cyan-100', 'dark:bg-cyan-500/20', 'border-cyan-300', 'dark:border-cyan-500/50', 'text-cyan-600', 'dark:text-cyan-400', 'shadow-lg');
-            btn.onclick = () => window.location.href = "{{ \Illuminate\Support\Facades\Route::has('courses.backgrounds') ? route('courses.backgrounds') : '#' }}";
+            btn.onclick = () => window.location.href = "{{ \Illuminate\Support\Facades\Route::has('courses.background') ? route('courses.background') : '#' }}";
         }
     }
 

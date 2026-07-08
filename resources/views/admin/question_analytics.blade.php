@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Bank Soal & Analisis · Panel Admin Utilwind</title>
+    <title>Analitik Kuis · Panel Admin Utilwind</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     {{-- RESOURCES --}}
@@ -74,8 +74,6 @@
         .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); transform: translateY(-4px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); z-index: 30; }
         .dark .glass-card:hover { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
         
-        .card-bg-gfx { position: absolute; inset: 0; overflow: hidden; border-radius: 1rem; pointer-events: none; z-index: 0; }
-
         /* --- INPUTS & NAV --- */
         .glass-input { background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.1); color: #0f172a; transition: 0.3s; }
         .dark .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
@@ -352,7 +350,8 @@
         .tooltip-violet .tooltip-trigger { background-color: #ede9fe; color: #7c3aed; border-color: #ddd6fe; }
         .dark .tooltip-violet .tooltip-trigger { background-color: #8b5cf6; color: white; border-color: transparent; box-shadow: 0 0 10px rgba(139,92,246,0.5); }
 
-        .modal-open { overflow: hidden; padding-right: 5px; } 
+        .modal-open { overflow: hidden; padding-right: 5px; }
+        [x-cloak] { display: none !important; }
         .swal2-container.quiz-alert-layer { z-index: 2147483647 !important; }
         .quiz-alert-popup { border-radius: 1.25rem !important; }
         .text-adaptive { color: #1e293b; }
@@ -360,20 +359,905 @@
         .text-adaptive-muted { color: #64748b; }
         .dark .text-adaptive-muted { color: rgba(255,255,255,0.4); }
     </style>
+
+    {{-- =========================================================================
+         DESAIN ANALITIK KUIS — RUANG BACA DAN VISUAL SOAL
+         ========================================================================= --}}
+    <style>
+        :root {
+            --quiz-surface: rgba(255,255,255,.92);
+            --quiz-surface-soft: #f8fafc;
+            --quiz-line: rgba(148,163,184,.24);
+            --quiz-line-strong: rgba(99,102,241,.30);
+            --quiz-muted: #64748b;
+            --quiz-ink: #0f172a;
+            --quiz-shadow: 0 16px 36px rgba(15,23,42,.06);
+        }
+        .dark {
+            --quiz-surface: rgba(10,14,23,.90);
+            --quiz-surface-soft: rgba(15,23,42,.78);
+            --quiz-line: rgba(148,163,184,.16);
+            --quiz-line-strong: rgba(129,140,248,.34);
+            --quiz-muted: #94a3b8;
+            --quiz-ink: #f8fafc;
+            --quiz-shadow: 0 18px 42px rgba(2,6,23,.28);
+        }
+
+        #admin-main-content {
+            scroll-behavior: smooth;
+            scroll-padding-top: 7.5rem;
+            overscroll-behavior-y: contain;
+            scrollbar-gutter: stable both-edges;
+        }
+
+        .quiz-analytics-shell {
+            display: flex;
+            max-width: 90rem;
+            flex-direction: column;
+            gap: clamp(2rem, 3vw, 3.25rem);
+            padding-bottom: 5.5rem;
+        }
+        .quiz-analytics-shell > * {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .quiz-dashboard-stack,
+        .quiz-question-detail-stack {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1.5rem, 2.3vw, 2.5rem);
+        }
+        .quiz-dashboard-stack > *,
+        .quiz-question-detail-stack > * {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .quiz-dashboard-stack .glass-card,
+        .quiz-question-detail-stack .glass-card,
+        .quiz-question-toolbar,
+        .quiz-question-card {
+            border-color: var(--quiz-line);
+            box-shadow: var(--quiz-shadow);
+        }
+
+        .question-insight-overview {
+            margin: 0 !important;
+            padding: clamp(1.25rem, 2vw, 1.75rem) !important;
+            border-color: var(--quiz-line) !important;
+            border-radius: 1.5rem !important;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(99,102,241,.09), transparent 18rem),
+                var(--quiz-surface) !important;
+            box-shadow: var(--quiz-shadow) !important;
+        }
+        .dark .question-insight-overview {
+            background:
+                radial-gradient(circle at 100% 0%, rgba(129,140,248,.13), transparent 19rem),
+                var(--quiz-surface) !important;
+        }
+        .question-insight-overview > div:first-child {
+            margin-bottom: 1.35rem !important;
+            padding-bottom: 1.1rem !important;
+            border-color: var(--quiz-line) !important;
+        }
+        .question-insight-overview .rounded-2xl {
+            border-color: var(--quiz-line) !important;
+            background: var(--quiz-surface-soft) !important;
+        }
+        .question-insight-overview .space-y-3 {
+            display: grid;
+            gap: .75rem;
+        }
+        .question-insight-overview .space-y-3 > * + * { margin-top: 0 !important; }
+        .question-insight-overview article {
+            padding: 1rem !important;
+            border-color: var(--quiz-line) !important;
+            background: var(--quiz-surface) !important;
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+        .question-insight-overview article:hover {
+            transform: translateY(-1px);
+            border-color: var(--quiz-line-strong) !important;
+            box-shadow: 0 12px 24px rgba(15,23,42,.07);
+        }
+
+        .quiz-chapter-layout {
+            gap: clamp(1.5rem, 2.4vw, 2.5rem) !important;
+            margin: 0 !important;
+        }
+        .quiz-chapter-layout > div { gap: 1.15rem !important; }
+        .quiz-chapter-card-grid { gap: 1rem !important; }
+        .quiz-chapter-card {
+            min-height: 13.25rem !important;
+            padding: 1.35rem !important;
+            border-radius: 1.35rem !important;
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-chapter-card:hover { transform: translateY(-2px) !important; }
+        .quiz-distribution-card {
+            min-height: 100%;
+            padding: 1.35rem !important;
+            border-radius: 1.35rem !important;
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-final-card {
+            padding: clamp(1.35rem, 2.4vw, 2rem) !important;
+            border-radius: 1.45rem !important;
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-student-panel,
+        .quiz-recent-panel {
+            padding: clamp(1.25rem, 2vw, 1.5rem) !important;
+            border-color: var(--quiz-line) !important;
+            border-radius: 1.35rem !important;
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-student-analytics.analytics-panel {
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-student-analytics.analytics-panel > div:first-child {
+            background: linear-gradient(115deg, var(--quiz-surface-soft), transparent) !important;
+            border-color: var(--quiz-line) !important;
+        }
+        .quiz-student-analytics .analytics-student-grid {
+            gap: 1.25rem !important;
+        }
+        .quiz-student-analytics .student-performance-card {
+            border-color: var(--quiz-line) !important;
+            background: var(--quiz-surface-soft) !important;
+            padding: 1.2rem !important;
+            transition: transform .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+        }
+        .quiz-student-analytics .student-performance-card:hover {
+            border-color: var(--quiz-line-strong) !important;
+            background: var(--quiz-surface) !important;
+            box-shadow: 0 16px 32px rgba(15,23,42,.08);
+        }
+        .dark .quiz-student-analytics .student-performance-card:hover {
+            box-shadow: 0 18px 38px rgba(0,0,0,.26);
+        }
+        .quiz-student-analytics .analytics-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.05rem;
+            height: 1.05rem;
+            border: 1px solid rgba(100,116,139,.38);
+            border-radius: 999px;
+            color: var(--quiz-muted);
+            font-size: .62rem;
+            font-weight: 900;
+            line-height: 1;
+            cursor: help;
+            user-select: none;
+            transition: border-color .16s ease, color .16s ease, background .16s ease;
+        }
+        .quiz-student-analytics .analytics-help:hover {
+            border-color: var(--quiz-line-strong);
+            background: rgba(99,102,241,.10);
+            color: #4f46e5;
+        }
+        .dark .quiz-student-analytics .analytics-help:hover { color: #c7d2fe; }
+        .quiz-student-analytics .analytics-help-inline {
+            width: .95rem;
+            height: .95rem;
+            margin-left: .25rem;
+            vertical-align: text-bottom;
+            font-size: .57rem;
+        }
+
+        .quiz-question-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1rem 1.5rem;
+            padding: clamp(1.1rem, 2vw, 1.45rem);
+            border: 1px solid var(--quiz-line);
+            border-radius: 1.35rem;
+            background:
+                linear-gradient(135deg, rgba(99,102,241,.08), transparent 46%),
+                var(--quiz-surface);
+            box-shadow: var(--quiz-shadow);
+        }
+        .dark .quiz-question-toolbar {
+            background:
+                linear-gradient(135deg, rgba(129,140,248,.13), transparent 46%),
+                var(--quiz-surface);
+        }
+        .quiz-question-toolbar-copy { min-width: min(100%, 16rem); }
+        .quiz-question-toolbar-copy p {
+            color: #4f46e5;
+            font-size: .63rem;
+            font-weight: 900;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+        .dark .quiz-question-toolbar-copy p { color: #a5b4fc; }
+        .quiz-question-toolbar-copy h3 {
+            margin-top: .3rem;
+            color: var(--quiz-ink);
+            font-size: clamp(1rem, 1.6vw, 1.25rem);
+            font-weight: 900;
+            letter-spacing: -.025em;
+        }
+        .quiz-question-toolbar-copy span {
+            display: block;
+            margin-top: .3rem;
+            color: var(--quiz-muted);
+            font-size: .72rem;
+            font-weight: 650;
+        }
+        .quiz-question-controls {
+            display: grid;
+            width: min(100%, 43rem);
+            grid-template-columns: minmax(0, 1fr);
+            gap: .65rem;
+        }
+        .quiz-question-controls input,
+        .quiz-question-controls select {
+            min-height: 2.9rem;
+            border-color: var(--quiz-line) !important;
+            background: var(--quiz-surface-soft) !important;
+            box-shadow: none !important;
+        }
+        @media (min-width: 640px) {
+            .quiz-question-controls { grid-template-columns: minmax(0,1fr) minmax(11.5rem,.38fr); }
+        }
+
+        .quiz-question-card-list {
+            display: grid;
+            gap: 1.15rem;
+        }
+        .quiz-question-card {
+            overflow: hidden;
+            border: 1px solid var(--quiz-line);
+            border-radius: 1.45rem;
+            background: var(--quiz-surface);
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .quiz-question-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--quiz-line-strong);
+            box-shadow: 0 20px 42px rgba(15,23,42,.10);
+        }
+        .dark .quiz-question-card:hover { box-shadow: 0 24px 48px rgba(0,0,0,.28); }
+        .quiz-question-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.15rem;
+            border-bottom: 1px solid var(--quiz-line);
+            background: linear-gradient(110deg, var(--quiz-surface-soft), transparent);
+        }
+        .quiz-question-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.15rem;
+            height: 2.15rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: .75rem;
+            background: var(--quiz-surface);
+            color: #4f46e5;
+            font-size: .76rem;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+        }
+        .dark .quiz-question-index { color: #c7d2fe; }
+        .quiz-question-meta {
+            display: flex;
+            min-width: 0;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .45rem;
+        }
+        .quiz-question-meta > span {
+            border: 1px solid var(--quiz-line);
+            border-radius: 999px;
+            background: var(--quiz-surface);
+            padding: .3rem .55rem;
+            color: var(--quiz-muted);
+            font-size: .62rem;
+            font-weight: 850;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+        .quiz-question-actions { display: flex; flex: 0 0 auto; gap: .45rem; }
+        .quiz-question-actions button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.15rem;
+            height: 2.15rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: .72rem;
+            background: var(--quiz-surface);
+            color: var(--quiz-muted);
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+        }
+        .quiz-question-actions button:hover { transform: translateY(-1px); }
+        .quiz-question-actions .edit-question:hover { border-color: rgba(245,158,11,.48); background: #f59e0b; color: white; }
+        .quiz-question-actions .delete-question:hover { border-color: rgba(239,68,68,.48); background: #ef4444; color: white; }
+
+        .quiz-question-card-body {
+            display: grid;
+            gap: 1.15rem;
+            padding: 1.15rem;
+        }
+        .quiz-question-main { min-width: 0; }
+        .quiz-question-text {
+            display: block;
+            width: 100%;
+            padding: .15rem 0;
+            color: var(--quiz-ink);
+            font-size: .88rem;
+            font-weight: 750;
+            line-height: 1.75;
+            text-align: left;
+        }
+        .quiz-question-text:hover { color: #4f46e5; }
+        .dark .quiz-question-text:hover { color: #c7d2fe; }
+        .quiz-question-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .45rem;
+            margin-top: .9rem;
+        }
+        .quiz-question-pill {
+            max-width: 100%;
+            overflow: hidden;
+            border: 1px solid var(--quiz-line);
+            border-radius: .65rem;
+            background: var(--quiz-surface-soft);
+            padding: .32rem .52rem;
+            color: var(--quiz-muted);
+            font-size: .62rem;
+            font-weight: 800;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quiz-question-pill.tp { border-color: rgba(6,182,212,.25); background: rgba(236,254,255,.78); color: #0e7490; }
+        .quiz-question-pill.type { border-color: rgba(217,70,239,.22); background: rgba(253,244,255,.72); color: #a21caf; }
+        .dark .quiz-question-pill.tp { border-color: rgba(34,211,238,.22); background: rgba(6,182,212,.12); color: #a5f3fc; }
+        .dark .quiz-question-pill.type { border-color: rgba(232,121,249,.20); background: rgba(217,70,239,.12); color: #f5d0fe; }
+        .quiz-question-options {
+            display: grid;
+            gap: .55rem;
+            margin-top: 1rem;
+        }
+        .quiz-question-option {
+            display: flex;
+            align-items: flex-start;
+            gap: .62rem;
+            min-width: 0;
+            padding: .66rem .72rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: .82rem;
+            background: var(--quiz-surface-soft);
+            color: var(--quiz-muted);
+            font-size: .73rem;
+            font-weight: 650;
+            line-height: 1.45;
+        }
+        .quiz-question-option.is-correct {
+            border-color: rgba(16,185,129,.30);
+            background: rgba(236,253,245,.70);
+            color: #047857;
+        }
+        .dark .quiz-question-option.is-correct { background: rgba(16,185,129,.10); color: #a7f3d0; }
+        .quiz-option-letter {
+            display: inline-flex;
+            width: 1.45rem;
+            height: 1.45rem;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            border-radius: .48rem;
+            background: rgba(148,163,184,.16);
+            color: var(--quiz-muted);
+            font-size: .62rem;
+            font-weight: 900;
+        }
+        .is-correct .quiz-option-letter { background: #10b981; color: white; }
+        .quiz-question-option span:last-child { overflow-wrap: anywhere; }
+
+        .question-analytics-rail {
+            display: flex;
+            flex-direction: column;
+            gap: .9rem;
+            min-width: 0;
+            padding: 1rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: 1.05rem;
+            background: var(--quiz-surface-soft);
+        }
+        .question-analytics-rail .status-badge {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            gap: .38rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: 999px;
+            padding: .34rem .55rem;
+            font-size: .62rem;
+            font-weight: 900;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+        .status-badge.status-easy { border-color: rgba(16,185,129,.28); background: rgba(236,253,245,.75); color: #047857; }
+        .status-badge.status-mid { border-color: rgba(245,158,11,.30); background: rgba(255,251,235,.78); color: #b45309; }
+        .status-badge.status-hard { border-color: rgba(244,63,94,.30); background: rgba(255,241,242,.78); color: #be123c; }
+        .status-badge.status-empty { color: var(--quiz-muted); }
+        .dark .status-badge.status-easy { background: rgba(16,185,129,.10); color: #a7f3d0; }
+        .dark .status-badge.status-mid { background: rgba(245,158,11,.10); color: #fde68a; }
+        .dark .status-badge.status-hard { background: rgba(244,63,94,.10); color: #fecdd3; }
+        .question-accuracy-readout {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: .75rem;
+        }
+        .question-accuracy-readout p { color: var(--quiz-muted); font-size: .62rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+        .question-accuracy-readout strong { display:block; margin-top:.22rem; color:var(--quiz-ink); font-size:2.35rem; font-weight:900; letter-spacing:-.07em; line-height:1; font-variant-numeric: tabular-nums; }
+        .question-accuracy-readout span { color:var(--quiz-muted); font-size:.68rem; font-weight:750; text-align:right; }
+        .question-answer-meter {
+            display: flex;
+            overflow: hidden;
+            height: .72rem;
+            border-radius: 999px;
+            background: rgba(148,163,184,.18);
+        }
+        .question-answer-meter > span { display: block; height:100%; min-width: 0; transition: width .35s cubic-bezier(.22,1,.36,1); }
+        .question-answer-meter .answer-correct { background: #10b981; }
+        .question-answer-meter .answer-wrong { background: #fb7185; }
+        .question-answer-meter .answer-empty { width: 100%; background: #94a3b8; }
+        .question-answer-legend {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: .55rem;
+        }
+        .question-answer-legend > div {
+            padding: .6rem;
+            border: 1px solid var(--quiz-line);
+            border-radius: .72rem;
+            background: var(--quiz-surface);
+        }
+        .question-answer-legend span { display:block; color: var(--quiz-muted); font-size:.57rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+        .question-answer-legend strong { display:block; margin-top:.18rem; color:var(--quiz-ink); font-size:1rem; font-weight:900; font-variant-numeric:tabular-nums; }
+        .question-answer-legend .correct strong { color:#059669; }
+        .question-answer-legend .wrong strong { color:#e11d48; }
+        .quiz-question-card-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: .8rem;
+            padding: .9rem 1.15rem 1.05rem;
+            border-top: 1px solid var(--quiz-line);
+            background: rgba(248,250,252,.55);
+        }
+        .dark .quiz-question-card-footer { background: rgba(2,6,23,.22); }
+        .quiz-question-outcome {
+            min-width: 0;
+            color: var(--quiz-muted);
+            font-size: .7rem;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+        .quiz-question-outcome b { color:var(--quiz-ink); font-weight:900; }
+        .quiz-question-insight-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            flex: 0 0 auto;
+            padding: .6rem .75rem;
+            border: 1px solid rgba(99,102,241,.20);
+            border-radius: .75rem;
+            background: rgba(238,242,255,.78);
+            color: #4338ca;
+            font-size: .68rem;
+            font-weight: 900;
+            transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+        }
+        .quiz-question-insight-button:hover { transform: translateY(-1px); border-color: rgba(99,102,241,.34); background:#eef2ff; }
+        .dark .quiz-question-insight-button { border-color: rgba(129,140,248,.26); background: rgba(99,102,241,.12); color:#c7d2fe; }
+        .dark .quiz-question-insight-button:hover { background: rgba(99,102,241,.20); }
+
+        @media (min-width: 1024px) {
+            .quiz-question-card-body { grid-template-columns: minmax(0,1fr) minmax(15rem,.32fr); padding: 1.35rem; }
+            .quiz-question-options { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .question-analytics-rail { align-self: stretch; }
+        }
+        @media (max-width: 767px) {
+            .quiz-analytics-shell { gap: 1.5rem; padding-bottom: 3.5rem; }
+            .quiz-dashboard-stack,
+            .quiz-question-detail-stack { gap: 1.25rem; }
+            .question-insight-overview { padding: 1rem !important; }
+            .quiz-chapter-layout { gap: 1.25rem !important; }
+            .quiz-question-toolbar { align-items: stretch; }
+            .quiz-question-card-header,
+            .quiz-question-card-body,
+            .quiz-question-card-footer { padding-left: 1rem; padding-right: 1rem; }
+            .question-accuracy-readout strong { font-size:2rem; }
+        }
+        @media (hover:none),(pointer:coarse) {
+            .quiz-question-card:hover,
+            .question-insight-overview article:hover,
+            .quiz-chapter-card:hover { transform:none !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .quiz-question-card,
+            .question-insight-overview article,
+            .quiz-chapter-card,
+            .question-answer-meter > span,
+            .quiz-question-actions button,
+            .quiz-question-insight-button { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+        }
+    </style>
+
+
+    {{-- =========================================================================
+         PENYELARASAN ANALITIK KUIS
+         Fokus pada pembacaan data per kelas dan proporsi panel admin awal.
+         ========================================================================= --}}
+    <style id="quiz-class-focus-refinement">
+        /* Proporsi mengikuti panel awal: jarak lebih rapat, card tidak terlalu besar. */
+        .quiz-analytics-shell {
+            max-width: 84rem !important;
+            gap: clamp(1.5rem, 2.2vw, 2.25rem) !important;
+            padding-bottom: 4.25rem !important;
+        }
+        .quiz-dashboard-stack,
+        .quiz-question-detail-stack {
+            gap: clamp(1.25rem, 1.9vw, 1.75rem) !important;
+        }
+        .quiz-chapter-layout { gap: 1.25rem !important; }
+        .quiz-chapter-layout > div { gap: .9rem !important; }
+        .quiz-chapter-card {
+            min-height: 11.65rem !important;
+            padding: 1.1rem !important;
+            border-radius: 1.15rem !important;
+        }
+        .quiz-distribution-card,
+        .quiz-final-card,
+        .quiz-student-panel,
+        .quiz-recent-panel {
+            border-radius: 1.15rem !important;
+        }
+        .quiz-distribution-card { padding: 1.1rem !important; }
+        .quiz-final-card { padding: 1.2rem !important; }
+        .quiz-student-analytics.analytics-panel > div:first-child {
+            padding: 1.1rem 1.2rem !important;
+        }
+        .quiz-student-analytics .analytics-help,
+        .quiz-student-analytics .analytics-help-inline { display: none !important; }
+
+        /* Angka analitik sejajar dan mudah dipindai tanpa mengganti gaya Inter utama. */
+        .quiz-analytics-shell .tabular-nums,
+        .quiz-analytics-shell .font-mono,
+        .quiz-analytics-shell .analytics-data-number,
+        .quiz-analytics-shell .quiz-class-metric strong {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -.025em;
+        }
+        .quiz-analytics-shell .analytics-data-number {
+            color: var(--quiz-ink);
+            font-size: .92rem;
+            font-weight: 850;
+            line-height: 1.15;
+        }
+        .quiz-analytics-shell .analytics-data-label {
+            color: var(--quiz-muted);
+            font-size: .56rem;
+            font-weight: 850;
+            letter-spacing: .09em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        /* Ringkasan performa kelas: data dibaca per baris, tanpa saran tindakan. */
+        .quiz-class-performance-panel {
+            overflow: hidden;
+            border: 1px solid var(--quiz-line);
+            border-radius: 1.15rem;
+            background: var(--quiz-surface);
+            box-shadow: var(--quiz-shadow);
+        }
+        .quiz-class-performance-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) repeat(5, minmax(0, .72fr));
+            gap: .75rem;
+            padding: .72rem 1.1rem;
+            border-bottom: 1px solid var(--quiz-line);
+            background: var(--quiz-surface-soft);
+            color: var(--quiz-muted);
+            font-size: .56rem;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+        .quiz-class-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) repeat(5, minmax(0, .72fr));
+            gap: .75rem;
+            align-items: center;
+            padding: .92rem 1.1rem;
+            border-bottom: 1px solid var(--quiz-line);
+            transition: background-color .18s ease;
+        }
+        .quiz-class-row:last-child { border-bottom: 0; }
+        .quiz-class-row:hover { background: rgba(99, 102, 241, .035); }
+        .dark .quiz-class-row:hover { background: rgba(129, 140, 248, .055); }
+        .quiz-class-name {
+            min-width: 0;
+        }
+        .quiz-class-name strong {
+            display: block;
+            overflow: hidden;
+            color: var(--quiz-ink);
+            font-size: .82rem;
+            font-weight: 850;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quiz-class-name span {
+            display: block;
+            margin-top: .2rem;
+            color: var(--quiz-muted);
+            font-size: .63rem;
+            font-weight: 650;
+            line-height: 1.2;
+        }
+        .quiz-class-metric { min-width: 0; text-align: center; }
+        .quiz-class-metric strong {
+            display: block;
+            color: var(--quiz-ink);
+            font-size: .91rem;
+            font-weight: 850;
+            line-height: 1.15;
+        }
+        .quiz-class-metric small {
+            display: block;
+            margin-top: .18rem;
+            color: var(--quiz-muted);
+            font-size: .60rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .quiz-class-rate { color: #059669 !important; }
+        .dark .quiz-class-rate { color: #6ee7b7 !important; }
+
+        @media (max-width: 900px) {
+            .quiz-class-performance-head { display: none; }
+            .quiz-class-row {
+                grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, 1fr));
+                gap: .65rem;
+                padding: 1rem;
+            }
+            .quiz-class-name { grid-column: 1 / -1; padding-bottom: .25rem; }
+            .quiz-class-metric {
+                padding: .62rem .68rem;
+                border: 1px solid var(--quiz-line);
+                border-radius: .7rem;
+                background: var(--quiz-surface-soft);
+            }
+            .quiz-class-metric::before {
+                content: attr(data-label);
+                display: block;
+                overflow: hidden;
+                color: var(--quiz-muted);
+                font-size: .53rem;
+                font-weight: 850;
+                letter-spacing: .08em;
+                line-height: 1.15;
+                text-overflow: ellipsis;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+            .quiz-class-metric small { margin-top: .26rem; }
+        }
+        @media (max-width: 640px) {
+            .quiz-analytics-shell { gap: 1.25rem !important; padding-bottom: 3rem !important; }
+            .quiz-chapter-card { min-height: 10.5rem !important; padding: 1rem !important; }
+            .quiz-class-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .quiz-class-metric { min-height: 4rem; }
+            .quiz-student-analytics .max-h-\[460px\] { max-height: 390px; }
+        }
+    </style>
+
+    {{-- =====================================================================
+         INSIGHT HERO KELAS KUIS & KARTU EVALUASI AKHIR
+         Menjaga proporsi panel awal sambil memperjelas pembacaan data kelas.
+         ===================================================================== --}}
+    <style id="quiz-class-hero-and-final-card">
+        .quiz-final-chapter-card {
+            overflow: hidden !important;
+            background:
+                linear-gradient(135deg, rgba(245, 158, 11, .10), transparent 58%),
+                var(--quiz-surface) !important;
+        }
+        .dark .quiz-final-chapter-card {
+            background:
+                linear-gradient(135deg, rgba(245, 158, 11, .14), transparent 58%),
+                var(--quiz-surface) !important;
+        }
+        .quiz-final-chapter-card::after {
+            content: '';
+            position: absolute;
+            right: -1.75rem;
+            top: -1.75rem;
+            width: 6.25rem;
+            height: 6.25rem;
+            border: 14px solid rgba(245, 158, 11, .10);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        .dark .quiz-final-chapter-card::after { border-color: rgba(251, 191, 36, .13); }
+
+        .quiz-class-row { position: relative; }
+
+        .quiz-class-hero-modal {
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, .18);
+            border-radius: 1.5rem;
+            background: rgba(255, 255, 255, .98);
+            box-shadow: 0 28px 78px rgba(15, 23, 42, .28);
+        }
+        .dark .quiz-class-hero-modal {
+            border-color: rgba(129, 140, 248, .20);
+            background: #0f141e;
+            box-shadow: 0 30px 82px rgba(0, 0, 0, .74);
+        }
+        .quiz-class-hero-head {
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--quiz-line);
+            background:
+                linear-gradient(135deg, rgba(99, 102, 241, .15), rgba(255, 255, 255, .78) 58%, rgba(6, 182, 212, .10));
+        }
+        .quiz-class-hero-head::after {
+            content: '';
+            position: absolute;
+            right: -3.8rem;
+            top: -3.8rem;
+            width: 10rem;
+            height: 10rem;
+            border: 18px solid rgba(99, 102, 241, .11);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        .dark .quiz-class-hero-head {
+            background: linear-gradient(135deg, rgba(99, 102, 241, .20), rgba(15, 23, 42, .92) 58%, rgba(6, 182, 212, .12));
+        }
+        .dark .quiz-class-hero-head::after { border-color: rgba(129, 140, 248, .16); }
+        .quiz-class-hero-kicker {
+            color: #4f46e5;
+            font-size: .60rem;
+            font-weight: 900;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+        .dark .quiz-class-hero-kicker { color: #a5b4fc; }
+        .quiz-class-hero-metric {
+            min-width: 0;
+            border: 1px solid var(--quiz-line);
+            border-radius: .95rem;
+            background: var(--quiz-surface-soft);
+            padding: .92rem;
+        }
+        .quiz-class-hero-metric p,
+        .quiz-class-hero-section-label {
+            color: var(--quiz-muted);
+            font-size: .58rem;
+            font-weight: 900;
+            letter-spacing: .11em;
+            text-transform: uppercase;
+        }
+        .quiz-class-hero-metric strong {
+            display: block;
+            margin-top: .35rem;
+            color: var(--quiz-ink);
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: -.05em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .quiz-class-hero-metric span {
+            display: block;
+            margin-top: .30rem;
+            color: var(--quiz-muted);
+            font-size: .64rem;
+            font-weight: 700;
+            line-height: 1.28;
+        }
+        .quiz-class-hero-meter {
+            display: flex;
+            overflow: hidden;
+            height: .65rem;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, .18);
+        }
+        .dark .quiz-class-hero-meter { background: rgba(255, 255, 255, .075); }
+        .quiz-class-hero-meter > span { display: block; height: 100%; transition: width .35s cubic-bezier(.22,1,.36,1); }
+
+        @media (max-width: 640px) {
+            .quiz-class-hero-modal { border-radius: 1.25rem; }
+        }
+    </style>
+
 </head>
 
 {{-- ==============================================================================
      LOGIKA BLADE BULLETPROOF (Aman dari null reference & Syntax Error)
      ============================================================================== --}}
 @php
-    $totalAttempts = $totalAttempts ?? \App\Models\QuizAttempt::whereNotNull('completed_at')->count();
-    $avgScore = $avgScore ?? \App\Models\QuizAttempt::whereNotNull('completed_at')->avg('score') ?? 0;
-    $passRate = $passRate ?? ($totalAttempts > 0 ? (\App\Models\QuizAttempt::where('score', '>=', 70)->count() / $totalAttempts) * 100 : 0);
-    $recentAttempts = isset($recentAttempts) ? collect($recentAttempts) : \App\Models\QuizAttempt::with('user')->whereNotNull('completed_at')->latest()->take(5)->get();
+    $selectedQuestionClass = trim((string) request('class_group', ''));
+    $selectedQuestionPeriod = (string) request('period', 'all');
+    $questionPeriodOptions = collect([
+        'all' => 'Semua waktu',
+        '7d' => '7 hari terakhir',
+        '30d' => '30 hari terakhir',
+        '6m' => '6 bulan terakhir',
+    ]);
+
+    if (!$questionPeriodOptions->has($selectedQuestionPeriod)) {
+        $selectedQuestionPeriod = 'all';
+    }
+
+    $questionPeriodStart = match ($selectedQuestionPeriod) {
+        '7d' => \Illuminate\Support\Carbon::now()->subDays(6)->startOfDay(),
+        '30d' => \Illuminate\Support\Carbon::now()->subDays(29)->startOfDay(),
+        '6m' => \Illuminate\Support\Carbon::now()->subMonths(6)->startOfDay(),
+        default => null,
+    };
+    $questionPeriodLabel = $questionPeriodOptions[$selectedQuestionPeriod] ?? 'Semua waktu';
+    $questionClassGroups = \Illuminate\Support\Facades\DB::table('class_groups')
+        ->whereNotNull('token')
+        ->where('token', '<>', '')
+        ->orderBy('name')
+        ->pluck('name')
+        ->merge(
+            \Illuminate\Support\Facades\DB::table('quiz_attempts')
+                ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+                ->whereNotNull('quiz_attempts.completed_at')
+                ->whereNotNull('users.class_group')
+                ->where('users.class_group', '<>', '')
+                ->when($questionPeriodStart, fn ($query) => $query->where('quiz_attempts.completed_at', '>=', $questionPeriodStart))
+                ->distinct()
+                ->pluck('users.class_group')
+        )
+        ->filter()
+        ->unique()
+        ->sort()
+        ->values();
+
+    if ($selectedQuestionClass !== '' && !$questionClassGroups->contains($selectedQuestionClass)) {
+        $selectedQuestionClass = '';
+    }
+
+    $quizAttemptScope = \App\Models\QuizAttempt::query()
+        ->whereNotNull('completed_at')
+        ->when($questionPeriodStart, fn ($query) => $query->where('completed_at', '>=', $questionPeriodStart))
+        ->when($selectedQuestionClass !== '', fn ($query) => $query->whereHas('user', fn ($userQuery) => $userQuery->where('class_group', $selectedQuestionClass)));
+
+    $totalAttempts = $totalAttempts ?? (clone $quizAttemptScope)->count();
+    $avgScore = $avgScore ?? ((clone $quizAttemptScope)->avg('score') ?? 0);
+    $passRate = $passRate ?? ($totalAttempts > 0 ? ((clone $quizAttemptScope)->where('score', '>=', 70)->count() / $totalAttempts) * 100 : 0);
+    $recentAttempts = isset($recentAttempts) ? collect($recentAttempts) : (clone $quizAttemptScope)->with('user')->latest()->take(5)->get();
 
     // Data Master Soal & Akurasi
     $questionsRaw = \App\Models\QuizQuestion::with('options')->get();
-    $questions = $questionsRaw->map(function($q) {
+    $questions = $questionsRaw->map(function($q) use ($questionPeriodStart, $selectedQuestionClass) {
         $correctOptionText = $q->options->firstWhere('is_correct', 1)?->option_text ?? 'Tidak ada kunci';
         $latestStudentAnswers = \Illuminate\Support\Facades\DB::table('quiz_attempt_answers')
             ->join('quiz_attempts', 'quiz_attempt_answers.quiz_attempt_id', '=', 'quiz_attempts.id')
@@ -392,6 +1276,8 @@
                 'chosen.option_text as chosen_text'
             )
             ->orderByDesc('quiz_attempts.completed_at')
+            ->when($questionPeriodStart, fn ($query) => $query->where('quiz_attempts.completed_at', '>=', $questionPeriodStart))
+            ->when($selectedQuestionClass !== '', fn ($query) => $query->where('users.class_group', $selectedQuestionClass))
             ->get()
             ->unique('user_id')
             ->values();
@@ -400,7 +1286,8 @@
         $q->correct_count = $latestStudentAnswers->where('is_correct', 1)->count();
         $q->wrong_count = $latestStudentAnswers->where('is_correct', 0)->count();
         $q->accuracy = $q->total_attempts > 0 ? round(($q->correct_count / $q->total_attempts) * 100) : 0;
-        if ($q->accuracy >= 80) $q->status = 'Mudah';
+        if ($q->total_attempts === 0) $q->status = 'Belum Ada Data';
+        elseif ($q->accuracy >= 80) $q->status = 'Mudah';
         elseif ($q->accuracy >= 50) $q->status = 'Sedang';
         else $q->status = 'Sulit';
         $q->outcome_meta = \App\Support\LearningOutcomeAnalytics::quizOutcomeMetadata($q);
@@ -425,7 +1312,7 @@
                 'answered_at' => $answer->completed_at ? \Illuminate\Support\Carbon::parse($answer->completed_at)->timezone(config('app.timezone'))->format('d M Y H:i') : '-',
                 'context' => $isCorrect
                     ? 'Siswa sudah memilih kunci yang sesuai pada percobaan terbaru.'
-                    : 'Siswa perlu penguatan pada konsep yang ditanyakan soal ini.',
+                    : 'Siswa memilih opsi yang belum sesuai pada percobaan terbaru.',
             ];
         });
 
@@ -437,7 +1324,7 @@
 
     $totalQuestions = $questions->count();
     $totalAnswersGlobal = $questions->sum('total_attempts');
-    $globalAcc = $totalQuestions > 0 ? round($questions->avg('accuracy'), 1) : 0;
+    $globalAcc = $totalAnswersGlobal > 0 ? round(($questions->sum('correct_count') / $totalAnswersGlobal) * 100, 1) : 0;
     $hardQuestionsCount = $questions->where('status', 'Sulit')->count();
 
     $chapterGroups = $questions->where('chapter_id', '!=', 99)->groupBy('chapter_id');
@@ -450,17 +1337,71 @@
     // Daftar Semua Siswa (Digunakan di UI Tabel Pencarian)
     $studentStats = \Illuminate\Support\Facades\DB::table('quiz_attempts')
         ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
-        ->select('users.name', 'users.email', \Illuminate\Support\Facades\DB::raw('AVG(quiz_attempts.score) as avg_score'), \Illuminate\Support\Facades\DB::raw('COUNT(quiz_attempts.id) as total_attempts'))
+        ->select(
+            'users.id',
+            'users.name',
+            'users.email',
+            'users.class_group',
+            \Illuminate\Support\Facades\DB::raw('AVG(quiz_attempts.score) as avg_score'),
+            \Illuminate\Support\Facades\DB::raw('COUNT(quiz_attempts.id) as total_attempts'),
+            \Illuminate\Support\Facades\DB::raw('MAX(quiz_attempts.score) as highest_score'),
+            \Illuminate\Support\Facades\DB::raw('MIN(quiz_attempts.score) as lowest_score'),
+            \Illuminate\Support\Facades\DB::raw('SUM(CASE WHEN quiz_attempts.score >= 70 THEN 1 ELSE 0 END) as passed_attempts'),
+            \Illuminate\Support\Facades\DB::raw('SUM(COALESCE(quiz_attempts.focus_lost_count, 0)) as focus_lost_count'),
+            \Illuminate\Support\Facades\DB::raw('ROUND(AVG(COALESCE(quiz_attempts.time_spent_seconds, 0)) / 60, 0) as avg_time_minutes'),
+            \Illuminate\Support\Facades\DB::raw('MAX(quiz_attempts.completed_at) as last_completed_at')
+        )
         ->whereNotNull('completed_at')
-        ->groupBy('users.id', 'users.name', 'users.email')
+        ->when($questionPeriodStart, fn ($query) => $query->where('quiz_attempts.completed_at', '>=', $questionPeriodStart))
+        ->when($selectedQuestionClass !== '', fn ($query) => $query->where('users.class_group', $selectedQuestionClass))
+        ->groupBy('users.id', 'users.name', 'users.email', 'users.class_group')
         ->orderByDesc('avg_score')
         ->get()
         ->map(function($stat) {
             $stat->avg_score = round($stat->avg_score, 1);
+            $stat->highest_score = round((float) ($stat->highest_score ?? 0), 1);
+            $stat->lowest_score = round((float) ($stat->lowest_score ?? 0), 1);
+            $stat->passed_attempts = (int) ($stat->passed_attempts ?? 0);
+            $stat->focus_lost_count = (int) ($stat->focus_lost_count ?? 0);
+            $stat->avg_time_minutes = (int) ($stat->avg_time_minutes ?? 0);
+            $stat->status_label = $stat->avg_score >= 70 ? 'Tuntas' : 'Belum tuntas';
             return $stat;
         });
-        
-    $totalParticipants = \Illuminate\Support\Facades\DB::table('quiz_attempts')->whereNotNull('completed_at')->distinct('user_id')->count('user_id');
+
+    // Performa kuis per kelas dihitung dari rekap pengguna pada filter aktif.
+    // Nilai rata-rata dan durasi dibobotkan oleh jumlah percobaan agar setiap sesi memiliki bobot yang sama.
+    $quizClassPerformance = $studentStats
+        ->groupBy(function ($stat) {
+            $className = trim((string) ($stat->class_group ?? ''));
+            return $className !== '' ? $className : 'Kelas belum diatur';
+        })
+        ->map(function ($classStudents, $className) {
+            $classStudents = collect($classStudents);
+            $studentsCount = (int) $classStudents->count();
+            $attemptsCount = (int) $classStudents->sum(fn ($student) => (int) ($student->total_attempts ?? 0));
+            $passedCount = (int) $classStudents->sum(fn ($student) => (int) ($student->passed_attempts ?? 0));
+            $weightedScoreTotal = (float) $classStudents->sum(fn ($student) => (float) ($student->avg_score ?? 0) * (int) ($student->total_attempts ?? 0));
+            $weightedDurationTotal = (float) $classStudents->sum(fn ($student) => (float) ($student->avg_time_minutes ?? 0) * (int) ($student->total_attempts ?? 0));
+
+            return (object) [
+                'class_group' => (string) $className,
+                'students_count' => $studentsCount,
+                'total_attempts' => $attemptsCount,
+                'passed_attempts' => $passedCount,
+                'pass_rate' => $attemptsCount > 0 ? round(($passedCount / $attemptsCount) * 100, 1) : 0,
+                'avg_score' => $attemptsCount > 0 ? round($weightedScoreTotal / $attemptsCount, 1) : 0,
+                'avg_duration_minutes' => $attemptsCount > 0 ? round($weightedDurationTotal / $attemptsCount) : 0,
+            ];
+        })
+        ->sortByDesc('avg_score')
+        ->values();
+    $totalParticipants = \Illuminate\Support\Facades\DB::table('quiz_attempts')
+        ->join('users', 'quiz_attempts.user_id', '=', 'users.id')
+        ->whereNotNull('quiz_attempts.completed_at')
+        ->when($questionPeriodStart, fn ($query) => $query->where('quiz_attempts.completed_at', '>=', $questionPeriodStart))
+        ->when($selectedQuestionClass !== '', fn ($query) => $query->where('users.class_group', $selectedQuestionClass))
+        ->distinct('quiz_attempts.user_id')
+        ->count('quiz_attempts.user_id');
 
     // ==========================================================================
     // EXTRAKSI DETAIL JAWABAN SISWA (TETAP DIAMAN-KAN UNTUK ALPINEJS)
@@ -477,6 +1418,8 @@
             'chosen.option_text as chosen_text', 'quiz_questions.id as question_id'
         )
         ->whereNotNull('quiz_attempts.completed_at')
+        ->when($questionPeriodStart, fn ($query) => $query->where('quiz_attempts.completed_at', '>=', $questionPeriodStart))
+        ->when($selectedQuestionClass !== '', fn ($query) => $query->where('users.class_group', $selectedQuestionClass))
         ->get();
 
     $correctOptions = \Illuminate\Support\Facades\DB::table('quiz_options')->where('is_correct', 1)->pluck('option_text', 'quiz_question_id');
@@ -507,6 +1450,25 @@
             'correct' => $correctOptions[$ans->question_id] ?? 'Tidak ada kunci'
         ];
     }
+
+    $questionFocusRows = $hardestQuestions->take(3);
+    $unansweredQuestionCount = $questions->where('status', 'Belum Ada Data')->count();
+    $questionAnalyticsUrl = function (array $overrides = []) use ($selectedQuestionClass, $selectedQuestionPeriod) {
+        $query = [
+            'class_group' => $selectedQuestionClass ?: null,
+            'period' => $selectedQuestionPeriod !== 'all' ? $selectedQuestionPeriod : null,
+            'chapter' => request('chapter'),
+        ];
+
+        foreach ($overrides as $key => $value) {
+            $query[$key] = $value;
+        }
+
+        $query = array_filter($query, fn ($value) => filled($value));
+
+        return route('admin.analytics.questions')
+            . ($query ? ('?' . http_build_query($query)) : '');
+    };
 @endphp
 
 {{-- Inject JSON data for AlpineJS --}}
@@ -534,6 +1496,14 @@
           studentDetails: {},
           showStudentDetailModal: false,
           selectedStudent: null,
+
+          // Insight hero untuk pembacaan data kelas kuis.
+          showClassInsightModal: false,
+          selectedClassInsight: {},
+          openClassInsight(data) {
+              this.selectedClassInsight = data || {};
+              this.showClassInsightModal = true;
+          },
 
           showDashboardInfoModal: false,
 
@@ -578,16 +1548,14 @@
                   (this.difficulty === 'all' || this.difficulty === status);
           }
       }" 
-      @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showQuestionsModal = false; showParticipantsModal = false; showAccuracyModal = false; showHardModal = false; showStudentDetailModal = false; showDashboardInfoModal = false; closeModal(); closeInsightModal();" 
-      :class="{'modal-open': sidebarOpen || showQuestionsModal || showParticipantsModal || showAccuracyModal || showHardModal || showStudentDetailModal || showDashboardInfoModal}">
+      @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showQuestionsModal = false; showParticipantsModal = false; showAccuracyModal = false; showHardModal = false; showStudentDetailModal = false; showClassInsightModal = false; showDashboardInfoModal = false; closeModal(); closeInsightModal();" 
+      :class="{'modal-open': sidebarOpen || showQuestionsModal || showParticipantsModal || showAccuracyModal || showHardModal || showStudentDetailModal || showClassInsightModal || showDashboardInfoModal}">
 
     <div x-show="sidebarOpen" class="fixed inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-sm z-[90] md:hidden transition-opacity" @click="sidebarOpen = false" x-transition.opacity style="display: none;" x-cloak></div>
 
      {{-- ==================== 1. SIDEBAR ==================== --}}
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
-            
             <a href="{{ route('landing') }}" class="flex items-center gap-3 relative z-10">
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain block dark:hidden" style="filter: brightness(0.1);" alt="Logo">
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
@@ -631,15 +1599,8 @@
     </aside>
 
     {{-- ==================== MAIN CONTENT ==================== --}}
-    <main class="flex-1 flex flex-col relative z-10 h-full overflow-y-auto overflow-x-hidden">
+    <main id="admin-main-content" class="flex-1 flex flex-col relative z-10 h-full overflow-y-auto overflow-x-hidden">
         
-        {{-- Background FX Main --}}
-        <div class="fixed inset-0 pointer-events-none z-0">
-            <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-indigo-300/20 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors duration-500"></div>
-            <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-cyan-300/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors duration-500"></div>
-            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay transition-opacity duration-500"></div>
-        </div>
-
         {{-- HEADER RESPONSIVE & BREADCRUMB --}}
         <header class="h-24 glass-header flex flex-col justify-center px-6 md:px-10 shrink-0 sticky top-0 z-40 transition-colors duration-500">
             <div class="flex items-center justify-between w-full">
@@ -648,7 +1609,7 @@
                     <button @click="sidebarOpen = true" class="md:hidden p-2 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
-                    
+
                     {{-- Judul & Breadcrumb --}}
                     <div class="flex items-center gap-3">
                         <button x-show="currentView === 'table'" @click="resetView()" x-cloak x-transition class="p-2 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white transition-colors group border border-transparent dark:border-white/10 shadow-sm" title="Kembali ke ringkasan bank soal">
@@ -662,13 +1623,13 @@
                                     <li>
                                         <div class="flex items-center transition-colors">
                                             <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                            <span class="text-slate-700 dark:text-white transition-colors">Bank Soal</span>
+                                            <span class="text-slate-700 dark:text-white transition-colors">Analitik Kuis</span>
                                         </div>
                                     </li>
                                 </ol>
                             </nav>
                             <div class="flex items-center gap-2">
-                                <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Manajemen Bank Soal' : 'Detail Bank Soal: ' + activeChapterName"></h2>
+                                <h2 class="text-adaptive font-bold text-lg md:text-xl tracking-tight transition-colors" x-text="currentView === 'dashboard' ? 'Analitik Kuis' : 'Soal: ' + activeChapterName"></h2>
                                 
                                 {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                 <button x-show="currentView === 'dashboard'" @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Modul Soal">
@@ -676,8 +1637,8 @@
                                 </button>
                             </div>
                             <p class="text-[9px] md:text-xs text-adaptive-muted flex items-center gap-1.5 mt-0.5 transition-colors">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                <span x-text="currentView === 'dashboard' ? 'Ringkasan kuis dan pratinjau TP' : 'Daftar soal pada bab terpilih'"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span x-text="currentView === 'dashboard' ? 'Akurasi, soal, dan evaluasi' : 'Bab terpilih'"></span>
                             </p>
                         </div>
                     </div>
@@ -693,7 +1654,7 @@
                         <svg x-show="isFullscreen" style="display: none;" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
 
-                    {{-- Action Button (Hanya Muncul di Mode Tabel Bank Soal) --}}
+                    {{-- Action Button (Hanya Muncul di Mode Detail Bab) --}}
                     <div class="border-l border-slate-300 dark:border-white/10 pl-5 ml-1 hidden lg:block transition-colors" x-show="currentView === 'table'">
                         <button onclick="openModal('create')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-500 dark:border-indigo-400">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Tambah Soal
@@ -715,468 +1676,561 @@
 
         {{-- Scroll Area Data --}}
         <div class="flex-1 p-4 md:p-8 lg:p-10 relative z-10">
-            <div class="max-w-7xl mx-auto space-y-8 md:space-y-12">
+            <div class="quiz-analytics-shell max-w-[90rem] mx-auto">
 
                 {{-- =======================================================
                      VIEW 1: DASHBOARD GRID (OVERVIEW)
                      ======================================================= --}}
-                <div x-show="currentView === 'dashboard'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-                    
-                    {{-- 1. OVERVIEW STATS HERO CARDS --}}
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8 reveal">
-                        
-                        {{-- Total Pertanyaan --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-cyan-500 cursor-pointer group transition-all" @click="showQuestionsModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Total Soal</p>
-                                <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-cyan-600 dark:group-hover:text-cyan-400">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-cyan-600 dark:text-cyan-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Total Soal Database</span>
-                                        Total akumulasi seluruh soal teori yang ada di dalam database saat ini.
-                                    </div>
-                                </div>
+                <div x-show="currentView === 'dashboard'" class="quiz-dashboard-stack" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-3" x-transition:enter-end="opacity-100 translate-y-0">
+                    @php
+                        $analyticsTitle = 'Ringkasan Kuis';
+                        $analyticsSubtitle = 'Data pada periode dan kelas yang dipilih.';
+                        $analyticsItems = [
+                            ['label' => 'Soal', 'value' => number_format($totalQuestions), 'hint' => 'soal tersimpan', 'tone' => 'cyan'],
+                            ['label' => 'Peserta', 'value' => number_format($totalParticipants), 'hint' => 'pengguna dengan kuis selesai', 'tone' => 'indigo'],
+                            ['label' => 'Akurasi', 'value' => $globalAcc . '%', 'hint' => number_format($totalAnswersGlobal) . ' respons jawaban', 'tone' => 'emerald'],
+                            ['label' => 'Percobaan Kuis', 'value' => number_format($totalAttempts), 'hint' => 'riwayat kuis selesai', 'tone' => 'amber'],
+                        ];
+                        $analyticsActions = [];
+                    @endphp
+                    @include('admin.partials.compact_analytics_strip')
+
+                    @php
+                        $filterId = 'question-analytics-filter';
+                        $filterTitle = 'Filter Data';
+                        $filterSummary = $questionPeriodLabel . ($selectedQuestionClass ? ' · ' . $selectedQuestionClass : ' · Semua kelas');
+                        $filterAction = route('admin.analytics.questions');
+                        $filterHidden = ['chapter' => request('chapter')];
+                        $filterControls = [
+                            [
+                                'name' => 'period',
+                                'label' => 'Periode',
+                                'selected' => $selectedQuestionPeriod,
+                                'options' => $questionPeriodOptions,
+                                'minWidth' => 'min-w-[180px]',
+                            ],
+                            [
+                                'name' => 'class_group',
+                                'label' => 'Kelas',
+                                'selected' => $selectedQuestionClass,
+                                'emptyLabel' => 'Semua kelas',
+                                'options' => $questionClassGroups->mapWithKeys(fn ($className) => [$className => $className]),
+                                'minWidth' => 'min-w-[220px]',
+                            ],
+                        ];
+                        $filterResetHref = route('admin.analytics.questions');
+                        $filterResetVisible = $selectedQuestionClass || $selectedQuestionPeriod !== 'all';
+                    @endphp
+                    @include('admin.partials.analytics_filter_bar')
+
+                    {{-- 2. PERFORMA KUIS PER KELAS --}}
+                    <section id="quiz-classes" class="analytics-section reveal scroll-mt-28" style="animation-delay: .08s;" aria-label="Performa kuis per kelas">
+                        <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-600 dark:text-cyan-400">Perbandingan Kelas</p>
+                                <h3 class="mt-1 text-lg font-bold text-slate-900 dark:text-white">Kinerja Kuis per Kelas</h3>
                             </div>
-                            <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalQuestions }}</h3>
-                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Buka bank soal &rarr;</p>
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-white/45">{{ number_format($quizClassPerformance->count()) }} kelas · kuis selesai · pilih baris untuk insight</span>
                         </div>
 
-                        {{-- Peserta Ujian --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-indigo-500 cursor-pointer group transition-all" @click="showParticipantsModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Peserta Ujian</p>
-                                <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-indigo-600 dark:text-indigo-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Total Peserta Unik</span>
-                                        Total siswa unik yang telah mengumpulkan setidaknya satu evaluasi kuis.
-                                    </div>
-                                </div>
+                        <div class="quiz-class-performance-panel">
+                            <div class="quiz-class-performance-head">
+                                <span>Kelas</span>
+                                <span class="text-center">pengguna</span>
+                                <span class="text-center">Percobaan</span>
+                                <span class="text-center">Kelulusan</span>
+                                <span class="text-center">Skor rata-rata</span>
+                                <span class="text-center">Durasi rata-rata</span>
                             </div>
-                            <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalParticipants }}</h3>
-                            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat peserta &rarr;</p>
-                        </div>
-
-                        {{-- Akurasi Global --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-emerald-500 cursor-pointer group transition-all" @click="showAccuracyModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Akurasi soal</p>
-                                <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-emerald-600 dark:text-emerald-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Akurasi Rata-rata</span>
-                                        Kalkulasi persentase ketepatan jawaban rata-rata dari total {{ $totalAnswersGlobal }} jawaban yang terkumpul.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1 mt-2">
-                                <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $globalAcc }}</h3>
-                                <span class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold"></span>
-                            </div>
-                            <p class="text-[9px] text-emerald-600 dark:text-emerald-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Lihat akurasi &rarr;</p>
-                        </div>
-
-                        {{-- Soal Sulit --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-red-500 cursor-pointer group transition-all" @click="showHardModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Soal Sulit</p>
-                                <div class="tooltip-container tooltip-red tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-red-600 dark:group-hover:text-red-400">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-red-600 dark:text-red-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Butuh Perhatian</span>
-                                        Jumlah soal dengan tingkat salah jawab di atas 50%.
-                                    </div>
-                                </div>
-                            </div>
-                            <h3 class="text-2xl md:text-3xl font-black text-red-600 dark:text-red-500 mt-2 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] transition-colors">{{ $hardQuestionsCount }}</h3>
-                            <p class="text-[9px] text-red-600 dark:text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0">Tinjau Soal &rarr;</p>
-                        </div>
-                    </div>
-
-                    <div class="mb-8 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 shadow-sm dark:border-cyan-500/20 dark:bg-cyan-500/10">
-                        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                            <div class="min-w-0">
-                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-300">Pemetaan TP</p>
-                                <p class="mt-1 text-xs font-semibold leading-relaxed text-slate-600 dark:text-white/55">Analitik tujuan pembelajaran dipisahkan agar bank soal tetap fokus pada pengelolaan soal.</p>
-                            </div>
-                            <a href="{{ route('admin.learning-outcomes.index') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-300 md:w-auto">
-                                Buka Pemetaan TP
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- 2. CHAPTER CARDS (REGULAR) --}}
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 md:mb-12">
-                        {{-- KOLOM KIRI: MATERI REGULER --}}
-                        <div class="lg:col-span-2 space-y-6">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Direktori Bank Soal</h3>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 reveal" style="animation-delay: 0.1s;">
+                            @forelse($quizClassPerformance as $classRow)
                                 @php
-                                    // Meta mapping warna & judul untuk chapter standard
-                                    $chapterMeta = [
-                                        1 => ['title' => 'BAB 1: Pendahuluan', 'desc' => 'Dasar HTML, CSS & Tailwind', 'color' => 'cyan'],
-                                        2 => ['title' => 'BAB 2: Layouting', 'desc' => 'Sistem Flexbox & Grid', 'color' => 'indigo'],
-                                        3 => ['title' => 'BAB 3: Styling', 'desc' => 'Efek, Dekorasi & Tipografi', 'color' => 'fuchsia'],
+                                    $classStudentCount = max(0, (int) ($classRow->students_count ?? 0));
+                                    $classAttemptCount = max(0, (int) ($classRow->total_attempts ?? 0));
+                                    $classPassedCount = max(0, (int) ($classRow->passed_attempts ?? 0));
+                                    $classNotPassedCount = max(0, $classAttemptCount - $classPassedCount);
+                                    $classPassRate = round((float) ($classRow->pass_rate ?? 0), 1);
+                                    $classAverageScore = round((float) ($classRow->avg_score ?? 0), 1);
+                                    $classAverageDuration = max(0, (int) ($classRow->avg_duration_minutes ?? 0));
+                                    $classAttemptsPerStudent = $classStudentCount > 0
+                                        ? round($classAttemptCount / $classStudentCount, 1)
+                                        : 0;
+                                    $classInsightPayload = [
+                                        'name' => $classRow->class_group ?: 'Kelas belum diatur',
+                                        'students_count' => $classStudentCount,
+                                        'total_attempts' => $classAttemptCount,
+                                        'passed_attempts' => $classPassedCount,
+                                        'not_passed_attempts' => $classNotPassedCount,
+                                        'pass_rate' => $classPassRate,
+                                        'avg_score' => $classAverageScore,
+                                        'avg_duration_minutes' => $classAverageDuration,
+                                        'attempts_per_student' => $classAttemptsPerStudent,
                                     ];
                                 @endphp
-
-                                @if($chapterGroups->count() > 0)
-                                    @foreach($chapterGroups as $id => $chQs)
-                                        @php
-                                            $meta = $chapterMeta[$id] ?? ['title' => 'BAB '.$id.': Lanjutan', 'desc' => 'Materi Tambahan', 'color' => 'emerald'];
-                                            $cnt = $chQs->count();
-                                            $acc = $cnt > 0 ? round($chQs->avg('accuracy')) : 0;
-                                        @endphp
-                                        <div @click="selectChapter({{ $id }}, '{{ addslashes($meta['title']) }}')" 
-                                             class="glass-card rounded-3xl p-6 cursor-pointer group hover:border-{{ $meta['color'] }}-400/50 flex flex-col justify-between h-48 md:h-56 transition-colors">
-                                            
-                                            <div class="card-bg-gfx">
-                                                <div class="absolute -right-8 -top-8 w-32 h-32 bg-{{ $meta['color'] }}-400/20 dark:bg-{{ $meta['color'] }}-500/10 rounded-full blur-2xl group-hover:bg-{{ $meta['color'] }}-400/30 dark:group-hover:bg-{{ $meta['color'] }}-500/20 transition duration-500"></div>
-                                            </div>
-                                            
-                                            <div class="relative z-10">
-                                                <div class="flex justify-between items-start mb-4">
-                                                    <span class="text-xl md:text-2xl font-black font-mono text-{{ $meta['color'] }}-600 dark:text-{{ $meta['color'] }}-400 bg-{{ $meta['color'] }}-50 dark:bg-{{ $meta['color'] }}-500/10 px-3 py-1 rounded-lg border border-{{ $meta['color'] }}-200 dark:border-{{ $meta['color'] }}-500/20 transition-colors">0{{ $id }}</span>
-                                                    <div class="text-right">
-                                                        <p class="text-xl md:text-2xl font-black text-slate-900 dark:text-white transition-colors">{{ $cnt }}</p>
-                                                        <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Soal</p>
-                                                    </div>
-                                                </div>
-                                                <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white group-hover:text-{{ $meta['color'] }}-600 dark:group-hover:text-{{ $meta['color'] }}-400 transition-colors">{{ $meta['title'] }}</h3>
-                                                <p class="text-[10px] md:text-xs text-slate-600 dark:text-white/50 mt-1 transition-colors">{{ $meta['desc'] }}</p>
-                                            </div>
-                                            <div class="relative z-10 w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden mt-4 shadow-inner transition-colors">
-                                                <div class="h-full bg-{{ $meta['color'] }}-500 transition-all duration-1000" style="width: {{ $acc }}%"></div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="col-span-2 text-center py-10 text-slate-500 dark:text-white/30 text-xs italic bg-slate-50 dark:bg-[#0a0e17]/50 rounded-xl border border-dashed border-slate-300 dark:border-white/10 transition-colors">Belum ada soal terdaftar untuk bab reguler.</div>
-                                @endif
-                            </div>
-                        </div>
-
-                        {{-- KOLOM KANAN: DISTRIBUTION CHART --}}
-                        <div class="lg:col-span-1 space-y-6 reveal" style="animation-delay: 0.2s;">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg> Rasio Kesulitan Soal</h3>
-                            <div class="glass-card rounded-3xl p-6 flex flex-col items-center justify-center h-auto lg:h-[calc(100%-3rem)] transition-colors">
-                                <div class="w-40 h-40 md:w-48 md:h-48 relative">
-                                    <canvas id="difficultyChart"></canvas>
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                        <span class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $totalQuestions }}</span>
-                                        <span class="text-[9px] md:text-[10px] uppercase text-slate-500 dark:text-white/40 font-bold tracking-widest transition-colors">Total</span>
+                                <article
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="Buka insight kinerja kuis kelas {{ $classRow->class_group }}"
+                                    data-class-insight='@json($classInsightPayload, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
+                                    @click="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
+                                    @keydown.enter="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
+                                    @keydown.space.prevent="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
+                                    class="quiz-class-row cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500/50"
+                                >
+                                    <div class="quiz-class-name">
+                                        <strong>{{ $classRow->class_group }}</strong>
+                                        <span>{{ number_format($classStudentCount) }} pengguna dengan riwayat kuis</span>
                                     </div>
+                                    <div class="quiz-class-metric" data-label="pengguna">
+                                        <strong>{{ number_format($classStudentCount) }}</strong>
+                                        <small>pengguna</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Percobaan">
+                                        <strong>{{ number_format($classAttemptCount) }}</strong>
+                                        <small>{{ $classAttemptsPerStudent }} / pengguna</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Kelulusan">
+                                        <strong class="quiz-class-rate">{{ number_format($classPassedCount) }}/{{ number_format($classAttemptCount) }}</strong>
+                                        <small>{{ $classPassRate }}%</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Skor rata-rata">
+                                        <strong>{{ $classAverageScore }}</strong>
+                                        <small>dari 100</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Durasi rata-rata">
+                                        <strong>{{ number_format($classAverageDuration) }}</strong>
+                                        <small>menit / sesi</small>
+                                    </div>
+                                </article>
+                            @empty
+                                <div class="px-5 py-10 text-center text-xs font-semibold text-slate-500 dark:text-white/40">
+                                    Belum ada riwayat kuis yang dapat dikelompokkan berdasarkan kelas.
                                 </div>
-                                <div class="grid grid-cols-3 gap-2 mt-6 w-full text-center">
-                                    <div class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 transition-colors">
-                                        <span class="block text-emerald-600 dark:text-emerald-400 font-bold text-xs md:text-sm">{{ $questions->where('status', 'Mudah')->count() }}</span>
-                                        <span class="text-[8px] md:text-[9px] text-slate-500 dark:text-white/40 uppercase transition-colors">Mudah</span>
-                                    </div>
-                                    <div class="p-2 rounded-xl bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 transition-colors">
-                                        <span class="block text-yellow-600 dark:text-yellow-400 font-bold text-xs md:text-sm">{{ $questions->where('status', 'Sedang')->count() }}</span>
-                                        <span class="text-[8px] md:text-[9px] text-slate-500 dark:text-white/40 uppercase transition-colors">Sedang</span>
-                                    </div>
-                                    <div class="p-2 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 transition-colors">
-                                        <span class="block text-red-600 dark:text-red-400 font-bold text-xs md:text-sm">{{ $hardQuestionsCount }}</span>
-                                        <span class="text-[8px] md:text-[9px] text-slate-500 dark:text-white/40 uppercase transition-colors">Sulit</span>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
-                    </div>
+                    </section>
 
-                    {{-- 3. FINAL EXAM CARD (SPECIAL) --}}
-                    @if($finalExam->count() > 0)
+                    {{-- 3. KUIS PER BAB DAN EVALUASI AKHIR --}}
                     @php
-                        $finalCnt = $finalExam->count();
-                        $finalAcc = $finalCnt > 0 ? round($finalExam->avg('accuracy')) : 0;
+                        // Empat kartu disajikan bersama agar Bab 1–3 dan evaluasi akhir dapat dibandingkan dalam satu grid 2 × 2.
+                        $chapterMeta = [
+                            1 => ['title' => 'BAB 1: Pendahuluan', 'desc' => 'Dasar HTML, CSS & Tailwind', 'color' => 'cyan', 'label' => 'Kuis Bab'],
+                            2 => ['title' => 'BAB 2: Layouting', 'desc' => 'Sistem Flexbox & Grid', 'color' => 'indigo', 'label' => 'Kuis Bab'],
+                            3 => ['title' => 'BAB 3: Styling', 'desc' => 'Efek, Dekorasi & Tipografi', 'color' => 'fuchsia', 'label' => 'Kuis Bab'],
+                        ];
+
+                        $chapterCards = collect($chapterMeta)->map(function ($meta, $id) use ($chapterGroups) {
+                            $chapterQuestions = collect($chapterGroups->get($id, collect()));
+                            $questionCount = $chapterQuestions->count();
+
+                            return array_merge($meta, [
+                                'id' => (int) $id,
+                                'question_count' => $questionCount,
+                                'accuracy' => $questionCount > 0 ? round($chapterQuestions->avg('accuracy')) : 0,
+                                'is_final' => false,
+                            ]);
+                        })->values();
+
+                        $finalQuestionCount = $finalExam->count();
+                        $finalAccuracy = $finalQuestionCount > 0 ? round($finalExam->avg('accuracy')) : 0;
+                        $chapterCards->push([
+                            'id' => 99,
+                            'title' => 'Evaluasi Akhir',
+                            'desc' => 'Cakupan materi Bab 1–3',
+                            'color' => 'amber',
+                            'label' => 'Evaluasi',
+                            'question_count' => $finalQuestionCount,
+                            'accuracy' => $finalAccuracy,
+                            'is_final' => true,
+                        ]);
                     @endphp
-                    <div class="mb-8 md:mb-12 reveal" style="animation-delay: 0.3s;">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 transition-colors"><svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg> Evaluasi Akhir</h3>
-                        <div @click="selectChapter(99, 'Evaluasi Akhir')"
-                            class="glass-card rounded-3xl p-6 md:p-8 cursor-pointer group hover:border-yellow-400/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 bg-gradient-to-r from-yellow-50 to-transparent dark:from-yellow-900/10 dark:to-transparent border-t-2 border-yellow-400 dark:border-yellow-500/50 transition-colors">
-                            
-                            <div class="card-bg-gfx">
-                                <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-10 transition-opacity"></div>
-                                <div class="absolute -left-20 -top-20 w-64 h-64 bg-yellow-400/20 dark:bg-yellow-500/10 rounded-full blur-[80px] group-hover:bg-yellow-400/30 dark:group-hover:bg-yellow-500/20 transition duration-500"></div>
+
+                    <div class="quiz-chapter-layout grid grid-cols-1 lg:grid-cols-3">
+                        <section class="lg:col-span-2 space-y-4" aria-label="Kuis per bab dan evaluasi akhir">
+                            <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-600 dark:text-indigo-400">Struktur Evaluasi</p>
+                                    <h3 class="mt-1 flex items-center gap-2 text-lg font-bold text-slate-900 transition-colors dark:text-white">
+                                        <svg class="h-5 w-5 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                        Kuis Bab dan Evaluasi Akhir
+                                    </h3>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-white/45">4 kelompok soal · pilih kartu untuk melihat detail</span>
                             </div>
 
-                            <div class="relative z-10 flex-1">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3 transition-colors">
-                                    <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> 
-                                </div>
-                                <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 transition-colors">Evaluasi Akhir (Bab 1 - 3)</h3>
-                                <p class="text-xs text-slate-600 dark:text-white/60 transition-colors">Kumpulan soal teori dari seluruh materi untuk mengukur pemahaman siswa.</p>
-                            </div>
+                            <div class="quiz-chapter-card-grid grid grid-cols-1 gap-4 sm:grid-cols-2 reveal" style="animation-delay: 0.1s;">
+                                @foreach($chapterCards as $card)
+                                    <article
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="Buka {{ $card['title'] }}"
+                                        @click="selectChapter({{ $card['id'] }}, '{{ addslashes($card['title']) }}')"
+                                        @keydown.enter="selectChapter({{ $card['id'] }}, '{{ addslashes($card['title']) }}')"
+                                        @keydown.space.prevent="selectChapter({{ $card['id'] }}, '{{ addslashes($card['title']) }}')"
+                                        class="quiz-chapter-card {{ $card['is_final'] ? 'quiz-final-chapter-card' : '' }} glass-card group flex cursor-pointer flex-col justify-between rounded-2xl border-t-2 border-{{ $card['color'] }}-400 transition-colors hover:border-{{ $card['color'] }}-400/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-{{ $card['color'] }}-500/50"
+                                    >
+                                        <div class="relative z-10">
+                                            <div class="mb-4 flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <span class="inline-flex items-center rounded-lg border border-{{ $card['color'] }}-200 bg-{{ $card['color'] }}-50 px-3 py-1 font-mono text-xl font-black text-{{ $card['color'] }}-600 transition-colors dark:border-{{ $card['color'] }}-500/20 dark:bg-{{ $card['color'] }}-500/10 dark:text-{{ $card['color'] }}-400 md:text-2xl">
+                                                        {{ $card['is_final'] ? 'EA' : sprintf('%02d', $card['id']) }}
+                                                    </span>
+                                                    <p class="mt-2 text-[9px] font-black uppercase tracking-[.14em] text-{{ $card['color'] }}-700 dark:text-{{ $card['color'] }}-300">{{ $card['label'] }}</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-xl font-black tabular-nums text-slate-900 transition-colors dark:text-white md:text-2xl">{{ $card['question_count'] }}</p>
+                                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500 transition-colors dark:text-white/40">Soal</p>
+                                                </div>
+                                            </div>
+                                            <h4 class="text-base font-bold text-slate-900 transition-colors group-hover:text-{{ $card['color'] }}-600 dark:text-white dark:group-hover:text-{{ $card['color'] }}-400 md:text-lg">{{ $card['title'] }}</h4>
+                                            <p class="mt-1 text-[10px] text-slate-600 transition-colors dark:text-white/50 md:text-xs">{{ $card['desc'] }}</p>
+                                        </div>
 
-                            <div class="relative z-10 flex gap-6 md:gap-8 text-center w-full md:w-auto justify-around md:justify-end border-t md:border-none border-slate-200 dark:border-white/10 pt-4 md:pt-0 transition-colors">
-                                <div>
-                                    <p class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white group-hover:scale-110 transition">{{ $finalCnt }}</p>
-                                    <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase font-bold tracking-widest mt-1 transition-colors">Soal</p>
+                                        <div class="relative z-10 mt-4">
+                                            <div class="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[.11em] text-slate-500 dark:text-white/40">
+                                                <span>Akurasi jawaban</span>
+                                                <span class="tabular-nums text-{{ $card['color'] }}-700 dark:text-{{ $card['color'] }}-300">{{ $card['accuracy'] }}%</span>
+                                            </div>
+                                            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner transition-colors dark:bg-white/10">
+                                                <div class="h-full bg-{{ $card['color'] }}-500 transition-all duration-1000" style="width: {{ $card['accuracy'] }}%"></div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </section>
+
+                        <section class="space-y-4 reveal" style="animation-delay: 0.2s;" aria-label="Komposisi tingkat kesulitan soal">
+                            <div>
+                                <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-emerald-600 dark:text-emerald-400">Komposisi Soal</p>
+                                <h3 class="mt-1 flex items-center gap-2 text-lg font-bold text-slate-900 transition-colors dark:text-white">
+                                    <svg class="h-5 w-5 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                                    Tingkat Kesulitan
+                                </h3>
+                            </div>
+                            <div class="quiz-distribution-card glass-card flex flex-col items-center justify-center rounded-3xl transition-colors">
+                                <div class="relative h-40 w-40 md:h-48 md:w-48">
+                                    <canvas id="difficultyChart"></canvas>
+                                    <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-2xl font-black text-slate-900 transition-colors dark:text-white md:text-3xl">{{ $totalQuestions }}</span>
+                                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 transition-colors dark:text-white/40 md:text-[10px]">Total</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-3xl md:text-4xl font-black {{ $finalAcc >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400' }} group-hover:scale-110 transition">{{ $finalAcc }}</p>
-                                    <p class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/40 uppercase font-bold tracking-widest mt-1 transition-colors">Rata-rata Skor</p>
-                                </div>
-                                <div class="flex items-center hidden sm:flex">
-                                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-white group-hover:bg-yellow-500 group-hover:text-slate-900 transition shadow-sm dark:shadow-none">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                <div class="mt-6 grid w-full grid-cols-3 gap-2 text-center">
+                                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-2 transition-colors dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                                        <span class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 md:text-sm">{{ $questions->where('status', 'Mudah')->count() }}</span>
+                                        <span class="text-[8px] uppercase text-slate-500 transition-colors dark:text-white/40 md:text-[9px]">Mudah</span>
+                                    </div>
+                                    <div class="rounded-xl border border-yellow-200 bg-yellow-50 p-2 transition-colors dark:border-yellow-500/20 dark:bg-yellow-500/10">
+                                        <span class="block text-xs font-bold text-yellow-600 dark:text-yellow-400 md:text-sm">{{ $questions->where('status', 'Sedang')->count() }}</span>
+                                        <span class="text-[8px] uppercase text-slate-500 transition-colors dark:text-white/40 md:text-[9px]">Sedang</span>
+                                    </div>
+                                    <div class="rounded-xl border border-red-200 bg-red-50 p-2 transition-colors dark:border-red-500/20 dark:bg-red-500/10">
+                                        <span class="block text-xs font-bold text-red-600 dark:text-red-400 md:text-sm">{{ $hardQuestionsCount }}</span>
+                                        <span class="text-[8px] uppercase text-slate-500 transition-colors dark:text-white/40 md:text-[9px]">Sulit</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
-                    @endif
 
-                    {{-- 4. TABEL SELURUH SISWA DENGAN TOMBOL "LEMBAR JAWABAN" --}}
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 reveal" style="animation-delay: 0.4s;">
-                        
-                        {{-- KIRI: Daftar Seluruh Siswa dengan Kolom Pencarian --}}
-                        <div class="glass-card rounded-2xl p-6 flex flex-col h-full border-t-2 border-amber-400 dark:border-amber-500/50" x-data="{ searchStudent: '' }">
-                            <div class="flex flex-col gap-3 mb-4 pb-4 border-b border-slate-200 dark:border-white/5 transition-colors">
-                                <div>
-                                    <h3 class="text-lg font-bold text-adaptive flex items-center gap-2">
-                                        {{-- <svg class="w-5 h-5 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg> --}}
-                                        Daftar Seluruh Evaluasi Siswa
-                                    </h3>
-                                    <p class="text-[10px] text-adaptive-muted mt-1 font-mono">Diurutkan berdasarkan rata-rata nilai kuis tertinggi.</p>
-                                </div>
-                                {{-- Pencarian Siswa Khusus Box Ini --}}
-                                <div class="relative w-full group mt-1">
-                                    <input x-model="searchStudent" type="text" placeholder="Cari nama atau email siswa..." class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-amber-500 outline-none transition shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
-                                    <div class="absolute left-3 top-2.5 text-slate-400 dark:text-white/30 group-focus-within:text-amber-500 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
-                                </div>
+                    {{-- 5. PERFORMA pengguna --}}
+                    <div id="quiz-students" class="analytics-section glass-card analytics-panel quiz-student-analytics rounded-2xl overflow-hidden reveal border-t-2 border-amber-500/50 scroll-mt-28" style="animation-delay: 0.4s;">
+                        <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
+                                    Performa pengguna
+                                </h3>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Rata-rata skor, ketuntasan, durasi, dan catatan fokus setiap pengguna.</p>
                             </div>
-                            
-                            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2 max-h-[400px]">
-                                @forelse($studentStats as $index => $stat)
-                                <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/50 border border-slate-200 dark:border-white/5 transition-colors hover:border-yellow-300 dark:hover:border-yellow-500/30 group"
-                                     x-show="searchStudent === '' || '{{ strtolower(addslashes($stat->name)) }}'.includes(searchStudent.toLowerCase()) || '{{ strtolower(addslashes($stat->email)) }}'.includes(searchStudent.toLowerCase())"
-                                     x-transition>
-                                 
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-bold text-adaptive truncate">{{ $stat->name }}</p>
-                                        <p class="text-[9px] text-adaptive-muted mt-0.5 truncate">{{ $stat->email }}</p>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-right">
-                                            <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400">{{ $stat->avg_score }}</span>
-                                            <div class="w-16 h-1 bg-slate-200 dark:bg-white/10 rounded-full mt-1 ml-auto">
-                                                <div class="h-full bg-emerald-500 rounded-full" style="width: {{ $stat->avg_score }}%"></div>
-                                            </div>
-                                            <span class="text-[8px] text-adaptive-muted font-mono bg-slate-200 dark:bg-white/5 px-1.5 py-0.5 rounded mt-1 inline-block">{{ $stat->total_attempts }} Kuis</span>
-                                        </div>
-                                        {{-- TOMBOL: BUKA MODAL DETAIL JAWABAN SISWA --}}
-                                        <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
-                                            <button @click="openStudentDetail('{{ addslashes($stat->email) }}')" class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-indigo-600 dark:hover:bg-indigo-500 text-slate-400 hover:text-white transition-colors shadow-sm border border-slate-200 dark:border-white/10">
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            </button>
-                                            <div class="tooltip-content" style="width:150px; text-align:center;">Lihat jawaban siswa</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @empty
-                                <div class="text-center py-10 text-adaptive-muted text-xs italic">Belum ada data siswa.</div>
-                                @endforelse
-                            </div>
+                            <span class="text-[10px] bg-white dark:bg-[#020617] px-3 py-1.5 rounded-lg text-slate-500 dark:text-white/50 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner transition-colors">{{ $studentStats->count() }} pengguna</span>
                         </div>
 
-                        {{-- KANAN: Aktivitas Pengerjaan Kuis Terbaru --}}
-                        <div class="glass-card rounded-2xl p-6 flex flex-col h-full border-t-2 border-cyan-500 dark:border-cyan-500/50">
-                            <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-200 dark:border-white/5 transition-colors">
-                                <div>
-                                    <h3 class="text-lg font-bold text-adaptive flex items-center gap-2">
-                                        <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Log Evaluasi Terbaru
-                                    </h3>
-                                    <p class="text-[10px] text-adaptive-muted mt-1 font-mono">Log penyelesaian kuis secara real-time.</p>
-                                </div>
-                            </div>
-
-                            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2 max-h-[400px]">
-                                @forelse($recentAttempts as $act)
-                                    @php $isLulus = $act->score >= 70; @endphp
-                                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors group">
-                                        <div class="flex justify-between items-start mb-2 gap-2">
-                                            <div class="flex items-center gap-2 min-w-0">
-                                                <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-white/10 text-adaptive flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner transition-colors">
-                                                    {{ substr($act->user->name ?? 'U', 0, 1) }}
-                                                </div>
-                                                <p class="text-xs font-bold text-adaptive truncate">{{ $act->user->name ?? 'Unknown User' }}</p>
-                                            </div>
-                                            <span class="text-[8px] font-bold px-2 py-0.5 rounded border transition-colors shrink-0 {{ $isLulus ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20' }}">
-                                                {{ $isLulus ? 'Lulus' : 'Gagal' }}
-                                            </span>
-                                        </div>
-                                        
-                                        <div class="flex items-start gap-3 mt-1.5">
-                                            <div class="flex-1 min-w-0 pl-8">
-                                                <p class="text-[11px] font-medium leading-snug transition-colors text-adaptive">
-                                                    {{ $act->chapter_id == 99 ? 'Evaluasi Akhir' : 'Kuis Bab ' . $act->chapter_id }}
-                                                    <span class="{{ $isLulus ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-600 dark:text-red-500' }} font-black ml-1">({{ $act->score }} Poin)</span>
-                                                </p>
-                                                <div class="flex items-center justify-between mt-1.5">
-                                                    <p class="text-[9px] text-adaptive-muted font-mono transition-colors flex items-center gap-1">
-                                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                        {{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-10 text-adaptive-muted text-xs italic">Belum ada aktivitas kuis terbaru.</div>
-                                @endforelse
+                        <div class="p-5 md:p-6">
+                            <div class="max-h-[460px] overflow-x-auto overflow-y-auto custom-scrollbar rounded-2xl border border-slate-200 bg-white/70 dark:border-white/10 dark:bg-[#020617]/60">
+                                <table class="w-full min-w-[1120px] text-left text-xs">
+                                    <thead class="sticky top-0 z-10 bg-slate-50/95 text-[9px] font-black uppercase tracking-widest text-slate-400 backdrop-blur dark:bg-[#0a0e17]/95 dark:text-white/30">
+                                        <tr>
+                                            <th class="px-4 py-3">
+                                                <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Nama Pengguna</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Percobaan Kuis</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Skor Rata-rata</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Rentang Skor</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Ketuntasan Kuis</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Gangguan Fokus</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Durasi Rata-rata</span>
+                                            </th>
+                                            <th class="px-3 py-3">
+                                                <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Pengerjaan Terakhir</span>
+                                            </th>
+                                            <th class="px-4 py-3 text-right">
+                                                <span class="inline-flex items-center justify-end gap-1.5 whitespace-nowrap">Detail</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                                        @forelse($studentStats as $stat)
+                                            @php
+                                                $score = round((float) ($stat->avg_score ?? 0), 1);
+                                                $passed = (int) ($stat->passed_attempts ?? 0);
+                                                $totalTries = (int) ($stat->total_attempts ?? 0);
+                                                $failed = max(0, $totalTries - $passed);
+                                                $passPercent = $totalTries > 0 ? round(($passed / $totalTries) * 100) : 0;
+                                                $focusLost = (int) ($stat->focus_lost_count ?? 0);
+                                                $studentQuizAnalyticsUrl = route('admin.quiz.student.analytics', $stat->id ?? 0);
+                                            @endphp
+                                            <tr class="table-row">
+                                                <td class="px-4 py-3">
+                                                    <p class="max-w-[220px] truncate text-sm font-black text-slate-900 dark:text-white">{{ $stat->name ?? 'Siswa' }}</p>
+                                                    <p class="mt-0.5 truncate text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $stat->class_group ?: 'Kelas belum diatur' }}</p>
+                                                </td>
+                                                <td class="px-3 py-3 text-center font-mono font-black text-adaptive">{{ number_format($totalTries) }}</td>
+                                                <td class="px-3 py-3 text-center">
+                                                    <span class="font-black {{ $score >= 70 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300' }}">{{ $score }}</span>
+                                                </td>
+                                                <td class="px-3 py-3 text-center font-mono text-adaptive-muted">{{ $stat->lowest_score ?? 0 }}-{{ $stat->highest_score ?? 0 }}</td>
+                                                <td class="px-3 py-3 text-center">
+                                                    <span class="font-mono font-black text-cyan-700 dark:text-cyan-300">{{ $passed }}/{{ $totalTries }}</span>
+                                                    <span class="ml-1 text-[10px] font-bold text-adaptive-muted">({{ $passPercent }}%)</span>
+                                                    @if($failed > 0)
+                                                        <span class="ml-1 rounded-md bg-rose-50 px-1.5 py-0.5 text-[9px] font-black text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ $failed }} belum</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-3 py-3 text-center">
+                                                    <span class="rounded-lg px-2 py-1 text-[10px] font-black {{ $focusLost > 0 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300' : 'bg-slate-50 text-slate-500 dark:bg-white/5 dark:text-white/45' }}">{{ $focusLost }}</span>
+                                                </td>
+                                                <td class="px-3 py-3 text-center font-mono text-adaptive-muted">{{ $stat->avg_time_minutes ?? 0 }} mnt</td>
+                                                <td class="px-3 py-3 text-[10px] font-semibold text-adaptive-muted">{{ $stat->last_completed_at ? \Carbon\Carbon::parse($stat->last_completed_at)->diffForHumans() : '-' }}</td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <a href="{{ $studentQuizAnalyticsUrl }}" class="inline-flex items-center justify-center rounded-lg bg-indigo-50 px-3 py-2 text-[10px] font-black text-indigo-700 transition hover:bg-indigo-600 hover:text-white dark:bg-indigo-500/10 dark:text-indigo-300 dark:hover:bg-indigo-600 dark:hover:text-white">
+                                                        Detail
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="9" class="px-4 py-10 text-center text-xs font-semibold text-slate-500 dark:text-white/40">
+                                                    Belum ada data riwayat pengerjaan kuis siswa.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- =======================================================
-                     VIEW 2: DETAIL TABLE BANK SOAL (DRILL DOWN PER BAB)
+                     VIEW 2: DETAIL BANK SOAL PER BAB
+                     Visual kartu memberi ruang lebih lega untuk membaca soal,
+                     opsi jawaban, dan data respons siswa.
                      ======================================================= --}}
-                <div x-show="currentView === 'table'" x-cloak x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                    
-                    {{-- Controls --}}
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                        <div class="relative w-full md:w-96 group">
-                            <input x-model="search" type="text" placeholder="Cari soal atau opsi jawaban..." class="w-full bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-slate-900 dark:text-white focus:border-indigo-500 outline-none transition shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-white/30">
-                            <div class="absolute left-3 top-3 md:top-3.5 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
+                <div x-show="currentView === 'table'" x-cloak class="quiz-question-detail-stack"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="opacity-0 translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0">
+
+                    {{-- Kontrol pencarian dan filter --}}
+                    <section class="quiz-question-toolbar" aria-label="Filter bank soal">
+                        <div class="quiz-question-toolbar-copy">
+                            <p>Bank Soal</p>
+                            <h3 x-text="activeChapterName || 'Semua Bab'"></h3>
+                            <span>Telusuri soal, lihat respons siswa, lalu buka detail untuk meninjau jawaban.</span>
                         </div>
-                        <div class="flex gap-3 w-full md:w-auto">
-                            <select x-model="difficulty" class="w-full md:w-auto bg-white dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white text-xs rounded-xl px-4 py-3 outline-none focus:border-indigo-500 cursor-pointer min-w-[150px] shadow-sm dark:shadow-inner transition-colors">
-                                <option value="all">Semua tingkat kesulitan</option>
-                                <option value="Sulit">🔥 Sulit (< 50%)</option>
-                                <option value="Sedang">⚖️ Sedang (50-79%)</option>
-                                <option value="Mudah">✅ Mudah (≥ 80%)</option>
+
+                        <div class="quiz-question-controls">
+                            <div class="relative group">
+                                <input x-model="search" type="text" placeholder="Cari teks soal atau opsi jawaban..."
+                                       class="w-full rounded-xl pl-10 pr-4 py-3 text-xs md:text-sm text-slate-900 dark:text-white outline-none transition placeholder-slate-400 dark:placeholder-white/30">
+                                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/30 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-300 transition">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </div>
+                            </div>
+                            <select x-model="difficulty" class="w-full rounded-xl px-4 py-3 text-xs text-slate-700 dark:text-white outline-none cursor-pointer transition">
+                                <option value="all">Semua status</option>
+                                <option value="Sulit">Sulit · di bawah 50%</option>
+                                <option value="Sedang">Sedang · 50–79%</option>
+                                <option value="Mudah">Mudah · 80% ke atas</option>
+                                <option value="Belum Ada Data">Belum ada respons</option>
                             </select>
                         </div>
-                    </div>
+                    </section>
 
-                    {{-- Main Table Bank Soal (Tampil jika ada $questions) --}}
+                    {{-- Kartu per soal --}}
                     @if($questions->count() > 0)
-                    <div class="glass-card rounded-2xl overflow-hidden border-t border-slate-200 dark:border-white/10 transition-colors">
-                        <div class="overflow-x-auto custom-scrollbar rounded-2xl bg-white/50 dark:bg-transparent">
-                            <table class="w-full text-sm text-left min-w-[800px]">
-                                <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-10 shadow-sm dark:shadow-lg transition-colors">
-                                    <tr>
-                                        <th class="px-6 py-4 w-[50%]">Teks Pertanyaan & Opsi Jawaban</th>
-                                        <th class="px-6 py-4 text-center">Analisis Rasio Jawaban</th>
-                                        <th class="px-6 py-4 text-center">Label Status</th>
-                                        <th class="px-6 py-4 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-200 dark:divide-white/5 bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors">
-                                    @foreach($questions as $q)
-                                    @php
-                                        $questionSearchText = strtolower(trim(strip_tags(
-                                            (string) ($q->question_text ?? '') . ' ' . (($q->options ?? collect())->pluck('option_text')->join(' '))
-                                        )));
-                                    @endphp
-                                    <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition-colors group question-row" 
-                                        data-search="{{ e($questionSearchText) }}"
-                                        data-status="{{ e($q->status ?? '') }}"
-                                        x-show="matchesQuestionRow($el, {{ (int) ($q->chapter_id ?? 0) }})"
-                                        x-transition>
-                                        <td class="px-6 py-5 align-top">
-                                            <div class="flex items-start gap-3">
-                                                <span class="px-2 py-1 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/50 text-[9px] font-bold rounded-md whitespace-nowrap mt-0.5 shadow-inner transition-colors">{{ (int) $q->chapter_id === 99 ? 'Evaluasi' : 'BAB ' . $q->chapter_id }}</span>
-                                                <div>
-                                                    @if(!empty($q->media_url))
-                                                        <div data-media-card class="question-media-card mb-3 overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 max-w-xl shadow-sm">
-                                                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-3 py-2">
-                                                                <span class="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Media Soal</span>
-                                                                <span class="rounded-md border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-2 py-0.5 text-[9px] font-bold text-slate-500 dark:text-white/45">Gambar</span>
-                                                            </div>
-                                                            <img src="{{ $q->media_url }}" alt="{{ $q->media_caption ?: 'Media soal' }}" loading="lazy" onerror="this.closest('[data-media-card]').classList.add('hidden')" class="h-32 w-full object-contain bg-slate-100 dark:bg-[#020617]">
-                                                            @if(!empty($q->media_caption))
-                                                                <p class="px-3 py-2 text-[10px] text-slate-500 dark:text-white/50">{{ $q->media_caption }}</p>
+                        <section class="quiz-question-card-list" aria-label="Daftar soal dan analitik respons">
+                            @foreach($questions as $q)
+                                @php
+                                    $questionSearchText = strtolower(trim(strip_tags(
+                                        (string) ($q->question_text ?? '') . ' ' . (($q->options ?? collect())->pluck('option_text')->join(' '))
+                                    )));
+                                    $questionAccuracy = min(100, max(0, (int) ($q->accuracy ?? 0)));
+                                    $questionTotal = max(0, (int) ($q->total_attempts ?? 0));
+                                    $questionCorrect = max(0, (int) ($q->correct_count ?? 0));
+                                    $questionWrong = max(0, (int) ($q->wrong_count ?? 0));
+                                    $questionWrongPercent = $questionTotal > 0 ? min(100, max(0, 100 - $questionAccuracy)) : 0;
+                                    $questionStatus = $q->status ?? 'Belum Ada Data';
+                                    $statusBadgeClass = match ($questionStatus) {
+                                        'Mudah' => 'status-easy',
+                                        'Sedang' => 'status-mid',
+                                        'Sulit' => 'status-hard',
+                                        default => 'status-empty',
+                                    };
+                                    $questionInteractionType = !empty($q->media_url)
+                                        ? 'image_context'
+                                        : ($q->interaction_type ?? 'multiple_choice');
+                                    $questionTypeLabel = [
+                                        'multiple_choice' => 'Pilihan ganda',
+                                        'image_context' => 'Soal gambar',
+                                    ][$questionInteractionType] ?? 'Pilihan ganda';
+                                    $questionChapterLabel = (int) ($q->chapter_id ?? 0) === 99
+                                        ? 'Evaluasi akhir'
+                                        : 'Bab ' . ($q->chapter_id ?? '-');
+                                    $questionOutcomeCode = $q->outcome_meta['display_code']
+                                        ?? ($q->learning_objective_code ?: 'TP Umum');
+                                    $questionOutcomeTitle = $q->outcome_meta['title']
+                                        ?? ($q->learning_objective_title ?: 'Tujuan pembelajaran umum');
+                                @endphp
+
+                                <article class="quiz-question-card question-row"
+                                         data-search="{{ e($questionSearchText) }}"
+                                         data-status="{{ e($questionStatus) }}"
+                                         x-show="matchesQuestionRow($el, {{ (int) ($q->chapter_id ?? 0) }})"
+                                         x-transition.opacity.duration.200ms>
+
+                                    <header class="quiz-question-card-header">
+                                        <div class="flex min-w-0 items-center gap-3">
+                                            <span class="quiz-question-index">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                            <div class="quiz-question-meta">
+                                                <span>{{ $questionChapterLabel }}</span>
+                                                <span>{{ $questionTypeLabel }}</span>
+                                                <span>{{ $questionOutcomeCode }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="quiz-question-actions" aria-label="Aksi soal">
+                                            <button type="button" class="edit-question"
+                                                    onclick='openModal("edit", @json($q))'
+                                                    title="Perbarui soal">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                            </button>
+                                            <button type="button" class="delete-question"
+                                                    onclick="confirmHapus('{{ $q->id }}')"
+                                                    title="Hapus soal">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            </button>
+                                        </div>
+                                    </header>
+
+                                    <div class="quiz-question-card-body">
+                                        <div class="quiz-question-main">
+                                            @if(!empty($q->media_url))
+                                                <div data-media-card class="question-media-card mb-4 overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+                                                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-3 py-2">
+                                                        <span class="text-[9px] font-black uppercase tracking-[0.20em] text-cyan-700 dark:text-cyan-300">Media soal</span>
+                                                        <span class="rounded-md border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-2 py-0.5 text-[9px] font-bold text-slate-500 dark:text-white/45">Gambar</span>
+                                                    </div>
+                                                    <img src="{{ $q->media_url }}" alt="{{ $q->media_caption ?: 'Media soal' }}" loading="lazy"
+                                                         onerror="this.closest('[data-media-card]').classList.add('hidden')"
+                                                         class="h-40 w-full object-contain bg-slate-100 dark:bg-[#020617] md:h-48">
+                                                    @if(!empty($q->media_caption))
+                                                        <p class="px-3 py-2 text-[10px] text-slate-500 dark:text-white/50">{{ $q->media_caption }}</p>
+                                                    @endif
+                                                </div>
+                                            @endif
+
+                                            <div onclick="openInsightModalById({{ (int) $q->id }})"
+                                                 onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openInsightModalById({{ (int) $q->id }}); }"
+                                                 role="button" tabindex="0" title="Buka ringkasan respons siswa"
+                                                 class="quiz-question-text question-rich-text cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400/40">
+                                                {!! $q->question_text !!}
+                                            </div>
+
+                                            <div class="quiz-question-pills">
+                                                <span class="quiz-question-pill tp">{{ $questionOutcomeCode }}</span>
+                                                <span class="quiz-question-pill" title="{{ $questionOutcomeTitle }}">{{ \Illuminate\Support\Str::limit($questionOutcomeTitle, 86) }}</span>
+                                                <span class="quiz-question-pill type">{{ $questionTypeLabel }}</span>
+                                            </div>
+
+                                            <div class="quiz-question-options">
+                                                @if(isset($q->options))
+                                                    @foreach($q->options as $idx => $opt)
+                                                        <div class="quiz-question-option {{ $opt->is_correct ? 'is-correct' : '' }}">
+                                                            <span class="quiz-option-letter">{{ ['A','B','C','D','E'][$idx] ?? ($idx + 1) }}</span>
+                                                            <span>{{ \Illuminate\Support\Str::limit($opt->option_text, 120) }}</span>
+                                                            @if($opt->is_correct)
+                                                                <svg class="ml-auto mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                                             @endif
                                                         </div>
-                                                    @endif
-                                                    <p onclick="openInsightModalById({{ (int) $q->id }})"
-                                                       onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openInsightModalById({{ (int) $q->id }}); }"
-                                                       role="button"
-                                                       tabindex="0"
-                                                       title="Klik untuk ringkasan benar/salah"
-                                                       class="question-rich-text text-slate-900 dark:text-white font-medium text-xs md:text-sm leading-relaxed mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors pr-4 cursor-pointer rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400/40">{!! $q->question_text !!}</p>
-                                                    <div class="mb-3 flex flex-wrap gap-2">
-                                                        @php $questionInteractionType = !empty($q->media_url) ? 'image_context' : ($q->interaction_type ?? 'multiple_choice'); @endphp
-                                                        <span class="px-2 py-1 rounded-lg border border-cyan-200 dark:border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-[9px] font-black uppercase tracking-widest">
-                                                            {{ $q->outcome_meta['display_code'] ?? ($q->learning_objective_code ?: 'TP Umum') }}
-                                                        </span>
-                                                        <span class="px-2 py-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-500 dark:text-white/50 text-[9px] font-bold">
-                                                            {{ Str::limit($q->outcome_meta['title'] ?? ($q->learning_objective_title ?: 'Tujuan pembelajaran umum'), 72) }}
-                                                        </span>
-                                                        <span class="px-2 py-1 rounded-lg border border-fuchsia-200 dark:border-fuchsia-500/20 bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300 text-[9px] font-black uppercase tracking-widest">
-                                                            {{ [
-                                                                'multiple_choice' => 'Pilihan Ganda',
-                                                                'image_context' => 'Gambar',
-                                                            ][$questionInteractionType] ?? 'Pilihan Ganda' }}
-                                                        </span>
-                                                    </div>
-                                                    <div class="mb-3 rounded-xl border border-cyan-100 dark:border-cyan-500/10 bg-cyan-50/70 dark:bg-cyan-500/[0.06] px-3 py-2 text-[11px] leading-relaxed text-cyan-900 dark:text-cyan-100">
-                                                        <span class="font-black">Tujuan:</span> {{ $q->outcome_meta['title'] ?? 'Tujuan pembelajaran terkait' }}
-                                                    </div>
-                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 opacity-80 sm:opacity-60 group-hover:opacity-100 transition-opacity">
-                                                        @if(isset($q->options))
-                                                            @foreach($q->options as $idx => $opt)
-                                                                <div class="flex items-start gap-2 text-[10px] md:text-xs transition-colors {{ $opt->is_correct ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-white/50 sm:text-slate-500 sm:dark:text-white/40' }}">
-                                                                    <span class="uppercase w-4 shrink-0">{{ ['A','B','C','D'][$idx] ?? '' }}.</span>
-                                                                    <span class="truncate pr-2">{{ Str::limit($opt->option_text, 50) }}</span>
-                                                                    @if($opt->is_correct) <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> @endif
-                                                                </div>
-                                                            @endforeach
-                                                        @endif
-                                                    </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <aside class="question-analytics-rail" aria-label="Analitik soal">
+                                            <span class="status-badge {{ $statusBadgeClass }}">{{ $questionStatus }}</span>
+
+                                            <div class="question-accuracy-readout">
+                                                <div>
+                                                    <p>Akurasi</p>
+                                                    <strong>{{ $questionAccuracy }}%</strong>
+                                                </div>
+                                                <span>{{ number_format($questionTotal) }}<br>respons siswa</span>
+                                            </div>
+
+                                            <div class="question-answer-meter" aria-label="Perbandingan jawaban benar dan salah">
+                                                @if($questionTotal > 0)
+                                                    <span class="answer-correct" style="width: {{ $questionAccuracy }}%"></span>
+                                                    <span class="answer-wrong" style="width: {{ $questionWrongPercent }}%"></span>
+                                                @else
+                                                    <span class="answer-empty"></span>
+                                                @endif
+                                            </div>
+
+                                            <div class="question-answer-legend">
+                                                <div class="correct">
+                                                    <span>Benar</span>
+                                                    <strong>{{ number_format($questionCorrect) }}</strong>
+                                                </div>
+                                                <div class="wrong">
+                                                    <span>Salah</span>
+                                                    <strong>{{ number_format($questionWrong) }}</strong>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td class="px-6 py-5 align-middle">
-                                            <div class="flex flex-col gap-2">
-                                                <div class="flex justify-between text-[9px] md:text-[10px] font-bold text-slate-500 dark:text-white/60 px-4 transition-colors">
-                                                    <span class="text-emerald-600 dark:text-emerald-400">{{ $q->correct_count ?? 0 }} Benar</span>
-                                                    <span class="text-red-600 dark:text-red-400">{{ $q->wrong_count ?? 0 }} Salah</span>
-                                                </div>
-                                                <div class="w-24 md:w-32 h-1.5 md:h-2 bg-slate-200 dark:bg-[#020617] rounded-full overflow-hidden flex mx-auto border border-slate-300 dark:border-white/5 shadow-inner transition-colors">
-                                                    @if(isset($q->total_attempts) && $q->total_attempts > 0)
-                                                        <div class="h-full bg-emerald-500" style="width: {{ $q->accuracy }}%"></div>
-                                                        <div class="h-full bg-red-500" style="width: {{ 100 - $q->accuracy }}%"></div>
-                                                    @else
-                                                        <div class="w-full h-full bg-slate-300 dark:bg-white/5 transition-colors"></div>
-                                                    @endif
-                                                </div>
-                                                <div class="text-center mt-1 transition-colors"><span class="text-xs font-black text-slate-800 dark:text-white">{{ $q->total_attempts ?? 0 }}</span> <span class="text-[9px] md:text-[10px] text-slate-500 dark:text-white/30">Siswa Menjawab</span></div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-5 text-center align-middle">
-                                            <span class="px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase border whitespace-nowrap transition-colors
-                                                {{ ($q->status ?? '') == 'Sulit' ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20' : 
-                                                  (($q->status ?? '') == 'Sedang' ? 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20' : 
-                                                  'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20') }}">
-                                                {{ $q->status }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-5 text-right align-middle">
-                                            <div class="flex justify-end gap-2 sm:opacity-0 group-hover:opacity-100 transition duration-300">
-                                                <button onclick='openModal("edit", @json($q))' class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-amber-500 dark:hover:bg-amber-500 text-slate-500 dark:text-amber-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-amber-500 dark:hover:border-amber-400" title="Perbarui Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                                                <button onclick="confirmHapus('{{ $q->id }}')" class="p-2 rounded-lg bg-white dark:bg-[#020617] hover:bg-red-500 dark:hover:bg-red-500 text-slate-500 dark:text-red-400 hover:text-white transition shadow-sm dark:shadow-inner border border-slate-200 dark:border-white/10 hover:border-red-500 dark:hover:border-red-400" title="Hapus Soal"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                        </aside>
+                                    </div>
+
+                                    <footer class="quiz-question-card-footer">
+                                        <p class="quiz-question-outcome">
+                                            <b>TP terkait:</b> {{ \Illuminate\Support\Str::limit($questionOutcomeTitle, 150) }}
+                                        </p>
+                                        <button type="button" onclick="openInsightModalById({{ (int) $q->id }})"
+                                                class="quiz-question-insight-button">
+                                            Lihat respons siswa
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></svg>
+                                        </button>
+                                    </footer>
+                                </article>
+                            @endforeach
+                        </section>
                     @else
-                    <div class="glass-card rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[300px] opacity-60">
-                        <div class="text-4xl mb-4 grayscale">📂</div>
-                        <h3 class="text-slate-900 dark:text-white font-bold transition-colors">Bank soal belum tersedia</h3>
-                        <p class="text-xs text-slate-500 dark:text-white/50 mt-2 transition-colors">Tidak ada data pertanyaan yang ditemukan di database untuk bab ini.</p>
-                    </div>
+                        <section class="glass-card rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[300px] opacity-75">
+                            <div class="mb-4 text-4xl grayscale">📂</div>
+                            <h3 class="font-bold text-slate-900 dark:text-white">Bank soal belum tersedia</h3>
+                            <p class="mt-2 text-xs text-slate-500 dark:text-white/50">Tidak ada soal pada bab ini.</p>
+                        </section>
                     @endif
                 </div>
 
@@ -1185,9 +2239,10 @@
     </main>
 </div>
 
+
 {{-- ==================== MODALS HERO INSIGHTS ==================== --}}
 
-{{-- 1. MODAL BARU ULTIMATE: DETAIL JAWABAN PER SISWA (GRADING SHEET) --}}
+{{-- Detail jawaban per siswa --}}
 <div x-show="showStudentDetailModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 md:p-10" style="display: none;" x-transition.opacity>
     <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showStudentDetailModal = false"></div>
     <div class="relative w-full max-w-4xl bg-white dark:bg-[#0f141e] border border-indigo-200 dark:border-indigo-500/40 rounded-2xl shadow-2xl dark:shadow-[0_20px_70px_rgba(99,102,241,0.15)] p-0 transition-colors duration-500 overflow-hidden flex flex-col h-full max-h-[85vh] md:max-h-full" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -1205,12 +2260,12 @@
                 {{-- Global Score Info inside Header --}}
                 <div class="border-l border-slate-200 dark:border-white/10 pl-6 flex gap-4 hidden sm:flex">
                     <div>
-                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Total Evaluasi</p>
-                        <p class="text-base font-black text-slate-700 dark:text-white" x-text="selectedStudent?.summary_total + ' Sesi'"></p>
+                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Sesi</p>
+                        <p class="text-base font-black text-slate-700 dark:text-white" x-text="selectedStudent?.summary_total"></p>
                     </div>
                     <div>
-                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Rata-rata Nilai</p>
-                        <p class="text-base font-black text-emerald-600 dark:text-emerald-400" x-text="selectedStudent?.summary_score + ' Poin'"></p>
+                        <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/40">Rata-rata</p>
+                        <p class="text-base font-black text-emerald-600 dark:text-emerald-400" x-text="selectedStudent?.summary_score"></p>
                     </div>
                 </div>
             </div>
@@ -1224,7 +2279,7 @@
             <template x-if="selectedStudent && Object.keys(selectedStudent.chapters).length > 0">
                 <div>
                     <template x-for="(chapter, chId) in selectedStudent.chapters" :key="chId">
-                        <div class="border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden transition-colors mb-6" x-data="{ open: true }">
+                        <div class="border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden transition-colors mb-6" x-data="{ open: false }">
                             {{-- Accordion Header --}}
                             <div class="bg-slate-50 dark:bg-[#0a0e17]/50 p-4 flex justify-between items-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" @click="open = !open">
                                 <div class="flex items-center gap-3">
@@ -1300,21 +2355,29 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Tinjauan Data Soal
+                    Soal
                 </h3>
-                <p class="text-[10px] text-cyan-600 dark:text-cyan-400 mt-1 font-mono transition-colors">Daftar seluruh soal teori yang tersedia di sistem.</p>
+                <p class="text-[10px] text-cyan-600 dark:text-cyan-400 mt-1 font-mono transition-colors">{{ number_format($totalQuestions) }} soal</p>
             </div>
             <button @click="showQuestionsModal = false" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
         <div class="max-h-[60vh] overflow-y-auto custom-scrollbar space-y-2 pr-2">
             @forelse($questions as $q)
+            @php
+                $modalQuestionStatusClass = match ($q->status ?? 'Belum Ada Data') {
+                    'Sulit' => 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20',
+                    'Sedang' => 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20',
+                    'Mudah' => 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+                    default => 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/45 border-slate-200 dark:border-white/10',
+                };
+            @endphp
             <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#0a0e17]/80 border border-slate-200 dark:border-white/5 hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors group">
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-slate-900 dark:text-white truncate transition-colors" title="{{ $q->question_text }}">{{ $q->question_text }}</p>
                     <p class="text-[10px] text-slate-500 dark:text-white/50 font-mono mt-0.5 transition-colors">{{ (int) $q->chapter_id === 99 ? 'Evaluasi' : 'Bab ' . $q->chapter_id }}</p>
                 </div>
                 <div class="text-right shrink-0">
-                    <span class="text-[9px] font-bold uppercase tracking-widest border px-2 py-1 rounded transition-colors {{ ($q->status ?? '') == 'Sulit' ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20' : (($q->status ?? '') == 'Sedang' ? 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20') }}">{{ $q->status }}</span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest border px-2 py-1 rounded transition-colors {{ $modalQuestionStatusClass }}">{{ $q->status }}</span>
                 </div>
             </div>
             @empty
@@ -1332,9 +2395,9 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    Daftar Peserta Kuis
+                    Peserta
                 </h3>
-                <p class="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 font-mono transition-colors">Data siswa unik yang telah berpartisipasi mencoba kuis.</p>
+                <p class="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 font-mono transition-colors">{{ number_format($totalParticipants) }} siswa</p>
             </div>
             <button @click="showParticipantsModal = false" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
@@ -1366,9 +2429,9 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Rincian Akurasi per Bab
+                    Akurasi Bab
                 </h3>
-                <p class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-mono transition-colors">Menampilkan persentase ketepatan jawaban rata-rata untuk setiap materi.</p>
+                <p class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-mono transition-colors">Rata-rata per bab.</p>
             </div>
             <button @click="showAccuracyModal = false" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
@@ -1406,9 +2469,9 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5 text-red-600 dark:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    Daftar Soal Perlu Perhatian
+                    Soal dengan Akurasi di Bawah 50%
                 </h3>
-                <p class="text-[10px] text-red-600 dark:text-red-400 mt-1 font-mono transition-colors">Hanya menampilkan soal dengan rasio kegagalan > 50%</p>
+                <p class="text-[10px] text-red-600 dark:text-red-400 mt-1 font-mono transition-colors">Menampilkan soal dengan proporsi jawaban benar kurang dari 50%.</p>
             </div>
             <button @click="showHardModal = false" class="text-slate-400 hover:text-slate-900 dark:text-white/40 dark:hover:text-white transition bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-red-500/20 rounded-full p-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
@@ -1418,7 +2481,7 @@
                     <tr>
                         <th class="px-4 py-3 rounded-tl-lg border-b border-slate-200 dark:border-white/5">Kutipan Soal</th>
                         <th class="px-4 py-3 text-center border-b border-slate-200 dark:border-white/5">Bab</th>
-                        <th class="px-4 py-3 text-center border-b border-slate-200 dark:border-white/5">Salah / Total Coba</th>
+                        <th class="px-4 py-3 text-center border-b border-slate-200 dark:border-white/5">Salah / Total Jawaban</th>
                         <th class="px-4 py-3 text-right rounded-tr-lg border-b border-slate-200 dark:border-white/5">Rasio Kegagalan</th>
                     </tr>
                 </thead>
@@ -1437,7 +2500,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="4" class="text-center py-10 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-widest transition-colors">Aman! Tidak Ditemukan Soal Sulit.</td></tr>
+                    <tr><td colspan="4" class="text-center py-10 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-widest transition-colors">Tidak ada soal dengan akurasi di bawah 50%.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -1506,7 +2569,7 @@
 
             <section class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-white/10 dark:bg-[#0a0e17]/80">
                 <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Distribusi Kuantitas</p>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Analitik total respons</p>
                     <div class="flex gap-2">
                         <span id="countCorrect" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300">0 siswa benar</span>
                         <span id="countWrong" class="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-[10px] font-black text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">0 siswa salah</span>
@@ -1519,13 +2582,13 @@
                     </div>
                 </div>
                 <div class="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-emerald-800 dark:border-emerald-500/20 dark:bg-emerald-500/[0.08] dark:text-emerald-200">
-                        <p class="text-[10px] font-black uppercase tracking-widest">Siswa Benar</p>
-                        <p id="correctQuantityNote" class="mt-1 text-xs font-bold">0 siswa atau 0% dari total.</p>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-white/5 dark:bg-[#020617]/70">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300">Siswa Benar</p>
+                        <p id="correctQuantityNote" class="mt-1 text-xs font-bold text-slate-700 dark:text-white/70">0 siswa atau 0% dari total.</p>
                     </div>
-                    <div class="rounded-xl border border-red-200 bg-red-50/70 p-3 text-red-800 dark:border-red-500/20 dark:bg-red-500/[0.08] dark:text-red-200">
-                        <p class="text-[10px] font-black uppercase tracking-widest">Siswa Salah</p>
-                        <p id="wrongQuantityNote" class="mt-1 text-xs font-bold">0 siswa atau 0% dari total.</p>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-white/5 dark:bg-[#020617]/70">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-red-700 dark:text-red-300">Siswa Salah</p>
+                        <p id="wrongQuantityNote" class="mt-1 text-xs font-bold text-slate-700 dark:text-white/70">0 siswa atau 0% dari total.</p>
                     </div>
                 </div>
             </section>
@@ -1549,50 +2612,98 @@
     </div>
 </div>
 
+{{-- MODAL INSIGHT HERO KELAS KUIS --}}
+<div x-show="showClassInsightModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;" role="dialog" aria-modal="true" aria-label="Insight kinerja kuis per kelas">
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity dark:bg-[#020617]/90" @click="showClassInsightModal = false" x-transition.opacity></div>
+
+    <div class="quiz-class-hero-modal relative max-h-[92vh] w-full max-w-4xl overflow-y-auto custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-5 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-5 scale-95">
+        <button @click="showClassInsightModal = false" aria-label="Tutup insight kelas" class="absolute right-5 top-5 z-10 rounded-full p-2 text-slate-400 transition hover:bg-white/70 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-white">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="quiz-class-hero-head px-5 py-6 sm:px-7 sm:py-7">
+            <p class="quiz-class-hero-kicker">Insight Kinerja Kelas</p>
+            <h3 class="mt-2 truncate pr-10 text-2xl font-black tracking-tight text-slate-900 dark:text-white" x-text="selectedClassInsight.name || 'Kelas'"></h3>
+            <p class="mt-2 max-w-2xl text-xs font-semibold leading-5 text-slate-600 dark:text-slate-300">Ringkasan dihitung dari seluruh kuis yang selesai pada periode dan kelas yang sedang difilter.</p>
+        </div>
+
+        <div class="space-y-5 p-5 sm:p-7">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="quiz-class-hero-metric">
+                    <p>pengguna</p>
+                    <strong class="text-cyan-700 dark:text-cyan-300" x-text="selectedClassInsight.students_count || 0"></strong>
+                    <span>pengguna dengan kuis selesai</span>
+                </div>
+                <div class="quiz-class-hero-metric">
+                    <p>Percobaan</p>
+                    <strong x-text="selectedClassInsight.total_attempts || 0"></strong>
+                    <span x-text="(selectedClassInsight.attempts_per_student || 0) + ' sesi per pengguna'"></span>
+                </div>
+                <div class="quiz-class-hero-metric">
+                    <p>Skor rata-rata</p>
+                    <strong class="text-indigo-700 dark:text-indigo-300" x-text="selectedClassInsight.avg_score || 0"></strong>
+                    <span>nilai akhir seluruh sesi</span>
+                </div>
+                <div class="quiz-class-hero-metric">
+                    <p>Durasi rata-rata</p>
+                    <strong class="text-amber-700 dark:text-amber-300" x-text="(selectedClassInsight.avg_duration_minutes || 0) + ' m'"></strong>
+                    <span>waktu per sesi kuis</span>
+                </div>
+            </div>
+
+            <section class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.025]">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="quiz-class-hero-section-label">Kelulusan Kuis</p>
+                        <div class="mt-2 flex items-end gap-3">
+                            <strong class="text-3xl font-black tracking-tight text-emerald-600 dark:text-emerald-300" x-text="(selectedClassInsight.pass_rate || 0) + '%'"></strong>
+                            <span class="pb-1 text-xs font-semibold text-slate-500 dark:text-slate-400" x-text="(selectedClassInsight.passed_attempts || 0) + ' lulus dari ' + (selectedClassInsight.total_attempts || 0) + ' percobaan'"></span>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
+                        <span class="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300" x-text="(selectedClassInsight.passed_attempts || 0) + ' lulus'"></span>
+                        <span class="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300" x-text="(selectedClassInsight.not_passed_attempts || 0) + ' belum tuntas'"></span>
+                    </div>
+                </div>
+                <div class="quiz-class-hero-meter mt-4">
+                    <span class="bg-emerald-500" :style="'width: ' + Math.min(selectedClassInsight.pass_rate || 0, 100) + '%'" aria-label="Proporsi lulus"></span>
+                    <span class="bg-rose-400" :style="'width: ' + Math.max(0, 100 - Math.min(selectedClassInsight.pass_rate || 0, 100)) + '%'" aria-label="Proporsi belum tuntas"></span>
+                </div>
+            </section>
+
+            <div class="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-3 text-[11px] font-semibold leading-5 text-slate-500 dark:border-white/10 dark:bg-black/10 dark:text-slate-400">
+                Basis data: jumlah pengguna dihitung dari pengguna dengan minimal satu kuis selesai; kelulusan, skor, dan durasi dihitung dari seluruh percobaan kuis pada kelas ini.
+            </div>
+        </div>
+
+        <div class="flex justify-end border-t border-slate-200 px-5 py-4 dark:border-white/10 sm:px-7">
+            <button type="button" @click="showClassInsightModal = false" class="text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-white/50 dark:hover:text-white">Tutup</button>
+        </div>
+    </div>
+</div>
+
 {{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
-<div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+<div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
     <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
     
-    <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+    <div class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-white/95 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-all custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
         
         <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <div class="relative w-4 h-4 mx-auto mb-6">
-                
-            </div>
-        
-        <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Analisis Soal</span></h3>
-        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Manajemen dan Tinjauan Soal</p>
-        
-        <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-            <p>Halaman ini membantu pengajar meninjau kualitas butir evaluasi teori yang dikerjakan siswa.</p>
-            
-            <div class="space-y-3 mt-4 text-left">
-                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ringkasan Metrik</h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kartu rangkuman yang menyajikan status agregat, meliputi rasio penyelesaian kuis, kalkulasi, serta rekapitulasi data pengerjaan.</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Mode Detail Bab</h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pilih kartu bab untuk melihat kualitas soal pada bab tersebut.</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                    <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tinjauan Jawaban Siswa</h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Melalui daftar direktori evaluasi siswa, administrator dapat menekan tombol panel aksi untuk memeriksa lembar jawaban individu secara terperinci.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @php
+            $guideTitle = 'Panduan Analitik Kuis';
+            $guideSubtitle = 'Membaca data kuis, respons, dan capaian';
+            $guideImage = 'images/guides/current-admin-question-analytics.png';
+            $guideIntro = 'Gunakan nomor pada gambar untuk membaca ringkasan kuis, bank soal, serta distribusi tingkat kesulitan.';
+            $guidePoints = [
+                ['x' => 51, 'y' => 28, 'title' => 'Ringkasan evaluasi', 'description' => 'Baca total soal, peserta, akurasi, dan jumlah soal sulit untuk melihat kualitas kuis secara umum.'],
+                ['x' => 47, 'y' => 63, 'title' => 'Bank soal', 'description' => 'Gunakan daftar soal untuk meninjau pertanyaan, opsi jawaban, kunci, media, dan tujuan pembelajaran.'],
+                ['x' => 84, 'y' => 62, 'title' => 'Komposisi tingkat kesulitan', 'description' => 'Menampilkan jumlah soal mudah, sedang, sulit, dan soal yang belum memiliki respons.'],
+            ];
+        @endphp
+        @include('admin.partials.analytics_guide_mockup')
 
         <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
             <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
@@ -1684,14 +2795,15 @@
             myChart = new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Mudah', 'Sedang', 'Sulit'],
+                    labels: ['Mudah', 'Sedang', 'Sulit', 'Belum Ada Data'],
                     datasets: [{
                         data: [
                             {{ $questions->where('status', 'Mudah')->count() }},
                             {{ $questions->where('status', 'Sedang')->count() }},
-                            {{ $questions->where('status', 'Sulit')->count() }}
+                            {{ $questions->where('status', 'Sulit')->count() }},
+                            {{ $questions->where('status', 'Belum Ada Data')->count() }}
                         ],
-                        backgroundColor: ['#10b981', '#eab308', '#ef4444'],
+                        backgroundColor: ['#10b981', '#eab308', '#ef4444', '#94a3b8'],
                         borderColor: borderColor,
                         borderWidth: 2, 
                         hoverOffset: 4
@@ -2178,7 +3290,7 @@
             const status = isCorrect ? 'Benar' : 'Salah';
             const context = student.context || (isCorrect
                 ? 'Siswa sudah menjawab sesuai kunci pada percobaan terbaru.'
-                : 'Siswa perlu penguatan pada konsep yang ditanyakan soal ini.');
+                : 'Siswa memilih opsi yang belum sesuai pada percobaan terbaru.');
 
             return `
                 <article class="rounded-xl border ${palette.card} p-3 text-xs shadow-sm transition">
@@ -2194,7 +3306,6 @@
                             </div>
                             <div class="mt-2 flex flex-wrap gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                                 <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">${escapeHtml(student.class_group || 'Kelas belum diatur')}</span>
-                                <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">Skor ${escapeHtml(student.score ?? '-')}</span>
                                 <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 dark:border-white/10 dark:bg-white/5">${escapeHtml(student.answered_at || '-')}</span>
                             </div>
                             <div class="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] leading-5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
@@ -2224,7 +3335,7 @@
         $('#insightQuestion').text(meta.question || 'Soal belum tersedia');
         $('#insightOutcomeCode').text(meta.outcome_code || 'TP');
         $('#insightOutcomeTitle').text(meta.outcome_title || 'Tujuan pembelajaran terkait');
-        $('#insightAccuracy').text(correctPercent + '% akurasi');
+        $('#insightAccuracy').text(correctPercent + '% akurasi siswa menjawab benar');
         $('#correctBar').css('width', correctPercent + '%');
         $('#wrongBar').css('width', wrongPercent + '%');
         $('#correctQuantityNote').text(correct + ' siswa atau ' + correctPercent + '% dari total siswa menjawab.');

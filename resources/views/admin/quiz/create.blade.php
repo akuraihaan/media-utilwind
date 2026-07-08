@@ -181,7 +181,7 @@
     .quiz-alert-popup { border-radius: 1.25rem !important; }
 </style>
 
-<main class="quiz-admin-bg min-h-screen pt-20 pb-12 text-slate-900 dark:text-white">
+<main id="admin-main-content" class="quiz-admin-bg min-h-screen pt-20 pb-12 text-slate-900 dark:text-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div class="min-w-0">
@@ -189,17 +189,23 @@
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     Kembali ke Analitik
                 </a>
-                <p class="mt-5 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Bank Soal Utilwind</p>
+                <p class="mt-5 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Kuis Utilwind</p>
                 <h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-4xl">Buat Soal Kuis</h1>
                 <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-white/58">
-                    Susun soal, opsi jawaban, metadata pembelajaran, dan media gambar dari satu form yang sama dengan panel edit di analitik.
+                    Susun soal, opsi, TP, dan media gambar.
                 </p>
             </div>
 
-            <button id="submitQuestionBtn" type="button" onclick="submitForm()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/10 transition hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-300">
-                <span id="btnText">Simpan Soal</span>
-                <svg id="btnLoader" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+                <button id="questionGuideOpen" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-cyan-300 hover:text-cyan-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:text-cyan-200">
+                    Panduan
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 18a6 6 0 100-12 6 6 0 000 12z"/></svg>
+                </button>
+                <button id="submitQuestionBtn" type="button" onclick="submitForm()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/10 transition hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-300">
+                    <span id="btnText">Simpan Soal</span>
+                    <svg id="btnLoader" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                </button>
+            </div>
         </div>
 
         <form id="quizForm" action="{{ route('admin.questions.store') }}" method="POST" enctype="multipart/form-data">
@@ -208,6 +214,32 @@
         </form>
     </div>
 </main>
+
+<div id="questionGuideModal" class="fixed inset-0 z-[999999] hidden items-center justify-center p-4 sm:p-6" aria-hidden="true">
+    <button type="button" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md dark:bg-[#020617]/80" data-question-guide-close aria-label="Tutup panduan"></button>
+    <section class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-slate-200 bg-white/95 p-6 shadow-2xl dark:border-white/10 dark:bg-[#0f141e]/95 sm:p-8">
+        <button type="button" data-question-guide-close class="absolute right-5 top-5 z-10 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Tutup panduan">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        @php
+            $guideTitle = 'Panduan Buat Soal';
+            $guideSubtitle = 'Menyusun evaluasi kuis';
+            $guideImage = 'images/guides/current-admin-question-create.png';
+            $guideIntro = 'Gunakan nomor pada gambar untuk membaca area penyusunan soal, opsi jawaban, tujuan pembelajaran, dan media pendukung.';
+            $guidePoints = [
+                ['x' => 50, 'y' => 28, 'title' => 'Informasi soal', 'description' => 'Isi bab, tipe soal, teks pertanyaan, dan TP sebelum menyimpan.'],
+                ['x' => 45, 'y' => 62, 'title' => 'Opsi jawaban', 'description' => 'Lengkapi pilihan jawaban dan tandai kunci yang benar.'],
+                ['x' => 82, 'y' => 56, 'title' => 'Pratinjau', 'description' => 'Gunakan pratinjau untuk mengecek keterbacaan soal dan media.'],
+            ];
+        @endphp
+        @include('admin.partials.analytics_guide_mockup')
+
+        <div class="mt-8 border-t border-slate-200 pt-6 dark:border-white/5">
+            <button type="button" data-question-guide-close class="w-full rounded-xl bg-slate-900 py-3 text-sm font-bold text-white shadow-md transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">Mengerti, Tutup Panduan</button>
+        </div>
+    </section>
+</div>
 
 <script>
     $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
@@ -544,6 +576,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const guideModal = document.getElementById('questionGuideModal');
+        const openGuideButton = document.getElementById('questionGuideOpen');
+        const closeGuideButtons = document.querySelectorAll('[data-question-guide-close]');
+
+        openGuideButton?.addEventListener('click', () => {
+            guideModal?.classList.remove('hidden');
+            guideModal?.classList.add('flex');
+            guideModal?.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('overflow-hidden');
+        });
+
+        closeGuideButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                guideModal?.classList.add('hidden');
+                guideModal?.classList.remove('flex');
+                guideModal?.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('overflow-hidden');
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                guideModal?.classList.add('hidden');
+                guideModal?.classList.remove('flex');
+                guideModal?.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+
         $('#inputCorrect').val('option_a');
         populateLearningOutcomeSelect();
         syncLearningOutcomeSelectFromFields();

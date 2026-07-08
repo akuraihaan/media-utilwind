@@ -124,10 +124,8 @@
     isFullscreen: false,
     showAddModal: false,
     showEditModal: false,
-    showInsightModal: false,
     showDashboardInfoModal: false,
     editData: { id: '', name: '', major: '', is_active: 1 },
-    insightData: {},
     
     // Helper Tema untuk SweetAlert agar responsif Light/Dark
     getSwalTheme() {
@@ -140,7 +138,6 @@
     },
 
     openEdit(item) { this.editData = { ...item }; this.showEditModal = true; },
-    openInsight(item) { this.insightData = item; this.showInsightModal = true; },
     copyToken(token) { 
         navigator.clipboard.writeText(token); 
         const t = this.getSwalTheme();
@@ -154,7 +151,7 @@
         const t = this.getSwalTheme();
         Swal.fire({ title: 'Hapus Kelas?', text: 'Semua data yang terkait dengan kelas ini akan dihapus.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: t.cancelBg, background: t.bg, color: t.color }).then((r) => { if (r.isConfirmed) document.getElementById('form-delete-'+id).submit(); })
     }
-}" @keydown.escape.window="showAddModal = false; showEditModal = false; showInsightModal = false; showDashboardInfoModal = false; isFullscreen = false; document.exitFullscreen();" :class="{'modal-open': showAddModal || showEditModal || showInsightModal || showDashboardInfoModal || sidebarOpen}">
+}" @keydown.escape.window="showAddModal = false; showEditModal = false; showDashboardInfoModal = false; isFullscreen = false; document.exitFullscreen();" :class="{'modal-open': showAddModal || showEditModal || showDashboardInfoModal || sidebarOpen}">
 
     <div class="flex h-screen w-full relative">
 
@@ -208,7 +205,7 @@
     </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
-        <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
+        <main id="admin-main-content" class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
             
             {{-- Background FX --}}
             <div class="fixed inset-0 pointer-events-none z-0">
@@ -270,28 +267,29 @@
 
             <div class="flex-1 p-6 md:p-10 relative z-10">
                 <div class="max-w-7xl mx-auto space-y-8 md:space-y-12">
-                    
-                    {{-- 3 STATS CARDS --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 reveal">
-                        <div class="glass-card rounded-2xl p-6 border-l-4 border-l-indigo-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Total Kelas</p>
-                            <h3 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ $totalClasses ?? 0 }}</h3>
-                        </div>
-                        <div class="glass-card rounded-2xl p-6 border-l-4 border-l-emerald-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Token Aktif</p>
-                            <h3 class="text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2 drop-shadow-sm dark:drop-shadow-[0_0_8px_#10b981] transition-colors">{{ $totalAktif ?? 0 }}</h3>
-                        </div>
-                        <div class="glass-card rounded-2xl p-6 border-l-4 border-l-cyan-500 transition-colors">
-                            <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest transition-colors">Siswa Terhubung</p>
-                            <h3 class="text-3xl md:text-4xl font-black text-cyan-600 dark:text-cyan-400 mt-2 transition-colors">{{ $totalStudents ?? 0 }}</h3>
-                        </div>
-                    </div>
+
+                    @php
+                        $classCount = (int) ($totalClasses ?? 0);
+                        $activeClassCount = (int) ($totalActive ?? 0);
+                        $studentCount = (int) ($totalStudents ?? 0);
+                        $avgStudentsPerClass = $classCount > 0 ? round($studentCount / $classCount, 1) : 0;
+                        $analyticsTitle = 'Ringkasan Kelas';
+                        $analyticsSubtitle = null;
+                        $analyticsItems = [
+                            ['label' => 'Kelas', 'value' => number_format($classCount), 'hint' => 'total', 'tone' => 'indigo'],
+                            ['label' => 'Aktif', 'value' => number_format($activeClassCount), 'hint' => number_format(max(0, $classCount - $activeClassCount)) . ' tutup', 'tone' => $activeClassCount > 0 ? 'emerald' : 'amber'],
+                            ['label' => 'Siswa', 'value' => number_format($studentCount), 'hint' => 'terhubung', 'tone' => 'cyan'],
+                            ['label' => 'Rata-rata', 'value' => $avgStudentsPerClass, 'hint' => 'per kelas', 'tone' => 'fuchsia'],
+                        ];
+                        $analyticsActions = [];
+                    @endphp
+                    @include('admin.partials.compact_analytics_strip')
 
                     {{-- MAIN TABLE --}}
                     <div class="glass-card rounded-2xl overflow-hidden reveal flex flex-col transition-colors" style="animation-delay: 0.2s">
                         <div class="p-6 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] shrink-0 transition-colors">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Database Kelas</h3>
-                            <p class="text-xs text-slate-500 dark:text-white/40 mt-1 transition-colors">Kelola kelas, bagikan token akses, dan analisis performa siswa secara mendalam.</p>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">Kelas</h3>
+                            <p class="text-xs text-slate-500 dark:text-white/40 mt-1 transition-colors">Token, status, dan siswa.</p>
                         </div>
                         
                         <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-[500px] relative">
@@ -300,7 +298,6 @@
                                     <tr>
                                         <th class="px-6 py-4 transition-colors">Nama Kelas / Jurusan</th>
                                         <th class="px-6 py-4 text-center transition-colors">Siswa</th>
-                                        <th class="px-6 py-4 text-center transition-colors">Nilai Rata-rata</th>
                                         <th class="px-6 py-4 text-center transition-colors w-48">Token Akses</th>
                                         <th class="px-6 py-4 text-center transition-colors">Status</th>
                                         <th class="px-6 py-4 text-right transition-colors">Aksi</th>
@@ -315,11 +312,6 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span class="px-2.5 py-1 rounded bg-slate-100 dark:bg-[#020617] text-xs font-black text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">{{ $class['students_count'] ?? 0 }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-center">
-                                            <span class="font-bold transition-colors {{ ($class['avg_quiz'] ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                                                {{ $class['avg_quiz'] ?? 0 }} 
-                                            </span>
                                         </td>
                                         
                                         {{-- DETAIL IMPROVISASI TOKEN HOVER --}}
@@ -354,9 +346,6 @@
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end gap-2">
-                                                {{-- TOMBOL INSIGHT (DETAIL) --}}
-                                                <button @click="openInsight({{ is_array($class) ? json_encode($class) : collect($class)->toJson() }})" class="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 dark:hover:bg-cyan-500 hover:text-white transition-colors shadow-sm dark:shadow-inner border border-transparent hover:border-cyan-400" title="Rincian Analitik"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></button>
-
                                                 <form id="form-token-{{ $class['id'] ?? $class->id }}" action="{{ route('admin.classes.token', $class['id'] ?? $class->id) ?? '#' }}" method="POST">
                                                     @csrf <button type="button" @click="confirmRegenerate({{ $class['id'] ?? $class->id }})" class="p-2 rounded-lg bg-white dark:bg-white/5 text-amber-500 dark:text-yellow-500 hover:bg-amber-500 dark:hover:bg-yellow-500 hover:text-white dark:hover:text-black transition-colors shadow-sm dark:shadow-inner border border-slate-200 dark:border-transparent hover:border-amber-400 dark:hover:border-yellow-400" title="Buat Ulang Token"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
                                                 </form>
@@ -368,7 +357,7 @@
                                         </td>
                                     </tr>
                                     @empty
-                                    <tr><td colspan="6" class="py-20 text-center text-slate-500 dark:text-white/30 text-xs italic bg-slate-50/50 dark:bg-white/[0.01] transition-colors">Belum ada kelas yang dibuat di sistem.</td></tr>
+                                    <tr><td colspan="5" class="py-20 text-center text-slate-500 dark:text-white/30 text-xs italic bg-slate-50/50 dark:bg-white/[0.01] transition-colors">Belum ada kelas yang dibuat di sistem.</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -379,51 +368,28 @@
         </main>
     </div>
 
-    {{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
+    {{-- MODAL PANDUAN MANAJEMEN KELAS --}}
     <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
         
-        <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+        <div class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-white/95 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-all custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
             
             <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <!-- Hero Logo Section -->
-            <div class="relative w-4 h-4 mx-auto mb-6">
-                
-            </div>
-            
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Manajemen Kelas</span></h3>
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Distribusi & Pengelolaan Pengguna</p>
-            
-            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Halaman ini membantu pengajar mengelompokkan siswa ke dalam kelas yang rapi dan mudah dipantau.</p>
-                
-                <div class="space-y-3 mt-4 text-left">
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Kriptografi Token Akses</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Setiap kelas dilindungi token unik sepanjang 6 karakter. Token ini digunakan siswa untuk bergabung ke kelas yang sesuai.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Visibilitas Data & Kinerja</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Mengintegrasikan rekapitulasi performa (kuis dan lab) dari kelompok partisipan terkait, sehingga pendidik mampu meninjau distribusi skor per-kelas secara efisien.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Kontrol Siklus Aktivitas</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Admin dapat mengubah status pendaftaran kelas ("Aktif" atau "Tutup") serta membuat ulang token untuk menjaga akses kelas tetap terkendali.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @php
+                $guideTitle = 'Panduan Manajemen Kelas';
+                $guideSubtitle = 'Mengatur kelas dan token';
+                $guideImage = 'images/guides/current-admin-classes.png';
+                $guideIntro = 'Gunakan nomor pada gambar untuk membaca area ringkasan, daftar kelas, token, status, dan tombol aksi yang dipakai admin.';
+                $guidePoints = [
+                    ['x' => 61, 'y' => 27, 'title' => 'Ringkasan kelas', 'description' => 'Lihat jumlah kelas, token aktif, dan siswa terhubung sebelum mengubah data.'],
+                    ['x' => 57, 'y' => 62, 'title' => 'Token akses', 'description' => 'Salin token dari baris kelas yang benar, lalu bagikan kepada siswa yang sesuai.'],
+                    ['x' => 87, 'y' => 72, 'title' => 'Aksi kelas', 'description' => 'Gunakan tombol aksi untuk membuat ulang token, mengedit kelas, atau menghapus data.'],
+                ];
+            @endphp
+            @include('admin.partials.analytics_guide_mockup')
 
             <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
                 <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
@@ -433,139 +399,6 @@
         </div>
     </div>
 
-
-    {{-- ==================== MODALS PENGELOLAAN KELAS & INSIGHT ==================== --}}
-
-    {{-- MODAL HERO INSIGHT (ANALITIK MENDALAM DENGAN PROGRESS BAR) --}}
-    <div x-show="showInsightModal" class="fixed inset-0 z-[300] flex items-center justify-center p-4" x-cloak>
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" @click="showInsightModal = false"></div>
-        
-        <div class="relative w-full max-w-6xl max-h-[90vh] flex flex-col bg-white dark:bg-[#0f141e] border border-cyan-200 dark:border-cyan-500/30 rounded-3xl shadow-xl dark:shadow-[0_20px_70px_rgba(6,182,212,0.15)] overflow-hidden transition-colors" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-            
-            {{-- Header Insight Modal --}}
-            <div class="p-6 md:p-8 border-b border-slate-200 dark:border-white/10 flex justify-between items-start shrink-0 bg-slate-50/50 dark:bg-white/[0.02] transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center border border-cyan-200 dark:border-cyan-500/30 shadow-sm dark:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-colors">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-black text-slate-900 dark:text-white transition-colors" x-text="insightData.name"></h2>
-                        <p class="text-sm text-cyan-600 dark:text-cyan-400 font-mono tracking-wider font-bold mt-1 transition-colors" x-text="'TOKEN KELAS: ' + (insightData.token || 'N/A')"></p>
-                    </div>
-                </div>
-                <button @click="showInsightModal = false" class="text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white transition-colors p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-red-100 dark:hover:bg-red-500/20 border border-transparent hover:border-red-200 dark:hover:border-red-500/30"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-            </div>
-
-            {{-- Body Insight Modal --}}
-            <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8 bg-white dark:bg-[#020617] transition-colors">
-                
-                {{-- Insight Grid 3 Kotak --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-colors">
-                        <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-2 transition-colors">Total Siswa Aktif</p>
-                        <h3 class="text-4xl font-black text-indigo-600 dark:text-indigo-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-colors" x-text="insightData.students_count || 0"></h3>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner hover:border-fuchsia-300 dark:hover:border-fuchsia-500/30 transition-colors">
-                        <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-2 transition-colors">Rata-rata Evaluasi Kelas</p>
-                        <div class="flex items-baseline gap-1">
-                            <h3 class="text-4xl font-black text-fuchsia-600 dark:text-fuchsia-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(217,70,239,0.5)] transition-colors" x-text="insightData.avg_quiz || 0"></h3>
-                            <span class="text-slate-400 dark:text-white/40 text-xs font-bold transition-colors"></span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner hover:border-blue-300 dark:hover:border-blue-500/30 transition-colors">
-                        <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-2 transition-colors">Total Lab Diselesaikan</p>
-                        <h3 class="text-4xl font-black text-blue-600 dark:text-blue-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(59,130,246,0.5)] transition-colors" x-text="insightData.lab_passes || 0"></h3>
-                    </div>
-                </div>
-
-                {{-- Tabel Leaderboard Siswa & Progress (Advanced) --}}
-                <div>
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-4 flex items-center gap-2 border-l-4 border-cyan-500 pl-3 transition-colors">Daftar Siswa & Detail Progres</h3>
-                    <div class="bg-slate-50 dark:bg-[#0a0e17] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-colors">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-100 dark:bg-white/[0.03] border-b border-slate-200 dark:border-white/10 transition-colors">
-                                <tr>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-16 text-center transition-colors">Peringkat</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Profil Siswa</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold w-[25%] transition-colors">Progres Keseluruhan</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Rincian Pencapaian</th>
-                                    <th class="px-6 py-4 text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold text-right transition-colors">Rata-rata Nilai Kuis</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 dark:divide-white/5 transition-colors">
-                                <template x-if="insightData.students_list && insightData.students_list.length > 0">
-                                    <template x-for="(student, index) in insightData.students_list" :key="index">
-                                        <tr class="hover:bg-white dark:hover:bg-white/[0.02] transition-colors">
-                                            {{-- RANKING --}}
-                                            <td class="px-6 py-4 text-center align-middle">
-                                                <span class="w-7 h-7 rounded-full inline-flex items-center justify-center text-xs font-black shadow-inner transition-colors"
-                                                      :class="index === 0 ? 'bg-amber-100 dark:bg-yellow-500/20 text-amber-600 dark:text-yellow-400 border border-amber-300 dark:border-yellow-500/50 dark:shadow-[0_0_10px_rgba(234,179,8,0.3)]' : (index === 1 ? 'bg-slate-200 dark:bg-slate-300/20 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-300/50' : (index === 2 ? 'bg-orange-100 dark:bg-amber-700/20 text-orange-600 dark:text-amber-600 border border-orange-300 dark:border-amber-700/50' : 'bg-slate-100 dark:bg-white/5 text-slate-500'))"
-                                                      x-text="index + 1"></span>
-                                            </td>
-                                            
-                                            {{-- PROFILE --}}
-                                            <td class="px-6 py-4 align-middle">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-xs shadow-lg" x-text="student.name.charAt(0)"></div>
-                                                    <div>
-                                                        <p class="font-bold text-slate-900 dark:text-white text-sm transition-colors" x-text="student.name"></p>
-                                                        <p class="text-[10px] text-slate-500 dark:text-white/40 font-mono mt-0.5 transition-colors" x-text="student.email"></p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            
-                                            {{-- PROGRESS BAR --}}
-                                            <td class="px-6 py-4 align-middle">
-                                                <div class="w-full">
-                                                    <div class="flex justify-between items-center mb-1.5">
-                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest transition-colors">Selesai</span>
-                                                        <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 transition-colors" x-text="student.progress_pct + '%'"></span>
-                                                    </div>
-                                                    <div class="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                                        <div class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-2 rounded-full transition-all duration-1000 dark:shadow-[0_0_10px_rgba(99,102,241,0.5)]" :style="`width: ${student.progress_pct}%`"></div>
-                                                    </div>
-                                                    <span class="inline-flex mt-2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest border transition-colors"
-                                                          :class="student.status_tone === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : (student.status_tone === 'red' ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20' : (student.status_tone === 'amber' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10'))"
-                                                          x-text="student.status_label"></span>
-                                                </div>
-                                            </td>
-
-                                            {{-- BADGES PENCAPAIAN --}}
-                                            <td class="px-6 py-4 align-middle">
-                                                <div class="flex flex-wrap gap-2">
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-500/20 text-[10px] font-bold transition-colors" title="Materi Dibaca">
-                                                        <span>📚</span> <span x-text="student.lessons_done"></span>
-                                                    </span>
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 text-[10px] font-bold transition-colors" title="Lab Lulus">
-                                                        <span>💻</span> <span x-text="student.labs_done"></span>
-                                                    </span>
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 text-[10px] font-bold transition-colors" title="Kuis Lulus">
-                                                        <span>📝</span> <span x-text="student.quizzes_passed"></span>
-                                                    </span>
-                                                </div>
-                                            </td>
-
-                                            {{-- AVG QUIZ SCORE --}}
-                                            <td class="px-6 py-4 text-right align-middle">
-                                                <span class="px-3 py-1.5 rounded-lg text-sm font-black border transition-colors" 
-                                                      :class="student.avg_score >= 70 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 dark:shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20'" 
-                                                      x-text="student.avg_score + ' '"></span>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </template>
-                                <template x-if="!insightData.students_list || insightData.students_list.length === 0">
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-16 text-center text-slate-400 dark:text-white/30 text-xs italic bg-slate-50/50 dark:bg-white/[0.01] transition-colors">Belum ada siswa yang tergabung di kelas ini. Bagikan token untuk mengundang mereka.</td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- MODAL ADD CLASS (Diperbaiki dengan Dropdown Custom Status) --}}
     <div x-show="showAddModal" class="fixed inset-0 z-[200] flex items-center justify-center p-4" x-cloak>

@@ -91,6 +91,8 @@
     .choice-card.wrong { border-color: #f43f5e; background: rgba(244,63,94,.10); }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
@@ -157,7 +159,7 @@
                 </div>
 
                 <article class="space-y-24 md:space-y-32">
-                    <section id="section-51" class="lesson-section scroll-mt-32" data-lesson-id="51">
+                    <section id="section-56" class="lesson-section scroll-mt-32" data-lesson-id="56">
                         <div class="space-y-8 md:space-y-10">
                             <div class="space-y-4 border-l-4 border-indigo-500 pl-4 md:pl-6">
                                 <span class="text-indigo-600 dark:text-indigo-400 font-mono text-xs uppercase tracking-widest">Lesson 3.3.1</span>
@@ -186,7 +188,7 @@
                         </div>
                     </section>
 
-                    <section id="section-52" class="lesson-section scroll-mt-32" data-lesson-id="52">
+                    <section id="section-57" class="lesson-section scroll-mt-32" data-lesson-id="57">
                         <div class="space-y-8 md:space-y-10">
                             <div class="space-y-4 border-l-4 border-purple-500 pl-4 md:pl-6">
                                 <span class="text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-widest">Lesson 3.3.2</span>
@@ -235,7 +237,7 @@
                         </div>
                     </section>
 
-                    <section id="section-53" class="lesson-section scroll-mt-32" data-lesson-id="53">
+                    <section id="section-58" class="lesson-section scroll-mt-32" data-lesson-id="58">
                         <div class="space-y-8 md:space-y-10">
                             <div class="space-y-4 border-l-4 border-pink-500 pl-4 md:pl-6">
                                 <span class="text-pink-600 dark:text-pink-400 font-mono text-xs uppercase tracking-widest">Lesson 3.3.3</span>
@@ -270,7 +272,7 @@
                         </div>
                     </section>
 
-                    <section id="section-54" class="lesson-section scroll-mt-32" data-lesson-id="54">
+                    <section id="section-59" class="lesson-section scroll-mt-32" data-lesson-id="59">
                         <div class="space-y-8 md:space-y-10">
                             <div class="space-y-4 border-l-4 border-emerald-500 pl-4 md:pl-6">
                                 <span class="text-emerald-600 dark:text-emerald-400 font-mono text-xs uppercase tracking-widest">Lesson 3.3.4</span>
@@ -309,7 +311,7 @@
                         </div>
                     </section>
 
-                    <section id="section-55" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive" data-lesson-id="55" data-type="activity">
+                    <section id="section-60" class="lesson-section scroll-mt-32 pt-10 border-t border-adaptive" data-lesson-id="60" data-type="activity">
                         <div class="relative rounded-[2rem] sim-bg-adaptive border border-adaptive p-5 sm:p-6 md:p-10 overflow-hidden shadow-xl group hover:border-indigo-500/30 transition-all duration-500">
                             <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-600/10 dark:bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none"></div>
                             <div class="flex items-start md:items-center gap-5 mb-8 flex-col md:flex-row relative z-10">
@@ -317,15 +319,15 @@
                                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16M8 4v16M16 4v16"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 3.3: Pilih Class Tampilan</h2>
-                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih class Tailwind CSS yang sesuai dengan kebutuhan tampilan. Aktivitas selesai jika skor minimal 4 dari 5.</p>
+                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 3.3: Shape Lab</h2>
+                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih pengaturan garis tepi, warna border, radius, dan bayangan, lalu amati bentuk kartu!</p>
                                 </div>
                             </div>
 
                             <div id="activityPanel" class="space-y-5 relative z-10">
                                 <div id="quizContainer" class="space-y-5"></div>
                                 <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-4">
-                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih jawaban pada setiap kebutuhan.</div>
+                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih pengaturan visual sesuai kebutuhan border dan radius!</div>
                                     <div class="flex gap-2">
                                         <button onclick="resetActivity()" class="px-5 py-3 rounded-xl border border-adaptive text-xs font-bold hover:bg-slate-100 dark:hover:bg-white/10 transition">Ulangi</button>
                                         <button id="submitActivityBtn" onclick="submitActivity()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20 transition">Periksa Jawaban</button>
@@ -345,7 +347,7 @@
                 </article>
 
                 <div class="mt-20 md:mt-32 pt-8 border-t border-adaptive flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
-                    <a href="{{ \Illuminate\Support\Facades\Route::has('courses.backgrounds') ? route('courses.backgrounds') : '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
+                    <a href="{{ \Illuminate\Support\Facades\Route::has('courses.background') ? route('courses.background') : '#' }}" class="group flex items-center gap-4 text-muted hover:text-heading transition-colors w-full sm:w-auto justify-center sm:justify-start">
                         <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-adaptive flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors shrink-0">
                             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         </div>
@@ -364,29 +366,30 @@
 </div>
 
 <script>
-    window.LESSON_IDS = [51, 52, 53, 54, 55];
+    window.LESSON_IDS = [56, 57, 58, 59, 60];
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
     window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id));
     let completedSet = new Set(window.COMPLETED_IDS);
     const ACTIVITY_LESSON_ID = 60;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     let selectedAnswers = {};
+    let activityWidget = null;
 
     let borderEnabled = true;
     let borderColor = 'border-slate-300';
 
     const activityQuestions = [
-        { id: 1, need: 'Kotak informasi perlu memiliki garis tepi.', options: ['border', 'border-slate-300', 'shadow-md'], answer: 0, explain: 'Class border digunakan untuk membuat garis tepi dasar pada elemen.' },
-        { id: 2, need: 'Garis tepi kartu perlu diberi warna abu-abu.', options: ['border', 'border-slate-300', 'bg-slate-300'], answer: 1, explain: 'Class border-slate-300 memberi warna abu-abu pada garis tepi.' },
-        { id: 3, need: 'Tombol perlu memiliki sudut melengkung.', options: ['rounded-lg', 'border', 'shadow-lg'], answer: 0, explain: 'Class rounded-lg membuat sudut tombol melengkung.' },
-        { id: 4, need: 'Kartu perlu terlihat lebih menonjol dari latar.', options: ['shadow-md', 'rounded-md', 'border-slate-300'], answer: 0, explain: 'Class shadow-md memberi bayangan sedang agar kartu terlihat menonjol.' },
-        { id: 5, need: 'Kartu perlu memiliki latar putih, sudut melengkung, dan bayangan sedang.', options: ['bg-white rounded-xl shadow-md', 'bg-white border-slate-300 rounded-xl', 'bg-white shadow-none rounded-xl'], answer: 0, explain: 'Kombinasi bg-white rounded-xl shadow-md membuat kartu putih dengan sudut melengkung dan bayangan sedang.' }
+        { id: 1, need: 'Kotak informasi perlu memiliki garis tepi.', options: ['border', 'border-slate-300', 'shadow-md'], answer: 0 },
+        { id: 2, need: 'Garis tepi kartu perlu diberi warna abu-abu.', options: ['border', 'border-slate-300', 'bg-slate-300'], answer: 1 },
+        { id: 3, need: 'Tombol perlu memiliki sudut melengkung.', options: ['rounded-lg', 'border', 'shadow-lg'], answer: 0 },
+        { id: 4, need: 'Kartu perlu terlihat lebih menonjol dari latar.', options: ['shadow-md', 'rounded-md', 'border-slate-300'], answer: 0 },
+        { id: 5, need: 'Kartu perlu memiliki latar putih, sudut melengkung, dan bayangan sedang.', options: ['bg-white rounded-xl shadow-md', 'bg-white border-slate-300 rounded-xl', 'bg-white shadow-none rounded-xl'], answer: 0 }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initVisualEffects();
-        renderActivity();
+        initBorderActivity();
         updateProgressUI(false);
         if (activityCompleted) {
             lockActivityUI();
@@ -559,7 +562,6 @@
                     <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-xs shrink-0 border border-indigo-500/20">${qi+1}</div>
                     <div>
                         <h4 class="text-sm font-bold text-heading leading-relaxed">${q.need}</h4>
-                        <p class="explain hidden text-xs text-muted mt-2 leading-relaxed"></p>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -583,49 +585,114 @@
         btn.innerText = '✓ ' + btn.innerText.replace(/^✓\s|^□\s/, '');
     }
 
+    function initBorderActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#quizContainer',
+            badge: 'Shape Lab',
+            title: 'Rancang bentuk kartu informasi',
+            description: 'Pilih kombinasi border, warna garis, radius, dan bayangan yang paling sesuai dengan kebutuhan kartu!',
+            previewLabel: 'Preview Bentuk',
+            minScore: 4,
+            groups: [
+                {
+                    id: 'border',
+                    label: 'Garis tepi kartu',
+                    desc: 'Kotak informasi perlu batas yang jelas.',
+                    correct: 'on',
+                    default: 'off',
+                    options: [
+                        { id: 'off', label: 'Tanpa border', classText: 'border-0' },
+                        { id: 'on', label: 'Border aktif', classText: 'border' },
+                        { id: 'thick', label: 'Terlalu tebal', classText: 'border-4' }
+                    ]
+                },
+                {
+                    id: 'borderColor',
+                    label: 'Warna border',
+                    desc: 'Garis tepi sebaiknya lembut.',
+                    correct: 'soft',
+                    default: 'plain',
+                    options: [
+                        { id: 'plain', label: 'Tanpa warna khusus', classText: 'border-transparent', color: 'transparent' },
+                        { id: 'soft', label: 'Abu-abu lembut', classText: 'border-slate-300', color: '#cbd5e1' },
+                        { id: 'strong', label: 'Terlalu kuat', classText: 'border-indigo-600', color: '#4f46e5' }
+                    ]
+                },
+                {
+                    id: 'radius',
+                    label: 'Radius kartu',
+                    desc: 'Kartu perlu sudut melengkung yang nyaman.',
+                    correct: 'xl',
+                    default: 'none',
+                    options: [
+                        { id: 'none', label: 'Tajam', classText: 'rounded-none' },
+                        { id: 'xl', label: 'Melengkung', classText: 'rounded-xl' },
+                        { id: 'full', label: 'Terlalu bulat', classText: 'rounded-full' }
+                    ]
+                },
+                {
+                    id: 'shadow',
+                    label: 'Bayangan kartu',
+                    desc: 'Kartu perlu sedikit menonjol dari latar.',
+                    correct: 'medium',
+                    default: 'none',
+                    options: [
+                        { id: 'none', label: 'Datar', classText: 'shadow-none' },
+                        { id: 'medium', label: 'Sedang', classText: 'shadow-md' },
+                        { id: 'heavy', label: 'Berlebihan', classText: 'shadow-2xl' }
+                    ]
+                },
+                {
+                    id: 'buttonRadius',
+                    label: 'Radius tombol',
+                    desc: 'Tombol sebaiknya konsisten dengan kartu.',
+                    correct: 'button',
+                    default: 'sharp',
+                    options: [
+                        { id: 'sharp', label: 'Tombol tajam', classText: 'rounded-none' },
+                        { id: 'button', label: 'Tombol melengkung', classText: 'rounded-lg' },
+                        { id: 'pill', label: 'Tombol pil', classText: 'rounded-full' }
+                    ]
+                }
+            ],
+            renderPreview: (state, selected) => `
+                <section class="w-full min-h-[300px] bg-slate-100 p-6 grid place-items-center">
+                    <article class="max-w-sm bg-white p-6 ${selected.border.classText} ${selected.borderColor.classText} ${selected.radius.classText} ${selected.shadow.classText}">
+                        <p class="text-sm text-slate-500">Informasi</p>
+                        <h1 class="mt-1 text-2xl font-bold text-slate-900">Kartu Berita</h1>
+                        <p class="mt-3 text-slate-600">Border, radius, dan bayangan membantu memperjelas batas kartu.</p>
+                        <button class="mt-5 px-4 py-2 bg-indigo-600 text-white font-bold ${selected.buttonRadius.classText}">Detail</button>
+                    </article>
+                </section>
+            `
+        });
+    }
+
     async function submitActivity() {
         if(activityCompleted) return;
         const result = document.getElementById('activityResult');
-        if(Object.keys(selectedAnswers).length < activityQuestions.length) {
-            result.innerText = 'Lengkapi semua jawaban terlebih dahulu.';
-            result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
-            document.getElementById('activityPanel').classList.add('shake');
-            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
-            return;
-        }
-        let score = 0;
-        activityQuestions.forEach(q => {
-            const wrapper = document.querySelector(`[data-q="${q.id}"]`);
-            const buttons = wrapper.querySelectorAll('.choice-card');
-            buttons.forEach((btn, idx) => {
-                btn.classList.remove('selected','correct','wrong');
-                if(idx === q.answer) btn.classList.add('correct');
-                if(selectedAnswers[q.id] === idx && idx !== q.answer) btn.classList.add('wrong');
-            });
-            const explain = wrapper.querySelector('.explain');
-            explain.classList.remove('hidden');
-            explain.innerText = q.explain;
-            if(selectedAnswers[q.id] === q.answer) score++;
-        });
-        if(score >= 4) {
-            result.innerText = `Skor ${score}/5. Aktivitas valid dan progress disimpan.`;
+        const check = activityWidget?.check();
+        if(!check) return;
+        if(check.passed) {
+            result.innerText = `Skor ${check.score}/${check.total}. Aktivitas valid dan progress disimpan.`;
             result.className = 'text-sm font-bold text-emerald-600 dark:text-emerald-400';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/5. Minimal 4 benar. Pelajari pembahasan, baca ulang bagian border dan radius, lalu ulangi aktivitas.`;
+            result.innerText = `Skor ${check.score}/${check.total}. Minimal 4 benar. Ubah pengaturan shape lab sesuai kebutuhan.`;
             result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
+            document.getElementById('activityPanel').classList.add('shake');
+            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
         }
     }
 
     function resetActivity() {
         if(activityCompleted) return;
-        selectedAnswers = {};
-        renderActivity();
+        if(activityWidget) activityWidget.reset();
         const result = document.getElementById('activityResult');
-        result.innerText = 'Pilih jawaban pada setiap kebutuhan.';
+        result.innerText = 'Pilih pengaturan visual sesuai kebutuhan border dan radius!';
         result.className = 'text-sm font-bold text-muted';
     }
 
@@ -634,6 +701,7 @@
         if(overlay) overlay.classList.remove('hidden');
         const btn = document.getElementById('submitActivityBtn');
         if(btn) { btn.disabled = true; btn.innerText = 'Aktivitas Selesai'; }
+        if(activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

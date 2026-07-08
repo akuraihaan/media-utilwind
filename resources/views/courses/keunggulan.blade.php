@@ -439,7 +439,7 @@
 
                                 <div class="bg-cyan-600/95 dark:bg-cyan-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                                     <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor aktivitas.</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[640px] overflow-y-auto custom-scrollbar">
@@ -503,13 +503,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> <code>input.css</code> adalah file sumber untuk menulis <code>@import</code> dan konfigurasi <code>@theme</code>.</p>
-                                        <p><strong>2.</strong> <code>@import "tailwindcss";</code> digunakan untuk memanggil sistem Tailwind pada file CSS sumber.</p>
-                                        <p><strong>3.</strong> Token warna seperti <code>--color-sekolah-500</code> dapat digunakan sebagai <code>bg-sekolah-500</code>, <code>text-sekolah-500</code>, dan <code>border-sekolah-500</code>.</p>
-                                        <p><strong>4.</strong> Setelah konfigurasi diubah, build perlu dijalankan kembali agar <code>output.css</code> ikut diperbarui.</p>
-                                        <p><strong>5.</strong> HTML menghubungkan <code>output.css</code> karena file itulah hasil proses build.</p>
+                                        <p>Gunakan skor aktivitas sebagai penanda pemahaman. Detail jawaban tidak ditampilkan pada tahap ini.</p>
+                                        <p>Jika skor belum memenuhi, ulangi setelah meninjau materi konfigurasi dasar Tailwind.</p>
                                     </div>
                                 </div>
                             </div>
@@ -737,13 +734,15 @@
         Object.keys(correct).forEach((q, idx) => {
             const question = document.querySelectorAll('.activity-question')[idx];
             const options = question.querySelectorAll('.activity-option');
+            const isCorrect = activityAnswers[q] === correct[q];
             options.forEach(opt => {
                 opt.classList.remove('correct', 'wrong');
                 const clickAttr = opt.getAttribute('onclick') || '';
-                if (clickAttr.includes(`'${correct[q]}'`)) opt.classList.add('correct');
-                if (clickAttr.includes(`'${activityAnswers[q]}'`) && activityAnswers[q] !== correct[q]) opt.classList.add('wrong');
+                if (clickAttr.includes(`'${activityAnswers[q]}'`)) {
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
             });
-            if (activityAnswers[q] === correct[q]) score++;
+            if (isCorrect) score++;
         });
 
         const percent = Math.round((score / total) * 100);
@@ -758,7 +757,7 @@
             lockActivityUI();
             unlockNextChapter();
         } else {
-            status.innerText = 'Skor belum cukup. Baca pembahasan, lalu perbaiki jawaban yang salah.';
+            status.innerText = 'Skor belum cukup. Ulangi aktivitas setelah meninjau materi konfigurasi dasar Tailwind.';
             status.className = 'text-xs font-bold text-amber-600 dark:text-amber-400';
         }
     }

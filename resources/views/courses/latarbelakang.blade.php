@@ -112,6 +112,8 @@
     .activity-option.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -489,7 +491,7 @@
                             </div>
 
                             <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
-                                <p>Aktivitas ini mengecek pemahaman tentang fungsi CDN, posisi script, penerapan utility class, dan batasan penggunaannya. Pilih jawaban paling tepat berdasarkan materi subbab 1.3.</p>
+                                <p>Aktivitas ini menggunakan drag n drop untuk menyusun alur penggunaan CDN Tailwind. Geser kartu dari struktur HTML sampai hasilnya tampil di browser!</p>
                             </div>
 
                             <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
@@ -502,8 +504,8 @@
                                 </div>
 
                                 <div class="bg-purple-600/95 dark:bg-purple-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <div class="text-xs font-bold uppercase tracking-widest">Drag n Drop CDN</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Geser kartu alur CDN ke urutan yang benar, lalu tekan tombol periksa!</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
@@ -567,13 +569,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> CDN memanggil Tailwind dari server luar sehingga dapat langsung dicoba tanpa instalasi lokal.</p>
-                                        <p><strong>2.</strong> Script CDN diletakkan di bagian <code>&lt;head&gt;</code> agar Tailwind dimuat sebelum isi halaman dirender.</p>
-                                        <p><strong>3.</strong> Tanpa CDN, browser tidak memiliki aturan Tailwind sehingga class hanya menjadi nama biasa.</p>
-                                        <p><strong>4.</strong> <code>p-6</code> adalah utility class untuk memberikan padding.</p>
-                                        <p><strong>5.</strong> CDN paling sesuai untuk latihan awal dan demo cepat, bukan proyek besar yang memerlukan konfigurasi dan optimasi.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Gunakan urutan kartu sebagai latihan pengamatan alur sebelum melanjutkan.</p>
                                     </div>
                                 </div>
                             </div>
@@ -617,6 +616,7 @@
     const ACTIVITY_LESSON_ID = 15;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     const activityAnswers = {};
+    let activityWidget = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
@@ -627,6 +627,7 @@
         setCdnPlacement('head');
         updateCardBuilder();
         setScenario('latihan');
+        initCdnOrderActivity();
 
         if (activityCompleted) {
             lockActivityUI();
@@ -840,45 +841,67 @@
         btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
     }
 
+    function initCdnOrderActivity() {
+        activityWidget = CourseActivityKit.mountDragOrderActivity({
+            root: '#activityForm',
+            badge: 'Drag n Drop CDN',
+            title: 'Susun alur penggunaan Tailwind melalui CDN',
+            description: 'Geser kartu sesuai urutan kerja saat membuat halaman HTML sederhana yang memakai Tailwind CDN!',
+            minScore: 4,
+            initialOrder: ['class', 'html', 'browser', 'cdn', 'head'],
+            correctOrder: ['html', 'head', 'cdn', 'class', 'browser'],
+            items: [
+                {
+                    id: 'html',
+                    title: 'Buat struktur HTML dasar',
+                    desc: 'Siapkan file HTML dengan elemen html, head, dan body.',
+                    code: '<!doctype html> ... <body>...</body>',
+                    preview: 'Halaman memiliki kerangka awal sebelum Tailwind dipanggil.'
+                },
+                {
+                    id: 'head',
+                    title: 'Masuk ke bagian head',
+                    desc: 'Tempatkan pemanggilan pustaka sebelum isi halaman ditampilkan.',
+                    code: '<head> ... </head>',
+                    preview: 'Browser mengetahui resource yang harus dimuat lebih awal.'
+                },
+                {
+                    id: 'cdn',
+                    title: 'Tambahkan script CDN Tailwind',
+                    desc: 'Panggil Tailwind dari CDN agar utility class dapat digunakan pada latihan cepat.',
+                    code: '<script src="https://cdn.tailwindcss.com"><' + '/script>',
+                    preview: 'Utility class Tailwind tersedia tanpa instalasi lokal.'
+                },
+                {
+                    id: 'class',
+                    title: 'Tulis class pada elemen HTML',
+                    desc: 'Gunakan class seperti bg-white, p-6, rounded-xl, dan shadow-md pada elemen.',
+                    code: '<article class="bg-white p-6 rounded-xl shadow-md">',
+                    preview: 'Tampilan mulai berubah sesuai class yang dipasang.'
+                },
+                {
+                    id: 'browser',
+                    title: 'Jalankan dan amati hasil di browser',
+                    desc: 'Buka file HTML dan periksa apakah class Tailwind menghasilkan tampilan yang sesuai.',
+                    preview: 'Hasil akhir terlihat langsung pada halaman web.'
+                }
+            ]
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'b', q2:'a', q3:'c', q4:'d', q5:'b' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
+        scoreLabel.innerText = `Skor: ${result.score}/${result.total}`;
 
-        let score = 0;
-        document.querySelectorAll('.activity-question').forEach((question, index) => {
-            const q = 'q' + (index + 1);
-            const answer = correct[q];
-            const chosen = activityAnswers[q];
-            if (chosen === answer) score++;
-
-            question.querySelectorAll('.activity-option').forEach(btn => {
-                const match = btn.getAttribute('onclick')?.match(/'([a-d])'\)/);
-                const opt = match ? match[1] : '';
-                btn.disabled = true;
-                btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
-                if (opt === answer) btn.classList.add('correct');
-                if (opt === chosen && chosen !== answer) btn.classList.add('wrong');
-            });
-        });
-
-        document.getElementById('activity-analysis').classList.remove('hidden');
-        scoreLabel.innerText = `Skor: ${score}/${total}`;
-
-        if (score >= 4) {
-            status.innerText = 'Aktivitas selesai. Progress tersimpan.';
+        if (result.passed) {
+            status.innerText = 'Aktivitas selesai. Alur CDN sudah tersusun sesuai materi.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             activityCompleted = true;
             await saveLessonToDB(ACTIVITY_LESSON_ID);
@@ -887,8 +910,10 @@
             unlockNextChapter();
             setTimeout(lockActivityUI, 600);
         } else {
-            status.innerText = 'Skor belum memenuhi. Minimal benar 4 dari 5. Baca ulang bagian CDN dan urutan penggunaan Tailwind, lalu muat ulang halaman untuk mencoba lagi.';
+            status.innerText = 'Skor belum memenuhi. Susun ulang kartu berdasarkan alur CDN, lalu periksa kembali.';
             status.className = 'text-xs font-bold text-orange-500';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
@@ -897,6 +922,7 @@
         if (overlay) overlay.classList.remove('hidden');
         if (overlay) overlay.classList.add('flex');
         document.querySelectorAll('#activityForm button, #submitBtn').forEach(el => el.disabled = true);
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

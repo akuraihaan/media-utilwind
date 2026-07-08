@@ -163,9 +163,9 @@ class NavigationSmokeTest extends TestCase
         $this->actingAs($student)
             ->get('/labs/result/' . $history->id)
             ->assertOk()
-            ->assertSeeText('Umpan Balik Akhir Lab')
-            ->assertSeeText('Rangkuman Bab')
-            ->assertSeeText('Prioritas Perbaikan')
+            ->assertSeeText('Hasil akhir')
+            ->assertSeeText('Ringkasan materi')
+            ->assertSeeText('Prioritas perbaikan')
             ->assertSee(route('lab.workspace.history', ['historyId' => $history->id]));
 
         $this->actingAs($student)
@@ -177,9 +177,9 @@ class NavigationSmokeTest extends TestCase
         $this->actingAs($student)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSeeText('Tinjauan Praktik Lab')
-            ->assertSeeText('Buka Detail Lab')
-            ->assertSeeText('Praktik Lab: Lab Smoke');
+            ->assertSeeText('Tinjauan Praktik')
+            ->assertSeeText('Buka Detail Praktik')
+            ->assertSeeText('Praktik: Lab Smoke');
 
         $admin = User::factory()->create([
             'role' => 'admin',
@@ -189,8 +189,9 @@ class NavigationSmokeTest extends TestCase
             ->get('/admin/labs/results/' . $history->id)
             ->assertOk()
             ->assertSeeText('Tinjauan Hasil Lab Siswa')
-            ->assertSeeText('Analisis Tersembunyi')
-            ->assertSeeText('Detail Cuplikan Kode')
+            ->assertSeeText('Bagian yang Perlu Dicek')
+            ->assertDontSeeText('Analisis Tersembunyi')
+            ->assertDontSeeText('Rincian Cuplikan Kode')
             ->assertSeeText('Cuplikan Kode Akhir');
     }
 
@@ -205,6 +206,54 @@ class NavigationSmokeTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin')
             ->assertOk();
+    }
+
+    public function test_admin_primary_sidebar_navigation_links_are_reachable(): void
+    {
+        $this->seedLearningData();
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+        $student = User::factory()->create([
+            'role' => 'student',
+            'class_group' => 'PEMWEB TEST',
+        ]);
+        QuizAttempt::create([
+            'user_id' => $student->id,
+            'chapter_id' => 1,
+            'score' => 88,
+            'time_spent_seconds' => 320,
+            'focus_lost_count' => 1,
+            'started_at' => now()->subMinutes(8),
+            'completed_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $routes = [
+            'admin.dashboard',
+            'admin.guide',
+            'admin.analytics.questions',
+            'admin.lab.analytics',
+            'admin.labs.index',
+            'admin.questions.create',
+            'admin.students.index',
+            'admin.classes.index',
+        ];
+
+        foreach ($routes as $routeName) {
+            $this->get(route($routeName))
+                ->assertOk();
+        }
+
+        $this->get(route('admin.learning-outcomes.index'))
+            ->assertRedirect(route('admin.analytics.questions'));
+
+        $this->get(route('admin.quiz.student.analytics', $student->id))
+            ->assertOk()
+            ->assertSeeText('Ringkasan Kuis Siswa')
+            ->assertSeeText('Log Pengerjaan Kuis');
     }
 
     public function test_admin_lab_analytics_is_lab_only_and_lists_all_students(): void
@@ -230,6 +279,19 @@ class NavigationSmokeTest extends TestCase
             User::factory()->create(['role' => 'student', 'name' => 'Siswa Perlu Bimbingan', 'class_group' => 'KELAS B']),
         ]);
 
+        ClassGroup::create([
+            'name' => 'KELAS C',
+            'major' => 'Rekayasa Perangkat Lunak',
+            'token' => 'KELASC1',
+            'is_active' => true,
+        ]);
+
+        User::factory()->create([
+            'role' => 'student',
+            'name' => 'Siswa Baru Praktik',
+            'class_group' => 'KELAS C',
+        ]);
+
         foreach ([95, 45] as $index => $score) {
             LabHistory::create([
                 'user_id' => $students[$index]->id,
@@ -250,8 +312,8 @@ class NavigationSmokeTest extends TestCase
             ->assertSeeText('Ringkasan Per Kelas')
             ->assertSeeText('KELAS A')
             ->assertSeeText('KELAS B')
-            ->assertSeeText('Grafik Perkembangan Nilai Lab')
-            ->assertSeeText('Semua Performa Siswa')
+            ->assertSeeText('Rata-rata Skor per Lab')
+            ->assertSeeText('Rincian Percobaan Lab')
             ->assertSeeText('Siswa Nilai Tinggi')
             ->assertSeeText('Siswa Perlu Bimbingan')
             ->assertDontSeeText('Grafik Perkembangan Nilai Kuis dan Lab')
@@ -262,6 +324,74 @@ class NavigationSmokeTest extends TestCase
             ->assertOk()
             ->assertSeeText('Siswa Nilai Tinggi')
             ->assertDontSeeText('Siswa Perlu Bimbingan');
+
+        $this->actingAs($admin)
+            ->get('/admin/analytics/lab?class_group=KELAS%20C')
+            ->assertOk()
+            ->assertSeeText('KELAS C')
+            ->assertSeeText('Belum ada percobaan lab pada filter ini.')
+            ->assertDontSeeText('Siswa Nilai Tinggi')
+            ->assertDontSeeText('Siswa Perlu Bimbingan');
+    }
+
+    public function test_admin_question_analytics_accepts_period_and_class_filters(): void
+    {
+        $this->seedLearningData();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        ClassGroup::create([
+            'name' => 'KELAS SOAL',
+            'major' => 'Rekayasa Perangkat Lunak',
+            'token' => 'SOALCLS1',
+            'is_active' => true,
+        ]);
+
+        $student = User::factory()->create([
+            'role' => 'student',
+            'name' => 'Siswa Analitik Soal',
+            'class_group' => 'KELAS SOAL',
+        ]);
+
+        $questionId = DB::table('quiz_questions')->insertGetId([
+            'chapter_id' => 1,
+            'question_text' => 'Properti CSS untuk layout flex?',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $optionId = DB::table('quiz_options')->insertGetId([
+            'quiz_question_id' => $questionId,
+            'option_text' => 'display: flex',
+            'is_correct' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $attempt = QuizAttempt::create([
+            'user_id' => $student->id,
+            'chapter_id' => 1,
+            'score' => 100,
+            'started_at' => now()->subMinutes(5),
+            'completed_at' => now(),
+        ]);
+
+        DB::table('quiz_attempt_answers')->insert([
+            'quiz_attempt_id' => $attempt->id,
+            'quiz_question_id' => $questionId,
+            'quiz_option_id' => $optionId,
+            'is_correct' => true,
+            'is_flagged' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/admin/analytics/questions?class_group=KELAS%20SOAL&period=30d')
+            ->assertOk()
+            ->assertSeeText('Filter Data')
+            ->assertSeeText('30 hari terakhir')
+            ->assertSeeText('KELAS SOAL');
     }
 
     public function test_admin_lab_configuration_uses_indonesian_labels(): void

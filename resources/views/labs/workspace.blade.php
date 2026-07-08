@@ -417,7 +417,11 @@
                 
                 code: @json($session->current_code ?? ''),
                 expiry: {{ $session->expires_at ? \Carbon\Carbon::parse($session->expires_at)->timestamp : 0 }},
-                
+                saveCount: {{ (int) ($session->save_count ?? 0) }},
+                validationCount: {{ (int) ($session->validation_attempt_count ?? 0) }},
+                changeCount: {{ (int) ($session->code_change_count ?? 0) }},
+                hydratingEditor: false,
+
                 // --- UI CONTROL ---
                 mobileTab: 'editor', // Mobile View Switcher ('tasks', 'editor', 'preview')
                 terminalOpen: true, previewOpen: true, expandedTask: null, loadingId: null,
@@ -442,7 +446,9 @@
                         const currentStep = this.stepsData.find(s => s.id === this.expandedTask);
                         if(currentStep && currentStep.initial_code) {
                             this.code = currentStep.initial_code;
+                            this.hydratingEditor = true;
                             this.editor.setValue(this.code, -1);
+                            this.hydratingEditor = false;
                             this.log('Sistem', 'Template kode awal dimuat.', 'text-[#cca700]');
                         }
                     }
@@ -481,11 +487,23 @@
                         enableBasicAutocompletion: true, enableLiveAutocompletion: true, enableEmmet: true 
                     });
                     
+                    this.hydratingEditor = true;
                     this.editor.setValue(this.code, -1);
+                    this.hydratingEditor = false;
                     this.editor.session.on('change', () => { 
                         this.code = this.editor.getValue();
-                        if(!this.readOnly) this.unsaved = true;
+                        if(!this.readOnly && !this.hydratingEditor) {
+                            this.unsaved = true;
+                            this.changeCount++;
+                        }
                     });
+                },
+
+                syncInteractionCounters(data) {
+                    if(!data) return;
+                    if(Number.isFinite(Number(data.save_count))) this.saveCount = Number(data.save_count);
+                    if(Number.isFinite(Number(data.validation_attempt_count))) this.validationCount = Number(data.validation_attempt_count);
+                    if(Number.isFinite(Number(data.code_change_count))) this.changeCount = Number(data.code_change_count);
                 },
 
                 // --- CORE LOGIC: CHECK & AUTO NEXT ---
@@ -497,9 +515,10 @@
                         const res = await fetch('{{ route('lab.check', $session->id ?? 0) }}', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                            body: JSON.stringify({ step_id: stepId, source_code: this.code })
+                            body: JSON.stringify({ step_id: stepId, source_code: this.code, event_type: 'validation', code_change_count: this.changeCount })
                         });
                         const data = await res.json();
+                        this.syncInteractionCounters(data);
 
                         if (data.status === 'success') {
                             // 1. Update State Lokal
@@ -542,7 +561,9 @@
                             
                             setTimeout(() => {
                                 this.code = nextStep.initial_code;
+                                this.hydratingEditor = true;
                                 this.editor.setValue(this.code, -1);
+                                this.hydratingEditor = false;
                                 this.runCode(); 
                                 
                                 this.log('Sistem', 'Kode awal baru sudah dimasukkan.', 'text-[#cca700]');
@@ -569,7 +590,13 @@
                     const step = this.stepsData.find(s => s.id === stepId);
                     if(step && step.initial_code) {
                         this.code = step.initial_code;
+                        this.hydratingEditor = true;
                         this.editor.setValue(this.code, -1);
+                        this.hydratingEditor = false;
+                        if(!this.readOnly) {
+                            this.changeCount++;
+                            this.unsaved = true;
+                        }
                         this.runCode();
                     this.log('Sistem', 'Kode dikembalikan ke template awal.', 'text-[#cca700]');
                     }
@@ -626,7 +653,7 @@
                             const res = await fetch('{{ route('lab.end', $session->id ?? 0) }}', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                                body: JSON.stringify({ source_code: this.code })
+                                body: JSON.stringify({ source_code: this.code, event_type: 'submit', code_change_count: this.changeCount })
                             });
                             const data = await res.json();
                             if(data.status === 'success') window.location.href = data.redirect_url;
@@ -636,7 +663,27 @@
                     }
                 },
 
-                manualSave() { this.runCode(); this.unsaved = false; this.triggerToast('Tersimpan', 'Berkas berhasil disimpan.', 'success'); },
+                async manualSave() {
+                    if(this.readOnly) return;
+                    this.runCode();
+                    try {
+                        const res = await fetch('{{ route('lab.check', $session->id ?? 0) }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                            body: JSON.stringify({ source_code: this.code, event_type: 'manual_save', code_change_count: this.changeCount })
+                        });
+                        const data = await res.json();
+                        this.syncInteractionCounters(data);
+                        if(data.status === 'success') {
+                            this.unsaved = false;
+                            this.triggerToast('Tersimpan', `Berkas tersimpan (${this.saveCount}x).`, 'success');
+                        } else {
+                            this.triggerToast('Gagal Menyimpan', data.message || 'Server belum menerima perubahan kode.', 'error');
+                        }
+                    } catch(e) {
+                        this.triggerToast('Gagal Menyimpan', 'Gangguan jaringan: ' + e.message, 'error');
+                    }
+                },
                 toggleTask(id) { if(!this.isLocked(id)) this.expandedTask = (this.expandedTask === id) ? null : id; },
                 isCompleted(id) { return this.completed.includes(parseInt(id)); },
                 isLocked(id) { if (this.readOnly) return false; const idx = this.stepsData.findIndex(s => s.id === id); return idx > 0 && !this.completed.includes(this.stepsData[idx - 1].id); },

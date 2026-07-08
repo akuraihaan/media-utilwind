@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Tinjauan Hasil Lab · {{ $student->name ?? 'Siswa' }}</title>
+    <title>Tinjauan Hasil Lab · {{ $studentName ?? ($student->name ?? 'Siswa') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        mono: ['DM Mono', 'monospace'],
                     },
                     boxShadow: {
                         soft: '0 18px 60px -28px rgba(15, 23, 42, 0.35)',
@@ -25,6 +25,8 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; }
+        .font-mono { font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; }
+        .data-number { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: 'tnum' 1, 'lnum' 1; }
         .code-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
         .code-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
         .code-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -32,59 +34,60 @@
 </head>
 <body class="min-h-screen antialiased">
 @php
-    $metrics = $analysis['metrics'];
-    $codeMetrics = $analysis['code_metrics'];
-    $reviewItems = $analysis['review_items'];
-    $riskFlags = $analysis['risk_flags'];
-    $recommendations = $analysis['recommendations'];
+    $safeRoute = function ($name, $parameters = [], $fallback = '#') {
+        return \Illuminate\Support\Facades\Route::has($name) ? route($name, $parameters) : $fallback;
+    };
+
+    $metrics = $analysis['metrics'] ?? [];
+    $reviewItems = $analysis['review_items'] ?? [];
     $completedAt = $history->completed_at ?: $history->created_at;
+    $studentName = $student->name ?? 'Siswa';
+    $labTitle = $lab->title ?? 'Lab';
+    $labAnalyticsUrl = $safeRoute('admin.lab.analytics');
+    $studentProfileUrl = !empty($student?->id)
+        ? $safeRoute('admin.student.detail', $student->id, $safeRoute('admin.students.index'))
+        : $safeRoute('admin.students.index');
+    $score = (int) round((float) ($analysis['score'] ?? 0));
+    $isPassed = (bool) ($analysis['is_passed'] ?? false);
+    $totalSteps = max(0, (int) ($metrics['total_steps'] ?? 0));
+    $completedSteps = max(0, (int) ($metrics['completed_steps'] ?? 0));
+    $unfinishedSteps = max(0, $totalSteps - $completedSteps);
+    $earnedPoints = max(0, (int) ($metrics['earned_points'] ?? 0));
+    $totalPoints = max(0, (int) ($metrics['total_points'] ?? 0));
+    $taskCompletionPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
+    $pointCompletionPercent = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100) : 0;
     $statusClass = $analysis['is_passed']
         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
         : 'bg-rose-50 text-rose-700 border-rose-200';
-    $riskTone = [
-        'tinggi' => 'border-rose-200 bg-rose-50 text-rose-800',
-        'sedang' => 'border-amber-200 bg-amber-50 text-amber-800',
-        'rendah' => 'border-sky-200 bg-sky-50 text-sky-800',
-        'aman' => 'border-emerald-200 bg-emerald-50 text-emerald-800',
-    ];
-    $outcomeAnalytics = $analysis['outcome_analytics'] ?? [];
-    $outcomeRows = collect($outcomeAnalytics['outcomes'] ?? []);
-    $outcomeTone = [
-        'emerald' => 'border-emerald-200 bg-emerald-50 text-emerald-800',
-        'cyan' => 'border-cyan-200 bg-cyan-50 text-cyan-800',
-        'amber' => 'border-amber-200 bg-amber-50 text-amber-800',
-        'red' => 'border-rose-200 bg-rose-50 text-rose-800',
-        'slate' => 'border-slate-200 bg-slate-50 text-slate-700',
-    ];
 @endphp
 
 <div class="min-h-screen">
     <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
+        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
             <div class="flex min-w-0 items-center gap-4">
-                <a href="{{ route('admin.student.analytics', $student->id ?? 0) }}" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-indigo-200 hover:text-indigo-600" title="Kembali ke analitik siswa">
+                <a href="{{ $labAnalyticsUrl }}" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-cyan-200 hover:text-cyan-700" title="Kembali ke analitik lab">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </a>
                 <div class="min-w-0">
                     <nav class="mb-1 hidden text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400 sm:block">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-600">Dasbor</a>
+                        <a href="{{ $safeRoute('admin.dashboard') }}" class="hover:text-cyan-700">Dasbor</a>
                         <span class="mx-2">/</span>
-                        <a href="{{ route('admin.lab.analytics') }}" class="hover:text-indigo-600">Analitik Lab</a>
+                        <a href="{{ $labAnalyticsUrl }}" class="hover:text-cyan-700">Analitik Lab</a>
                         <span class="mx-2">/</span>
-                        <span class="text-slate-600">Tinjauan Hasil</span>
+                        <span class="text-slate-600">Tinjauan Hasil Lab</span>
                     </nav>
-                    <h1 class="truncate text-xl font-black tracking-tight text-slate-950 sm:text-2xl">Tinjauan Hasil Lab Siswa</h1>
-                    <p class="mt-1 truncate text-sm text-slate-500">{{ $lab->title ?? 'Lab' }} · {{ $student->name ?? 'Siswa' }}</p>
+                    <h1 class="truncate text-xl font-black tracking-tight text-slate-950 sm:text-2xl">Tinjauan Hasil Lab</h1>
+                    <p class="mt-1 truncate text-sm text-slate-500">{{ $labTitle }} · {{ $studentName }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('admin.lab.analytics') }}" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-indigo-200 hover:text-indigo-600">Analitik Lab</a>
-                <a href="{{ route('admin.student.detail', $student->id ?? 0) }}" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-indigo-200 hover:text-indigo-600">Profil Siswa</a>
+                <a href="{{ $labAnalyticsUrl }}" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-cyan-200 hover:text-cyan-700">Analitik Lab</a>
+                <a href="{{ $studentProfileUrl }}" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-cyan-200 hover:text-cyan-700">Profil Siswa</a>
             </div>
         </div>
     </header>
 
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main id="admin-main-content" class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft">
             <div class="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
                 <div class="p-6 sm:p-8">
@@ -105,147 +108,58 @@
                             </div>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Umpan Balik Sistem</p>
-                            <h2 class="mt-2 text-2xl font-black text-slate-950">{{ $analysis['feedback']['level'] }}</h2>
-                            <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{{ $analysis['feedback']['message'] }}</p>
+                            <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-cyan-700">Data Pengerjaan</p>
+                            <h2 class="mt-2 text-2xl font-black text-slate-950">Skor akhir {{ $score }} dari 100</h2>
+                            <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+                                {{ $completedSteps }} dari {{ $totalSteps }} tugas selesai · {{ $metrics['earned_points'] ?? 0 }} dari {{ $metrics['total_points'] ?? 0 }} poin · durasi {{ $metrics['duration_text'] ?? '-' }}.
+                            </p>
                         </div>
                     </div>
                 </div>
-
                 <div class="border-t border-slate-200 bg-slate-50 p-6 sm:p-8 lg:border-l lg:border-t-0">
-                    <h2 class="text-sm font-black uppercase tracking-[0.16em] text-slate-500">Rangkuman Bab</h2>
-                    <p class="mt-3 text-xl font-black text-slate-950">Bab {{ $chapterSummary['number'] }} · {{ $chapterSummary['title'] }}</p>
-                    <p class="mt-2 text-sm leading-7 text-slate-600">{{ $chapterSummary['summary'] }}</p>
-                    <div class="mt-5 space-y-3">
-                        @foreach(array_slice($chapterSummary['key_points'], 0, 3) as $point)
-                            <div class="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-600">
-                                <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-indigo-500"></span>
-                                <span>{{ $point }}</span>
-                            </div>
-                        @endforeach
-                    </div>
+                    <p class="text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Ringkasan Praktik</p>
+                    <p class="mt-3 text-xl font-black text-slate-950">{{ $labTitle }}</p>
+                    @if(!empty($chapterSummary['number']) || !empty($chapterSummary['title']))
+                        <span class="mt-3 inline-flex rounded-lg border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-cyan-700">Bab {{ $chapterSummary['number'] ?? '-' }} · {{ $chapterSummary['title'] ?? 'Materi Praktik' }}</span>
+                    @endif
+                    <p class="mt-4 text-sm leading-7 text-slate-600">{{ $chapterSummary['summary'] ?? 'Data berikut berasal dari satu riwayat praktik yang telah diselesaikan oleh siswa.' }}</p>
+
+                    <dl class="mt-6 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white text-sm">
+                        <div class="flex items-center justify-between gap-4 px-4 py-3"><dt class="text-slate-500">Siswa</dt><dd class="text-right font-bold text-slate-950">{{ $studentName }}</dd></div>
+                        <div class="flex items-center justify-between gap-4 px-4 py-3"><dt class="text-slate-500">Lab</dt><dd class="text-right font-bold text-slate-950">{{ $labTitle }}</dd></div>
+                        <div class="flex items-center justify-between gap-4 px-4 py-3"><dt class="text-slate-500">Status</dt><dd class="text-right font-bold {{ $isPassed ? 'text-emerald-700' : 'text-rose-700' }}">{{ $analysis['status_label'] ?? ($isPassed ? 'Lulus' : 'Belum lulus') }}</dd></div>
+                    </dl>
                 </div>
             </div>
         </section>
 
-        <section class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Ringkasan angka praktik">
+            <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Tugas Selesai</p>
-                <p class="mt-2 text-2xl font-black text-slate-950">{{ $metrics['completed_steps'] }}/{{ $metrics['total_steps'] }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Poin Tervalidasi</p>
-                <p class="mt-2 text-2xl font-black text-slate-950">{{ $metrics['earned_points'] }}/{{ $metrics['total_points'] }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <p class="data-number mt-2 text-2xl font-black text-slate-950">{{ $completedSteps }}/{{ $totalSteps }}</p>
+                <p class="mt-2 text-xs font-semibold text-slate-500">Task dengan status selesai.</p>
+            </article>
+            <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Poin Diperoleh</p>
+                <p class="data-number mt-2 text-2xl font-black text-slate-950">{{ $metrics['earned_points'] ?? 0 }}/{{ $metrics['total_points'] ?? 0 }}</p>
+                <p class="mt-2 text-xs font-semibold text-slate-500">Total poin yang tercatat.</p>
+            </article>
+            <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Durasi</p>
-                <p class="mt-2 font-mono text-2xl font-black text-cyan-700">{{ $metrics['duration_text'] }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Kelas Utility CSS</p>
-                <p class="mt-2 text-2xl font-black text-slate-950">{{ $codeMetrics['unique_class_count'] }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Tag HTML</p>
-                <p class="mt-2 text-2xl font-black text-slate-950">{{ $codeMetrics['html_tag_count'] }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Rata-rata Lab</p>
-                <p class="mt-2 text-2xl font-black text-indigo-700">{{ $labStats['average_score'] }}</p>
-            </div>
+                <p class="data-number mt-2 font-mono text-2xl font-black text-cyan-700">{{ $metrics['duration_text'] ?? '-' }}</p>
+                <p class="mt-2 text-xs font-semibold text-slate-500">Waktu pengerjaan praktik.</p>
+            </article>
+            <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Rata-rata Skor Lab</p>
+                <p class="data-number mt-2 text-2xl font-black text-cyan-700">{{ $labStats['average_score'] ?? 0 }}</p>
+                <p class="mt-2 text-xs font-semibold text-slate-500">Rata-rata skor pada lab ini.</p>
+            </article>
         </section>
-
-        <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Keputusan Pembelajaran</p>
-                    <h2 class="mt-2 text-xl font-black text-slate-950">Analitik TP Praktik</h2>
-                    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{{ $outcomeAnalytics['summary_text'] ?? 'Belum ada data TP praktik.' }}</p>
-                </div>
-                <span class="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-black text-indigo-700">{{ $outcomeAnalytics['decision'] ?? 'Belum ada data' }}</span>
-            </div>
-
-            <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                @forelse($outcomeRows as $tp)
-                    <article class="rounded-2xl border p-4 {{ $outcomeTone[$tp['tone'] ?? 'slate'] ?? $outcomeTone['slate'] }}">
-                        <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <p class="text-[10px] font-black uppercase tracking-widest opacity-75">{{ $tp['code'] ?? 'TP' }}</p>
-                                <h3 class="mt-1 text-sm font-black leading-snug">{{ $tp['title'] ?? 'Tujuan Praktik' }}</h3>
-                            </div>
-                            <span class="text-3xl font-black">{{ $tp['mastery_percent'] ?? 0 }}%</span>
-                        </div>
-                        <p class="mt-3 text-xs leading-6 opacity-85">{{ $tp['activity_data'] ?? '-' }}</p>
-                        <div class="mt-3 rounded-xl border border-white/70 bg-white/70 p-3">
-                            <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Uraian TP</p>
-                            <p class="mt-1 text-xs leading-6">{{ $tp['learning_description'] ?? '-' }}</p>
-                            <p class="mt-3 text-[10px] font-black uppercase tracking-widest opacity-70">Capaian Praktik</p>
-                            <p class="mt-1 text-xs leading-6">{{ $tp['mastery_statement'] ?? '-' }}</p>
-                            <p class="mt-3 text-[10px] font-black uppercase tracking-widest opacity-70">Arahan Materi</p>
-                            <p class="mt-1 text-xs leading-6">{{ $tp['material_direction'] ?? '-' }}</p>
-                        </div>
-                    </article>
-                @empty
-                    <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">Belum ada TP praktik untuk dianalisis.</div>
-                @endforelse
-            </div>
-        </section>
-
-        <section class="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-rose-500">Pemeriksaan Rinci</p>
-                        <h2 class="mt-2 text-xl font-black text-slate-950">Analisis Tersembunyi</h2>
-                    </div>
-                    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-500">{{ count($riskFlags) }} catatan</span>
-                </div>
-                <div class="mt-5 space-y-3">
-                    @foreach($riskFlags as $flag)
-                        <div class="rounded-xl border p-4 {{ $riskTone[$flag['level']] ?? 'border-slate-200 bg-slate-50 text-slate-700' }}">
-                            <div class="flex items-center justify-between gap-3">
-                                <h3 class="font-black">{{ $flag['title'] }}</h3>
-                                <span class="shrink-0 rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">{{ $flag['level'] }}</span>
-                            </div>
-                            <p class="mt-2 text-sm leading-6 opacity-80">{{ $flag['description'] }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Tindak Lanjut</p>
-                <h2 class="mt-2 text-xl font-black text-slate-950">Arahan Tindak Lanjut Admin</h2>
-                <div class="mt-5 grid gap-3">
-                    @foreach($recommendations as $recommendation)
-                        <div class="flex gap-3 rounded-xl border border-indigo-100 bg-indigo-50/70 p-4 text-sm leading-6 text-indigo-950">
-                            <span class="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-black text-white">{{ $loop->iteration }}</span>
-                            <span>{{ $recommendation }}</span>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Percobaan Lab Ini</p>
-                        <p class="mt-1 text-xl font-black text-slate-950">{{ $labStats['attempts'] }}</p>
-                    </div>
-                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Lulus</p>
-                        <p class="mt-1 text-xl font-black text-emerald-700">{{ $labStats['passed'] }}</p>
-                    </div>
-                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rasio Lulus</p>
-                        <p class="mt-1 text-xl font-black text-indigo-700">{{ $labStats['pass_rate'] }}%</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section class="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
             <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-200 p-6">
-                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Validasi Per Tugas</p>
-                    <h2 class="mt-2 text-xl font-black text-slate-950">Tinjauan Tugas Lab</h2>
+                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Data Tugas</p>
+                    <h2 class="mt-2 text-xl font-black text-slate-950">Status Pengerjaan Tugas</h2>
                 </div>
                 <div class="divide-y divide-slate-100">
                     @foreach($reviewItems as $item)
@@ -267,21 +181,58 @@
                                     <span class="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-500">Tidak ada aturan khusus</span>
                                 @endforelse
                             </div>
-                            @if(!$item['is_completed'] && $item['failed_rule'])
-                                <p class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">Aturan yang belum terpenuhi: <span class="font-mono">{{ $item['failed_rule'] }}</span></p>
-                            @endif
                         </div>
                     @endforeach
                 </div>
             </div>
 
             <div class="space-y-6">
+                <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" aria-label="Catatan praktik">
+                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Data Pengerjaan</p>
+                    <h2 class="mt-2 text-xl font-black text-slate-950">Catatan Praktik</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-600">Ringkasan angka yang tercatat pada riwayat praktik ini.</p>
+
+                    <div class="mt-5 space-y-3 text-sm">
+                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-slate-500">Tugas selesai</span>
+                                <span class="data-number font-black text-slate-950">{{ $completedSteps }}/{{ $totalSteps }}</span>
+                            </div>
+                            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200" aria-label="Penyelesaian tugas {{ $taskCompletionPercent }} persen">
+                                <span class="block h-full rounded-full bg-cyan-500" style="width: {{ $taskCompletionPercent }}%"></span>
+                            </div>
+                            <p class="mt-1.5 text-[11px] font-semibold text-slate-500">{{ $taskCompletionPercent }}% dari seluruh tugas.</p>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                            <span class="text-slate-500">Tugas belum selesai</span>
+                            <span class="data-number font-black text-slate-950">{{ $unfinishedSteps }}</span>
+                        </div>
+
+                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-slate-500">Poin diperoleh</span>
+                                <span class="data-number font-black text-slate-950">{{ $earnedPoints }}/{{ $totalPoints }}</span>
+                            </div>
+                            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200" aria-label="Perolehan poin {{ $pointCompletionPercent }} persen">
+                                <span class="block h-full rounded-full bg-indigo-500" style="width: {{ $pointCompletionPercent }}%"></span>
+                            </div>
+                            <p class="mt-1.5 text-[11px] font-semibold text-slate-500">{{ $pointCompletionPercent }}% dari total poin.</p>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                            <span class="text-slate-500">Durasi praktik</span>
+                            <span class="data-number font-mono font-black text-cyan-700">{{ $metrics['duration_text'] ?? '-' }}</span>
+                        </div>
+                    </div>
+                </aside>
+
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Riwayat Siswa</p>
+                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Riwayat Praktik</p>
                     <h2 class="mt-2 text-xl font-black text-slate-950">Percobaan pada Lab Ini</h2>
                     <div class="mt-5 space-y-3">
                         @foreach($previousAttempts as $attempt)
-                            <a href="{{ route('admin.labs.results.show', $attempt->id) }}" class="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-indigo-200 hover:bg-indigo-50/60">
+                            <a href="{{ route('admin.labs.results.show', $attempt->id) }}" class="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-cyan-200 hover:bg-cyan-50/60">
                                 <div class="min-w-0">
                                     <p class="truncate text-sm font-black text-slate-950">{{ \Carbon\Carbon::parse($attempt->created_at)->translatedFormat('d M Y, H:i') }}</p>
                                     <p class="mt-1 text-xs text-slate-500">{{ gmdate(($attempt->duration_seconds ?? 0) >= 3600 ? 'H:i:s' : 'i:s', max(0, (int) ($attempt->duration_seconds ?? 0))) }}</p>
@@ -295,16 +246,6 @@
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Metrik Kode</p>
-                    <h2 class="mt-2 text-xl font-black text-slate-950">Rincian Cuplikan Kode</h2>
-                    <dl class="mt-5 grid grid-cols-2 gap-3 text-sm">
-                        <div class="rounded-xl bg-slate-50 p-4"><dt class="font-bold text-slate-500">Baris</dt><dd class="mt-1 font-mono text-lg font-black">{{ $codeMetrics['line_count'] }}</dd></div>
-                        <div class="rounded-xl bg-slate-50 p-4"><dt class="font-bold text-slate-500">Karakter</dt><dd class="mt-1 font-mono text-lg font-black">{{ $codeMetrics['character_count'] }}</dd></div>
-                        <div class="rounded-xl bg-slate-50 p-4"><dt class="font-bold text-slate-500">Jumlah Kelas CSS</dt><dd class="mt-1 font-mono text-lg font-black">{{ $codeMetrics['class_count'] }}</dd></div>
-                        <div class="rounded-xl bg-slate-50 p-4"><dt class="font-bold text-slate-500">Kelas CSS Unik</dt><dd class="mt-1 font-mono text-lg font-black">{{ $codeMetrics['unique_class_count'] }}</dd></div>
-                    </dl>
-                </div>
             </div>
         </section>
 

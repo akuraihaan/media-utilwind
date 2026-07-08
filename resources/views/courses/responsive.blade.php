@@ -94,6 +94,8 @@
     .screen-shell { transition: width .35s ease, max-width .35s ease; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-sky-500/30 pt-20 transition-colors duration-500">
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
@@ -342,29 +344,20 @@
                                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas: Pilih Class Responsif</h2>
-                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih huruf jawaban yang paling sesuai dengan kebutuhan layout responsif sederhana. Aktivitas dianggap selesai jika minimal 3 dari 4 jawaban benar.</p>
+                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas: Responsive Builder</h2>
+                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih class responsive sesuai kebutuhan layout, lalu amati perubahan preview pada layar kecil dan sedang!</p>
                                 </div>
                             </div>
 
-                            <div class="relative z-10 grid lg:grid-cols-5 gap-6">
-                                <div class="lg:col-span-3 space-y-4" id="responsiveActivityList"></div>
-                                <div class="lg:col-span-2 card-adaptive border border-adaptive rounded-2xl p-5 h-fit lg:sticky lg:top-28">
-                                    <h3 class="text-sm font-black text-heading mb-3">Pilihan Class</h3>
-                                    <div class="grid grid-cols-1 gap-2 text-xs font-mono mb-5">
-                                        <div class="rounded-xl border border-adaptive p-3"><b>A.</b> gap-3 md:gap-6</div>
-                                        <div class="rounded-xl border border-adaptive p-3"><b>B.</b> p-4 md:p-8</div>
-                                        <div class="rounded-xl border border-adaptive p-3"><b>C.</b> grid grid-cols-1 md:grid-cols-2</div>
-                                        <div class="rounded-xl border border-adaptive p-3"><b>D.</b> flex flex-col md:flex-row</div>
-                                        <div class="rounded-xl border border-adaptive p-3 text-muted"><b>E.</b> text-center font-bold</div>
-                                        <div class="rounded-xl border border-adaptive p-3 text-muted"><b>F.</b> rounded-xl shadow-md</div>
+                            <div id="activityPanel" class="relative z-10 space-y-5">
+                                <div id="responsiveActivityList"></div>
+                                <div class="card-adaptive border border-adaptive rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-muted mb-1">Skor</div>
+                                        <div id="activityScoreLabel" class="text-3xl font-black text-heading">0/4</div>
+                                        <div id="activityResult" class="text-xs text-muted mt-2 leading-relaxed">Pilih pengaturan responsive sesuai kebutuhan layout!</div>
                                     </div>
-                                    <div class="bg-slate-100 dark:bg-black/30 border border-adaptive rounded-xl p-4 mb-4">
-                                        <div class="text-[10px] uppercase font-bold text-muted mb-2">Skor</div>
-                                        <div id="activityScoreLabel" class="text-4xl font-black text-heading">0/4</div>
-                                        <div id="activityResult" class="text-xs text-muted mt-2 leading-relaxed">Pilih jawaban pada setiap kebutuhan.</div>
-                                    </div>
-                                    <div class="flex flex-col gap-2">
+                                    <div class="flex flex-col sm:flex-row gap-2">
                                         <button id="submitActivityBtn" onclick="submitActivity()" class="px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-lg shadow-sky-500/20 transition">Periksa Jawaban</button>
                                         <button onclick="resetActivity()" class="px-5 py-3 rounded-xl border border-adaptive text-xs font-bold hover:bg-slate-100 dark:hover:bg-white/10 transition">Ulangi</button>
                                     </div>
@@ -410,19 +403,63 @@
     const ACTIVITY_LESSON_ID = 45;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     let selectedAnswers = {};
+    let activityWidget = null;
 
-    const activityItems = [
-        { id: 1, need: 'Kartu satu kolom pada layar kecil dan dua kolom pada layar sedang.', answer: 'C', explain: 'grid grid-cols-1 md:grid-cols-2 membuat kartu satu kolom lebih dahulu, lalu dua kolom pada layar sedang.' },
-        { id: 2, need: 'Kartu tersusun ke bawah pada layar kecil dan ke samping pada layar sedang.', answer: 'D', explain: 'flex flex-col md:flex-row membuat susunan turun pada layar kecil dan menyamping pada layar sedang.' },
-        { id: 3, need: 'Jarak antar kartu kecil pada layar kecil dan lebih besar pada layar sedang.', answer: 'A', explain: 'gap-3 md:gap-6 mengatur jarak kecil terlebih dahulu, lalu memperbesar gap pada breakpoint md.' },
-        { id: 4, need: 'Padding section kecil pada layar kecil dan lebih besar pada layar sedang.', answer: 'B', explain: 'p-4 md:p-8 membuat padding section hemat di layar kecil dan lebih lega di layar sedang.' }
+    const responsiveBuilderGroups = [
+        {
+            id: 'grid',
+            label: 'Jumlah kolom kartu',
+            desc: 'Kartu diminta satu kolom pada layar kecil dan dua kolom pada layar sedang.',
+            correct: 'responsiveGrid',
+            default: 'single',
+            options: [
+                { id: 'single', label: 'Tetap satu kolom', classText: 'grid grid-cols-1', sample: '#e0f2fe' },
+                { id: 'responsiveGrid', label: 'Satu ke dua kolom', classText: 'grid grid-cols-1 md:grid-cols-2', sample: '#bae6fd' },
+                { id: 'staticTwo', label: 'Langsung dua kolom', classText: 'grid grid-cols-2', sample: '#ddd6fe' }
+            ]
+        },
+        {
+            id: 'flow',
+            label: 'Arah susunan media',
+            desc: 'Konten perlu turun pada layar kecil dan menyamping pada layar sedang.',
+            correct: 'responsiveFlex',
+            default: 'column',
+            options: [
+                { id: 'column', label: 'Selalu turun', classText: 'flex flex-col', sample: '#e2e8f0' },
+                { id: 'responsiveFlex', label: 'Turun lalu menyamping', classText: 'flex flex-col md:flex-row', sample: '#c7d2fe' },
+                { id: 'row', label: 'Selalu menyamping', classText: 'flex flex-row', sample: '#fee2e2' }
+            ]
+        },
+        {
+            id: 'gap',
+            label: 'Jarak antar elemen',
+            desc: 'Jarak kecil pada layar kecil dan lebih lega pada layar sedang.',
+            correct: 'responsiveGap',
+            default: 'gap3',
+            options: [
+                { id: 'gap3', label: 'Gap kecil', classText: 'gap-3', sample: '#fef3c7' },
+                { id: 'responsiveGap', label: 'Gap responsive', classText: 'gap-3 md:gap-6', sample: '#dcfce7' },
+                { id: 'gap8', label: 'Gap besar tetap', classText: 'gap-8', sample: '#fee2e2' }
+            ]
+        },
+        {
+            id: 'padding',
+            label: 'Ruang dalam section',
+            desc: 'Padding perlu hemat di layar kecil dan lebih luas pada layar sedang.',
+            correct: 'responsivePadding',
+            default: 'p4',
+            options: [
+                { id: 'p4', label: 'Padding kecil', classText: 'p-4', sample: '#e0f2fe' },
+                { id: 'responsivePadding', label: 'Padding responsive', classText: 'p-4 md:p-8', sample: '#bfdbfe' },
+                { id: 'p10', label: 'Padding besar tetap', classText: 'p-10', sample: '#fee2e2' }
+            ]
+        }
     ];
-    const choices = ['A','B','C','D','E','F'];
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initVisualEffects();
-        renderActivity();
+        initResponsiveActivity();
         updateProgressUI(false);
         setDevice('mobile');
         setResponsiveGrid('small');
@@ -608,84 +645,89 @@
         }
     }
 
-    function renderActivity() {
-        const container = document.getElementById('responsiveActivityList');
-        if(!container) return;
-        container.innerHTML = activityItems.map((item) => `
-            <div class="card-adaptive border border-adaptive rounded-2xl p-5" data-q="${item.id}">
-                <div class="flex items-start gap-3 mb-4">
-                    <div class="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs shrink-0 border border-sky-500/20">${item.id}</div>
-                    <div>
-                        <h4 class="text-sm font-bold text-heading leading-relaxed">${item.need}</h4>
-                        <p class="explain hidden text-xs text-muted mt-2 leading-relaxed"></p>
+    function initResponsiveActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#responsiveActivityList',
+            badge: 'Responsive Builder',
+            title: 'Bangun layout mobile-first',
+            description: 'Pilih class yang sesuai dengan kebutuhan layar kecil dan layar sedang!',
+            previewLabel: 'Preview Responsive',
+            minScore: 3,
+            groups: responsiveBuilderGroups,
+            renderPreview: (state) => {
+                const mobileCols = state.grid === 'staticTwo' ? 'grid-cols-2' : 'grid-cols-1';
+                const mediumCols = state.grid === 'single' ? 'grid-cols-1' : 'grid-cols-2';
+                const mobileFlow = state.flow === 'row' ? 'flex-row' : 'flex-col';
+                const mediumFlow = state.flow === 'column' ? 'flex-col' : 'flex-row';
+                const mobileGap = state.gap === 'gap8' ? 'gap-8' : 'gap-3';
+                const mediumGap = state.gap === 'responsiveGap' ? 'gap-6' : mobileGap;
+                const mobilePadding = state.padding === 'p10' ? 'p-10' : 'p-4';
+                const mediumPadding = state.padding === 'responsivePadding' ? 'p-8' : mobilePadding;
+                const device = (label, widthClass, cols, flow, gap, padding) => `
+                    <div class="${widthClass} rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                        <div class="mb-3 flex items-center justify-between">
+                            <span class="text-[10px] uppercase tracking-widest font-black text-sky-700">${label}</span>
+                            <span class="text-[10px] font-bold text-slate-400">${widthClass.includes('max-w-[260px]') ? 'base' : 'md'}</span>
+                        </div>
+                        <section class="${padding} rounded-xl bg-slate-100 transition-all">
+                            <div class="grid ${cols} ${gap}">
+                                <article class="rounded-lg bg-sky-500 p-3 text-[11px] font-black text-white">Kartu 1</article>
+                                <article class="rounded-lg bg-indigo-500 p-3 text-[11px] font-black text-white">Kartu 2</article>
+                            </div>
+                            <div class="mt-4 flex ${flow} ${gap} rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="h-12 w-16 shrink-0 rounded-lg bg-slate-300"></div>
+                                <div class="min-w-0">
+                                    <div class="h-3 w-24 rounded bg-slate-800"></div>
+                                    <div class="mt-2 h-2 w-32 rounded bg-slate-300"></div>
+                                </div>
+                            </div>
+                        </section>
                     </div>
-                </div>
-                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    ${choices.map((choice) => `
-                        <button type="button" onclick="selectAnswer(${item.id}, '${choice}', this)" class="choice-card text-center px-3 py-3 rounded-xl border border-adaptive bg-white/70 dark:bg-black/20 hover:border-sky-400 transition text-xs font-black text-slate-700 dark:text-slate-200">${choice}</button>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function selectAnswer(qid, letter, btn) {
-        if(activityCompleted) return;
-        selectedAnswers[qid] = letter;
-        const wrapper = btn.closest('[data-q]');
-        wrapper.querySelectorAll('.choice-card').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+                `;
+                return `
+                    <div class="grid w-full gap-4 lg:grid-cols-2">
+                        ${device('Layar Kecil', 'max-w-[260px]', mobileCols, mobileFlow, mobileGap, mobilePadding)}
+                        ${device('Layar Sedang', 'max-w-[420px]', mediumCols, mediumFlow, mediumGap, mediumPadding)}
+                    </div>
+                `;
+            }
+        });
     }
 
     async function submitActivity() {
         if(activityCompleted) return;
         const result = document.getElementById('activityResult');
-        if(Object.keys(selectedAnswers).length < activityItems.length) {
-            result.innerText = 'Lengkapi semua jawaban terlebih dahulu.';
-            result.className = 'text-xs text-rose-600 dark:text-rose-400 mt-2 leading-relaxed';
-            document.getElementById('responsiveActivityList').classList.add('shake');
-            setTimeout(() => document.getElementById('responsiveActivityList').classList.remove('shake'), 400);
-            return;
-        }
-        let score = 0;
-        activityItems.forEach(item => {
-            const wrapper = document.querySelector(`[data-q="${item.id}"]`);
-            const buttons = wrapper.querySelectorAll('.choice-card');
-            buttons.forEach(btn => {
-                btn.classList.remove('selected','correct','wrong');
-                if(btn.textContent.trim() === item.answer) btn.classList.add('correct');
-                if(selectedAnswers[item.id] === btn.textContent.trim() && selectedAnswers[item.id] !== item.answer) btn.classList.add('wrong');
-            });
-            const explain = wrapper.querySelector('.explain');
-            explain.classList.remove('hidden');
-            explain.innerText = item.explain;
-            if(selectedAnswers[item.id] === item.answer) score++;
-        });
-        document.getElementById('activityScoreLabel').innerText = `${score}/${activityItems.length}`;
-        if(score >= 3) {
-            result.innerText = `Skor ${score}/4. Aktivitas valid dan progress disimpan.`;
+        const check = activityWidget?.check();
+        if(!check) return;
+
+        document.getElementById('activityScoreLabel').innerText = `${check.score}/${check.total}`;
+        if(check.passed) {
+            result.innerText = `Skor ${check.score}/${check.total}. Aktivitas valid dan progress disimpan.`;
             result.className = 'text-xs text-emerald-600 dark:text-emerald-400 mt-2 leading-relaxed font-bold';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/4. Minimal 3 benar. Pelajari pembahasan, baca ulang breakpoint responsif, lalu ulangi aktivitas.`;
+            result.innerText = `Skor ${check.score}/${check.total}. Minimal 3 benar. Ulangi aktivitas setelah meninjau materi responsive.`;
             result.className = 'text-xs text-rose-600 dark:text-rose-400 mt-2 leading-relaxed font-bold';
+            document.getElementById('responsiveActivityList').classList.add('shake');
+            setTimeout(() => document.getElementById('responsiveActivityList').classList.remove('shake'), 400);
         }
     }
 
     function resetActivity() {
         if(activityCompleted) return;
         selectedAnswers = {};
-        renderActivity();
+        activityWidget?.reset();
         document.getElementById('activityScoreLabel').innerText = '0/4';
         const result = document.getElementById('activityResult');
-        result.innerText = 'Pilih jawaban pada setiap kebutuhan.';
+        result.innerText = 'Pilih pengaturan responsive sesuai kebutuhan layout!';
         result.className = 'text-xs text-muted mt-2 leading-relaxed';
     }
 
     function lockActivityUI() {
+        activityWidget?.lock();
         const overlay = document.getElementById('lockOverlay');
         if(overlay) overlay.classList.remove('hidden');
         const btn = document.getElementById('submitActivityBtn');

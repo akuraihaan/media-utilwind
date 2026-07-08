@@ -20,7 +20,10 @@ class LabSession extends Model
     'expires_at', 
     'current_code', 
     'current_score',
-    'completed_steps' // <--- TAMBAHKAN INI
+    'completed_steps', // <--- TAMBAHKAN INI
+    'save_count',
+    'validation_attempt_count',
+    'code_change_count',
 ];
 
     public function lab()

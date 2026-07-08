@@ -96,6 +96,8 @@
     .choice-card.wrong { border-color: #f43f5e; background: rgba(244,63,94,.10); }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
@@ -341,15 +343,15 @@
                                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 5a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9 0a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2h-3a2 2 0 01-2-2V5zM4 16a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm9 0a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2h-3a2 2 0 01-2-2v-3z"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 2.3: Cocokkan Class Grid</h2>
-                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Perhatikan kebutuhan layout pada tabel. Pilih huruf jawaban A sampai G berdasarkan pilihan class yang tersedia. Aktivitas dianggap selesai jika skor minimal 4 dari 5.</p>
+                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 2.3: Grid Builder</h2>
+                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih pengaturan Grid yang sesuai dengan kebutuhan layout, lalu amati perubahan preview secara langsung!</p>
                                 </div>
                             </div>
 
                             <div id="activityPanel" class="space-y-5 relative z-10">
                                 <div id="quizContainer" class="space-y-5"></div>
                                 <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-4">
-                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih jawaban pada setiap kasus.</div>
+                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih pengaturan grid sesuai kebutuhan layout!</div>
                                     <div class="flex gap-2">
                                         <button onclick="resetActivity()" class="px-5 py-3 rounded-xl border border-adaptive text-xs font-bold hover:bg-slate-100 dark:hover:bg-white/10 transition">Ulangi</button>
                                         <button id="submitActivityBtn" onclick="submitActivity()" class="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 transition">Periksa Jawaban</button>
@@ -396,29 +398,75 @@
     const ACTIVITY_LESSON_ID = 40;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     let selectedAnswers = {};
+    let activityWidget = null;
 
-    const choices = [
-        { letter: 'A', className: 'col-span-2', note: 'Membuat satu item menempati dua kolom.' },
-        { letter: 'B', className: 'text-center', note: 'Mengatur teks ke tengah, bukan layout grid.' },
-        { letter: 'C', className: 'grid', note: 'Mengaktifkan layout Grid pada container.' },
-        { letter: 'D', className: 'col-span-full', note: 'Membuat satu item menempati seluruh kolom.' },
-        { letter: 'E', className: 'gap-4', note: 'Memberi jarak antar item grid.' },
-        { letter: 'F', className: 'flex-col', note: 'Class Flexbox, bukan class utama Grid.' },
-        { letter: 'G', className: 'grid-cols-3', note: 'Membagi container menjadi tiga kolom.' }
-    ];
-
-    const questions = [
-        { id: 1, need: 'Mengaktifkan layout Grid pada kartu.', answer: 'C', explain: 'Class grid dipasang pada container untuk mengaktifkan sistem Grid.' },
-        { id: 2, need: 'Membuat susunan menjadi tiga kolom.', answer: 'G', explain: 'Class grid-cols-3 membagi container Grid menjadi tiga kolom.' },
-        { id: 3, need: 'Memberi jarak antar kartu agar tidak menempel.', answer: 'E', explain: 'Class gap-4 memberi jarak antar kartu secara horizontal dan vertikal.' },
-        { id: 4, need: 'Membuat Kartu Utama menempati dua kolom.', answer: 'A', explain: 'Class col-span-2 dipasang pada item agar menempati dua kolom.' },
-        { id: 5, need: 'Membuat satu kartu menempati seluruh kolom.', answer: 'D', explain: 'Class col-span-full membuat item membentang memenuhi seluruh kolom grid.' }
+    const gridBuilderGroups = [
+        {
+            id: 'mode',
+            label: 'Mode layout',
+            desc: 'Container kartu perlu memakai sistem Grid.',
+            correct: 'grid',
+            default: 'block',
+            options: [
+                { id: 'block', label: 'Block biasa', classText: 'block', sample: '#e2e8f0' },
+                { id: 'grid', label: 'Grid container', classText: 'grid', sample: '#cffafe' },
+                { id: 'flex', label: 'Flex container', classText: 'flex', sample: '#ede9fe' }
+            ]
+        },
+        {
+            id: 'columns',
+            label: 'Jumlah kolom',
+            desc: 'Susunan kartu diminta menjadi tiga kolom.',
+            correct: 'three',
+            default: 'one',
+            options: [
+                { id: 'one', label: 'Satu kolom', classText: 'grid-cols-1', sample: '#e0f2fe' },
+                { id: 'two', label: 'Dua kolom', classText: 'grid-cols-2', sample: '#dbeafe' },
+                { id: 'three', label: 'Tiga kolom', classText: 'grid-cols-3', sample: '#ccfbf1' }
+            ]
+        },
+        {
+            id: 'gap',
+            label: 'Jarak antar kartu',
+            desc: 'Setiap kartu perlu memiliki jarak yang jelas.',
+            correct: 'gap4',
+            default: 'gap0',
+            options: [
+                { id: 'gap0', label: 'Tanpa gap', classText: 'gap-0', sample: '#fee2e2' },
+                { id: 'gap2', label: 'Gap kecil', classText: 'gap-2', sample: '#fef3c7' },
+                { id: 'gap4', label: 'Gap sedang', classText: 'gap-4', sample: '#dcfce7' }
+            ]
+        },
+        {
+            id: 'mainSpan',
+            label: 'Kartu utama',
+            desc: 'Kartu utama perlu menempati dua kolom.',
+            correct: 'span2',
+            default: 'span1',
+            options: [
+                { id: 'span1', label: 'Satu kolom', classText: 'col-span-1', sample: '#e2e8f0' },
+                { id: 'span2', label: 'Dua kolom', classText: 'col-span-2', sample: '#bae6fd' },
+                { id: 'full', label: 'Semua kolom', classText: 'col-span-full', sample: '#ddd6fe' }
+            ]
+        },
+        {
+            id: 'summarySpan',
+            label: 'Kartu ringkasan',
+            desc: 'Kartu ringkasan perlu memenuhi seluruh baris grid.',
+            correct: 'full',
+            default: 'span1',
+            options: [
+                { id: 'span1', label: 'Satu kolom', classText: 'col-span-1', sample: '#e2e8f0' },
+                { id: 'span2', label: 'Dua kolom', classText: 'col-span-2', sample: '#bae6fd' },
+                { id: 'full', label: 'Semua kolom', classText: 'col-span-full', sample: '#ccfbf1' }
+            ]
+        }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initVisualEffects();
-        renderActivity();
+        initGridActivity();
         updateProgressUI(false);
         if (activityCompleted) {
             lockActivityUI();
@@ -604,118 +652,71 @@
         }
     }
 
-    function renderActivity() {
-        const container = document.getElementById('quizContainer');
-        if(!container) return;
-        container.innerHTML = `
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
-                <div class="lg:col-span-3 card-adaptive border border-adaptive rounded-2xl overflow-hidden">
-                    <div class="p-4 border-b border-adaptive bg-cyan-50/70 dark:bg-cyan-500/10">
-                        <h3 class="text-sm font-black text-heading">Tabel Kebutuhan Layout</h3>
-                        <p class="text-xs text-muted mt-1">Pilih huruf jawaban pada setiap baris.</p>
-                    </div>
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-xs md:text-sm">
-                            <thead class="text-[10px] uppercase tracking-widest text-muted bg-slate-100 dark:bg-black/20">
-                                <tr>
-                                    <th class="p-3 w-12">No.</th>
-                                    <th class="p-3 min-w-[260px]">Kebutuhan</th>
-                                    <th class="p-3 min-w-[220px]">Jawaban</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${questions.map(q => `
-                                    <tr class="border-t border-adaptive" data-q="${q.id}">
-                                        <td class="p-3 font-black text-cyan-600 dark:text-cyan-400">${q.id}</td>
-                                        <td class="p-3 text-heading font-semibold leading-relaxed">${q.need}</td>
-                                        <td class="p-3">
-                                            <div class="flex flex-wrap gap-2">
-                                                ${choices.map(c => `
-                                                    <button type="button" onclick="selectAnswer(${q.id}, '${c.letter}', this)" class="choice-card w-9 h-9 rounded-lg border border-adaptive bg-white/70 dark:bg-black/20 hover:border-cyan-400 transition text-xs font-black text-slate-700 dark:text-slate-200">${c.letter}</button>
-                                                `).join('')}
-                                            </div>
-                                            <p class="explain hidden text-[11px] text-muted mt-3 leading-relaxed"></p>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="lg:col-span-2 card-adaptive border border-adaptive rounded-2xl p-5">
-                    <h3 class="text-sm font-black text-heading mb-4">Pilihan Class</h3>
-                    <div class="space-y-2">
-                        ${choices.map(c => `
-                            <div class="flex items-start gap-3 rounded-xl border border-adaptive bg-white/60 dark:bg-black/20 p-3">
-                                <div class="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 flex items-center justify-center font-black text-xs shrink-0">${c.letter}</div>
-                                <div>
-                                    <code class="text-xs font-bold text-heading">${c.className}</code>
-                                    <p class="text-[11px] text-muted leading-relaxed mt-1">${c.note}</p>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    function selectAnswer(qid, letter, btn) {
-        if(activityCompleted) return;
-        selectedAnswers[qid] = letter;
-        const wrapper = btn.closest('[data-q]');
-        wrapper.querySelectorAll('.choice-card').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+    function initGridActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#quizContainer',
+            badge: 'Grid Builder',
+            title: 'Bangun susunan kartu grid',
+            description: 'Pilih class sesuai kebutuhan layout, lalu amati preview yang berubah langsung!',
+            previewLabel: 'Preview Grid',
+            minScore: 4,
+            groups: gridBuilderGroups,
+            renderPreview: (state, selected) => {
+                const mode = selected.mode?.classText || 'block';
+                const columns = selected.columns?.classText || '';
+                const gap = selected.gap?.classText || '';
+                const mainSpan = selected.mainSpan?.classText || 'col-span-1';
+                const summarySpan = selected.summarySpan?.classText || 'col-span-1';
+                const containerClass = [mode, mode === 'grid' ? columns : '', gap].filter(Boolean).join(' ');
+                return `
+                    <section class="w-full rounded-2xl bg-slate-100 p-4 text-slate-900">
+                        <div class="${containerClass} transition-all duration-300">
+                            <article class="${mainSpan} min-h-24 rounded-xl border border-cyan-300 bg-cyan-100 p-4 flex flex-col justify-center">
+                                <span class="text-[10px] uppercase tracking-widest font-black text-cyan-700">Kartu Utama</span>
+                                <strong class="mt-1 text-sm">Area konten prioritas</strong>
+                            </article>
+                            <article class="min-h-24 rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-center text-xs font-bold">Kartu 2</article>
+                            <article class="min-h-24 rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-center text-xs font-bold">Kartu 3</article>
+                            <article class="${summarySpan} min-h-20 rounded-xl border border-emerald-300 bg-emerald-100 p-4 flex items-center justify-center text-xs font-black text-emerald-800">Ringkasan</article>
+                        </div>
+                    </section>
+                `;
+            }
+        });
     }
 
     async function submitActivity() {
         if(activityCompleted) return;
         const result = document.getElementById('activityResult');
-        if(Object.keys(selectedAnswers).length < questions.length) {
-            result.innerText = 'Lengkapi semua jawaban terlebih dahulu.';
-            result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
-            document.getElementById('activityPanel').classList.add('shake');
-            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
-            return;
-        }
-        let score = 0;
-        questions.forEach(q => {
-            const wrapper = document.querySelector(`[data-q="${q.id}"]`);
-            const buttons = wrapper.querySelectorAll('.choice-card');
-            buttons.forEach(btn => {
-                btn.classList.remove('selected','correct','wrong');
-                const letter = btn.textContent.trim();
-                if(letter === q.answer) btn.classList.add('correct');
-                if(selectedAnswers[q.id] === letter && letter !== q.answer) btn.classList.add('wrong');
-            });
-            const explain = wrapper.querySelector('.explain');
-            explain.classList.remove('hidden');
-            explain.innerText = q.explain;
-            if(selectedAnswers[q.id] === q.answer) score++;
-        });
-        if(score >= 4) {
-            result.innerText = `Skor ${score}/5. Aktivitas valid dan progress disimpan.`;
+        const check = activityWidget?.check();
+        if(!check) return;
+
+        if(check.passed) {
+            result.innerText = `Skor ${check.score}/${check.total}. Aktivitas valid dan progress disimpan.`;
             result.className = 'text-sm font-bold text-emerald-600 dark:text-emerald-400';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/5. Minimal 4 benar. Pelajari pembahasan, baca ulang bagian Grid, lalu ulangi aktivitas.`;
+            result.innerText = `Skor ${check.score}/${check.total}. Minimal 4 benar. Ulangi aktivitas setelah meninjau materi Grid.`;
             result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
+            document.getElementById('activityPanel').classList.add('shake');
+            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
         }
     }
 
     function resetActivity() {
         if(activityCompleted) return;
         selectedAnswers = {};
-        renderActivity();
+        activityWidget?.reset();
         const result = document.getElementById('activityResult');
-        result.innerText = 'Pilih jawaban pada setiap kasus.';
+        result.innerText = 'Pilih pengaturan grid sesuai kebutuhan layout!';
         result.className = 'text-sm font-bold text-muted';
     }
 
     function lockActivityUI() {
+        activityWidget?.lock();
         const overlay = document.getElementById('lockOverlay');
         if(overlay) overlay.classList.remove('hidden');
         const btn = document.getElementById('submitActivityBtn');

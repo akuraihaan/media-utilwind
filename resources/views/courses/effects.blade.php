@@ -91,6 +91,8 @@
     .choice-card.wrong { border-color: #f43f5e; background: rgba(244,63,94,.10); }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
     <div class="fixed inset-0 -z-50 pointer-events-none">
         <div id="animated-bg" class="absolute inset-0 opacity-60 transition-opacity"></div>
@@ -317,15 +319,15 @@
                                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16M8 4v16M16 4v16"/></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 3.4: Pilih Class Tampilan</h2>
-                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih class Tailwind CSS yang sesuai dengan kebutuhan tampilan. Aktivitas selesai jika skor minimal 4 dari 5.</p>
+                                    <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight">Aktivitas 3.4: Effect Lab</h2>
+                                    <p class="text-muted text-sm leading-relaxed mt-2 max-w-3xl text-justify">Pilih efek bayangan, hover, transisi, gerak, dan durasi, lalu amati respons kartu!</p>
                                 </div>
                             </div>
 
                             <div id="activityPanel" class="space-y-5 relative z-10">
                                 <div id="quizContainer" class="space-y-5"></div>
                                 <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-4">
-                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih jawaban pada setiap kebutuhan.</div>
+                                    <div id="activityResult" class="text-sm font-bold text-muted">Pilih pengaturan efek visual yang sesuai kebutuhan!</div>
                                     <div class="flex gap-2">
                                         <button onclick="resetActivity()" class="px-5 py-3 rounded-xl border border-adaptive text-xs font-bold hover:bg-slate-100 dark:hover:bg-white/10 transition">Ulangi</button>
                                         <button id="submitActivityBtn" onclick="submitActivity()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20 transition">Periksa Jawaban</button>
@@ -371,22 +373,23 @@
     const ACTIVITY_LESSON_ID = 65;
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
     let selectedAnswers = {};
+    let activityWidget = null;
 
     let borderEnabled = true;
     let borderColor = 'border-slate-300';
 
     const activityQuestions = [
-        { id: 1, need: 'Kotak informasi perlu memiliki garis tepi.', options: ['border', 'border-slate-300', 'shadow-md'], answer: 0, explain: 'Class border digunakan untuk membuat garis tepi dasar pada elemen.' },
-        { id: 2, need: 'Garis tepi kartu perlu diberi warna abu-abu.', options: ['border', 'border-slate-300', 'bg-slate-300'], answer: 1, explain: 'Class border-slate-300 memberi warna abu-abu pada garis tepi.' },
-        { id: 3, need: 'Tombol perlu memiliki sudut melengkung.', options: ['rounded-lg', 'border', 'shadow-lg'], answer: 0, explain: 'Class rounded-lg membuat sudut tombol melengkung.' },
-        { id: 4, need: 'Kartu perlu terlihat lebih menonjol dari latar.', options: ['shadow-md', 'rounded-md', 'border-slate-300'], answer: 0, explain: 'Class shadow-md memberi bayangan sedang agar kartu terlihat menonjol.' },
-        { id: 5, need: 'Kartu perlu memiliki latar putih, sudut melengkung, dan bayangan sedang.', options: ['bg-white rounded-xl shadow-md', 'bg-white border-slate-300 rounded-xl', 'bg-white shadow-none rounded-xl'], answer: 0, explain: 'Kombinasi bg-white rounded-xl shadow-md membuat kartu putih dengan sudut melengkung dan bayangan sedang.' }
+        { id: 1, need: 'Kotak informasi perlu memiliki garis tepi.', options: ['border', 'border-slate-300', 'shadow-md'], answer: 0 },
+        { id: 2, need: 'Garis tepi kartu perlu diberi warna abu-abu.', options: ['border', 'border-slate-300', 'bg-slate-300'], answer: 1 },
+        { id: 3, need: 'Tombol perlu memiliki sudut melengkung.', options: ['rounded-lg', 'border', 'shadow-lg'], answer: 0 },
+        { id: 4, need: 'Kartu perlu terlihat lebih menonjol dari latar.', options: ['shadow-md', 'rounded-md', 'border-slate-300'], answer: 0 },
+        { id: 5, need: 'Kartu perlu memiliki latar putih, sudut melengkung, dan bayangan sedang.', options: ['bg-white rounded-xl shadow-md', 'bg-white border-slate-300 rounded-xl', 'bg-white shadow-none rounded-xl'], answer: 0 }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
         initSidebarScroll();
         initVisualEffects();
-        renderActivity();
+        initEffectsActivity();
         updateProgressUI(false);
         if (activityCompleted) {
             lockActivityUI();
@@ -559,7 +562,6 @@
                     <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-xs shrink-0 border border-indigo-500/20">${qi+1}</div>
                     <div>
                         <h4 class="text-sm font-bold text-heading leading-relaxed">${q.need}</h4>
-                        <p class="explain hidden text-xs text-muted mt-2 leading-relaxed"></p>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -583,49 +585,114 @@
         btn.innerText = '✓ ' + btn.innerText.replace(/^✓\s|^□\s/, '');
     }
 
+    function initEffectsActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#quizContainer',
+            badge: 'Effect Lab',
+            title: 'Rancang efek interaksi kartu',
+            description: 'Pilih efek visual yang membuat kartu terasa responsif tanpa berlebihan!',
+            previewLabel: 'Preview Efek',
+            minScore: 4,
+            groups: [
+                {
+                    id: 'baseShadow',
+                    label: 'Bayangan awal',
+                    desc: 'Kartu perlu kedalaman sebelum disentuh.',
+                    correct: 'base',
+                    default: 'none',
+                    options: [
+                        { id: 'none', label: 'Datar', classText: 'shadow-none' },
+                        { id: 'base', label: 'Bayangan ringan', classText: 'shadow-md' },
+                        { id: 'heavy', label: 'Terlalu berat', classText: 'shadow-2xl' }
+                    ]
+                },
+                {
+                    id: 'hoverShadow',
+                    label: 'Efek hover bayangan',
+                    desc: 'Saat diarahkan, kartu boleh terlihat lebih aktif.',
+                    correct: 'lift',
+                    default: 'none',
+                    options: [
+                        { id: 'none', label: 'Tidak berubah', classText: 'hover:shadow-none' },
+                        { id: 'lift', label: 'Lebih menonjol', classText: 'hover:shadow-xl' },
+                        { id: 'fade', label: 'Makin datar', classText: 'hover:shadow-sm' }
+                    ]
+                },
+                {
+                    id: 'transition',
+                    label: 'Transisi',
+                    desc: 'Perubahan hover perlu terasa halus.',
+                    correct: 'smooth',
+                    default: 'none',
+                    options: [
+                        { id: 'none', label: 'Tanpa transisi', classText: '' },
+                        { id: 'smooth', label: 'Transisi halus', classText: 'transition-all' },
+                        { id: 'color', label: 'Hanya warna', classText: 'transition-colors' }
+                    ]
+                },
+                {
+                    id: 'motion',
+                    label: 'Gerak hover',
+                    desc: 'Gerak kecil membuat kartu terasa interaktif.',
+                    correct: 'raise',
+                    default: 'still',
+                    options: [
+                        { id: 'still', label: 'Diam', classText: '' },
+                        { id: 'raise', label: 'Naik sedikit', classText: 'hover:-translate-y-1' },
+                        { id: 'spin', label: 'Terlalu ramai', classText: 'hover:rotate-3' }
+                    ]
+                },
+                {
+                    id: 'duration',
+                    label: 'Durasi efek',
+                    desc: 'Durasi sedang membuat efek tidak terasa kaku.',
+                    correct: 'medium',
+                    default: 'instant',
+                    options: [
+                        { id: 'instant', label: 'Cepat sekali', classText: 'duration-75' },
+                        { id: 'medium', label: 'Sedang', classText: 'duration-300' },
+                        { id: 'slow', label: 'Terlalu lambat', classText: 'duration-1000' }
+                    ]
+                }
+            ],
+            renderPreview: (state, selected) => `
+                <section class="w-full min-h-[300px] bg-slate-100 p-6 grid place-items-center">
+                    <article class="max-w-sm bg-white border border-slate-200 rounded-2xl p-6 ${selected.baseShadow.classText} ${selected.hoverShadow.classText} ${selected.transition.classText} ${selected.motion.classText} ${selected.duration.classText}">
+                        <p class="text-sm text-indigo-600 font-semibold">Interaktif</p>
+                        <h1 class="mt-1 text-2xl font-bold text-slate-900">Kartu Efek Visual</h1>
+                        <p class="mt-3 text-slate-600">Arahkan kursor ke kartu untuk mengamati efek hover.</p>
+                        <button class="mt-5 px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold">Coba Hover</button>
+                    </article>
+                </section>
+            `
+        });
+    }
+
     async function submitActivity() {
         if(activityCompleted) return;
         const result = document.getElementById('activityResult');
-        if(Object.keys(selectedAnswers).length < activityQuestions.length) {
-            result.innerText = 'Lengkapi semua jawaban terlebih dahulu.';
-            result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
-            document.getElementById('activityPanel').classList.add('shake');
-            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
-            return;
-        }
-        let score = 0;
-        activityQuestions.forEach(q => {
-            const wrapper = document.querySelector(`[data-q="${q.id}"]`);
-            const buttons = wrapper.querySelectorAll('.choice-card');
-            buttons.forEach((btn, idx) => {
-                btn.classList.remove('selected','correct','wrong');
-                if(idx === q.answer) btn.classList.add('correct');
-                if(selectedAnswers[q.id] === idx && idx !== q.answer) btn.classList.add('wrong');
-            });
-            const explain = wrapper.querySelector('.explain');
-            explain.classList.remove('hidden');
-            explain.innerText = q.explain;
-            if(selectedAnswers[q.id] === q.answer) score++;
-        });
-        if(score >= 4) {
-            result.innerText = `Skor ${score}/5. Aktivitas valid dan progress disimpan.`;
+        const check = activityWidget?.check();
+        if(!check) return;
+        if(check.passed) {
+            result.innerText = `Skor ${check.score}/${check.total}. Aktivitas valid dan progress disimpan.`;
             result.className = 'text-sm font-bold text-emerald-600 dark:text-emerald-400';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI();
             unlockNextChapter();
         } else {
-            result.innerText = `Skor ${score}/5. Minimal 4 benar. Pelajari pembahasan, baca ulang bagian bayangan dan efek visual, lalu ulangi aktivitas.`;
+            result.innerText = `Skor ${check.score}/${check.total}. Minimal 4 benar. Ubah pengaturan effect lab sesuai kebutuhan.`;
             result.className = 'text-sm font-bold text-rose-600 dark:text-rose-400';
+            document.getElementById('activityPanel').classList.add('shake');
+            setTimeout(() => document.getElementById('activityPanel').classList.remove('shake'), 400);
         }
     }
 
     function resetActivity() {
         if(activityCompleted) return;
-        selectedAnswers = {};
-        renderActivity();
+        if(activityWidget) activityWidget.reset();
         const result = document.getElementById('activityResult');
-        result.innerText = 'Pilih jawaban pada setiap kebutuhan.';
+        result.innerText = 'Pilih pengaturan efek visual yang sesuai kebutuhan!';
         result.className = 'text-sm font-bold text-muted';
     }
 
@@ -634,6 +701,7 @@
         if(overlay) overlay.classList.remove('hidden');
         const btn = document.getElementById('submitActivityBtn');
         if(btn) { btn.disabled = true; btn.innerText = 'Aktivitas Selesai'; }
+        if(activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

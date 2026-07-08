@@ -112,6 +112,8 @@
     .activity-option.wrong { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-indigo-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -478,7 +480,7 @@
                             </div>
 
                             <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
-                                <p>Aktivitas ini menguji pemahaman tentang konsep dasar Tailwind CSS, fungsi utility class, dan cara membaca gabungan class pada elemen HTML. Pilih jawaban yang paling tepat.</p>
+                                <p>Aktivitas ini menggunakan class composer. Pilih chip utility yang sesuai, lalu amati perubahan kartu pada preview!</p>
                             </div>
 
                             <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
@@ -491,8 +493,8 @@
                                 </div>
 
                                 <div class="bg-purple-600/95 dark:bg-purple-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Jawab semua soal, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <div class="text-xs font-bold uppercase tracking-widest">Class Composer</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih chip utility untuk membentuk kartu produk, lalu tekan tombol periksa!</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
@@ -556,13 +558,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> Utility-first berarti tampilan dibangun dari class kecil yang masing-masing memiliki fungsi spesifik.</p>
-                                        <p><strong>2.</strong> <code>p-6</code> digunakan untuk memberi padding atau ruang bagian dalam pada elemen.</p>
-                                        <p><strong>3.</strong> <code>bg-blue-600</code> memberi latar biru, <code>text-white</code> memberi teks putih, dan <code>rounded-lg</code> membuat sudut melengkung.</p>
-                                        <p><strong>4.</strong> Pada pendekatan Tailwind, tampilan disusun dari utility class yang sudah tersedia.</p>
-                                        <p><strong>5.</strong> <code>shadow-md</code> menunjukkan elemen memiliki bayangan tingkat sedang.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Gunakan perubahan preview sebagai bahan refleksi sebelum melanjutkan.</p>
                                     </div>
                                 </div>
                             </div>
@@ -607,6 +606,7 @@
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
 
     const activityAnswers = {};
+    let activityWidget = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         initScrollSpy();
@@ -616,6 +616,7 @@
         setCompareMode('css');
         explainUtility('bg-blue-600');
         updateCardBuilder();
+        initTailwindClassActivity();
 
         if (activityCompleted) {
             lockActivityUI();
@@ -804,50 +805,113 @@
         btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
     }
 
+    function initTailwindClassActivity() {
+        activityWidget = CourseActivityKit.mountChoiceBuilderActivity({
+            root: '#activityForm',
+            badge: 'Class Composer',
+            title: 'Rancang kartu produk dengan utility class',
+            description: 'Pilih chip utility yang paling sesuai untuk membentuk kartu produk yang rapi!',
+            previewLabel: 'Preview Kartu',
+            minScore: 4,
+            groups: [
+                {
+                    id: 'surface',
+                    label: 'Permukaan kartu',
+                    desc: 'Kartu perlu kontras dari latar halaman.',
+                    correct: 'card',
+                    default: 'plain',
+                    options: [
+                        { id: 'plain', label: 'Tanpa permukaan', classText: 'border', desc: 'Kartu masih terlalu datar.' },
+                        { id: 'card', label: 'Kartu putih dengan border', classText: 'bg-white border border-slate-200', desc: 'Permukaan kartu terlihat jelas.', color: '#ffffff' },
+                        { id: 'dark', label: 'Kartu gelap', classText: 'bg-slate-900 text-white', desc: 'Kontras kuat tetapi kurang sesuai dengan contoh materi.', color: '#0f172a' }
+                    ]
+                },
+                {
+                    id: 'spacing',
+                    label: 'Ruang dalam kartu',
+                    desc: 'Isi kartu tidak boleh menempel pada tepi.',
+                    correct: 'roomy',
+                    default: 'tight',
+                    options: [
+                        { id: 'tight', label: 'Terlalu rapat', classText: 'p-2' },
+                        { id: 'medium', label: 'Sedang', classText: 'p-4' },
+                        { id: 'roomy', label: 'Nyaman', classText: 'p-6' }
+                    ]
+                },
+                {
+                    id: 'shape',
+                    label: 'Sudut kartu',
+                    desc: 'Kartu produk perlu terlihat lembut.',
+                    correct: 'soft',
+                    default: 'sharp',
+                    options: [
+                        { id: 'sharp', label: 'Tajam', classText: 'rounded-none' },
+                        { id: 'soft', label: 'Melengkung', classText: 'rounded-xl' },
+                        { id: 'pill', label: 'Sangat bulat', classText: 'rounded-full' }
+                    ]
+                },
+                {
+                    id: 'depth',
+                    label: 'Kedalaman visual',
+                    desc: 'Kartu perlu sedikit terangkat dari latar.',
+                    correct: 'shadow',
+                    default: 'flat',
+                    options: [
+                        { id: 'flat', label: 'Tanpa bayangan', classText: 'shadow-none' },
+                        { id: 'shadow', label: 'Bayangan sedang', classText: 'shadow-md' },
+                        { id: 'heavy', label: 'Bayangan berat', classText: 'shadow-2xl' }
+                    ]
+                },
+                {
+                    id: 'button',
+                    label: 'Tombol utama',
+                    desc: 'Aksi utama butuh warna kuat dan teks kontras.',
+                    correct: 'primary',
+                    default: 'muted',
+                    options: [
+                        { id: 'muted', label: 'Tombol sekunder', classText: 'bg-slate-100 text-slate-700', color: '#f1f5f9' },
+                        { id: 'primary', label: 'Tombol utama', classText: 'bg-blue-600 text-white', color: '#2563eb' },
+                        { id: 'warning', label: 'Tombol peringatan', classText: 'bg-amber-400 text-slate-950', color: '#fbbf24' }
+                    ]
+                }
+            ],
+            renderPreview: (state, selected) => `
+                <section class="w-full min-h-[300px] bg-slate-100 p-6 grid place-items-center">
+                    <article class="max-w-sm ${selected.surface.classText} ${selected.spacing.classText} ${selected.shape.classText} ${selected.depth.classText}">
+                        <p class="text-sm text-slate-500">Produk Pilihan</p>
+                        <h1 class="mt-1 text-2xl font-bold text-slate-900">Sepatu Harian</h1>
+                        <p class="mt-3 text-slate-600">Ringan, nyaman, dan cocok digunakan untuk aktivitas harian.</p>
+                        <button class="mt-5 px-4 py-3 rounded-lg font-bold ${selected.button.classText}">Simpan Data</button>
+                    </article>
+                </section>
+            `
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'b', q2:'c', q3:'a', q4:'d', q5:'b' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua soal terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        const percent = Math.round((result.score / result.total) * 100);
+        scoreLabel.innerText = `Skor: ${result.score}/${result.total} (${percent}%)`;
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
 
-        let score = 0;
-        Object.keys(correct).forEach((q, idx) => {
-            const question = document.querySelectorAll('.activity-question')[idx];
-            const options = question.querySelectorAll('.activity-option');
-            options.forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                const clickAttr = opt.getAttribute('onclick') || '';
-                if (clickAttr.includes(`'${correct[q]}'`)) opt.classList.add('correct');
-                if (clickAttr.includes(`'${activityAnswers[q]}'`) && activityAnswers[q] !== correct[q]) opt.classList.add('wrong');
-            });
-            if (activityAnswers[q] === correct[q]) score++;
-        });
-
-        const percent = Math.round((score / total) * 100);
-        scoreLabel.innerText = `Skor: ${score}/${total} (${percent}%)`;
-        document.getElementById('activity-analysis').classList.remove('hidden');
-
-        if (percent >= 80) {
-            status.innerText = 'Aktivitas berhasil. Pemahaman dasar Tailwind CSS sudah sesuai.';
+        if (result.passed) {
+            status.innerText = 'Aktivitas berhasil. Utility class sudah membentuk tampilan kartu sesuai kebutuhan.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             activityCompleted = true;
             lockActivityUI(false);
             unlockNextChapter();
         } else {
-            status.innerText = 'Skor belum cukup. Baca pembahasan, lalu perbaiki jawaban yang salah.';
+            status.innerText = 'Skor belum cukup. Ubah pilihan chip utility dan amati kembali preview.';
             status.className = 'text-xs font-bold text-orange-600 dark:text-orange-400';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
@@ -868,6 +932,7 @@
             b.disabled = true;
             b.classList.add('cursor-not-allowed');
         });
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

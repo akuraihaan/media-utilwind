@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Analitik Lab</title>
+    <title>Analitik Praktik Lab</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    
+
     {{-- RESOURCES --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -106,8 +106,6 @@
         .glass-card:hover { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
         .dark .glass-card:hover { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
         
-        .card-bg-gfx { position: absolute; inset: 0; overflow: hidden; border-radius: 1rem; pointer-events: none; z-index: 0; }
-
         /* --- INPUTS & NAV --- */
         .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: 0.3s; }
         .glass-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
@@ -165,8 +163,1226 @@
         .tooltip-cyan .tooltip-trigger:hover { background-color: #22d3ee; box-shadow: 0 0 15px rgba(6,182,212,0.8); }
         .tooltip-cyan .tooltip-content { border: 1px solid rgba(6,182,212,0.5); }
 
-        .modal-open { overflow: hidden; padding-right: 5px; } 
+        .modal-open { overflow: hidden; padding-right: 5px; }
+        [x-cloak] { display: none !important; }
     </style>
+
+    {{-- =========================================================================
+         PENYEMPURNAAN VISUAL ANALITIK LAB
+         Seluruh data dan mekanisme lama dipertahankan. Blok ini hanya
+         menata ulang hierarchy visual, kartu data, bento, dan interaksi gulir.
+         ========================================================================= --}}
+    <style>
+        :root {
+            --analytics-surface: rgba(255, 255, 255, .94);
+            --analytics-surface-soft: #f8fafc;
+            --analytics-border: rgba(148, 163, 184, .28);
+            --analytics-border-strong: rgba(99, 102, 241, .28);
+            --analytics-muted: #64748b;
+            --analytics-shadow: 0 16px 38px rgba(15, 23, 42, .065);
+            --analytics-shadow-hover: 0 20px 46px rgba(15, 23, 42, .10);
+            --analytics-accent: #4f46e5;
+            --analytics-accent-soft: #eef2ff;
+        }
+
+        .dark {
+            --analytics-surface: rgba(15, 23, 42, .88);
+            --analytics-surface-soft: rgba(30, 41, 59, .56);
+            --analytics-border: rgba(148, 163, 184, .15);
+            --analytics-border-strong: rgba(129, 140, 248, .34);
+            --analytics-muted: #94a3b8;
+            --analytics-shadow: 0 18px 42px rgba(2, 6, 23, .24);
+            --analytics-shadow-hover: 0 24px 52px rgba(2, 6, 23, .34);
+            --analytics-accent: #818cf8;
+            --analytics-accent-soft: rgba(99, 102, 241, .14);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        .smooth-analytics-scroll {
+            scroll-behavior: auto;
+            scroll-padding-top: 7.5rem;
+            overscroll-behavior-y: contain;
+            scrollbar-gutter: stable both-edges;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(99, 102, 241, .38) transparent;
+        }
+
+        .smooth-analytics-scroll:focus { outline: none; }
+
+        .smooth-analytics-scroll .glass-card {
+            background: var(--analytics-surface);
+            border-color: var(--analytics-border);
+            box-shadow: var(--analytics-shadow);
+            border-radius: 1.35rem;
+        }
+
+        .smooth-analytics-scroll .glass-card:hover {
+            border-color: var(--analytics-border-strong);
+            box-shadow: var(--analytics-shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .smooth-analytics-scroll .glass-card,
+        .smooth-analytics-scroll .glass-card *,
+        .smooth-analytics-scroll .glass-input,
+        .smooth-analytics-scroll button,
+        .smooth-analytics-scroll a {
+            transition-timing-function: cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .analytics-content-shell {
+            max-width: 84rem;
+            margin-inline: auto;
+            padding-bottom: 5rem;
+        }
+
+        .analytics-kpi-card {
+            min-height: 148px;
+            overflow: hidden !important;
+            border-left-width: 1px !important;
+            border-radius: 1.25rem !important;
+            padding: 1.25rem !important;
+            isolation: isolate;
+        }
+
+        .analytics-kpi-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 3px;
+            background: var(--analytics-accent);
+            opacity: .82;
+        }
+
+        .analytics-kpi-card.kpi-indigo { --analytics-accent: #6366f1; }
+        .analytics-kpi-card.kpi-emerald { --analytics-accent: #059669; }
+        .analytics-kpi-card.kpi-amber { --analytics-accent: #d97706; }
+        .analytics-kpi-card.kpi-cyan { --analytics-accent: #0891b2; }
+        .dark .analytics-kpi-card.kpi-indigo { --analytics-accent: #818cf8; }
+        .dark .analytics-kpi-card.kpi-emerald { --analytics-accent: #34d399; }
+        .dark .analytics-kpi-card.kpi-amber { --analytics-accent: #fbbf24; }
+        .dark .analytics-kpi-card.kpi-cyan { --analytics-accent: #67e8f9; }
+
+        .analytics-kpi-card h3 {
+            letter-spacing: -.035em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .analytics-kpi-card .tooltip-trigger {
+            width: 17px;
+            height: 17px;
+            color: var(--analytics-muted);
+            background: transparent !important;
+            box-shadow: none !important;
+            border-color: currentColor !important;
+            opacity: .72;
+        }
+
+        .analytics-kpi-card .tooltip-trigger:hover {
+            color: var(--analytics-accent);
+            opacity: 1;
+            transform: none;
+        }
+
+        .analytics-kpi-card .tooltip-content {
+            z-index: 2147483000;
+            border-color: var(--analytics-border);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, .18);
+        }
+
+        .analytics-section-heading {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+        }
+
+        .analytics-section-heading::before {
+            content: '';
+            width: .18rem;
+            height: 1rem;
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: var(--analytics-accent);
+        }
+
+        .class-insight-card {
+            min-height: 218px;
+            padding: 1.2rem !important;
+            border-left-width: 1px !important;
+        }
+
+        .class-insight-card .grid > div {
+            background: var(--analytics-surface-soft) !important;
+            border-color: var(--analytics-border) !important;
+            border-radius: .9rem;
+        }
+
+        .class-insight-card > .mt-4:last-child {
+            border-color: var(--analytics-border) !important;
+        }
+
+        .analytics-panel > div:first-child {
+            background: linear-gradient(115deg, var(--analytics-surface-soft), transparent) !important;
+            border-color: var(--analytics-border) !important;
+        }
+
+        .analytics-panel h3,
+        .analytics-panel h4 {
+            letter-spacing: -.02em;
+        }
+
+        .analytics-data-row {
+            background: var(--analytics-surface-soft) !important;
+            border-color: var(--analytics-border) !important;
+            border-radius: 1rem !important;
+        }
+
+        .analytics-data-row:hover {
+            border-color: var(--analytics-border-strong) !important;
+            transform: translateY(-1px);
+        }
+
+        .chart-surface {
+            background: linear-gradient(145deg, var(--analytics-surface-soft), transparent 72%);
+        }
+
+        .student-performance-card {
+            background: var(--analytics-surface-soft) !important;
+            border-color: var(--analytics-border) !important;
+            border-radius: 1rem !important;
+        }
+
+        .student-performance-card:hover {
+            border-color: var(--analytics-border-strong) !important;
+            background: var(--analytics-surface) !important;
+            transform: translateY(-1px);
+        }
+
+        .data-chip {
+            border: 1px solid var(--analytics-border);
+            background: var(--analytics-surface-soft);
+            border-radius: .65rem;
+        }
+
+        .page-context-subtitle {
+            color: var(--analytics-muted) !important;
+        }
+
+        .analytics-compact-control {
+            border-color: var(--analytics-border) !important;
+            background: var(--analytics-surface-soft) !important;
+            box-shadow: none !important;
+        }
+
+        .analytics-compact-control:hover {
+            border-color: var(--analytics-border-strong) !important;
+            background: var(--analytics-surface) !important;
+        }
+
+        .analytics-empty-state {
+            border-color: var(--analytics-border) !important;
+            background: var(--analytics-surface-soft) !important;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .smooth-analytics-scroll .glass-card:hover { transform: translateY(-2px); }
+            .analytics-data-row:hover,
+            .student-performance-card:hover { transform: translateY(-1px); }
+        }
+
+        @media (hover: none), (pointer: coarse) {
+            .smooth-analytics-scroll .glass-card:hover,
+            .analytics-data-row:hover,
+            .student-performance-card:hover { transform: none; }
+        }
+
+        @media (max-width: 767px) {
+            .smooth-analytics-scroll { scroll-padding-top: 6rem; }
+            .analytics-kpi-card { min-height: 132px; padding: 1rem !important; }
+            .class-insight-card { min-height: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .smooth-analytics-scroll { scroll-behavior: auto; }
+            .smooth-analytics-scroll .glass-card,
+            .smooth-analytics-scroll .glass-card *,
+            .smooth-analytics-scroll .glass-input,
+            .smooth-analytics-scroll button,
+            .smooth-analytics-scroll a {
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+            }
+        }
+
+        /* Tampilan ringkas: angka dan status menjadi fokus, narasi diminimalkan. */
+        .analytics-focus-bar {
+            overflow: hidden;
+            border: 1px solid var(--analytics-border);
+            border-radius: 1.35rem;
+            background: var(--analytics-surface);
+            box-shadow: var(--analytics-shadow);
+        }
+        .analytics-focus-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--analytics-border);
+        }
+        .analytics-focus-head p {
+            color: var(--analytics-muted);
+            font-size: .62rem;
+            font-weight: 900;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+        .analytics-focus-head h3 {
+            color: var(--text-main);
+            font-size: .9rem;
+            font-weight: 900;
+            letter-spacing: -.015em;
+        }
+        .analytics-focus-grid { display: grid; gap: 1px; background: var(--analytics-border); }
+        .analytics-focus-item {
+            min-width: 0;
+            padding: 1rem 1.2rem;
+            background: var(--analytics-surface);
+        }
+        .analytics-focus-label {
+            color: var(--analytics-muted);
+            font-size: .6rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+        .analytics-focus-value {
+            margin-top: .35rem;
+            color: var(--text-main);
+            font-size: 1.65rem;
+            font-weight: 900;
+            letter-spacing: -.055em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .analytics-focus-item h4 {
+            margin-top: .45rem;
+            overflow: hidden;
+            color: var(--text-main);
+            font-size: .88rem;
+            font-weight: 900;
+            line-height: 1.35;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .analytics-focus-item span {
+            display: block;
+            margin-top: .38rem;
+            overflow: hidden;
+            color: var(--analytics-muted);
+            font-size: .68rem;
+            font-weight: 750;
+            line-height: 1.35;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .focus-pass .analytics-focus-value { color: #059669; }
+        .focus-obstacle h4 { color: #be123c; }
+        .focus-action h4 { color: #0f766e; }
+        .dark .focus-pass .analytics-focus-value { color: #6ee7b7; }
+        .dark .focus-obstacle h4 { color: #fda4af; }
+        .dark .focus-action h4 { color: #67e8f9; }
+        .analytics-section-helper,
+        .analytics-class-caption { display: none !important; }
+        @media (min-width: 768px) {
+            .analytics-focus-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 639px) {
+            .analytics-focus-head { align-items: flex-start; flex-direction: column; gap: .3rem; }
+        }
+
+    </style>
+
+
+
+    {{-- =========================================================================
+         TOOLTIP DAN VISUALISASI RINGKAS ANALITIK
+         - Tooltip memakai portal global supaya tidak terpotong panel/overflow.
+         - Visual status dan interaksi memakai batang komposisi sederhana.
+         ========================================================================= --}}
+    <style>
+        .analytics-overview { display: grid; gap: 1rem; }
+        .analytics-overview-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+        .analytics-overview-head p { color: var(--analytics-accent); font-size: .64rem; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+        .analytics-overview-head h3 { margin-top: .2rem; color: var(--text-main); font-size: 1.25rem; font-weight: 900; letter-spacing: -.035em; }
+        .analytics-overview-grid { display: grid; gap: .75rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .analytics-metric-card { min-height: 132px; overflow: hidden; position: relative; border: 1px solid var(--analytics-border); border-radius: 1rem; background: var(--analytics-surface); padding: 1rem; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+        .analytics-metric-card::before { content: ''; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px; background: var(--metric-tone, var(--analytics-accent)); }
+        .analytics-metric-card:hover { transform: translateY(-1px); border-color: var(--analytics-border-strong); box-shadow: var(--analytics-shadow); }
+        .metric-indigo { --metric-tone: #6366f1; } .metric-emerald { --metric-tone: #10b981; } .metric-cyan { --metric-tone: #06b6d4; } .metric-amber { --metric-tone: #f59e0b; }
+        .analytics-metric-title { display: flex; align-items: center; gap: .45rem; color: var(--analytics-muted); font-size: .6rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+        .analytics-metric-card strong { display: block; margin-top: 1rem; color: var(--text-main); font-size: 1.75rem; font-weight: 900; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+        .analytics-metric-card small { display: block; margin-top: .35rem; color: var(--analytics-muted); font-size: .68rem; font-weight: 700; line-height: 1.4; }
+        .analytics-help { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 1.05rem; height: 1.05rem; border: 1px solid color-mix(in srgb, var(--analytics-muted) 48%, transparent); border-radius: 999px; color: var(--analytics-muted); font-family: 'Inter', sans-serif; font-size: .62rem; font-weight: 900; line-height: 1; cursor: help; user-select: none; transition: border-color .16s ease, color .16s ease, background .16s ease; }
+        .analytics-help:hover, .analytics-help:focus { border-color: var(--analytics-accent); outline: none; background: var(--analytics-accent-soft); color: var(--analytics-accent); }
+        .analytics-help-inline { width: .95rem; height: .95rem; margin-left: .25rem; vertical-align: text-bottom; font-size: .57rem; }
+        #analyticsTooltipPortal { position: fixed; z-index: 2147483647; width: min(300px, calc(100vw - 24px)); border: 1px solid var(--analytics-border-strong); border-radius: .8rem; background: var(--analytics-surface); color: var(--text-main); box-shadow: 0 18px 42px rgba(15, 23, 42, .2); padding: .75rem .85rem; font-size: .72rem; font-weight: 650; line-height: 1.55; opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity .14s ease, transform .14s ease; }
+        .dark #analyticsTooltipPortal { box-shadow: 0 20px 54px rgba(2, 6, 23, .7); }
+        #analyticsTooltipPortal.is-visible { opacity: 1; transform: translateY(0); }
+        .analytics-focus-grid-visual { grid-template-columns: 1.25fr 1fr 1fr; }
+        .focus-status { min-height: 0; }
+        .analytics-status-chart { display: flex; overflow: hidden; height: .72rem; margin-top: .9rem; border-radius: 999px; background: var(--analytics-border); }
+        .analytics-status-chart > span { display: block; min-width: 0; height: 100%; transition: width .35s cubic-bezier(.22,1,.36,1); }
+        .status-pass { background: #10b981; } .status-fail { background: #fb7185; } .status-wait { background: #94a3b8; }
+        .analytics-status-legend { display: flex; flex-wrap: wrap; gap: .55rem .8rem; margin-top: .75rem; color: var(--analytics-muted); font-size: .62rem; font-weight: 800; }
+        .analytics-status-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+        .analytics-status-legend i { display: inline-block; width: .5rem; height: .5rem; border-radius: 999px; }
+        .legend-pass { background: #10b981; } .legend-fail { background: #fb7185; } .legend-wait { background: #94a3b8; }
+        .analytics-activity-summary { min-height: 100%; border: 1px solid var(--analytics-border); border-radius: 1rem; background: var(--analytics-surface-soft); padding: 1.05rem; }
+        .analytics-activity-summary strong { display: block; margin-top: .35rem; color: var(--text-main); font-size: 2rem; font-weight: 900; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+        .activity-status-chart { margin-top: .72rem; }
+        .activity-save { background: #06b6d4; } .activity-validation { background: #6366f1; } .activity-change { background: #f59e0b; }
+        .legend-save { background: #06b6d4; } .legend-validation { background: #6366f1; } .legend-change { background: #f59e0b; }
+        @media (max-width: 1100px) { .analytics-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .analytics-focus-grid-visual { grid-template-columns: 1.2fr 1fr; } .focus-action { grid-column: span 2; } }
+        @media (max-width: 640px) { .analytics-overview-head { align-items: flex-start; flex-direction: column; } .analytics-overview-grid { grid-template-columns: 1fr 1fr; } .analytics-metric-card { min-height: 124px; padding: .9rem; } .analytics-metric-card strong { font-size: 1.45rem; } .analytics-focus-grid-visual { grid-template-columns: 1fr; } .focus-action { grid-column: auto; } }
+        @media (prefers-reduced-motion: reduce) { .analytics-metric-card, #analyticsTooltipPortal, .analytics-status-chart > span { transition: none !important; } }
+    </style>
+
+
+    {{-- =====================================================================
+         PENYEMPURNAAN JARAK DAN PENYEDERHANAAN ANALITIK
+         Fokus pada ruang baca, urutan data, dan elemen inti.
+         ===================================================================== --}}
+    <style>
+        .analytics-content-shell {
+            display: flex !important;
+            flex-direction: column;
+            gap: clamp(2rem, 3vw, 3.25rem) !important;
+            max-width: 92rem;
+            padding-bottom: 6rem;
+        }
+
+        .analytics-content-shell > * {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .analytics-filter-wrap,
+        .analytics-section {
+            margin: 0 !important;
+        }
+
+        .analytics-overview {
+            gap: 1.35rem;
+        }
+
+        .analytics-overview-grid {
+            gap: 1rem;
+        }
+
+        .analytics-metric-card {
+            min-height: 150px;
+            padding: 1.25rem;
+        }
+
+        #lab-status .analytics-focus-head {
+            padding: 1.2rem 1.45rem;
+        }
+
+        #lab-status .analytics-focus-grid {
+            display: block;
+            padding: 1.2rem 1.45rem 1.45rem;
+            background: transparent;
+        }
+
+        #lab-status .analytics-focus-item {
+            padding: 1.05rem 1.15rem;
+            border: 1px solid var(--analytics-border);
+            border-radius: 1rem;
+            background: var(--analytics-surface-soft);
+        }
+
+        #lab-status .analytics-status-chart {
+            margin-top: 1rem;
+        }
+
+        #lab-classes .analytics-section-heading-row {
+            margin-bottom: 1.5rem !important;
+        }
+
+        #lab-chart-section .analytics-panel > :first-child {
+            padding: 1.5rem 1.65rem !important;
+        }
+
+        #lab-chart-section .analytics-chart-stats {
+            gap: 1rem !important;
+            padding: 1.35rem 1.65rem 0 !important;
+        }
+
+        #lab-chart-section .analytics-chart-body {
+            padding: 1.65rem !important;
+        }
+
+        #lab-students > :first-child,
+        #lab-students > :last-child {
+            padding: 1.5rem 1.65rem !important;
+        }
+
+        #lab-students .analytics-student-grid {
+            gap: 1rem !important;
+        }
+
+        @media (max-width: 767px) {
+            .analytics-content-shell {
+                gap: 1.75rem !important;
+                padding-bottom: 4rem;
+            }
+
+            .analytics-metric-card {
+                min-height: 138px;
+                padding: 1rem;
+            }
+
+            #lab-status .analytics-focus-head,
+            #lab-status .analytics-focus-grid,
+        }
+    </style>
+
+
+
+    {{-- =====================================================================
+         RUANG BACA BAGIAN BAWAH
+         Menjaga semua data analitik, dengan jarak tegas antarcontainer.
+         ===================================================================== --}}
+    <style>
+        .analytics-content-shell {
+            gap: clamp(2.5rem, 4vw, 4rem) !important;
+        }
+
+        /* Margin langsung dipakai agar jarak tetap terlihat meskipun layout berubah. */
+        #lab-chart-section.analytics-section,
+        #lab-students.analytics-section {
+            margin-top: clamp(3rem, 4.8vw, 4.75rem) !important;
+        }
+
+        #lab-students.analytics-section {
+            margin-bottom: 3rem !important;
+        }
+
+        /* Kembalikan tiga data ringkas pada status, bukan hanya grafik hasil. */
+        #lab-status .analytics-focus-grid {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
+            gap: 1.25rem !important;
+            padding: 1.35rem 1.5rem 1.55rem !important;
+            background: transparent !important;
+        }
+
+        #lab-status .analytics-focus-item {
+            min-height: 150px;
+            padding: 1.15rem 1.2rem;
+            border: 1px solid var(--analytics-border);
+            border-radius: 1rem;
+            background: var(--analytics-surface-soft);
+        }
+
+        #lab-status .focus-obstacle h4,
+        #lab-status .focus-action h4,
+        #lab-status .focus-obstacle span,
+        #lab-status .focus-action span {
+            overflow: visible;
+            white-space: normal;
+            text-overflow: clip;
+        }
+
+        #lab-chart-section .analytics-panel > :first-child {
+            padding: 1.65rem 1.8rem !important;
+        }
+
+        #lab-chart-section .analytics-chart-stats {
+            gap: 1.15rem !important;
+            padding: 1.55rem 1.8rem 0 !important;
+        }
+
+        #lab-chart-section .analytics-chart-body {
+            padding: 1.8rem !important;
+        }
+
+        #lab-students > :first-child,
+        #lab-students > :last-child {
+            padding: 1.65rem 1.8rem !important;
+        }
+
+        #lab-students .analytics-student-grid {
+            gap: 1.25rem !important;
+        }
+
+        #lab-students .student-performance-card {
+            padding: 1.2rem !important;
+        }
+
+        @media (max-width: 1100px) {
+            #lab-status .analytics-focus-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            #lab-status .focus-action {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .analytics-content-shell {
+                gap: 2.25rem !important;
+            }
+        #lab-chart-section.analytics-section,
+            #lab-students.analytics-section {
+                margin-top: 2.5rem !important;
+            }
+
+            #lab-status .analytics-focus-grid {
+                grid-template-columns: 1fr;
+                gap: .85rem !important;
+                padding: 1rem !important;
+            }
+
+            #lab-status .focus-action {
+                grid-column: auto;
+            }
+
+            #lab-status .analytics-focus-item {
+                min-height: auto;
+                padding: 1rem;
+            }
+        }
+    </style>
+
+
+    {{-- =====================================================================
+         PENYEMPURNAAN HEADING & TIPOGRAFI DATA ANALITIK
+         - Heading dibuat seragam: konteks singkat di atas, judul data di bawah.
+         - Angka memakai Inter dengan tabular figures agar nyaman dipindai.
+         - JetBrains Mono tetap dipakai pada area kode saja; data analitik tidak.
+         ===================================================================== --}}
+    <style id="analytics-heading-typography-refinement">
+        :root {
+            --analytics-reading-font: 'Inter', sans-serif;
+            --analytics-number-font: 'Inter', sans-serif;
+        }
+
+        /* Hierarki heading: label konteks lebih tenang, judul fokus pada data. */
+        .analytics-overview-head {
+            align-items: flex-start;
+        }
+        .analytics-overview-head p,
+        #lab-classes .analytics-section-heading-row > div > p,
+        .analytics-overview-head h3,
+        #lab-classes .analytics-section-heading-row h3,
+        .analytics-overview-head h3 {
+            font-size: clamp(1.18rem, 1.7vw, 1.55rem) !important;
+        }
+
+        /* Bahasa heading mikro disederhanakan dan tidak terlalu rapat. */
+        .analytics-metric-title,
+        .analytics-focus-head p,
+        .analytics-focus-label,
+        .analytics-section-heading-row p,
+        .analytics-chart-stats p,
+        #lab-students thead {
+            font-family: var(--analytics-reading-font) !important;
+            letter-spacing: .09em !important;
+        }
+        .analytics-metric-title {
+            font-size: .64rem !important;
+            font-weight: 800 !important;
+            line-height: 1.3 !important;
+        }
+
+        /* Angka data: tabular numerals memudahkan perbandingan lintas kartu/tabel. */
+        .smooth-analytics-scroll .analytics-data-number,
+        .smooth-analytics-scroll .analytics-metric-card strong,
+        .smooth-analytics-scroll .analytics-focus-value,
+        .smooth-analytics-scroll .analytics-focus-item strong,
+        .smooth-analytics-scroll .analytics-chart-stats .text-xl,
+        .smooth-analytics-scroll .font-mono {
+            font-family: var(--analytics-number-font) !important;
+            font-variant-numeric: tabular-nums lining-nums;
+            font-feature-settings: 'tnum' 1, 'lnum' 1;
+            letter-spacing: -.02em;
+        }
+        .smooth-analytics-scroll .analytics-metric-card strong {
+            font-size: clamp(1.7rem, 2vw, 1.95rem) !important;
+            font-weight: 800 !important;
+            line-height: 1.05 !important;
+        }
+        .smooth-analytics-scroll .analytics-metric-card small {
+            max-width: 17rem;
+            font-size: .72rem !important;
+            font-weight: 650 !important;
+            line-height: 1.45 !important;
+        }
+        .smooth-analytics-scroll .analytics-chart-stats .text-xl,
+        .smooth-analytics-scroll #lab-classes .text-lg.font-black,
+        .smooth-analytics-scroll #lab-obstacles .text-lg.font-black,
+        .smooth-analytics-scroll #lab-students tbody .font-black {
+            font-weight: 800 !important;
+        }
+
+        /* Tabel siswa: data tetap jelas tanpa kesan teknis/monospace berlebihan. */
+        #lab-students table {
+            font-family: var(--analytics-reading-font) !important;
+            font-size: .78rem !important;
+        }
+        #lab-students thead {
+            font-size: .61rem !important;
+            font-weight: 800 !important;
+        }
+        #lab-students tbody td {
+            line-height: 1.45;
+        }
+        #lab-students tbody td.font-mono,
+        #lab-students tbody .font-mono {
+            font-size: .76rem !important;
+            font-weight: 700 !important;
+        }
+
+        /* Subjudul data dibuat lebih mudah dibaca pada kartu dan panel. */
+        .analytics-data-row h5,
+        .analytics-data-row h4,
+        .analytics-panel h4,
+        .student-performance-card h4 {
+            font-family: var(--analytics-reading-font) !important;
+            font-weight: 800 !important;
+            letter-spacing: -.012em !important;
+        }
+        .analytics-data-row p,
+        .analytics-panel p,
+        .student-performance-card p {
+            font-family: var(--analytics-reading-font) !important;
+        }
+
+        @media (max-width: 640px) {
+            .analytics-overview-head h3,
+            #lab-classes .analytics-section-heading-row h3,
+            .smooth-analytics-scroll .analytics-metric-card strong {
+                font-size: 1.55rem !important;
+            }
+        }
+    </style>
+
+
+    <style id="class-analytics-focus-style">
+        /* Performa kelas: semua elemen menampilkan ukuran yang dapat dibandingkan langsung. */
+        .class-performance-board { overflow: hidden; }
+        .class-performance-row { background: rgba(255,255,255,.26); }
+        .dark .class-performance-row { background: rgba(255,255,255,.012); }
+        .class-performance-row:hover { background: rgba(6,182,212,.045); }
+        .dark .class-performance-row:hover { background: rgba(34,211,238,.045); }
+        .class-analytics-cell {
+            min-width: 0;
+            border: 1px solid var(--analytics-border);
+            border-radius: .92rem;
+            background: var(--analytics-surface-soft);
+            padding: .78rem .82rem;
+        }
+        .class-analytics-cell.compact { padding: .68rem .72rem; }
+        .class-analytics-label {
+            color: var(--analytics-muted);
+            font-size: .57rem;
+            font-weight: 900;
+            letter-spacing: .105em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+        .class-analytics-value {
+            font-size: 1.18rem;
+            font-weight: 900;
+            letter-spacing: -.045em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .class-analytics-meter { overflow: hidden; height: .46rem; border-radius: 999px; background: rgba(148,163,184,.18); }
+        .dark .class-analytics-meter { background: rgba(255,255,255,.08); }
+        .class-analytics-meter > span { display:block; height:100%; border-radius:inherit; transition:width .35s cubic-bezier(.22,1,.36,1); }
+        .class-analytics-note { margin-top:.45rem; color:var(--analytics-muted); font-size:.62rem; font-weight:750; line-height:1.35; }
+        .class-modal-row:hover { box-shadow: 0 12px 26px rgba(15,23,42,.06); }
+        .class-detail-metric { min-width:0; border:1px solid var(--analytics-border); border-radius:1rem; background:var(--analytics-surface-soft); padding:1rem; }
+        .class-detail-metric p { color:var(--analytics-muted); font-size:.58rem; font-weight:900; letter-spacing:.11em; text-transform:uppercase; }
+        .class-detail-metric strong { display:block; margin-top:.42rem; color:var(--text-main); font-size:1.65rem; font-weight:900; letter-spacing:-.05em; line-height:1; font-variant-numeric:tabular-nums; }
+        .class-detail-metric span { display:block; margin-top:.42rem; color:var(--analytics-muted); font-size:.63rem; font-weight:700; line-height:1.35; }
+        @media (max-width: 1023px) { .class-performance-row { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+        @media (max-width: 639px) { .class-performance-row { grid-template-columns: 1fr; padding:1rem; } .class-analytics-cell { padding:.72rem; } }
+        @media (prefers-reduced-motion: reduce) { .class-performance-row, .class-analytics-meter > span { transition:none !important; } }
+    </style>
+
+
+
+    {{-- ================================================================
+         PENYELARASAN UKURAN DENGAN DESAIN AWAL PANEL ADMIN
+         Mempertahankan data analitik berbasis kelas, tetapi mengembalikan
+         proporsi ruang, kartu, heading, grafik, dan tabel agar tidak terlalu
+         besar dibanding halaman panel admin lainnya.
+         ================================================================ --}}
+    <style id="analytics-initial-scale-alignment">
+        /* Kanvas konten kembali ke lebar dan jarak panel awal. */
+        .analytics-content-shell {
+            max-width: 84rem !important;
+            gap: clamp(1.5rem, 2.25vw, 2.5rem) !important;
+            padding-bottom: 5rem !important;
+        }
+        .analytics-content-shell > .analytics-section,
+        #lab-chart-section.analytics-section,
+        #lab-students.analytics-section {
+            margin-top: 0 !important;
+        }
+
+        /* Heading: label konteks kecil, judul menjadi fokus utama. */
+        .analytics-overview { gap: 1rem !important; }
+        .analytics-overview-head { align-items: flex-start !important; }
+        .analytics-overview-head p,
+        #lab-classes .analytics-section-heading-row > div > p:first-child,
+        #lab-chart-section .analytics-panel > :first-child > div > div > p {
+            font-size: .63rem !important;
+            font-weight: 900 !important;
+            letter-spacing: .16em !important;
+            line-height: 1.25 !important;
+        }
+        .analytics-overview-head h3,
+        #lab-classes .analytics-section-heading-row h3,
+        #lab-chart-section .analytics-panel h3 {
+            font-size: 1.25rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -.025em !important;
+            line-height: 1.2 !important;
+        }
+        #lab-classes .analytics-section-heading-row > div > p:last-child {
+            max-width: 42rem !important;
+            font-size: .72rem !important;
+            font-weight: 600 !important;
+            line-height: 1.45 !important;
+        }
+        #lab-classes .analytics-section-heading-row {
+            gap: .75rem !important;
+            margin-bottom: .9rem !important;
+        }
+
+        /* Kartu ringkasan dikembalikan ke tinggi dan padding awal. */
+        .analytics-overview-grid { gap: .75rem !important; }
+        .analytics-metric-card {
+            min-height: 132px !important;
+            border-radius: 1rem !important;
+            padding: 1rem !important;
+        }
+        .analytics-metric-title {
+            font-size: .60rem !important;
+            font-weight: 900 !important;
+            letter-spacing: .12em !important;
+            line-height: 1.25 !important;
+        }
+        .smooth-analytics-scroll .analytics-metric-card strong {
+            margin-top: .82rem !important;
+            font-size: 1.75rem !important;
+            font-weight: 800 !important;
+            line-height: 1 !important;
+        }
+        .smooth-analytics-scroll .analytics-metric-card small {
+            margin-top: .32rem !important;
+            font-size: .68rem !important;
+            font-weight: 650 !important;
+            line-height: 1.35 !important;
+        }
+
+        /* Papan kelas mempertahankan empat aspek data, dengan densitas panel awal. */
+        .class-performance-board {
+            margin-top: .85rem !important;
+            border-radius: 1rem !important;
+        }
+        .class-performance-row {
+            gap: .75rem !important;
+            padding: 1rem !important;
+        }
+        .class-performance-row h4 { font-size: .94rem !important; }
+        .class-performance-row > div:first-child > p { font-size: .62rem !important; }
+        .class-analytics-cell {
+            border-radius: .75rem !important;
+            padding: .65rem .7rem !important;
+        }
+        .class-analytics-cell.compact { padding: .62rem .65rem !important; }
+        .class-analytics-label { font-size: .54rem !important; }
+        .class-analytics-value { font-size: 1.02rem !important; }
+        .class-analytics-note { margin-top: .34rem !important; font-size: .58rem !important; }
+        .class-performance-row .text-lg { font-size: 1rem !important; }
+        .class-performance-row .text-\[10px\] { font-size: .58rem !important; }
+
+        /* Grafik dipadatkan agar proporsional dengan kartu analitik awal. */
+        #lab-chart-section .analytics-panel { border-radius: 1rem !important; }
+        #lab-chart-section .analytics-panel > :first-child {
+            padding: 1.1rem 1.25rem !important;
+        }
+        #lab-chart-section .analytics-chart-stats {
+            gap: .75rem !important;
+            padding: .9rem 1.25rem 0 !important;
+        }
+        #lab-chart-section .analytics-chart-stats > div {
+            border-radius: .75rem !important;
+            padding: .75rem !important;
+        }
+        #lab-chart-section .analytics-chart-stats p { font-size: .56rem !important; }
+        #lab-chart-section .analytics-chart-stats .text-xl { font-size: 1.1rem !important; }
+        #lab-chart-section .analytics-chart-body { padding: 1.25rem !important; }
+        #lab-chart-section .analytics-chart-body > div { height: 280px !important; }
+
+        /* Tabel siswa mengikuti skala tabel awal, tanpa membesar dari panel lain. */
+        #lab-students {
+            border-radius: 1rem !important;
+            margin-top: 0 !important;
+        }
+        #lab-students > :first-child,
+        #lab-students > :last-child {
+            padding: 1.1rem 1.25rem !important;
+        }
+        #lab-students > :first-child { gap: .75rem !important; }
+        #lab-students > :first-child h3 { font-size: 1rem !important; }
+        #lab-students > :first-child p { font-size: .68rem !important; }
+        #lab-students .max-h-\[460px\] {
+            max-height: 390px !important;
+            border-radius: .75rem !important;
+        }
+        #lab-students table { font-size: .72rem !important; }
+        #lab-students thead { font-size: .55rem !important; }
+        #lab-students tbody td { padding-top: .7rem !important; padding-bottom: .7rem !important; }
+        #lab-students tbody td:first-child > p:first-child { font-size: .82rem !important; }
+
+        @media (max-width: 767px) {
+            .analytics-content-shell {
+                gap: 1.25rem !important;
+                padding-bottom: 3.5rem !important;
+            }
+            .analytics-overview { gap: .85rem !important; }
+            .analytics-overview-head h3,
+            #lab-classes .analytics-section-heading-row h3,
+            #lab-chart-section .analytics-panel h3 {
+                font-size: 1.08rem !important;
+            }
+            .analytics-overview-grid { gap: .65rem !important; }
+            .analytics-metric-card { min-height: 120px !important; padding: .9rem !important; }
+            .smooth-analytics-scroll .analytics-metric-card strong { font-size: 1.5rem !important; }
+            .class-performance-row { gap: .65rem !important; padding: .85rem !important; }
+            #lab-chart-section .analytics-panel > :first-child,
+            #lab-chart-section .analytics-chart-body,
+            #lab-students > :first-child,
+            #lab-students > :last-child { padding-left: 1rem !important; padding-right: 1rem !important; }
+            #lab-chart-section .analytics-chart-stats { padding-left: 1rem !important; padding-right: 1rem !important; }
+            #lab-chart-section .analytics-chart-body > div { height: 245px !important; }
+        }
+    </style>
+
+
+    {{-- =====================================================================
+         PENYELARASAN FINAL: ANALITIK PRAKTIK LAB = BAHASA VISUAL ANALITIK KUIS
+         Satu sistem untuk skala, tabel kelas, panel, chart, dan insight hero.
+         ===================================================================== --}}
+    <style id="lab-quiz-design-system-alignment">
+        :root {
+            --quiz-surface: rgba(255,255,255,.92);
+            --quiz-surface-soft: #f8fafc;
+            --quiz-line: rgba(148,163,184,.24);
+            --quiz-line-strong: rgba(99,102,241,.30);
+            --quiz-muted: #64748b;
+            --quiz-ink: #0f172a;
+            --quiz-shadow: 0 16px 36px rgba(15,23,42,.06);
+        }
+        .dark {
+            --quiz-surface: rgba(10,14,23,.90);
+            --quiz-surface-soft: rgba(15,23,42,.78);
+            --quiz-line: rgba(148,163,184,.16);
+            --quiz-line-strong: rgba(129,140,248,.34);
+            --quiz-muted: #94a3b8;
+            --quiz-ink: #f8fafc;
+            --quiz-shadow: 0 18px 42px rgba(2,6,23,.28);
+        }
+
+        /* Skala kanvas dan ritme bagian sama dengan dasbor Analitik Kuis. */
+        .lab-quiz-analytics-shell {
+            display: flex !important;
+            max-width: 84rem !important;
+            margin-inline: auto;
+            flex-direction: column;
+            gap: clamp(1.5rem, 2.2vw, 2.25rem) !important;
+            padding-bottom: 4.25rem !important;
+        }
+        .lab-quiz-analytics-shell > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+        .lab-quiz-analytics-shell .glass-card,
+        .lab-quiz-chart-panel,
+        .quiz-student-analytics.analytics-panel,
+        .quiz-class-performance-panel {
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow) !important;
+        }
+
+        /* Ringkasan memakai partial compact_analytics_strip yang sama dengan kuis. */
+        .lab-quiz-analytics-shell .compact-analytics-strip,
+        .lab-quiz-analytics-shell [data-analytics-strip] {
+            border-color: var(--quiz-line) !important;
+            box-shadow: var(--quiz-shadow) !important;
+        }
+
+        /* Heading bagian mengikuti ukuran dan hirarki Analitik Kuis. */
+        #lab-classes > .mb-3 { margin-bottom: .75rem !important; }
+        #lab-classes > .mb-3 > div > p {
+            font-size: .625rem !important;
+            letter-spacing: .18em !important;
+            line-height: 1.25 !important;
+        }
+        #lab-classes > .mb-3 h3 {
+            font-size: 1.125rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -.02em !important;
+            line-height: 1.25 !important;
+        }
+
+        /* Papan kelas sama: header enam kolom, baris ringkas, responsif. */
+        .quiz-class-performance-panel {
+            overflow: hidden;
+            border: 1px solid var(--quiz-line);
+            border-radius: 1.15rem;
+            background: var(--quiz-surface);
+        }
+        .quiz-class-performance-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) repeat(5, minmax(0, .72fr));
+            gap: .75rem;
+            padding: .72rem 1.1rem;
+            border-bottom: 1px solid var(--quiz-line);
+            background: var(--quiz-surface-soft);
+            color: var(--quiz-muted);
+            font-size: .56rem;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+        .quiz-class-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) repeat(5, minmax(0, .72fr));
+            gap: .75rem;
+            align-items: center;
+            padding: .92rem 1.1rem;
+            border-bottom: 1px solid var(--quiz-line);
+            transition: background-color .18s ease;
+        }
+        .quiz-class-row:last-child { border-bottom: 0; }
+        .quiz-class-row:hover { background: rgba(99,102,241,.035); }
+        .dark .quiz-class-row:hover { background: rgba(129,140,248,.055); }
+        .quiz-class-name { min-width: 0; }
+        .quiz-class-name strong {
+            display: block;
+            overflow: hidden;
+            color: var(--quiz-ink);
+            font-size: .82rem;
+            font-weight: 850;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quiz-class-name span {
+            display: block;
+            margin-top: .2rem;
+            color: var(--quiz-muted);
+            font-size: .63rem;
+            font-weight: 650;
+            line-height: 1.2;
+        }
+        .quiz-class-metric { min-width: 0; text-align: center; }
+        .quiz-class-metric strong {
+            display: block;
+            color: var(--quiz-ink);
+            font-family: 'Inter', sans-serif;
+            font-size: .91rem;
+            font-weight: 850;
+            letter-spacing: -.025em;
+            line-height: 1.15;
+            font-variant-numeric: tabular-nums;
+        }
+        .quiz-class-metric small {
+            display: block;
+            margin-top: .18rem;
+            color: var(--quiz-muted);
+            font-size: .60rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .quiz-class-rate { color: #059669 !important; }
+        .dark .quiz-class-rate { color: #6ee7b7 !important; }
+
+        /* Grafik lab memakai permukaan, header, statistik, dan ukuran panel yang sama. */
+        .lab-quiz-chart-panel {
+            overflow: hidden !important;
+            border: 1px solid var(--quiz-line) !important;
+            border-radius: 1.15rem !important;
+            background: var(--quiz-surface) !important;
+        }
+        .lab-quiz-panel-head {
+            padding: 1.1rem 1.2rem !important;
+            border-color: var(--quiz-line) !important;
+            background: linear-gradient(110deg, var(--quiz-surface-soft), transparent) !important;
+        }
+        .lab-quiz-panel-head p {
+            font-size: .625rem !important;
+            letter-spacing: .16em !important;
+        }
+        .lab-quiz-panel-head h3 {
+            font-size: 1.125rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -.02em !important;
+        }
+        .lab-quiz-chart-stats {
+            gap: .75rem !important;
+            padding: .9rem 1.2rem 0 !important;
+        }
+        .lab-quiz-chart-stats > div {
+            border-color: var(--quiz-line) !important;
+            border-radius: .75rem !important;
+            background: var(--quiz-surface-soft) !important;
+            padding: .75rem !important;
+        }
+        .lab-quiz-chart-stats p { font-size: .56rem !important; }
+        .lab-quiz-chart-stats .text-xl {
+            font-family: 'Inter', sans-serif !important;
+            font-size: 1.1rem !important;
+            font-weight: 850 !important;
+            font-variant-numeric: tabular-nums;
+        }
+        .lab-quiz-chart-body { padding: 1.2rem !important; }
+        .lab-quiz-chart-body > div { height: 280px !important; }
+
+        /* Tabel pengguna mengikuti panel Analitik Kuis tanpa tooltip atau narasi tindakan. */
+        .quiz-student-analytics.analytics-panel {
+            border-radius: 1.15rem !important;
+            background: var(--quiz-surface) !important;
+        }
+        .quiz-student-analytics.analytics-panel > div:first-child {
+            padding: 1.1rem 1.2rem !important;
+            border-color: var(--quiz-line) !important;
+            background: linear-gradient(115deg, var(--quiz-surface-soft), transparent) !important;
+        }
+        .quiz-student-analytics.analytics-panel > div:first-child h3 {
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+        }
+        .quiz-student-analytics.analytics-panel > div:first-child p {
+            font-size: .68rem !important;
+        }
+        .quiz-student-analytics.analytics-panel > div:last-child { padding: 1.1rem 1.2rem !important; }
+        .quiz-student-analytics .max-h-\[460px\] {
+            max-height: 390px !important;
+            border-color: var(--quiz-line) !important;
+            border-radius: .75rem !important;
+            background: var(--quiz-surface-soft) !important;
+        }
+        .quiz-student-analytics table { font-family: 'Inter', sans-serif !important; font-size: .72rem !important; }
+        .quiz-student-analytics thead {
+            background: var(--quiz-surface-soft) !important;
+            color: var(--quiz-muted) !important;
+            font-size: .55rem !important;
+            letter-spacing: .09em !important;
+        }
+        .quiz-student-analytics tbody td { padding-top: .7rem !important; padding-bottom: .7rem !important; }
+        .quiz-student-analytics tbody td.font-mono,
+        .quiz-student-analytics tbody .font-mono,
+        .quiz-student-analytics .analytics-data-number {
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 800 !important;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: 'tnum' 1, 'lnum' 1;
+            letter-spacing: -.02em;
+        }
+        .quiz-student-analytics .table-row:hover { background: rgba(99,102,241,.035) !important; }
+        .dark .quiz-student-analytics .table-row:hover { background: rgba(129,140,248,.055) !important; }
+
+        /* Insight hero kelas memakai komponen dan proporsi modal Analitik Kuis. */
+        .quiz-class-hero-modal {
+            overflow: hidden;
+            border: 1px solid rgba(99,102,241,.18);
+            border-radius: 1.5rem;
+            background: rgba(255,255,255,.98);
+            box-shadow: 0 28px 78px rgba(15,23,42,.28);
+        }
+        .dark .quiz-class-hero-modal {
+            border-color: rgba(129,140,248,.20);
+            background: #0f141e;
+            box-shadow: 0 30px 82px rgba(0,0,0,.74);
+        }
+        .quiz-class-hero-head {
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--quiz-line);
+            background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(255,255,255,.78) 58%, rgba(6,182,212,.10));
+        }
+        .quiz-class-hero-head::after {
+            content: '';
+            position: absolute;
+            right: -3.8rem;
+            top: -3.8rem;
+            width: 10rem;
+            height: 10rem;
+            border: 18px solid rgba(99,102,241,.11);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        .dark .quiz-class-hero-head { background: linear-gradient(135deg, rgba(99,102,241,.20), rgba(15,23,42,.92) 58%, rgba(6,182,212,.12)); }
+        .dark .quiz-class-hero-head::after { border-color: rgba(129,140,248,.16); }
+        .quiz-class-hero-kicker { color: #4f46e5; font-size: .60rem; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+        .dark .quiz-class-hero-kicker { color: #a5b4fc; }
+        .quiz-class-hero-metric {
+            min-width: 0;
+            border: 1px solid var(--quiz-line);
+            border-radius: .95rem;
+            background: var(--quiz-surface-soft);
+            padding: .92rem;
+        }
+        .quiz-class-hero-metric p,
+        .quiz-class-hero-section-label { color: var(--quiz-muted); font-size: .58rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
+        .quiz-class-hero-metric strong {
+            display: block;
+            margin-top: .35rem;
+            color: var(--quiz-ink);
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: -.05em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .quiz-class-hero-metric span { display: block; margin-top: .30rem; color: var(--quiz-muted); font-size: .64rem; font-weight: 700; line-height: 1.28; }
+        .quiz-class-hero-meter { display: flex; overflow: hidden; height: .65rem; border-radius: 999px; background: rgba(148,163,184,.18); }
+        .dark .quiz-class-hero-meter { background: rgba(255,255,255,.075); }
+        .quiz-class-hero-meter > span { display: block; height: 100%; transition: width .35s cubic-bezier(.22,1,.36,1); }
+
+        @media (max-width: 900px) {
+            .quiz-class-performance-head { display: none; }
+            .quiz-class-row { grid-template-columns: minmax(0,1fr) repeat(2,minmax(0,1fr)); gap: .65rem; padding: 1rem; }
+            .quiz-class-name { grid-column: 1 / -1; padding-bottom: .25rem; }
+            .quiz-class-metric { padding: .62rem .68rem; border: 1px solid var(--quiz-line); border-radius: .7rem; background: var(--quiz-surface-soft); }
+            .quiz-class-metric::before { content: attr(data-label); display:block; overflow:hidden; color:var(--quiz-muted); font-size:.53rem; font-weight:850; letter-spacing:.08em; line-height:1.15; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+            .quiz-class-metric small { margin-top: .26rem; }
+        }
+        @media (max-width: 640px) {
+            .lab-quiz-analytics-shell { gap: 1.25rem !important; padding-bottom: 3rem !important; }
+            .quiz-class-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .quiz-class-metric { min-height: 4rem; }
+            .lab-quiz-chart-body > div { height: 245px !important; }
+            .quiz-class-hero-modal { border-radius: 1.25rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .quiz-class-row,
+            .quiz-class-hero-meter > span,
+            .lab-quiz-chart-panel,
+            .quiz-student-analytics .table-row { transition: none !important; }
+        }
+    </style>
+
 </head>
 <body x-data="{ 
     sidebarOpen: false,
@@ -196,13 +1412,34 @@
         $avgDuration = $avgDuration ?? '00:00';
         
         $userPerformance = isset($userPerformance) ? collect($userPerformance) : collect([]);
-        $performanceBest = $userPerformance->sortByDesc('best_score')->values();
-        $performanceWorst = $userPerformance->sortBy('best_score')->values();
         $labsList = isset($labsList) ? collect($labsList) : collect([]);
         $classGroups = isset($classGroups) ? collect($classGroups) : collect([]);
         $classPerformance = isset($classPerformance) ? collect($classPerformance) : collect([]);
         $selectedClass = $selectedClass ?? request('class_group');
+        $selectedPeriod = $selectedPeriod ?? request('period', 'all');
+        $periodOptions = collect($periodOptions ?? [
+            'all' => 'Semua waktu',
+            '7d' => '7 hari terakhir',
+            '30d' => '30 hari terakhir',
+            '6m' => '6 bulan terakhir',
+        ]);
+        $periodLabel = $periodLabel ?? ($periodOptions[$selectedPeriod] ?? 'Semua waktu');
         $analyticsRouteParams = !empty($labId) ? ['labId' => $labId] : [];
+        $analyticsUrl = function (array $overrides = []) use ($analyticsRouteParams, $selectedClass, $selectedPeriod) {
+            $query = [
+                'class_group' => $selectedClass ?: null,
+                'period' => $selectedPeriod !== 'all' ? $selectedPeriod : null,
+            ];
+
+            foreach ($overrides as $key => $value) {
+                $query[$key] = $value;
+            }
+
+            $query = array_filter($query, fn ($value) => filled($value));
+
+            return route('admin.lab.analytics', $analyticsRouteParams)
+                . ($query ? ('?' . http_build_query($query)) : '');
+        };
         
         $labChartLabels = isset($labChartLabels) ? collect($labChartLabels) : collect([]);
         $labChartScores = isset($labChartScores) ? collect($labChartScores) : collect([]);
@@ -217,6 +1454,7 @@
             $labChartScores = collect([null]);
             $labChartParticipants = collect([0]);
         }
+
     @endphp
 
     <div class="flex h-screen w-full relative">
@@ -228,8 +1466,6 @@
 
     <aside class="glass-sidebar w-72 h-full flex flex-col fixed md:relative z-[100] transition-transform duration-300 transform md:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-24 flex items-center justify-between px-8 border-b border-slate-200 dark:border-white/5 relative overflow-hidden group transition-colors">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-indigo-200/50 dark:bg-indigo-500/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition duration-500"></div>
-            
             <a href="{{ route('landing') }}" class="flex items-center gap-3 relative z-10">
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain block dark:hidden" style="filter: brightness(0.1);" alt="Logo">
                 <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto object-contain hidden dark:block drop-shadow-sm" alt="Logo Dark">
@@ -273,15 +1509,8 @@
     </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
-        <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
+        <main id="admin-main-content" class="smooth-analytics-scroll custom-scrollbar flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
             
-            {{-- Background FX --}}
-            <div class="fixed inset-0 pointer-events-none z-0">
-                <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[120px] transition-colors"></div>
-                <div class="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] transition-colors"></div>
-                <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay"></div>
-            </div>
-
             {{-- HEADER RESPONSIVE --}}
             <header class="h-24 glass-header flex flex-col justify-center px-6 md:px-10 shrink-0 sticky top-0 z-40 transition-colors">
                 <div class="flex items-center justify-between w-full">
@@ -298,22 +1527,22 @@
                                         <li>
                                             <div class="flex items-center transition-colors">
                                                 <svg class="w-3 h-3 text-slate-400 dark:text-white/30 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                                <span class="text-slate-900 dark:text-white transition-colors">Analitik Lab</span>
+                                                <span class="text-slate-900 dark:text-white transition-colors">Analitik Praktik </span>
                                             </div>
                                         </li>
                                     </ol>
                                 </nav>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Analitik Lab</h2>
+                                    <h2 class="text-slate-900 dark:text-white font-bold text-lg md:text-xl tracking-tight transition-colors">Analitik Praktik Lab</h2>
                                     
                                     {{-- TOMBOL TRIGGER HERO MODAL PANDUAN --}}
                                     <button @click="showDashboardInfoModal = true" class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] md:text-xs font-black text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none mt-0.5" title="Panduan Analitik Lab">
                                         ?
                                     </button>
                                 </div>
-                                <p class="text-[9px] md:text-xs text-slate-500 dark:text-white/40 flex items-center gap-1.5 mt-0.5 transition-colors">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                                    Ringkasan lab, kelas, dan performa siswa
+                                <p class="page-context-subtitle text-[10px] md:text-xs flex items-center gap-1.5 mt-1 transition-colors">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Ringkasan hasil praktik, perbandingan kelas, dan data performa pengguna
                                 </p>
                             </div>
                         </div>
@@ -336,247 +1565,189 @@
             </header>
 
             {{-- CONTENT SCROLLABLE --}}
-            <div class="flex-1 p-6 md:p-10 relative z-10">
-                <div class="max-w-7xl mx-auto space-y-8 md:space-y-12">
+            <div class="flex-1 p-5 md:p-8 lg:p-10 relative z-10">
+                <div class="analytics-content-shell lab-quiz-analytics-shell">
 
-                    {{-- =======================================================
-                         A. STATS GRID DENGAN HERO MODAL TRIGGERS
-                         ======================================================= --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 reveal" style="animation-delay: 0.1s;">
-                        
-                        {{-- 1. Percobaan --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all" @click="showAttemptsModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Percobaan</p>
-                                <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-indigo-600 dark:text-indigo-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Percobaan Lab</span>
-                                        Total akumulasi seluruh percobaan lab yang dilakukan siswa.
-                                    </div>
-                                </div>
-                            </div>
-                            <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ number_format($totalAttempts) }}</h3>
-                            <div class="mt-3 flex gap-2">
-                                <span class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/10 transition-colors">{{ $passedCount }} Lulus</span>
-                                <span class="bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200 dark:border-red-500/10 transition-colors">{{ $failedCount }} Belum Lulus</span>
-                            </div>
-                        </div>
-
-                        {{-- 2. Rasio Kelulusan --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 cursor-pointer group transition-all" @click="showSuccessRateModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Rasio Kelulusan</p>
-                                <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-emerald-600 dark:text-emerald-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Rasio Kelulusan</span>
-                                        Persentase modul praktikum yang diselesaikan dengan status lulus.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1 mt-2">
-                                <h3 class="text-2xl md:text-3xl font-black transition-colors {{ $completionRate >= 70 ? 'text-emerald-600 dark:text-emerald-400' : ($completionRate >= 50 ? 'text-amber-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400') }}">
-                                    {{ $completionRate }}
-                                </h3>
-                                <span class="text-lg font-bold transition-colors {{ $completionRate >= 70 ? 'text-emerald-600 dark:text-emerald-400' : ($completionRate >= 50 ? 'text-amber-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400') }}">%</span>
-                            </div>
-                            <div class="w-full bg-slate-200 dark:bg-white/10 h-1.5 mt-3 rounded-full overflow-hidden border border-slate-300 dark:border-white/5 transition-colors">
-                                <div class="h-full {{ $completionRate >= 70 ? 'bg-emerald-500' : 'bg-red-500' }}" style="width: {{ $completionRate }}%"></div>
-                            </div>
-                        </div>
-
-                        {{-- 3. Rata-rata Nilai --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-amber-500 cursor-pointer group transition-all" @click="showAvgScoreModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition-colors">Rata-rata Nilai</p>
-                                <div class="tooltip-container tooltip-yellow tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-amber-600 dark:text-yellow-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Rata-rata Keseluruhan</span>
-                                        Rata-rata nilai yang didapatkan dari seluruh pengerjaan modul lab.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-baseline gap-1 mt-2">
-                                <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white transition-colors">{{ $avgScore }}</h3>
-                                <span class="text-[10px] text-amber-500 font-bold"></span>
-                            </div>
-                            <p class="text-[9px] text-amber-600 dark:text-yellow-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">Buka daftar nilai &rarr;</p>
-                        </div>
-
-                        {{-- 4. Avg Time --}}
-                        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-cyan-500 cursor-pointer group transition-all" @click="showDurationModal = true">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Rata-rata Durasi</p>
-                                <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
-                                    <div class="tooltip-trigger">?</div>
-                                    <div class="tooltip-content">
-                                        <span class="block font-bold text-cyan-600 dark:text-cyan-400 mb-1 border-b border-slate-200 dark:border-white/10 pb-1">Durasi per Sesi</span>
-                                        Rata-rata waktu yang dihabiskan siswa per percobaan modul lab.
-                                    </div>
-                                </div>
-                            </div>
-                            <h3 class="text-2xl md:text-3xl font-black text-cyan-600 dark:text-cyan-400 mt-2 font-mono tracking-tight transition-colors">{{ $avgDuration }}</h3>
-                            <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">Buka riwayat durasi &rarr;</p>
-                        </div>
+                    @php
+                        $filterId = 'lab-analytics-filter';
+                        $filterTitle = 'Filter Data';
+                        $filterSummary = $periodLabel . ($selectedClass ? ' · ' . $selectedClass : ' · Semua kelas');
+                        $filterAction = route('admin.lab.analytics', $analyticsRouteParams);
+                        $filterControls = [
+                            [
+                                'name' => 'period',
+                                'label' => 'Periode',
+                                'selected' => $selectedPeriod,
+                                'options' => $periodOptions,
+                                'minWidth' => 'min-w-[180px]',
+                            ],
+                            [
+                                'name' => 'class_group',
+                                'label' => 'Kelas',
+                                'selected' => $selectedClass,
+                                'emptyLabel' => 'Semua kelas',
+                                'options' => $classGroups->mapWithKeys(fn ($className) => [$className => $className]),
+                                'minWidth' => 'min-w-[220px]',
+                            ],
+                        ];
+                        $filterResetHref = route('admin.lab.analytics', $analyticsRouteParams);
+                        $filterResetVisible = $selectedClass || $selectedPeriod !== 'all';
+                    @endphp
+                    <div class="analytics-filter-wrap">
+                        @include('admin.partials.analytics_filter_bar')
                     </div>
+
+                    @php
+                        $attemptCount = max(0, (int) $totalAttempts);
+                        $passedAttemptCount = max(0, (int) $passedCount);
+                        $failedAttemptCount = max(0, (int) $failedCount);
+                        $statusTotal = max(1, $attemptCount, $passedAttemptCount + $failedAttemptCount);
+                        $unfinishedAttemptCount = max(0, $statusTotal - $passedAttemptCount - $failedAttemptCount);
+                        $passedShare = round(($passedAttemptCount / $statusTotal) * 100, 1);
+                        $failedShare = round(($failedAttemptCount / $statusTotal) * 100, 1);
+                        $unfinishedShare = round(($unfinishedAttemptCount / $statusTotal) * 100, 1);
+                    @endphp
+
+                    @php
+                        $labParticipantCount = max(0, (int) $userPerformance->count());
+                        $analyticsTitle = 'Ringkasan Praktik Lab';
+                        $analyticsSubtitle = 'Data pada periode dan kelas yang dipilih.';
+                        $analyticsItems = [
+                            [
+                                'label' => 'Percobaan',
+                                'value' => number_format($attemptCount),
+                                'hint' => 'sesi praktik selesai',
+                                'tone' => 'cyan',
+                            ],
+                            [
+                                'label' => 'Pengguna',
+                                'value' => number_format($labParticipantCount),
+                                'hint' => 'pengguna dengan praktik tercatat',
+                                'tone' => 'indigo',
+                            ],
+                            [
+                                'label' => 'Kelulusan',
+                                'value' => $completionRate . '%',
+                                'hint' => number_format($passedAttemptCount) . ' dari ' . number_format($attemptCount) . ' percobaan',
+                                'tone' => 'emerald',
+                            ],
+                            [
+                                'label' => 'Skor Rata-rata',
+                                'value' => number_format((float) $avgScore, 1),
+                                'hint' => 'nilai akhir praktik',
+                                'tone' => 'amber',
+                            ],
+                        ];
+                        $analyticsActions = [];
+                    @endphp
+                    @include('admin.partials.compact_analytics_strip')
 
                     {{-- =======================================================
                          B. RINGKASAN PER KELAS
                          ======================================================= --}}
-                    <div class="reveal" style="animation-delay: 0.18s;">
-                        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-4">
+                    {{-- =======================================================
+                         KINERJA PRAKTIK PER KELAS
+                         Tata baca, proporsi, dan insight mengikuti Analitik Kuis.
+                         ======================================================= --}}
+                    <section id="lab-classes" class="analytics-section reveal scroll-mt-28" style="animation-delay: .08s;" aria-label="Kinerja praktik per kelas">
+                        <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-400 mb-1">
-                                    Navigasi Kelas
-                                </p>
-                                <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white transition-colors">
-                                    Ringkasan Kelas
-                                </h3>
-                                <p class="text-xs text-slate-500 dark:text-white/40 mt-1 max-w-2xl">
-                                    Pilih kelas dari dropdown untuk memfilter halaman. Klik kartu kelas untuk melihat ringkasan.
-                                </p>
+                                <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-600 dark:text-cyan-400">Perbandingan Kelas</p>
+                                <h3 class="mt-1 text-lg font-bold text-slate-900 dark:text-white">Kinerja Praktik per Kelas</h3>
                             </div>
-
-                            <form method="GET" action="{{ route('admin.lab.analytics', $analyticsRouteParams) }}" class="flex flex-col sm:flex-row gap-2 sm:items-center" aria-label="Filter kelas lab">
-                                <select name="class_group" onchange="this.form.submit()" class="glass-input rounded-xl px-4 py-2.5 text-xs font-bold min-w-[220px]">
-                                    <option value="">Semua kelas</option>
-                                    @foreach($classGroups as $className)
-                                        <option value="{{ $className }}" @selected($selectedClass === $className)>{{ $className }}</option>
-                                    @endforeach
-                                </select>
-                                <noscript>
-                                    <button type="submit" class="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300">
-                                        Filter
-                                    </button>
-                                </noscript>
-                                @if($selectedClass)
-                                    <a href="{{ route('admin.lab.analytics', $analyticsRouteParams) }}" class="px-2 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition hover:text-indigo-600 dark:text-white/45 dark:hover:text-indigo-300">
-                                        Reset
-                                    </a>
-                                @endif
-                                @if($classPerformance->count() > 3)
-                                    <button type="button" @click="showClassListModal = true" class="px-2 py-2 text-[10px] font-black uppercase tracking-widest text-cyan-700 transition hover:text-cyan-500 dark:text-cyan-300 dark:hover:text-cyan-200">
-                                        Lihat semua
-                                    </button>
-                                @endif
-                            </form>
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-white/45">{{ number_format($classPerformance->count()) }} kelas · praktik tercatat · pilih baris untuk insight</span>
                         </div>
 
-                        @php
-                            $classPreviewRows = $classPerformance->take(3);
-                            $hiddenClassCount = max(0, $classPerformance->count() - $classPreviewRows->count());
-                        @endphp
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                            @forelse($classPreviewRows as $classRow)
+                        <div class="quiz-class-performance-panel lab-class-performance-panel">
+                            <div class="quiz-class-performance-head">
+                                <span>Kelas</span>
+                                <span class="text-center">pengguna</span>
+                                <span class="text-center">Percobaan</span>
+                                <span class="text-center">Kelulusan</span>
+                                <span class="text-center">Skor rata-rata</span>
+                                <span class="text-center">Durasi rata-rata</span>
+                            </div>
+                            @forelse($classPerformance as $classRow)
                                 @php
-                                    $classAttempts = (int) ($classRow->total_attempts ?? 0);
-                                    $classLulus = (int) ($classRow->passed_attempts ?? 0);
-                                    $classFailed = (int) ($classRow->failed_attempts ?? 0);
-                                    $classRate = $classRow->pass_rate ?? ($classAttempts > 0 ? round(($classLulus / $classAttempts) * 100, 1) : 0);
+                                    $classAttempts = max(0, (int) ($classRow->total_attempts ?? 0));
+                                    $classLulus = max(0, (int) ($classRow->passed_attempts ?? 0));
+                                    $classFailed = max(0, (int) ($classRow->failed_attempts ?? max(0, $classAttempts - $classLulus)));
+                                    $classRate = $classAttempts > 0
+                                        ? round(($classLulus / $classAttempts) * 100, 1)
+                                        : 0;
                                     $classAvg = round((float) ($classRow->avg_score ?? 0), 1);
-                                    $classQueryUrl = route('admin.lab.analytics', $analyticsRouteParams) . '?class_group=' . urlencode($classRow->class_group);
+                                    $classStudentsWithAttempts = max(0, (int) ($classRow->students_count ?? 0));
+                                    $classEnrolled = max(0, (int) ($classRow->enrolled_students ?? $classStudentsWithAttempts));
+                                    $classAttemptsPerStudent = $classStudentsWithAttempts > 0
+                                        ? round($classAttempts / $classStudentsWithAttempts, 1)
+                                        : 0;
+                                    $classAverageDuration = $classRow->avg_time_label ?? '-';
                                     $classInsightPayload = [
-                                        'name' => $classRow->class_group,
+                                        'name' => $classRow->class_group ?: 'Kelas belum diatur',
                                         'major' => $classRow->major ?: 'Program belum diatur',
-                                        'token' => $classRow->token ?: '-',
-                                        'status' => $classRow->status_label ?? 'Aktif',
-                                        'students_count' => (int) ($classRow->students_count ?? 0),
-                                        'enrolled_students' => (int) ($classRow->enrolled_students ?? $classRow->students_count ?? 0),
+                                        'students_count' => $classStudentsWithAttempts,
+                                        'enrolled_students' => $classEnrolled,
                                         'total_attempts' => $classAttempts,
                                         'passed_attempts' => $classLulus,
                                         'failed_attempts' => $classFailed,
                                         'pass_rate' => $classRate,
                                         'avg_score' => $classAvg,
-                                        'avg_time' => $classRow->avg_time_label ?? '-',
-                                        'last_attempt' => $classRow->last_attempt_label ?? 'Belum ada aktivitas',
-                                        'url' => $classQueryUrl,
-                                        'note' => $classAvg >= 70
-                                            ? 'Kinerja kelas sudah berada pada jalur baik.'
-                                            : 'Kelas perlu ditinjau pada percobaan yang belum lulus.',
+                                        'avg_time' => $classAverageDuration,
+                                        'attempts_per_student' => $classAttemptsPerStudent,
                                     ];
                                 @endphp
                                 <article
                                     role="button"
                                     tabindex="0"
+                                    aria-label="Buka insight kinerja praktik kelas {{ $classRow->class_group }}"
                                     data-class-insight='@json($classInsightPayload, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
                                     @click="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
                                     @keydown.enter="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
                                     @keydown.space.prevent="openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
-                                    class="glass-card rounded-2xl p-5 border-l-4 {{ $classAvg >= 70 ? 'border-l-emerald-500' : 'border-l-rose-500' }} group cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-indigo-400/40">
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <p class="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-white/30">Kelas</p>
-                                            <h4 class="text-lg font-black text-slate-900 dark:text-white truncate mt-1">{{ $classRow->class_group }}</h4>
-                                            <p class="mt-1 text-[10px] font-bold text-slate-500 dark:text-white/40 truncate">{{ $classRow->major ?: 'Program belum diatur' }}</p>
-                                        </div>
-                                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black border {{ $classAvg >= 70 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/20' }}">
-                                            {{ $classRate }}%
-                                        </span>
+                                    class="quiz-class-row cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500/50"
+                                >
+                                    <div class="quiz-class-name">
+                                        <strong>{{ $classRow->class_group ?: 'Kelas belum diatur' }}</strong>
+                                        <span>{{ number_format($classStudentsWithAttempts) }} pengguna dengan riwayat praktik</span>
                                     </div>
-                                    <div class="grid grid-cols-3 gap-2 mt-4">
-                                        <div class="rounded-xl bg-white/70 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-3">
-                                            <p class="text-[9px] uppercase tracking-widest text-slate-400 dark:text-white/30 font-bold">Siswa</p>
-                                            <p class="text-lg font-black text-slate-900 dark:text-white">{{ $classRow->students_count ?? 0 }}</p>
-                                        </div>
-                                        <div class="rounded-xl bg-white/70 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-3">
-                                            <p class="text-[9px] uppercase tracking-widest text-slate-400 dark:text-white/30 font-bold">Percobaan</p>
-                                            <p class="text-lg font-black text-indigo-600 dark:text-indigo-400">{{ $classAttempts }}</p>
-                                        </div>
-                                        <div class="rounded-xl bg-white/70 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-3">
-                                            <p class="text-[9px] uppercase tracking-widest text-slate-400 dark:text-white/30 font-bold">Rata-rata</p>
-                                            <p class="text-lg font-black {{ $classAvg >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">{{ $classAvg }}</p>
-                                        </div>
+                                    <div class="quiz-class-metric" data-label="pengguna">
+                                        <strong>{{ number_format($classStudentsWithAttempts) }}</strong>
+                                        <small>{{ $classEnrolled > 0 ? 'dari ' . number_format($classEnrolled) . ' terdaftar' : 'pengguna' }}</small>
                                     </div>
-                                    <div class="mt-4 flex items-center justify-between text-[10px] text-slate-500 dark:text-white/40">
-                                        <span>{{ $classLulus }} lulus / {{ $classFailed }} belum</span>
-                                        <span class="font-mono">Token: {{ $classRow->token ?: '-' }}</span>
+                                    <div class="quiz-class-metric" data-label="Percobaan">
+                                        <strong>{{ number_format($classAttempts) }}</strong>
+                                        <small>{{ $classAttemptsPerStudent }} / pengguna</small>
                                     </div>
-                                    <div class="mt-4 flex items-center justify-between gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
-                                        <span class="text-[10px] font-bold text-slate-400 dark:text-white/35">Klik kartu untuk ringkasan</span>
-                                        <a href="{{ $classQueryUrl }}" @click.stop class="text-[10px] font-black uppercase tracking-widest text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-300 dark:hover:text-indigo-200">
-                                            Filter
-                                        </a>
+                                    <div class="quiz-class-metric" data-label="Kelulusan">
+                                        <strong class="quiz-class-rate">{{ number_format($classLulus) }}/{{ number_format($classAttempts) }}</strong>
+                                        <small>{{ $classRate }}%</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Skor rata-rata">
+                                        <strong>{{ $classAvg }}</strong>
+                                        <small>dari 100</small>
+                                    </div>
+                                    <div class="quiz-class-metric" data-label="Durasi rata-rata">
+                                        <strong>{{ $classAverageDuration }}</strong>
+                                        <small>waktu per sesi</small>
                                     </div>
                                 </article>
                             @empty
-                                <div class="md:col-span-2 xl:col-span-3 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-white/[0.02] p-8 text-center">
-                                    <p class="text-xs text-slate-500 dark:text-white/40 italic">Belum ada data kelas pada riwayat lab.</p>
+                                <div class="px-5 py-10 text-center text-xs font-semibold text-slate-500 dark:text-white/40">
+                                    Belum ada riwayat praktik yang dapat dikelompokkan berdasarkan kelas.
                                 </div>
                             @endforelse
-
-                            @if($hiddenClassCount > 0)
-                                <article role="button" tabindex="0" @click="showClassListModal = true" @keydown.enter="showClassListModal = true" @keydown.space.prevent="showClassListModal = true" class="rounded-2xl border border-dashed border-cyan-300 bg-cyan-50/70 p-5 text-center cursor-pointer transition hover:border-cyan-400 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 dark:border-cyan-500/25 dark:bg-cyan-500/10 dark:hover:bg-cyan-500/15">
-                                    <span class="block text-2xl font-black text-cyan-700 dark:text-cyan-200">+{{ $hiddenClassCount }}</span>
-                                    <span class="mt-1 block text-[10px] font-black uppercase tracking-widest text-cyan-700 dark:text-cyan-200">kelas lain</span>
-                                    <span class="mt-2 block text-xs font-semibold text-slate-500 dark:text-white/40">Lihat daftar kelas tanpa mengubah filter.</span>
-                                </article>
-                            @endif
                         </div>
-                    </div>
+                    </section>
 
-                    {{-- =======================================================
-                         B. GRAFIK PERFORMA LAB
-                         ======================================================= --}}
-                    <div class="reveal" style="animation-delay: 0.2s;" x-data="{ chartType: 'line' }">
-                        <div class="glass-card rounded-2xl overflow-hidden relative">
-                            <div class="relative px-6 py-5 border-b border-slate-200 dark:border-white/5 bg-slate-50/60 dark:bg-[#0a0e17]/50 transition-colors overflow-hidden">
-                                <div class="absolute -top-24 -right-16 w-72 h-72 bg-indigo-300/20 dark:bg-indigo-600/10 rounded-full blur-[90px] pointer-events-none"></div>
-                                <div class="absolute -bottom-28 -left-16 w-72 h-72 bg-cyan-300/20 dark:bg-cyan-600/10 rounded-full blur-[90px] pointer-events-none"></div>
-
+                    <div id="lab-chart-section" class="analytics-section reveal scroll-mt-28" style="animation-delay: 0.26s;" x-data="{ chartType: 'line' }">
+                        <div class="lab-quiz-chart-panel glass-card analytics-panel chart-surface rounded-2xl overflow-hidden relative">
+                            <div class="lab-quiz-panel-head relative px-6 py-5 border-b border-slate-200 dark:border-white/5 bg-slate-50/60 dark:bg-[#0a0e17]/50 transition-colors overflow-hidden">
                                 <div class="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                                     <div>
                                         <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-1">
-                                            Performa Lab
+                                            Performa Praktik
                                         </p>
-                                        <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white transition-colors">
-                                            Grafik Perkembangan Nilai Lab
-                                        </h3>
-                                        <p class="text-xs text-slate-500 dark:text-white/40 mt-1 font-medium transition-colors max-w-2xl">
-                                            Menampilkan rata-rata skor terbaik siswa pada setiap modul lab. Data kosong dibiarkan kosong, bukan dianggap nol.
-                                        </p>
+                                        <div class="flex items-center gap-2"><h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white transition-colors">Skor Rata-rata per Lab</h3><span class="analytics-help" tabindex="0" role="button" data-analytics-tooltip="Setiap titik atau batang mewakili rata-rata skor terbaik siswa pada satu lab.">i</span></div>
                                     </div>
 
                                     <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
@@ -588,31 +1759,26 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 pt-5">
+                            <div class="lab-quiz-chart-stats analytics-chart-stats grid grid-cols-2 md:grid-cols-4 gap-3 px-6 pt-5">
                                 <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
-                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Rata-rata Lab</p>
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Skor rata-rata <span class="analytics-help analytics-help-inline" tabindex="0" role="button" data-analytics-tooltip="Rata-rata skor terbaik siswa pada seluruh lab yang memiliki data pada filter aktif.">i</span></p>
                                     <p class="mt-1 text-xl font-black text-blue-600 dark:text-blue-400">{{ $labChartAverage !== null ? $labChartAverage : '-' }}</p>
                                 </div>
                                 <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
-                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Lab Tertinggi</p>
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Skor paling tinggi <span class="analytics-help analytics-help-inline" tabindex="0" role="button" data-analytics-tooltip="Nilai tertinggi yang muncul di antara rata-rata skor terbaik setiap lab, bukan nilai tertinggi dari satu percobaan individu.">i</span></p>
                                     <p class="mt-1 text-xl font-black text-emerald-600 dark:text-emerald-400">{{ $labChartHighest !== null ? $labChartHighest : '-' }}</p>
                                 </div>
                                 <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
-                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Lab Terendah</p>
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Skor paling rendah <span class="analytics-help analytics-help-inline" tabindex="0" role="button" data-analytics-tooltip="Nilai terendah yang muncul di antara rata-rata skor lab pada filter aktif.">i</span></p>
                                     <p class="mt-1 text-xl font-black text-rose-600 dark:text-rose-400">{{ $labChartLowest !== null ? $labChartLowest : '-' }}</p>
                                 </div>
                                 <div class="rounded-2xl bg-slate-50 dark:bg-[#020617]/70 border border-slate-200 dark:border-white/5 p-4 transition-colors">
-                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Modul Dianalisis</p>
+                                    <p class="text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-white/30">Modul terbaca <span class="analytics-help analytics-help-inline" tabindex="0" role="button" data-analytics-tooltip="Jumlah modul lab yang memiliki data skor dan dapat ditampilkan pada grafik.">i</span></p>
                                     <p class="mt-1 text-xl font-black text-indigo-600 dark:text-indigo-400">{{ $hasLabChartData ? $labChartLabels->count() : 0 }}</p>
                                 </div>
                             </div>
 
-                            <div class="relative p-6">
-                                <div class="absolute inset-0 pointer-events-none overflow-hidden">
-                                    <div class="absolute -top-16 right-8 w-72 h-72 bg-indigo-300/10 dark:bg-indigo-500/10 rounded-full blur-[90px]"></div>
-                                    <div class="absolute -bottom-20 left-4 w-72 h-72 bg-cyan-300/10 dark:bg-cyan-500/10 rounded-full blur-[90px]"></div>
-                                </div>
-
+                            <div class="lab-quiz-chart-body analytics-chart-body relative p-6">
                                 <div class="relative h-[330px] w-full z-10">
                                     @if($hasLabChartData)
                                         <canvas id="mainPerformanceChart"></canvas>
@@ -623,125 +1789,100 @@
                                     @endif
                                 </div>
 
-                                <div class="relative z-10 mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-[10px] font-bold text-slate-500 dark:text-white/40">
-                                    <div class="flex items-center gap-4">
-                                        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Nilai Lab</span>
-                                    </div>
-                                    <p>Rata-rata skor terbaik per modul lab. Data kosong tidak dipaksa menjadi 0.</p>
-                                </div>
                             </div>
                         </div>
                     </div>
 
                     {{-- =======================================================
-                         C. SEMUA PERFORMA SISWA
+                         D. SEMUA PERFORMA SISWA
                          ======================================================= --}}
-                    <div class="glass-card rounded-2xl overflow-hidden reveal border-t-2 border-amber-500/50" style="animation-delay: 0.3s;" x-data="{ performanceView: 'best' }">
+                    <div id="lab-students" class="analytics-section glass-card analytics-panel quiz-student-analytics lab-quiz-student-analytics rounded-2xl overflow-hidden reveal border-t-2 border-amber-500/50 scroll-mt-28" style="animation-delay: 0.38s;">
                         <div class="p-5 md:p-6 border-b border-slate-200 dark:border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-slate-50/50 dark:bg-[#0a0e17]/30 transition-colors">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-                                    Semua Performa Siswa
+                                    Performa pengguna
                                 </h3>
-                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Memuat seluruh siswa yang memiliki riwayat lab. Gunakan filter untuk melihat urutan terbaik atau yang perlu pendampingan.</p>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Rata-rata skor, ketuntasan, durasi, dan percobaan setiap pengguna.</p>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-                                <span class="text-[10px] bg-white dark:bg-[#020617] px-3 py-1.5 rounded-lg text-slate-500 dark:text-white/50 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner transition-colors">{{ $userPerformance->count() }} siswa</span>
-                                <div class="flex items-center bg-white/80 dark:bg-[#020617] p-1 rounded-xl border border-slate-200 dark:border-white/5 shadow-inner transition-colors">
-                                    <button type="button" @click="performanceView = 'best'" :class="performanceView === 'best' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Terbaik</button>
-                                    <button type="button" @click="performanceView = 'worst'" :class="performanceView === 'worst' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 rounded-lg text-[10px] font-bold transition focus:outline-none">Terburuk</button>
-                                </div>
-                            </div>
+                            <span class="text-[10px] bg-white dark:bg-[#020617] px-3 py-1.5 rounded-lg text-slate-500 dark:text-white/50 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner transition-colors">{{ $userPerformance->count() }} pengguna</span>
                         </div>
                         
-                        <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-[560px]">
-                            <table class="w-full text-sm text-left border-collapse min-w-[1080px]">
-                                <thead class="bg-slate-100 dark:bg-[#0f141e] text-slate-500 dark:text-white/40 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-white/5 sticky top-0 z-10 shadow-sm dark:shadow-lg transition-colors">
-                                    <tr>
-                                        <th class="px-6 py-4 w-16 text-center border-b border-slate-200 dark:border-white/5">Peringkat</th>
-                                        <th class="px-6 py-4 border-b border-slate-200 dark:border-white/5">Profil Siswa</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Kelas</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Percobaan</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Status</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Rata-rata</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Rentang Skor</th>
-                                        <th class="px-6 py-4 text-center border-b border-slate-200 dark:border-white/5">Aktivitas Terakhir</th>
-                                        <th class="px-6 py-4 text-right border-b border-slate-200 dark:border-white/5">Aksi</th>
-                                    </tr>
-                                </thead>
-
-                                @foreach(['best' => $performanceBest, 'worst' => $performanceWorst] as $view => $rows)
-                                    <tbody x-show="performanceView === '{{ $view }}'" @if($view !== 'best') style="display: none;" @endif class="divide-y divide-slate-200 dark:divide-white/5 bg-white/50 dark:bg-[#0a0e17]/30 transition-colors">
-                                        @forelse($rows as $index => $usr)
-                                            <tr class="table-row group">
-                                                <td class="px-6 py-4 text-center">
-                                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs mx-auto shadow-sm dark:shadow-inner
-                                                        {{ $view === 'best' && $index == 0 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 shadow-md dark:shadow-[0_0_10px_#eab308]' :
-                                                           ($view === 'best' && $index == 1 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-800' :
-                                                           ($view === 'best' && $index == 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' : 'bg-indigo-50 dark:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400')) }}">
-                                                        {{ $index + 1 }}
-                                                    </div>
+                        <div class="p-5 md:p-6">
+                            <div class="max-h-[460px] overflow-x-auto overflow-y-auto custom-scrollbar rounded-2xl border border-slate-200 bg-white/70 dark:border-white/10 dark:bg-[#020617]/60">
+                                <table class="w-full min-w-[1060px] text-left text-xs">
+                                    <thead class="sticky top-0 z-10 bg-slate-50/95 text-[9px] font-black uppercase tracking-widest text-slate-400 backdrop-blur dark:bg-[#0a0e17]/95 dark:text-white/30">
+                                        <tr>
+                                            <th class="px-4 py-3">
+                                                <span class="inline-flex items-center gap-1.5 whitespace-nowrap">pengguna / Kelas</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Percobaan Lab</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Skor Rata-rata</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Rentang Skor</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Kelulusan Lab</span>
+                                            </th>
+                                            <th class="px-3 py-3 text-center">
+                                                <span class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">Durasi Rata-rata</span>
+                                            </th>
+                                            <th class="px-3 py-3">
+                                                <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Waktu </span>
+                                            </th>
+                                            <th class="px-4 py-3 text-right">
+                                                <span class="inline-flex items-center justify-end gap-1.5 whitespace-nowrap">Tinjau</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                                        @forelse($userPerformance as $usr)
+                                            @php
+                                                $score = round((float) ($usr->average_score ?? 0), 1);
+                                                $passed = (int) ($usr->passed_tries ?? 0);
+                                                $failed = (int) ($usr->failed_tries ?? 0);
+                                                $totalTries = (int) ($usr->total_tries ?? 0);
+                                                $passPercent = $totalTries > 0 ? round(($passed / $totalTries) * 100) : 0;
+                                                $avgTimeLabel = is_numeric($usr->avg_time ?? 0) ? gmdate('i:s', (int) ($usr->avg_time ?? 0)) : ($usr->avg_time ?? '00:00');
+                                            @endphp
+                                            <tr class="table-row">
+                                                <td class="px-4 py-3">
+                                                    <p class="max-w-[220px] truncate text-sm font-black text-slate-900 dark:text-white">{{ $usr->name ?? 'pengguna' }}</p>
+                                                    <p class="mt-0.5 truncate text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $usr->class_group ?: 'Kelas belum diatur' }}</p>
                                                 </td>
-                                                <td class="px-6 py-4">
-                                                    <div class="flex flex-col">
-                                                        <a href="{{ route('admin.student.analytics', $usr->student_id ?? 1) }}" class="font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-2 group-hover:translate-x-1 duration-200">
-                                                            {{ $usr->name ?? 'Siswa' }}
-                                                            <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                                        </a>
-                                                        <span class="text-[10px] text-slate-500 dark:text-white/30 font-mono mt-0.5 transition-colors">{{ $usr->email ?? '-' }}</span>
-                                                    </div>
+                                                <td class="px-3 py-3 text-center font-mono font-black text-adaptive">{{ number_format($totalTries) }}</td>
+                                                <td class="px-3 py-3 text-center">
+                                                    <span class="font-black {{ $score >= 70 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300' }}">{{ $score }}</span>
                                                 </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <span class="inline-flex items-center justify-center px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20 text-[10px] font-black">
-                                                        {{ $usr->class_group ?: '-' }}
-                                                    </span>
+                                                <td class="px-3 py-3 text-center font-mono text-adaptive-muted">{{ $usr->lowest_score ?? 0 }}-{{ $usr->best_score ?? 0 }}</td>
+                                                <td class="px-3 py-3 text-center">
+                                                    <span class="font-mono font-black text-cyan-700 dark:text-cyan-300">{{ $passed }}/{{ $totalTries }}</span>
+                                                    <span class="ml-1 text-[10px] font-bold text-adaptive-muted">({{ $passPercent }}%)</span>
+                                                    @if($failed > 0)
+                                                        <span class="ml-1 rounded-md bg-rose-50 px-1.5 py-0.5 text-[9px] font-black text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{{ $failed }} belum</span>
+                                                    @endif
                                                 </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <div class="flex justify-center items-center gap-2">
-                                                        <span class="bg-white dark:bg-[#020617] px-2 py-1.5 rounded-lg text-[10px] text-slate-600 dark:text-white/60 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">
-                                                            {{ $usr->total_tries ?? 0 }}x
-                                                        </span>
-                                                        <span class="bg-white dark:bg-[#020617] px-2 py-1.5 rounded-lg text-[10px] text-cyan-600 dark:text-cyan-400 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">
-                                                            {{ is_numeric($usr->avg_time ?? 0) ? gmdate("i:s", $usr->avg_time) : ($usr->avg_time ?? 0) }}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <div class="flex justify-center items-center gap-2">
-                                                        <span class="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-1.5 rounded-lg text-[10px] border border-emerald-200 dark:border-emerald-500/20 font-bold">{{ $usr->passed_tries ?? 0 }} lulus</span>
-                                                        <span class="bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 px-2 py-1.5 rounded-lg text-[10px] border border-rose-200 dark:border-rose-500/20 font-bold">{{ $usr->failed_tries ?? 0 }} belum</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <span class="font-black {{ ($usr->average_score ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
-                                                        {{ round((float) ($usr->average_score ?? 0), 1) }}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <span class="font-mono text-[10px] text-slate-600 dark:text-white/60">
-                                                        {{ $usr->lowest_score ?? 0 }} - {{ $usr->best_score ?? 0 }}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <span class="text-[10px] text-slate-500 dark:text-white/50 bg-white dark:bg-[#020617] px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner transition-colors">
-                                                        {{ isset($usr->last_attempt) ? \Carbon\Carbon::parse($usr->last_attempt)->diffForHumans() : '-' }}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <a href="{{ route('admin.student.analytics', $usr->student_id ?? 1) }}" class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-600/10 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white border border-indigo-200 dark:border-indigo-600/30 text-[10px] font-bold transition-all shadow-sm dark:shadow-inner">
-                                                        Tinjau Siswa
+                                                <td class="px-3 py-3 text-center font-mono text-adaptive-muted">{{ $avgTimeLabel }}</td>
+                                                <td class="px-3 py-3 text-[10px] font-semibold text-adaptive-muted">{{ isset($usr->last_attempt) ? \Carbon\Carbon::parse($usr->last_attempt)->diffForHumans() : '-' }}</td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <a href="{{ route('admin.student.analytics', $usr->student_id ?? 1) }}" class="inline-flex items-center justify-center rounded-lg bg-indigo-50 px-3 py-2 text-[10px] font-black text-indigo-700 transition hover:bg-indigo-600 hover:text-white dark:bg-indigo-500/10 dark:text-indigo-300 dark:hover:bg-indigo-600 dark:hover:text-white">
+                                                        Tinjau
                                                     </a>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="py-16 text-center text-slate-500 dark:text-white/30 text-xs italic bg-slate-50 dark:bg-[#0a0e17]/50 transition-colors">
-                                                    Belum ada data riwayat pengerjaan siswa.
+                                                <td colspan="8" class="px-4 py-10 text-center text-xs font-semibold text-slate-500 dark:text-white/40">
+                                                    Belum ada data riwayat pengerjaan pengguna.
                                                 </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                @endforeach
-                            </table>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -754,47 +1895,25 @@
     <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
         
-        <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+        <div class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-white/95 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-all custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
             
             <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <!-- Hero Logo Section -->
-            <div class="relative w-4 h-4 mx-auto mb-6">
-                
-            </div>
-            
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Analitik Lab</span></h3>
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Analitik & Pemantauan Performa</p>
-            
-            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Halaman ini membantu admin membaca perkembangan praktikum siswa secara lebih cepat. Data utama ditampilkan dalam bentuk ringkasan, grafik, dan daftar peringkat agar mudah ditindaklanjuti.</p>
-                
-                <div class="space-y-3 mt-4 text-left">
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ringkasan Kinerja</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan jumlah percobaan, rasio kelulusan, rata-rata nilai, dan rata-rata durasi pengerjaan lab.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Visualisasi Tren & Rasio</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan grafik perkembangan nilai lab agar pola pengerjaan praktikum siswa lebih mudah dibaca.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Peringkat Peserta</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menampilkan siswa dengan performa terbaik berdasarkan nilai, jumlah percobaan, dan waktu pengerjaan.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @php
+                $guideTitle = 'Panduan Analitik Lab';
+                $guideSubtitle = 'Membaca ringkasan praktik dan perbandingan kelas.';
+                $guideImage = 'images/guides/current-admin-lab-analytics.png';
+                $guideIntro = 'Gunakan nomor pada gambar untuk mengenali area ringkasan, grafik, dan tombol tampilan sebelum membaca performa lab lebih rinci.';
+                $guidePoints = [
+                    ['x' => 52, 'y' => 28, 'title' => 'Ringkasan lab', 'description' => 'Baca total percobaan, rasio lulus, rata-rata skor, dan durasi sebagai gambaran awal kondisi praktik.'],
+                    ['x' => 85, 'y' => 28, 'title' => 'Filter dan pilihan data', 'description' => 'Gunakan filter saat ingin melihat kelas atau modul tertentu tanpa mencampur semua data.'],
+                    ['x' => 48, 'y' => 58, 'title' => 'Grafik perkembangan', 'description' => 'Grafik membantu melihat apakah capaian lab naik, turun, atau stabil dari waktu ke waktu.'],
+                    ['x' => 86, 'y' => 52, 'title' => 'Mode tampilan', 'description' => 'Ganti bentuk grafik saat pola lebih mudah dibaca dalam garis atau batang.'],
+                ];
+            @endphp
+            @include('admin.partials.analytics_guide_mockup')
 
             <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
                 <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">
@@ -807,41 +1926,39 @@
     {{-- ==================== HERO MODALS (INSIGHT DATA PER CARD) ==================== --}}
 
     {{-- Modal: Daftar Kelas --}}
-    <div x-show="showClassListModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
+    <div x-show="showClassListModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;" role="dialog" aria-modal="true" aria-labelledby="class-list-modal-title">
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-opacity" @click="showClassListModal = false" x-transition.opacity></div>
-
-        <div class="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-cyan-200 bg-white/95 shadow-2xl backdrop-blur-xl transition-all dark:border-cyan-500/30 dark:bg-[#0f141e]/95"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
-            <div class="flex items-start justify-between gap-4 border-b border-slate-200 bg-slate-50/80 px-6 py-5 dark:border-white/5 dark:bg-[#0a0e17]/80">
+        <div class="relative flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#0f141e]" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-6 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5 dark:border-white/5 sm:px-8">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-300">Daftar kelas lab</p>
-                    <h3 class="mt-1 text-xl font-black text-slate-900 dark:text-white">Ringkasan Seluruh Kelas</h3>
-                    <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-white/40">Klik kartu untuk ringkasan. Tautan Filter memuat halaman kelas.</p>
+                    <p class="text-[10px] font-black uppercase tracking-[.2em] text-cyan-600 dark:text-cyan-300">Analitik Kelas</p>
+                    <h3 id="class-list-modal-title" class="mt-1 text-xl font-black text-slate-900 dark:text-white">Seluruh Kinerja Praktik Kelas</h3>
+                    <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-white/45">Kelulusan, partisipasi, skor rata-rata, dan frekuensi percobaan.</p>
                 </div>
-                <button @click="showClassListModal = false" class="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-white">
+                <button @click="showClassListModal = false" aria-label="Tutup daftar kelas" class="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-white">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-
-            <div class="overflow-y-auto p-5 custom-scrollbar">
-                <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div class="custom-scrollbar overflow-y-auto p-4 sm:p-6">
+                <div class="grid gap-3">
                     @forelse($classPerformance as $classRow)
                         @php
-                            $classAttempts = (int) ($classRow->total_attempts ?? 0);
-                            $classLulus = (int) ($classRow->passed_attempts ?? 0);
-                            $classFailed = (int) ($classRow->failed_attempts ?? 0);
-                            $classRate = $classRow->pass_rate ?? ($classAttempts > 0 ? round(($classLulus / $classAttempts) * 100, 1) : 0);
+                            $classAttempts = max(0, (int) ($classRow->total_attempts ?? 0));
+                            $classLulus = max(0, (int) ($classRow->passed_attempts ?? 0));
+                            $classFailed = max(0, (int) ($classRow->failed_attempts ?? 0));
+                            $classRate = $classAttempts > 0 ? round(($classLulus / $classAttempts) * 100, 1) : 0;
                             $classAvg = round((float) ($classRow->avg_score ?? 0), 1);
-                            $classQueryUrl = route('admin.lab.analytics', $analyticsRouteParams) . '?class_group=' . urlencode($classRow->class_group);
+                            $classStudentsWithAttempts = max(0, (int) ($classRow->students_count ?? 0));
+                            $classEnrolled = max(0, (int) ($classRow->enrolled_students ?? $classStudentsWithAttempts));
+                            $classCoverage = $classEnrolled > 0 ? min(100, round(($classStudentsWithAttempts / $classEnrolled) * 100, 1)) : 0;
+                            $classAttemptsPerStudent = $classStudentsWithAttempts > 0 ? round($classAttempts / $classStudentsWithAttempts, 1) : 0;
                             $classInsightPayload = [
                                 'name' => $classRow->class_group,
                                 'major' => $classRow->major ?: 'Program belum diatur',
                                 'token' => $classRow->token ?: '-',
                                 'status' => $classRow->status_label ?? 'Aktif',
-                                'students_count' => (int) ($classRow->students_count ?? 0),
-                                'enrolled_students' => (int) ($classRow->enrolled_students ?? $classRow->students_count ?? 0),
+                                'students_count' => $classStudentsWithAttempts,
+                                'enrolled_students' => $classEnrolled,
                                 'total_attempts' => $classAttempts,
                                 'passed_attempts' => $classLulus,
                                 'failed_attempts' => $classFailed,
@@ -849,53 +1966,21 @@
                                 'avg_score' => $classAvg,
                                 'avg_time' => $classRow->avg_time_label ?? '-',
                                 'last_attempt' => $classRow->last_attempt_label ?? 'Belum ada aktivitas',
-                                'url' => $classQueryUrl,
-                                'note' => $classAvg >= 70
-                                    ? 'Kinerja kelas sudah berada pada jalur baik.'
-                                    : 'Kelas perlu ditinjau pada percobaan yang belum lulus.',
+                                'attempts_per_student' => $classAttemptsPerStudent,
+                                'coverage' => $classCoverage,
                             ];
                         @endphp
-                        <article
-                            role="button"
-                            tabindex="0"
-                            data-class-insight='@json($classInsightPayload, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
-                            @click="showClassListModal = false; openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
-                            @keydown.enter="showClassListModal = false; openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
-                            @keydown.space.prevent="showClassListModal = false; openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))"
-                            class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 cursor-pointer transition hover:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 dark:border-white/10 dark:bg-[#020617]/70 dark:hover:border-cyan-500/30">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Kelas</p>
-                                    <h4 class="mt-1 truncate text-base font-black text-slate-900 dark:text-white">{{ $classRow->class_group }}</h4>
-                                    <p class="mt-1 truncate text-[10px] font-bold text-slate-500 dark:text-white/40">{{ $classRow->major ?: 'Program belum diatur' }}</p>
-                                </div>
-                                <span class="rounded-lg border px-2.5 py-1 text-[10px] font-black {{ $classAvg >= 70 ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300' : 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300' }}">{{ $classRate }}%</span>
+                        <button type="button" data-class-insight='@json($classInsightPayload, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)' @click="showClassListModal = false; openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))" @keydown.enter="showClassListModal = false; openClassInsight(JSON.parse($event.currentTarget.dataset.classInsight))" class="class-modal-row grid w-full gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left transition hover:border-cyan-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-400/40 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-cyan-500/30 dark:hover:bg-white/[0.05] md:grid-cols-[1.1fr_.9fr_.9fr_.9fr] md:items-center">
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-black text-slate-900 dark:text-white">{{ $classRow->class_group }}</p>
+                                <p class="mt-1 truncate text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $classRow->major ?: 'Program belum diatur' }}</p>
                             </div>
-                            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-                                <div class="rounded-xl bg-white px-2 py-2 dark:bg-black/10">
-                                    <p class="font-black text-slate-900 dark:text-white">{{ $classRow->students_count ?? 0 }}</p>
-                                    <p class="text-[8px] font-bold uppercase tracking-widest text-slate-400">Siswa</p>
-                                </div>
-                                <div class="rounded-xl bg-white px-2 py-2 dark:bg-black/10">
-                                    <p class="font-black text-indigo-600 dark:text-indigo-300">{{ $classAttempts }}</p>
-                                    <p class="text-[8px] font-bold uppercase tracking-widest text-slate-400">Coba</p>
-                                </div>
-                                <div class="rounded-xl bg-white px-2 py-2 dark:bg-black/10">
-                                    <p class="font-black {{ $classAvg >= 70 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300' }}">{{ $classAvg }}</p>
-                                    <p class="text-[8px] font-bold uppercase tracking-widest text-slate-400">Nilai</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between border-t border-slate-200 pt-3 dark:border-white/10">
-                                <span class="text-[10px] font-bold text-slate-400 dark:text-white/35">Ringkasan</span>
-                                <a href="{{ $classQueryUrl }}" @click.stop class="text-[10px] font-black uppercase tracking-widest text-cyan-700 transition hover:text-cyan-500 dark:text-cyan-300 dark:hover:text-cyan-200">
-                                    Filter
-                                </a>
-                            </div>
-                        </article>
+                            <div><p class="class-analytics-label">Kelulusan</p><p class="mt-1 text-base font-black text-emerald-600 dark:text-emerald-300">{{ $classRate }}%</p><p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $classLulus }}/{{ $classAttempts }} lulus</p></div>
+                            <div><p class="class-analytics-label">Partisipasi</p><p class="mt-1 text-base font-black text-cyan-700 dark:text-cyan-300">{{ $classCoverage }}%</p><p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $classStudentsWithAttempts }}/{{ $classEnrolled ?: $classStudentsWithAttempts }} pengguna</p></div>
+                            <div><p class="class-analytics-label">Skor rata-rata</p><p class="mt-1 text-base font-black text-slate-900 dark:text-white">{{ $classAvg }}<span class="ml-1 text-[10px] text-slate-400">/100</span></p><p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-white/40">{{ $classAttemptsPerStudent }} percobaan/pengguna</p></div>
+                        </button>
                     @empty
-                        <div class="md:col-span-2 xl:col-span-3 rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs font-semibold text-slate-500 dark:border-white/10 dark:text-white/40">
-                            Belum ada data kelas pada riwayat lab.
-                        </div>
+                        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-xs font-semibold text-slate-500 dark:border-white/10 dark:bg-white/[0.02] dark:text-white/40">Belum ada data kelas pada filter aktif.</div>
                     @endforelse
                 </div>
             </div>
@@ -903,97 +1988,76 @@
     </div>
 
     {{-- Modal: Insight Per Kelas --}}
-    <div x-show="showClassInsightModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
-        <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-opacity" @click="showClassInsightModal = false" x-transition.opacity></div>
+    {{-- MODAL INSIGHT HERO KELAS PRAKTIK --}}
+    <div x-show="showClassInsightModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;" role="dialog" aria-modal="true" aria-label="Insight kinerja praktik per kelas">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity dark:bg-[#020617]/90" @click="showClassInsightModal = false" x-transition.opacity></div>
 
-        <div class="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-[2rem] border border-indigo-200 bg-white/95 shadow-2xl backdrop-blur-xl transition-all dark:border-indigo-500/30 dark:bg-[#0f141e]/95 dark:shadow-[0_30px_100px_rgba(99,102,241,0.18)]"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-             x-transition:leave-end="opacity-0 scale-95 translate-y-4">
-
-            <button @click="showClassInsightModal = false" class="absolute right-5 top-5 z-10 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-white">
+        <div class="quiz-class-hero-modal relative max-h-[92vh] w-full max-w-4xl overflow-y-auto custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-5 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-5 scale-95">
+            <button @click="showClassInsightModal = false" aria-label="Tutup insight kelas" class="absolute right-5 top-5 z-10 rounded-full p-2 text-slate-400 transition hover:bg-white/70 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-white">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <div class="relative overflow-hidden border-b border-slate-200 bg-slate-50/80 px-6 py-7 dark:border-white/5 dark:bg-[#0a0e17]/80 sm:px-8">
-                <div class="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-indigo-300/25 blur-3xl dark:bg-indigo-500/10"></div>
-                <div class="absolute -bottom-24 left-10 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-500/10"></div>
+            <div class="quiz-class-hero-head px-5 py-6 sm:px-7 sm:py-7">
+                <p class="quiz-class-hero-kicker">Insight Kinerja Kelas</p>
+                <h3 class="mt-2 truncate pr-10 text-2xl font-black tracking-tight text-slate-900 dark:text-white" x-text="selectedClassInsight.name || 'Kelas'"></h3>
+                <p class="mt-2 max-w-2xl text-xs font-semibold leading-5 text-slate-600 dark:text-slate-300">Ringkasan dihitung dari seluruh praktik lab yang selesai pada periode dan kelas yang sedang difilter.</p>
+            </div>
 
-                <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div class="flex min-w-0 items-start gap-4">
-                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-indigo-200 bg-indigo-50 text-indigo-600 shadow-sm dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300">
-                            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7a2 2 0 012-2h12a2 2 0 012 2v11a1 1 0 01-1 1H5a1 1 0 01-1-1V7zm4 4h8M8 15h5"/></svg>
+            <div class="space-y-5 p-5 sm:p-7">
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="quiz-class-hero-metric">
+                        <p>pengguna</p>
+                        <strong class="text-cyan-700 dark:text-cyan-300" x-text="selectedClassInsight.students_count || 0"></strong>
+                        <span x-text="'dari ' + (selectedClassInsight.enrolled_students || 0) + ' pengguna terdaftar'"></span>
+                    </div>
+                    <div class="quiz-class-hero-metric">
+                        <p>Percobaan</p>
+                        <strong x-text="selectedClassInsight.total_attempts || 0"></strong>
+                        <span x-text="(selectedClassInsight.attempts_per_student || 0) + ' sesi per pengguna'"></span>
+                    </div>
+                    <div class="quiz-class-hero-metric">
+                        <p>Skor rata-rata</p>
+                        <strong class="text-indigo-700 dark:text-indigo-300" x-text="selectedClassInsight.avg_score || 0"></strong>
+                        <span>nilai akhir seluruh sesi</span>
+                    </div>
+                    <div class="quiz-class-hero-metric">
+                        <p>Durasi rata-rata</p>
+                        <strong class="text-amber-700 dark:text-amber-300" x-text="selectedClassInsight.avg_time || '-'"></strong>
+                        <span>waktu per sesi praktik</span>
+                    </div>
+                </div>
+
+                <section class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.025]">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p class="quiz-class-hero-section-label">Kelulusan Praktik</p>
+                            <div class="mt-2 flex items-end gap-3">
+                                <strong class="text-3xl font-black tracking-tight text-emerald-600 dark:text-emerald-300" x-text="(selectedClassInsight.pass_rate || 0) + '%'"></strong>
+                                <span class="pb-1 text-xs font-semibold text-slate-500 dark:text-slate-400" x-text="(selectedClassInsight.passed_attempts || 0) + ' lulus dari ' + (selectedClassInsight.total_attempts || 0) + ' percobaan'"></span>
+                            </div>
                         </div>
-                        <div class="min-w-0 pr-10 sm:pr-0">
-                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">Ringkasan Kelas Lab</p>
-                            <h3 class="mt-1 truncate text-2xl font-black text-slate-900 dark:text-white" x-text="selectedClassInsight.name || 'Kelas'"></h3>
-                            <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400" x-text="selectedClassInsight.major || 'Program belum diatur'"></p>
+                        <div class="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
+                            <span class="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300" x-text="(selectedClassInsight.passed_attempts || 0) + ' lulus'"></span>
+                            <span class="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300" x-text="(selectedClassInsight.failed_attempts || 0) + ' belum lulus'"></span>
                         </div>
                     </div>
-
-                    <div class="flex flex-wrap gap-2 sm:justify-end">
-                        <span class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 shadow-sm dark:border-white/10 dark:bg-[#020617] dark:text-white/60" x-text="'Token ' + (selectedClassInsight.token || '-')"></span>
-                        <span class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300" x-text="selectedClassInsight.status || 'Aktif'"></span>
+                    <div class="quiz-class-hero-meter mt-4">
+                        <span class="bg-emerald-500" :style="'width: ' + Math.min(selectedClassInsight.pass_rate || 0, 100) + '%'" aria-label="Proporsi lulus"></span>
+                        <span class="bg-rose-400" :style="'width: ' + Math.max(0, 100 - Math.min(selectedClassInsight.pass_rate || 0, 100)) + '%'" aria-label="Proporsi belum lulus"></span>
                     </div>
+                </section>
+
+                <div class="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-3 text-[11px] font-semibold leading-5 text-slate-500 dark:border-white/10 dark:bg-black/10 dark:text-slate-400">
+                    Basis data: jumlah pengguna dihitung dari pengguna dengan minimal satu praktik selesai; kelulusan, skor, dan durasi dihitung dari seluruh percobaan praktik pada kelas ini.
                 </div>
             </div>
 
-            <div class="max-h-[calc(90vh-180px)] overflow-y-auto p-6 custom-scrollbar sm:p-8">
-                <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-[#020617]/70">
-                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">Siswa Aktif</p>
-                        <p class="mt-1 text-2xl font-black text-indigo-600 dark:text-indigo-300" x-text="selectedClassInsight.students_count || 0"></p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-[#020617]/70">
-                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">Percobaan</p>
-                        <p class="mt-1 text-2xl font-black text-slate-900 dark:text-white" x-text="selectedClassInsight.total_attempts || 0"></p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-[#020617]/70">
-                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">Rata-rata</p>
-                        <p class="mt-1 text-2xl font-black" :class="(selectedClassInsight.avg_score || 0) >= 70 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'" x-text="selectedClassInsight.avg_score || 0"></p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-[#020617]/70">
-                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">Durasi Rata-rata</p>
-                        <p class="mt-1 text-2xl font-black text-cyan-600 dark:text-cyan-300" x-text="selectedClassInsight.avg_time || '-'"></p>
-                    </div>
-                </div>
-
-                <div class="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/5 dark:bg-[#020617]/70">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">Rasio Kelulusan</p>
-                            <p class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300" x-text="selectedClassInsight.note || 'Belum ada catatan kelas.'"></p>
-                        </div>
-                        <p class="text-3xl font-black text-indigo-600 dark:text-indigo-300" x-text="(selectedClassInsight.pass_rate || 0) + '%'"></p>
-                    </div>
-                    <div class="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
-                        <div class="h-full rounded-full transition-all"
-                             :class="(selectedClassInsight.pass_rate || 0) >= 70 ? 'bg-emerald-500' : 'bg-rose-500'"
-                             :style="'width: ' + Math.min(selectedClassInsight.pass_rate || 0, 100) + '%'"></div>
-                    </div>
-                    <div class="mt-3 flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-500 dark:text-white/40">
-                        <span class="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300" x-text="(selectedClassInsight.passed_attempts || 0) + ' lulus'"></span>
-                        <span class="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300" x-text="(selectedClassInsight.failed_attempts || 0) + ' belum lulus'"></span>
-                        <span class="ml-auto" x-text="'Aktivitas terakhir: ' + (selectedClassInsight.last_attempt || '-')"></span>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-5 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
-                    <button type="button" @click="showClassInsightModal = false" class="text-left text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-white/50 dark:hover:text-white">
-                        Tutup ringkasan
-                    </button>
-                    <a :href="selectedClassInsight.url || '#'" class="text-sm font-black text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-300 dark:hover:text-indigo-200">
-                        Filter halaman ke kelas ini &rarr;
-                    </a>
-                </div>
+            <div class="flex justify-end border-t border-slate-200 px-5 py-4 dark:border-white/10 sm:px-7">
+                <button type="button" @click="showClassInsightModal = false" class="text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-white/50 dark:hover:text-white">Tutup</button>
             </div>
         </div>
     </div>
 
-    {{-- 1. Modal: Rincian Total Percobaan --}}
     <div x-show="showAttemptsModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showAttemptsModal = false"></div>
         <div class="relative w-full max-w-2xl bg-white dark:bg-[#0f141e] border border-indigo-200 dark:border-indigo-500/40 rounded-3xl shadow-2xl dark:shadow-[0_30px_100px_rgba(99,102,241,0.15)] p-6 md:p-8 transition-colors" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -1285,6 +2349,86 @@
                 initCharts();
             });
         });
+    </script>
+
+
+
+    <div id="analyticsTooltipPortal" role="tooltip" aria-hidden="true"></div>
+    <script>
+        (function () {
+            const portal = document.getElementById('analyticsTooltipPortal');
+            const triggers = Array.from(document.querySelectorAll('[data-analytics-tooltip]'));
+            if (!portal || !triggers.length) return;
+
+            let activeTrigger = null;
+            let hideTimer = null;
+
+            const hide = () => {
+                window.clearTimeout(hideTimer);
+                portal.classList.remove('is-visible');
+                portal.setAttribute('aria-hidden', 'true');
+                activeTrigger = null;
+            };
+
+            const position = () => {
+                if (!activeTrigger || !portal.classList.contains('is-visible')) return;
+                const rect = activeTrigger.getBoundingClientRect();
+                const gap = 10;
+                const viewportPadding = 12;
+                const portalRect = portal.getBoundingClientRect();
+                let top = rect.bottom + gap;
+                let left = rect.left + (rect.width / 2) - (portalRect.width / 2);
+
+                if (top + portalRect.height > window.innerHeight - viewportPadding) {
+                    top = rect.top - portalRect.height - gap;
+                }
+
+                top = Math.max(viewportPadding, top);
+                left = Math.max(viewportPadding, Math.min(left, window.innerWidth - portalRect.width - viewportPadding));
+                portal.style.top = `${top}px`;
+                portal.style.left = `${left}px`;
+            };
+
+            const show = (trigger) => {
+                window.clearTimeout(hideTimer);
+                const message = trigger.getAttribute('data-analytics-tooltip');
+                if (!message) return;
+                activeTrigger = trigger;
+                portal.textContent = message;
+                portal.classList.add('is-visible');
+                portal.setAttribute('aria-hidden', 'false');
+                requestAnimationFrame(position);
+            };
+
+            triggers.forEach((trigger) => {
+                trigger.addEventListener('mouseenter', () => show(trigger));
+                trigger.addEventListener('mouseleave', () => {
+                    hideTimer = window.setTimeout(hide, 70);
+                });
+                trigger.addEventListener('focus', () => show(trigger));
+                trigger.addEventListener('blur', () => {
+                    hideTimer = window.setTimeout(hide, 70);
+                });
+                trigger.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (activeTrigger === trigger && portal.classList.contains('is-visible')) {
+                        hide();
+                    } else {
+                        show(trigger);
+                    }
+                });
+            });
+
+            document.addEventListener('pointerdown', (event) => {
+                if (activeTrigger && !event.target.closest('[data-analytics-tooltip]')) hide();
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') hide();
+            });
+            window.addEventListener('scroll', hide, true);
+            window.addEventListener('resize', position);
+        })();
     </script>
 
 </body>

@@ -87,7 +87,7 @@
             'quiz_key_db' => 'quiz_3',
             'topics' => [
                 ['code' => '3.1', 'name' => 'Tipografi', 'route' => 'courses.typography', 'time' => '20 min', 'range' => '46-50'],
-                ['code' => '3.2', 'name' => 'Warna dan Latar Belakang', 'route' => ['courses.backgrounds', 'courses.background'], 'time' => '20 min', 'range' => '51-55'],
+                ['code' => '3.2', 'name' => 'Warna dan Latar Belakang', 'route' => ['courses.background', 'courses.backgrounds'], 'time' => '20 min', 'range' => '51-55'],
                 ['code' => '3.3', 'name' => 'Border dan Radius', 'route' => 'courses.borders', 'time' => '20 min', 'range' => '56-60'],
                 ['code' => '3.4', 'name' => 'Bayangan dan Efek Visual', 'route' => 'courses.effects', 'time' => '25 min', 'range' => '61-65'],
             ],

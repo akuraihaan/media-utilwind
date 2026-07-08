@@ -99,6 +99,7 @@
         .dark .table-row:hover { background: rgba(255,255,255,0.02); }
 
         .modal-open { overflow: hidden; padding-right: 5px; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{
@@ -161,7 +162,7 @@
     </aside>
 
         {{-- ==================== MAIN CONTENT ==================== --}}
-        <main class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
+        <main id="admin-main-content" class="flex-1 flex flex-col relative z-10 transition-colors duration-300 h-full overflow-y-auto overflow-x-hidden">
 
             {{-- Background FX Main --}}
             <div class="fixed inset-0 pointer-events-none z-0">
@@ -238,27 +239,23 @@
             <div class="flex-1 p-4 md:p-8 lg:p-10 relative z-10">
                 <div class="max-w-7xl mx-auto space-y-8">
 
-                    {{-- HERO SECTION --}}
-                    <div class="glass-card rounded-2xl p-6 md:p-10 overflow-hidden bg-gradient-to-r from-indigo-50 via-white to-purple-50 dark:from-indigo-900/30 dark:via-[#0f141e] dark:to-purple-900/20 group reveal transition-colors shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
-                        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-[0.05] mix-blend-overlay transition-opacity"></div>
-                        <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-[100px] group-hover:bg-indigo-500/20 transition duration-1000"></div>
-
-                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                            <div>
-                                <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3 transition-colors">Konfigurasi <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Lab</span></h1>
-                                <p class="text-slate-600 dark:text-indigo-200/60 max-w-xl text-xs md:text-sm leading-relaxed mb-6 transition-colors">
-                                    Pusat manajemen modul praktikum. Tambahkan lab baru, atur durasi pengerjaan, dan kelola langkah validasi secara terstruktur.
-                                </p>
-
-                                <div class="flex items-center gap-3">
-                                    <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 dark:bg-[#020617]/50 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner transition-colors">
-                                        <span class="text-2xl font-bold text-indigo-600 dark:text-white transition-colors">{{ $labs->count() ?? 0 }}</span>
-                                        <span class="text-[9px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-bold transition-colors">Total Modul</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @php
+                        $labRows = collect($labs ?? []);
+                        $totalLabs = $labRows->count();
+                        $activeLabs = $labRows->filter(fn ($lab) => (int) ($lab->is_active ?? 0) === 1)->count();
+                        $avgDuration = $totalLabs > 0 ? round($labRows->avg(fn ($lab) => (float) ($lab->duration_minutes ?? 0))) : 0;
+                        $avgPassingGrade = $totalLabs > 0 ? round($labRows->avg(fn ($lab) => (float) ($lab->passing_grade ?? 0))) : 0;
+                        $analyticsTitle = 'Ringkasan Modul Lab';
+                        $analyticsSubtitle = 'Konfigurasi lab diringkas dari jumlah modul, status aktif, durasi, dan nilai minimum agar struktur praktikum mudah ditinjau.';
+                        $analyticsItems = [
+                            ['label' => 'Total Modul', 'value' => number_format($totalLabs), 'hint' => 'Modul praktikum yang tersedia.', 'tone' => 'indigo'],
+                            ['label' => 'Modul Aktif', 'value' => number_format($activeLabs), 'hint' => number_format(max(0, $totalLabs - $activeLabs)) . ' modul belum aktif.', 'tone' => $activeLabs > 0 ? 'emerald' : 'amber'],
+                            ['label' => 'Durasi Rata-rata', 'value' => $avgDuration . ' menit', 'hint' => 'Rerata waktu pengerjaan yang disiapkan.', 'tone' => 'cyan'],
+                            ['label' => 'Nilai Minimum', 'value' => $avgPassingGrade, 'hint' => 'Rerata passing grade seluruh modul.', 'tone' => 'fuchsia'],
+                        ];
+                        $analyticsActions = [];
+                    @endphp
+                    @include('admin.partials.compact_analytics_strip')
 
                     {{-- SEARCH & TABLE SECTION --}}
                     <div class="glass-card rounded-2xl flex flex-col transition-colors duration-300 z-10 reveal shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]" style="animation-delay: 0.1s;">
@@ -342,51 +339,28 @@
         </main>
     </div>
 
-    {{-- MODAL PANDUAN DASBOR ADMIN (HERO MODAL POPUP) --}}
-    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+    {{-- MODAL PANDUAN KONFIGURASI LAB --}}
+    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak style="display: none;">
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
 
-        <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+        <div class="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-white/95 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl transition-all custom-scrollbar" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
 
             <button @click="showDashboardInfoModal = false" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all focus:outline-none z-10">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <!-- Hero Logo Section -->
-            <div class="relative w-4 h-4 mx-auto mb-6">
-
-            </div>
-
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Konfigurasi Praktikum</span></h3>
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Pengelolaan Praktikum</p>
-
-            <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Halaman ini membantu admin menyusun, mengatur, dan membagikan modul praktikum secara terstruktur.</p>
-
-                <div class="space-y-3 mt-4 text-left">
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Manajemen Parameter Modul</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Atur nama modul, slug, durasi pengerjaan, dan nilai minimum kelulusan dengan rapi.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Urutan Instruksi Praktikum</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Susun instruksi langkah demi langkah agar siswa menyelesaikan praktik dengan lebih terarah.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Validasi Kode Otomatis</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Fitur yang memungkinkan pendefinisian aturan (rules) pemeriksaan syntax kode siswa secara otomatis, menjamin akurasi evaluasi performa pemrograman.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @php
+                $guideTitle = 'Panduan Konfigurasi Praktikum';
+                $guideSubtitle = 'Menyusun modul lab';
+                $guideImage = 'images/guides/current-admin-lab.png';
+                $guideIntro = 'Gunakan nomor pada gambar untuk membaca daftar modul lab, informasi durasi, nilai minimum, dan tombol pengaturan langkah.';
+                $guidePoints = [
+                    ['x' => 61, 'y' => 32, 'title' => 'Data modul', 'description' => 'Pastikan judul, slug, deskripsi, durasi, dan nilai minimum mudah dipahami siswa.'],
+                    ['x' => 55, 'y' => 70, 'title' => 'Direktori lab', 'description' => 'Gunakan daftar ini untuk meninjau modul mana yang sudah tersedia dan mana yang perlu diperbarui.'],
+                    ['x' => 86, 'y' => 74, 'title' => 'Langkah praktik', 'description' => 'Buka tombol langkah untuk menyusun instruksi, validasi, dan urutan pengerjaan siswa.'],
+                ];
+            @endphp
+            @include('admin.partials.analytics_guide_mockup')
 
             <div class="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
                 <button @click="showDashboardInfoModal = false" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-md focus:outline-none">

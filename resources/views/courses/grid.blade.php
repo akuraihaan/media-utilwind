@@ -383,10 +383,10 @@
                                 </div>
                                 <div>
                                     <div class="flex flex-wrap items-center gap-3 mb-1">
-                                        <h2 class="text-3xl font-black text-heading tracking-tight">Aktivitas 2.2: Pilih Susunan Class Flexbox</h2>
+                                        <h2 class="text-3xl font-black text-heading tracking-tight">Aktivitas 2.2: Flex Match Preview</h2>
                                     </div>
                                     <p class="text-slate-600 dark:text-indigo-200/60 text-sm leading-relaxed max-w-2xl mt-2 text-justify">
-                                        Pilih huruf jawaban yang sesuai dengan kebutuhan layout. Aktivitas ini membantu mencocokkan kebutuhan layout dengan susunan class Tailwind CSS yang tepat.
+                                        Pilih huruf jawaban yang sesuai dengan kebutuhan layout, lalu amati perubahan preview pada baris yang dipilih!
                                     </p>
                                 </div>
                             </div>
@@ -395,7 +395,7 @@
                                 <div class="xl:col-span-3 card-adaptive border border-adaptive rounded-2xl overflow-hidden">
                                     <div class="bg-indigo-600/95 dark:bg-indigo-900/95 text-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                         <div class="text-xs font-bold uppercase tracking-widest">Tabel Aktivitas</div>
-                                        <p class="text-[11px] opacity-90 leading-relaxed m-0 sm:text-right max-w-xl">Pilih A sampai H pada kolom Jawaban. Minimal benar 4 dari 5 agar progress subbab selesai.</p>
+                                        <p class="text-[11px] opacity-90 leading-relaxed m-0 sm:text-right max-w-xl">Pilih A sampai H pada kolom Jawaban. Minimal benar 4 dari 5 agar progress subbab selesai!</p>
                                     </div>
 
                                     <div class="overflow-x-auto custom-scrollbar">
@@ -429,7 +429,7 @@
                                 <div class="xl:col-span-2 space-y-6">
                                     <div class="card-adaptive border border-adaptive rounded-2xl p-6">
                                         <h3 class="text-sm font-black text-heading mb-3">Preview Layout</h3>
-                                        <p class="text-xs text-muted leading-relaxed mb-4">Preview akan berubah mengikuti baris yang sedang dipilih agar pembelajar memahami alasan pemilihan class.</p>
+                                        <p class="text-xs text-muted leading-relaxed mb-4">Preview berubah mengikuti baris yang sedang dipilih.</p>
                                         <div id="matchPreview" class="bg-slate-100 dark:bg-slate-950/60 border border-adaptive rounded-xl p-5 min-h-[240px] flex items-center justify-center"></div>
                                     </div>
 
@@ -623,35 +623,30 @@
             need: 'Dua tombol perlu disusun sejajar ke samping.',
             answer: 'A',
             className: 'flex gap-4',
-            explain: 'flex membuat tombol berada satu baris, sedangkan gap-4 memberi jarak antar tombol.',
             preview: 'buttons'
         },
         {
             need: 'Daftar menu perlu disusun dari atas ke bawah.',
             answer: 'B',
             className: 'flex flex-col',
-            explain: 'flex-col mengubah arah susunan menjadi vertikal dari atas ke bawah.',
             preview: 'menu'
         },
         {
             need: 'Ikon dan teks perlu sejajar di tengah secara vertikal.',
             answer: 'C',
             className: 'flex items-center',
-            explain: 'items-center menyejajarkan elemen pada sumbu silang, sehingga ikon dan teks berada di tengah secara vertikal.',
             preview: 'icontext'
         },
         {
             need: 'Judul berada di kiri dan tombol berada di kanan.',
             answer: 'D',
             className: 'flex justify-between',
-            explain: 'justify-between membagi ruang kosong sehingga elemen pertama berada di kiri dan elemen terakhir berada di kanan.',
             preview: 'between'
         },
         {
             need: 'Kolom isian perlu melebar mengisi ruang kosong.',
             answer: 'E',
             className: 'flex-1',
-            explain: 'flex-1 membuat elemen mengambil sisa ruang yang tersedia di dalam container flex.',
             preview: 'input'
         }
     ];
@@ -751,11 +746,13 @@
             }
             if (feedback) {
                 feedback.className = `block text-[11px] mt-2 leading-relaxed ${correct ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'}`;
-                feedback.innerHTML = `${correct ? 'Benar' : 'Belum tepat'}. Jawaban yang sesuai adalah <b>${item.answer}. ${item.className}</b>. ${item.explain}`;
+                feedback.innerHTML = correct
+                    ? 'Pilihan diterima.'
+                    : 'Belum tepat. Ulangi aktivitas setelah meninjau materi pada subbab ini.';
             }
         });
 
-        document.getElementById('scoreLabel').innerText = `${score}/5`;
+        document.getElementById('answerCounter').innerText = `${score}/5`;
         matchValidated = true;
 
         if (score >= 4) {
@@ -769,7 +766,7 @@
             unlockNextChapter();
         } else {
             msg.className = 'rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-4 text-xs text-amber-700 dark:text-amber-300 leading-relaxed mb-4';
-            msg.innerHTML = `<b>Skor ${score}/5.</b> Minimal benar 4. Baca ulang bagian Flexbox yang belum dipahami, tinjau pembahasan pada jawaban salah, lalu tekan tombol ulangi.`;
+            msg.innerHTML = `<b>Skor ${score}/5.</b> Minimal benar 4. Ulangi aktivitas setelah meninjau materi Flexbox.`;
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed', 'shake');
             setTimeout(() => btn.classList.remove('shake'), 400);
@@ -780,7 +777,7 @@
         if (activityCompleted) return;
         matchAnswers = {};
         matchValidated = false;
-        document.getElementById('scoreLabel').innerText = '0/5';
+        document.getElementById('answerCounter').innerText = '0/5';
         const msg = document.getElementById('activityMsg');
         msg.className = 'rounded-xl bg-slate-100 dark:bg-black/30 border border-adaptive p-4 text-xs text-muted leading-relaxed mb-4';
         msg.innerText = 'Isi semua jawaban terlebih dahulu, lalu tekan tombol validasi.';

@@ -114,6 +114,8 @@
     .activity-select.invalid { border-color:#ef4444 !important; background:rgba(239,68,68,.10) !important; }
 </style>
 
+@include('courses.partials.interactive-activity-kit')
+
 <div id="courseRoot" class="relative h-screen bg-adaptive text-adaptive font-sans overflow-hidden flex flex-col selection:bg-cyan-500/30 pt-20 transition-colors duration-500">
 
     <div class="fixed inset-0 -z-50 pointer-events-none">
@@ -459,7 +461,7 @@
                             </div>
 
                             <div class="prose prose-slate dark:prose-invert max-w-none text-adaptive opacity-90 text-sm md:text-base leading-relaxed text-justify">
-                                <p>Aktivitas ini menguji pemahaman alur instalasi Tailwind CSS. Pilih perintah atau file yang paling tepat untuk setiap kebutuhan instalasi. Jawaban dinyatakan berhasil jika minimal empat dari lima langkah sudah tepat.</p>
+                                <p>Aktivitas ini menggunakan drag n drop untuk menyusun alur instalasi Tailwind CSS. Geser kartu dari pemeriksaan Node.js sampai proses build output.css!</p>
                             </div>
 
                             <div class="card-adaptive border rounded-2xl overflow-hidden shadow-xl relative">
@@ -472,15 +474,15 @@
                                 </div>
 
                                 <div class="bg-blue-600/95 dark:bg-blue-900/95 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div class="text-xs font-bold uppercase tracking-widest">Evaluasi Interaktif</div>
-                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Pilih jawaban pada setiap baris, lalu tekan tombol periksa untuk melihat skor dan pembahasan.</p>
+                                    <div class="text-xs font-bold uppercase tracking-widest">Drag n Drop Instalasi</div>
+                                    <p class="text-[11px] opacity-90 leading-relaxed m-0 md:text-right max-w-xl">Geser kartu langkah instalasi ke urutan yang benar, lalu tekan tombol periksa!</p>
                                 </div>
 
                                 <div id="activityForm" class="p-4 md:p-6 space-y-4 max-h-[620px] overflow-y-auto custom-scrollbar">
                                     <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="b">
                                         <p class="text-sm font-bold text-heading mb-3">1. Terminal perlu memastikan Node.js sudah terpasang. Perintah yang tepat adalah ....</p>
                                         <select onchange="chooseActivity(this, 'q1')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
-                                            <option value="">Pilih jawaban</option>
+                                            <option value="">Geser kartu langkah</option>
                                             <option value="a">npm init -y</option>
                                             <option value="b">node -v</option>
                                             <option value="c">@import "tailwindcss";</option>
@@ -490,7 +492,7 @@
                                     <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="a">
                                         <p class="text-sm font-bold text-heading mb-3">2. Folder proyek perlu dibuat menjadi proyek NPM agar memiliki package.json. Perintah yang tepat adalah ....</p>
                                         <select onchange="chooseActivity(this, 'q2')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
-                                            <option value="">Pilih jawaban</option>
+                                            <option value="">Geser kartu langkah</option>
                                             <option value="a">npm init -y</option>
                                             <option value="b">npm -v</option>
                                             <option value="c">src/output.css</option>
@@ -500,7 +502,7 @@
                                     <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="c">
                                         <p class="text-sm font-bold text-heading mb-3">3. Paket yang dipasang agar Tailwind dan CLI dapat digunakan adalah ....</p>
                                         <select onchange="chooseActivity(this, 'q3')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
-                                            <option value="">Pilih jawaban</option>
+                                            <option value="">Geser kartu langkah</option>
                                             <option value="a">npm install bootstrap jquery</option>
                                             <option value="b">npm install laravel vite</option>
                                             <option value="c">npm install tailwindcss @tailwindcss/cli</option>
@@ -510,7 +512,7 @@
                                     <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="d">
                                         <p class="text-sm font-bold text-heading mb-3">4. Isi dasar file input.css untuk memanggil Tailwind adalah ....</p>
                                         <select onchange="chooseActivity(this, 'q4')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
-                                            <option value="">Pilih jawaban</option>
+                                            <option value="">Geser kartu langkah</option>
                                             <option value="a">&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</option>
                                             <option value="b">body { margin: 0; }</option>
                                             <option value="c">npm init -y</option>
@@ -520,7 +522,7 @@
                                     <div class="activity-row card-adaptive border rounded-xl p-5" data-answer="b">
                                         <p class="text-sm font-bold text-heading mb-3">5. Perintah yang memproses input.css menjadi output.css adalah ....</p>
                                         <select onchange="chooseActivity(this, 'q5')" class="activity-select w-full bg-white dark:bg-black/30 border border-adaptive rounded-lg px-3 py-3 text-xs outline-none focus:ring-2 focus:ring-cyan-500">
-                                            <option value="">Pilih jawaban</option>
+                                            <option value="">Geser kartu langkah</option>
                                             <option value="a">node -v -i ./src/input.css</option>
                                             <option value="b">npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch</option>
                                             <option value="c">&lt;link rel="stylesheet" href="./input.css"&gt;</option>
@@ -538,13 +540,10 @@
                                 </div>
 
                                 <div id="activity-analysis" class="hidden border-t border-adaptive p-4 md:p-6 bg-slate-50 dark:bg-black/20">
-                                    <h3 class="font-bold text-heading mb-3">Pembahasan Singkat</h3>
+                                    <h3 class="font-bold text-heading mb-3">Status Aktivitas</h3>
                                     <div class="space-y-2 text-xs text-muted leading-relaxed">
-                                        <p><strong>1.</strong> <code>node -v</code> digunakan untuk memastikan Node.js sudah tersedia.</p>
-                                        <p><strong>2.</strong> <code>npm init -y</code> membuat file <code>package.json</code> sebagai informasi proyek.</p>
-                                        <p><strong>3.</strong> <code>tailwindcss</code> dan <code>@tailwindcss/cli</code> dipasang agar Tailwind dapat diproses melalui terminal.</p>
-                                        <p><strong>4.</strong> <code>@import "tailwindcss";</code> ditulis pada <code>input.css</code> sebagai file sumber.</p>
-                                        <p><strong>5.</strong> Perintah build membaca <code>input.css</code>, lalu menghasilkan <code>output.css</code> yang dihubungkan ke HTML.</p>
+                                        <p>Aktivitas telah memenuhi skor minimal. Progress materi berhasil diproses.</p>
+                                        <p>Gunakan urutan yang telah disusun sebagai latihan mandiri sebelum melanjutkan.</p>
                                     </div>
                                 </div>
                             </div>
@@ -589,6 +588,7 @@
     let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
 
     const activityAnswers = {};
+    let activityWidget = null;
     const projectFiles = {
         html: {
             title: 'index.html',
@@ -643,6 +643,7 @@
         selectProjectFile('html');
         setFlow(1);
         setBuildStage(1);
+        initInstallOrderActivity();
 
         if (activityCompleted) {
             lockActivityUI();
@@ -840,49 +841,78 @@
         select.classList.remove('valid', 'invalid');
     }
 
+    function initInstallOrderActivity() {
+        activityWidget = CourseActivityKit.mountDragOrderActivity({
+            root: '#activityForm',
+            badge: 'Drag n Drop Instalasi',
+            title: 'Perhatikan susunan alur instalasi berikut!',
+            description: 'Geser kartu untuk membentuk urutan instalasi dan proses build dari proyek kosong hingga file output.css dipakai browser!',
+            minScore: 4,
+            initialOrder: ['install', 'output', 'node', 'input', 'package'],
+            correctOrder: ['node', 'package', 'install', 'input', 'output'],
+            items: [
+                {
+                    id: 'node',
+                    title: 'Periksa Node.js',
+                    desc: 'Pastikan Node.js tersedia sebelum menjalankan perintah NPM.',
+                    code: 'node -v',
+                    preview: 'Lingkungan siap menjalankan NPM dan Tailwind CLI.'
+                },
+                {
+                    id: 'package',
+                    title: 'Inisialisasi proyek',
+                    desc: 'Buat package.json sebagai identitas proyek dan tempat menyimpan dependency.',
+                    code: 'npm init -y',
+                    preview: 'Proyek memiliki package.json.'
+                },
+                {
+                    id: 'install',
+                    title: 'Pasang Tailwind dan CLI',
+                    desc: 'Instal paket yang diperlukan agar Tailwind dapat diproses melalui terminal.',
+                    code: 'npm install tailwindcss @tailwindcss/cli',
+                    preview: 'Dependency Tailwind tersedia pada proyek.'
+                },
+                {
+                    id: 'input',
+                    title: 'Siapkan file input.css',
+                    desc: 'Tambahkan import Tailwind sebagai sumber CSS yang akan diproses.',
+                    code: '@import "tailwindcss";',
+                    preview: 'input.css menjadi titik masuk pemrosesan Tailwind.'
+                },
+                {
+                    id: 'output',
+                    title: 'Jalankan build ke output.css',
+                    desc: 'Proses input.css menjadi output.css, lalu hubungkan output.css ke HTML.',
+                    code: 'npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch',
+                    preview: 'Browser membaca output.css yang berisi utility class terpakai.'
+                }
+            ]
+        });
+    }
+
     async function checkActivity() {
         if (activityCompleted) return;
-        const correct = { q1:'b', q2:'a', q3:'c', q4:'d', q5:'b' };
-        const total = Object.keys(correct).length;
-        const answered = Object.keys(activityAnswers).filter(k => activityAnswers[k]).length;
         const status = document.getElementById('activity-status');
         const scoreLabel = document.getElementById('activity-score');
         const submit = document.getElementById('submitBtn');
+        const result = activityWidget?.check();
+        if (!result) return;
 
-        if (answered < total) {
-            status.innerText = 'Lengkapi semua pilihan terlebih dahulu.';
-            status.className = 'text-xs font-bold text-red-500';
-            submit.classList.add('shake');
-            setTimeout(() => submit.classList.remove('shake'), 500);
-            return;
-        }
+        scoreLabel.innerText = `Skor: ${result.score}/${result.total}`;
+        document.getElementById('activity-analysis').classList.toggle('hidden', !result.passed);
 
-        let score = 0;
-        document.querySelectorAll('.activity-row').forEach((row, index) => {
-            const q = 'q' + (index + 1);
-            const select = row.querySelector('select');
-            select.classList.remove('valid', 'invalid');
-            if (activityAnswers[q] === correct[q]) {
-                score++;
-                select.classList.add('valid');
-            } else {
-                select.classList.add('invalid');
-            }
-        });
-
-        scoreLabel.innerText = `Skor: ${score}/${total}`;
-        document.getElementById('activity-analysis').classList.remove('hidden');
-
-        if (score >= 4) {
-            status.innerText = 'Berhasil. Aktivitas instalasi Tailwind sudah valid.';
+        if (result.passed) {
+            status.innerText = 'Berhasil. Alur instalasi Tailwind sudah valid.';
             status.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400';
             activityCompleted = true;
             await saveLessonToDB(ACTIVITY_LESSON_ID);
             lockActivityUI();
             unlockNextChapter();
         } else {
-            status.innerText = 'Belum berhasil. Periksa kembali urutan dan fungsi file instalasi.';
+            status.innerText = 'Belum berhasil. Susun kembali urutan instalasi dan proses build, lalu periksa lagi.';
             status.className = 'text-xs font-bold text-amber-600 dark:text-amber-400';
+            submit.classList.add('shake');
+            setTimeout(() => submit.classList.remove('shake'), 500);
         }
     }
 
@@ -893,6 +923,7 @@
             overlay.classList.add('flex');
         }
         document.querySelectorAll('#activityForm select, #submitBtn').forEach(el => el.disabled = true);
+        if (activityWidget) activityWidget.lock();
     }
 
     function unlockNextChapter() {

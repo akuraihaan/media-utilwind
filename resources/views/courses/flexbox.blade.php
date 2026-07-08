@@ -468,7 +468,7 @@
                                 </div>
                                 <div>
                                     <h2 class="text-2xl md:text-3xl font-black text-heading tracking-tight transition-colors">Aktivitas: Pilih Utility Ruang</h2>
-                                    <p class="text-slate-600 dark:text-indigo-200/70 text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">Pilih class Tailwind yang paling tepat untuk memperbaiki masalah ruang pada beberapa kasus layout sederhana. Skor minimal 4 dari 5 diperlukan agar subbab selesai.</p>
+                                    <p class="text-slate-600 dark:text-indigo-200/70 text-sm leading-relaxed max-w-2xl transition-colors mt-2 text-justify">Pilih class Tailwind yang paling tepat untuk memperbaiki masalah ruang pada beberapa kasus layout sederhana!</p>
                                 </div>
                             </div>
 
@@ -481,7 +481,7 @@
                                     <h3 id="activityQuestion" class="text-lg md:text-xl font-black text-heading leading-snug mb-3">Pertanyaan</h3>
                                     <p id="activityScenario" class="text-sm text-muted leading-relaxed mb-6">Skenario</p>
                                     <div id="activityOptions" class="space-y-3"></div>
-                                    <div id="activityFeedback" class="mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border border-dashed border-adaptive p-4 text-muted">Pilih salah satu jawaban.</div>
+                                    <div id="activityFeedback" class="mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border border-dashed border-adaptive p-4 text-muted">Pilih salah satu jawaban!</div>
                                     <button id="nextActivityBtn" onclick="nextActivityQuestion()" disabled class="mt-auto w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold opacity-50 cursor-not-allowed transition-all">Lanjut</button>
                                 </div>
                                 <div class="bg-slate-100 dark:bg-[#020617] border border-adaptive rounded-2xl p-6 min-h-[360px] flex items-center justify-center shadow-inner">
@@ -529,8 +529,8 @@
     let rawCompletedIds = {!! json_encode($completedLessonIds ?? []) !!};
     window.COMPLETED_IDS = rawCompletedIds.map(id => Number(id));
     let completedSet = new Set(window.COMPLETED_IDS);
-    const ACTIVITY_LESSON_ID = 31;
-    let activityCompleted = completedSet.has(ACTIVITY_LESSON_ID);
+    const ACTIVITY_LESSON_ID = 30;
+    let activityCompleted = {!! ($activityCompleted ?? false) ? 'true' : 'false' !!};
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof initSidebarScroll === 'function') initSidebarScroll();
@@ -696,31 +696,31 @@
             q: 'Bagian halaman yang paling tepat untuk menampilkan nama toko atau judul situs adalah...',
             s: 'Sebuah halaman toko sederhana memiliki bagian atas yang berisi identitas halaman.',
             options: ['header', 'footer', 'article', 'input'], answer: 'header',
-            explain: 'Tag header digunakan untuk bagian atas halaman, seperti judul situs atau identitas halaman.', preview: 'header'
+            preview: 'header'
         },
         {
             q: 'Kartu produk seperti Sepatu Kanvas paling tepat ditulis menggunakan tag...',
             s: 'Kartu produk merupakan konten mandiri di dalam section produk pilihan.',
             options: ['article', 'nav', 'footer', 'meta'], answer: 'article',
-            explain: 'Tag article cocok untuk konten mandiri seperti kartu produk atau item informasi.', preview: 'article'
+            preview: 'article'
         },
         {
             q: 'Teks di dalam kartu terlalu menempel ke tepi. Class Tailwind yang paling sesuai adalah...',
             s: 'Masalah terjadi pada ruang bagian dalam kartu, bukan jarak luar antar kartu.',
             options: ['p-6', 'mx-auto', 'text-2xl', 'bg-slate-100'], answer: 'p-6',
-            explain: 'p-6 menambah padding atau ruang bagian dalam elemen sehingga isi tidak menempel ke tepi.', preview: 'p-6'
+            preview: 'p-6'
         },
         {
             q: 'Kartu produk perlu diberi jarak dari paragraf sebelumnya. Class yang paling tepat adalah...',
             s: 'Pada contoh modul, article kartu produk diberi jarak dari paragraf di atasnya.',
             options: ['mt-4', 'p-0', 'font-bold', 'rounded-xl'], answer: 'mt-4',
-            explain: 'mt-4 memberi margin atas sehingga kartu memiliki jarak dari elemen sebelumnya.', preview: 'mt-4'
+            preview: 'mt-4'
         },
         {
             q: 'Kombinasi untuk membatasi lebar konten dan menempatkannya di tengah adalah...',
             s: 'Pada contoh layout sederhana, main perlu berada di tengah dan tidak melebar terlalu jauh.',
             options: ['mx-auto max-w-md', 'bg-white text-white', 'rounded-xl shadow-md', 'p-6 mt-2'], answer: 'mx-auto max-w-md',
-            explain: 'mx-auto membuat container berada di tengah, sedangkan max-w-md membatasi lebarnya.', preview: 'mx-auto max-w-md'
+            preview: 'mx-auto max-w-md'
         }
     ]
     let activityIndex = 0;
@@ -734,7 +734,7 @@
         document.getElementById('activityScore').textContent = `Skor: ${activityScore}`;
         document.getElementById('activityQuestion').textContent = item.q;
         document.getElementById('activityScenario').textContent = item.s;
-        document.getElementById('activityFeedback').textContent = 'Pilih salah satu jawaban.';
+        document.getElementById('activityFeedback').textContent = 'Pilih salah satu jawaban!';
         document.getElementById('activityFeedback').className = 'mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border border-dashed border-adaptive p-4 text-muted';
         const options = document.getElementById('activityOptions');
         options.innerHTML = '';
@@ -762,12 +762,14 @@
         if (correct) activityScore++;
         document.querySelectorAll('#activityOptions button').forEach(btn => {
             btn.disabled = true;
-            if (btn.textContent === item.answer) btn.classList.add('border-emerald-400', 'bg-emerald-50', 'dark:bg-emerald-500/10');
+            if (correct && btn.textContent === item.answer) btn.classList.add('border-emerald-400', 'bg-emerald-50', 'dark:bg-emerald-500/10');
         });
         if (!correct) button.classList.add('border-rose-400', 'bg-rose-50', 'dark:bg-rose-500/10', 'shake');
         const feedback = document.getElementById('activityFeedback');
         feedback.className = `mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border p-4 ${correct ? 'border-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'border-rose-300 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300'}`;
-        feedback.textContent = `${correct ? 'Benar.' : 'Belum tepat.'} ${item.explain}`;
+        feedback.textContent = correct
+            ? 'Pilihan diterima. Preview diperbarui sesuai pilihan Anda.'
+            : 'Belum tepat. Lanjutkan aktivitas, lalu ulangi bila skor belum cukup.';
         document.getElementById('activityScore').textContent = `Skor: ${activityScore}`;
         updateActivityPreview(item.preview);
         const next = document.getElementById('nextActivityBtn');
@@ -809,7 +811,7 @@
         } else {
             const feedback = document.getElementById('activityFeedback');
             feedback.className = 'mt-5 min-h-[70px] text-sm leading-relaxed rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-500/10 p-4 text-amber-700 dark:text-amber-300';
-            feedback.textContent = `Skor Anda ${activityScore}/5. Minimal benar 4 soal. Baca ulang bagian padding, margin, gap, dan ruang fleksibel, lalu tekan ulangi untuk mencoba lagi.`;
+            feedback.textContent = `Skor Anda ${activityScore}/5. Minimal benar 4 soal. Ulangi aktivitas setelah meninjau materi subbab ini.`;
             activityIndex = 0;
             activityScore = 0;
             setTimeout(renderActivityQuestion, 1200);

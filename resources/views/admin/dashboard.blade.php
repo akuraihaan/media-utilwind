@@ -46,6 +46,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(150,150,150,0.5); }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        [x-cloak] { display: none !important; }
 
         /* --- GLASS COMPONENTS THEME RESPONSIVE --- */
         .glass-sidebar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(0,0,0,0.05); z-index: 50; }
@@ -150,14 +151,27 @@
         .chart-hero-backdrop { background: radial-gradient(circle at 20% 10%, rgba(99,102,241,.25), transparent 32%), radial-gradient(circle at 80% 20%, rgba(217,70,239,.18), transparent 32%), rgba(2,6,23,.78); }
         .delete-instant-btn { transition: all .2s ease; }
         .delete-instant-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(239,68,68,.20); }
+        .analytics-card-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .analytics-source-key {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
     </style>
 </head>
 <body class="flex h-screen w-full bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200 transition-colors duration-500" x-data="{ 
     sidebarOpen: false, showImport: false, showAdd: false, 
     showLabModal: false, showQuizModal: false,
     showAvgModal: false, showRemedialModal: false, showPassedModal: false, isFullscreen: false,
-    showDashboardInfoModal: false 
-}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showLabModal = false; showQuizModal = false; showAvgModal = false; showRemedialModal = false; showPassedModal = false; showDashboardInfoModal = false;" :class="{'modal-open': showQuizModal || showLabModal || showAvgModal || showRemedialModal || showPassedModal || showAdd || showImport || showDashboardInfoModal}">
+    showDashboardInfoModal: false, showLearningInsightModal: false,
+    learningInsight: { label: '', value: '', valueCaption: '', primaryCount: '', primaryCaption: '', secondaryCount: '', secondaryCaption: '', insight: '', sourceName: '', sourceKey: '' }
+}" @keydown.escape.window="isFullscreen = false; document.exitFullscreen(); showLabModal = false; showQuizModal = false; showAvgModal = false; showRemedialModal = false; showPassedModal = false; showDashboardInfoModal = false; showLearningInsightModal = false;" :class="{'modal-open': showQuizModal || showLabModal || showAvgModal || showRemedialModal || showPassedModal || showAdd || showImport || showDashboardInfoModal || showLearningInsightModal}">
 
     {{-- ==============================================================================
          LOGIKA DATA BLADE TERPISAH DENGAN DETAIL KALKULASI YANG JELAS
@@ -214,7 +228,7 @@
 
         } catch(\Exception $e) {}
 
-        // 2. REMEDIAL (Siswa Belum Memenuhi KKM)
+        // 2. Remedial pengguna yang belum memenuhi KKM
         try {
             $passedUserIds = DB::table('quiz_attempts')->where('score', '>=', 70)->pluck('user_id')->toArray();
             $remQuery = DB::table('quiz_attempts')
@@ -283,7 +297,7 @@
                 ]);
             }
 
-            // Ambil Lab Terbaru
+            // Ambil praktik terbaru
             $recentLabs = DB::table('lab_histories')
                 ->join('users', 'lab_histories.user_id', '=', 'users.id')
                 ->leftJoin('labs', 'lab_histories.lab_id', '=', 'labs.id')
@@ -296,7 +310,7 @@
                 $unifiedActivities->push([
                     'type' => 'lab',
                     'user_name' => $l->name,
-                    'title' => $l->lab_title ?? 'Sesi Lab Virtual',
+                    'title' => $l->lab_title ?? 'Sesi Praktik',
                     'score' => $l->score,
                     'is_passed' => $l->status === 'passed',
                     'duration' => $l->duration_seconds,
@@ -508,13 +522,13 @@
 
                     <div class="border-l border-slate-200 dark:border-white/10 pl-3 md:pl-5 ml-1 hidden lg:block transition-colors">
                         <button @click="showAdd = true" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition border border-indigo-500 dark:border-indigo-400">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Tambah Siswa
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Tambah pengguna
                         </button>
                     </div>
 
                     <div class="text-right hidden lg:block border-l border-slate-200 dark:border-white/10 pl-5 ml-1 transition-colors">
                         <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">{{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}</p>
-                        <p class="text-[10px] text-slate-500 dark:text-white/40 font-mono mt-0.5 transition-colors">{{ \Carbon\Carbon::now()->format('H:i') }} WIB</p>
+                        <p class="text-[10px] text-slate-500 dark:text-white/40 font-mono mt-0.5 transition-colors">{{ \Carbon\Carbon::now()->format('H:i') }} WITA</p>
                     </div>
 
                     <button @click="showAdd = true" class="lg:hidden p-2 rounded-lg bg-indigo-600 text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">
@@ -528,10 +542,489 @@
         <div class="flex-1 p-4 md:p-8 lg:p-10 relative z-10">
             <div class="max-w-7xl mx-auto space-y-8">
 
+                @php
+                    $minimumScore = $minimumScore ?? 70;
+                    $overviewTotalLessons = 0;
+                    $overviewCompletedLessons = 0;
+                    $overviewMaterialUsers = 0;
+                    $overviewMaterialRate = 0;
+                    $overviewEvaluationAttempts = 0;
+                    $overviewEvaluationAverage = 0;
+                    $overviewEvaluationUsers = 0;
+                    $overviewLabAttempts = 0;
+                    $overviewLabUsers = 0;
+
+                    try {
+                        if (\Illuminate\Support\Facades\Schema::hasTable('course_lessons')) {
+                            $overviewTotalLessons = \App\Models\CourseLesson::count();
+                        }
+
+                        if (\Illuminate\Support\Facades\Schema::hasTable('user_lesson_progress')) {
+                            $overviewCompletedLessons = DB::table('user_lesson_progress')
+                                ->where('completed', true)
+                                ->count();
+                            $overviewMaterialUsers = DB::table('user_lesson_progress')
+                                ->where('completed', true)
+                                ->distinct()
+                                ->count('user_id');
+                        }
+
+                        if (\Illuminate\Support\Facades\Schema::hasTable('quiz_attempts')) {
+                            $evaluationQuery = DB::table('quiz_attempts')
+                                ->where('chapter_id', 99)
+                                ->whereNotNull('score');
+                            $overviewEvaluationAttempts = (clone $evaluationQuery)->count();
+                            $overviewEvaluationUsers = (clone $evaluationQuery)
+                                ->distinct()
+                                ->count('user_id');
+                            $overviewEvaluationAverage = $overviewEvaluationAttempts > 0
+                                ? round((float) ((clone $evaluationQuery)->avg('score') ?? 0), 1)
+                                : 0;
+                        }
+
+                        if (\Illuminate\Support\Facades\Schema::hasTable('lab_histories')) {
+                            $overviewLabAttempts = DB::table('lab_histories')->count();
+                            $overviewLabUsers = DB::table('lab_histories')
+                                ->distinct()
+                                ->count('user_id');
+                        }
+                    } catch (\Exception $e) {
+                        $overviewTotalLessons = $overviewTotalLessons ?? 0;
+                    }
+
+                    $overviewMaterialTarget = max(1, ($totalStudents ?? 0) * max(1, $overviewTotalLessons));
+                    $overviewMaterialRate = (($totalStudents ?? 0) > 0 && $overviewTotalLessons > 0)
+                        ? min(100, round(($overviewCompletedLessons / $overviewMaterialTarget) * 100))
+                        : 0;
+                    $overviewQuizRate = min(100, max(0, (float) ($passRate ?? 0)));
+                    $overviewLabRate = $overviewLabAttempts > 0
+                        ? min(100, round((($realLabCount ?? 0) / $overviewLabAttempts) * 100))
+                        : 0;
+                    $overviewEvaluationRate = min(100, max(0, (float) $overviewEvaluationAverage));
+                    $overviewActivityDays = collect($activityTrendLabels ?? [])->values()->map(function ($label, $index) use ($activityQuizCounts, $activityLabCounts) {
+                        $quiz = (int) ($activityQuizCounts[$index] ?? 0);
+                        $lab = (int) ($activityLabCounts[$index] ?? 0);
+
+                        return [
+                            'label' => $label,
+                            'quiz' => $quiz,
+                            'lab' => $lab,
+                            'total' => $quiz + $lab,
+                        ];
+                    });
+                    $overviewActivityPeak = max(1, (int) ($overviewActivityDays->max('total') ?? 0));
+                    $overviewQuizActivityTotal = array_sum($activityQuizCounts ?? []);
+                    $overviewLabActivityTotal = array_sum($activityLabCounts ?? []);
+                    $overviewActivityTotal = $overviewQuizActivityTotal + $overviewLabActivityTotal;
+                    $overviewMetrics = [
+                        [
+                            'label' => 'Akses materi',
+                            'value' => $overviewMaterialRate,
+                            'value_display' => number_format($overviewMaterialRate),
+                            'unit' => '%',
+                            'value_caption' => 'persentase materi selesai',
+                            'primary_count' => number_format($overviewCompletedLessons),
+                            'primary_label' => 'submateri selesai',
+                            'primary_caption' => 'submateri selesai',
+                            'secondary_count' => number_format($overviewMaterialUsers),
+                            'secondary_label' => 'pengguna selesai',
+                            'secondary_caption' => 'pengguna dengan materi selesai',
+                            'insight' => $overviewCompletedLessons > 0 ? 'Data materi dihitung dari submateri yang ditandai selesai.' : 'Belum ada submateri selesai.',
+                            'source_name' => 'Data akses materi',
+                            'source_key' => 'user_lesson_progress.completed = true',
+                            'bar' => 'bg-indigo-500',
+                            'border' => 'border-l-indigo-500',
+                        ],
+                        [
+                            'label' => 'Kuis',
+                            'value' => $overviewQuizRate,
+                            'value_display' => number_format($overviewQuizRate),
+                            'unit' => '%',
+                            'value_caption' => 'persentase kuis lulus',
+                            'primary_count' => number_format($totalPassedQuizzesCount ?? 0) . 'x',
+                            'primary_label' => 'percobaan lulus',
+                            'primary_caption' => 'percobaan kuis lulus',
+                            'secondary_count' => number_format($totalAttempts ?? 0) . 'x',
+                            'secondary_label' => 'percobaan kuis',
+                            'secondary_caption' => 'seluruh percobaan kuis',
+                            'insight' => ($totalAttempts ?? 0) > 0 ? 'Data kuis dihitung dari percobaan dengan nilai minimal KKM.' : 'Belum ada percobaan kuis.',
+                            'source_name' => 'Data kuis',
+                            'source_key' => 'quiz_attempts.score >= ' . $minimumScore,
+                            'bar' => 'bg-cyan-500',
+                            'border' => 'border-l-cyan-500',
+                        ],
+                        [
+                            'label' => 'Praktik',
+                            'value' => $overviewLabRate,
+                            'value_display' => number_format($overviewLabRate),
+                            'unit' => '%',
+                            'value_caption' => 'persentase praktik lulus',
+                            'primary_count' => number_format($realLabCount ?? 0) . 'x',
+                            'primary_label' => 'riwayat lulus',
+                            'primary_caption' => 'praktik lulus',
+                            'secondary_count' => number_format($overviewLabAttempts) . 'x',
+                            'secondary_label' => 'riwayat praktik',
+                            'secondary_caption' => 'seluruh riwayat praktik',
+                            'insight' => $overviewLabAttempts > 0 ? 'Data praktik dihitung dari riwayat praktik berstatus lulus.' : 'Belum ada riwayat praktik.',
+                            'source_name' => 'Data praktik',
+                            'source_key' => 'lab_histories.status = "passed"',
+                            'bar' => 'bg-fuchsia-500',
+                            'border' => 'border-l-fuchsia-500',
+                        ],
+                        [
+                            'label' => 'Evaluasi Akhir',
+                            'value' => $overviewEvaluationRate,
+                            'value_display' => rtrim(rtrim(number_format($overviewEvaluationRate, 1, '.', ''), '0'), '.') ?: '0',
+                            'unit' => '',
+                            'value_caption' => 'rata-rata nilai evaluasi',
+                            'primary_count' => number_format($overviewEvaluationAttempts) . 'x',
+                            'primary_label' => 'percobaan evaluasi',
+                            'primary_caption' => 'percobaan evaluasi akhir',
+                            'secondary_count' => number_format($overviewEvaluationUsers),
+                            'secondary_label' => 'pengguna mengerjakan',
+                            'secondary_caption' => 'pengguna mengerjakan evaluasi',
+                            'insight' => $overviewEvaluationAttempts > 0 ? 'Data evaluasi dihitung dari percobaan evaluasi akhir.' : 'Belum ada evaluasi akhir.',
+                            'source_name' => 'Data evaluasi akhir',
+                            'source_key' => 'quiz_attempts.chapter_id = 99',
+                            'bar' => 'bg-amber-500',
+                            'border' => 'border-l-amber-500',
+                        ],
+                    ];
+
+                    $teacherPassTarget = 70;
+                    $teacherAverageTarget = 70;
+                    $teacherActivityTarget = 1;
+                    $lowestChapter = collect($chapterAverages ?? [])->sortBy('avg_score')->first();
+                    $lowestChapterLabel = $lowestChapter
+                        ? (($lowestChapter->chapter_id ?? null) == 99 ? 'Evaluasi Akhir' : 'Bab ' . ($lowestChapter->chapter_id ?? '-'))
+                        : null;
+                    $lowestChapterScore = $lowestChapter ? round((float) ($lowestChapter->avg_score ?? 0), 1) : null;
+
+                    if (($totalAttempts ?? 0) === 0 && $overviewLabAttempts === 0 && $overviewCompletedLessons === 0) {
+                        $teacherConditionTitle = 'Data kelas belum terbentuk';
+                        $teacherConditionBody = 'Belum ada aktivitas tercatat.';
+                        $teacherConditionTone = 'slate';
+                    } elseif (($realRemedialCount ?? 0) > 0 || ($globalAverage ?? 0) < $teacherAverageTarget) {
+                        $teacherConditionTitle = 'Ada area yang perlu intervensi';
+                        $teacherConditionBody = 'Nilai atau ketuntasan belum stabil.';
+                        $teacherConditionTone = 'amber';
+                    } elseif (($passRate ?? 0) >= $teacherPassTarget && ($globalAverage ?? 0) >= $teacherAverageTarget) {
+                        $teacherConditionTitle = 'Kelas relatif stabil';
+                        $teacherConditionBody = 'Ketuntasan dan nilai memenuhi target.';
+                        $teacherConditionTone = 'emerald';
+                    } else {
+                        $teacherConditionTitle = 'Pembelajaran sedang berjalan';
+                        $teacherConditionBody = 'Aktivitas kelas sudah tercatat.';
+                        $teacherConditionTone = 'cyan';
+                    }
+
+                    $teacherToneClasses = [
+                        'slate' => [
+                            'text' => 'text-slate-600 dark:text-slate-300',
+                            'soft' => 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-white/5 dark:text-slate-300 dark:border-white/10',
+                            'bar' => 'bg-slate-400',
+                            'dot' => 'bg-slate-400',
+                        ],
+                        'cyan' => [
+                            'text' => 'text-cyan-600 dark:text-cyan-300',
+                            'soft' => 'bg-cyan-50 text-cyan-700 border-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-300 dark:border-cyan-500/20',
+                            'bar' => 'bg-cyan-500',
+                            'dot' => 'bg-cyan-500 shadow-[0_0_8px_#06b6d4]',
+                        ],
+                        'emerald' => [
+                            'text' => 'text-emerald-600 dark:text-emerald-300',
+                            'soft' => 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20',
+                            'bar' => 'bg-emerald-500',
+                            'dot' => 'bg-emerald-500 shadow-[0_0_8px_#10b981]',
+                        ],
+                        'amber' => [
+                            'text' => 'text-amber-600 dark:text-amber-300',
+                            'soft' => 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20',
+                            'bar' => 'bg-amber-500',
+                            'dot' => 'bg-amber-500 shadow-[0_0_8px_#f59e0b]',
+                        ],
+                        'indigo' => [
+                            'text' => 'text-indigo-600 dark:text-indigo-300',
+                            'soft' => 'bg-indigo-50 text-indigo-700 border-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/20',
+                            'bar' => 'bg-indigo-500',
+                            'dot' => 'bg-indigo-500 shadow-[0_0_8px_#6366f1]',
+                        ],
+                        'fuchsia' => [
+                            'text' => 'text-fuchsia-600 dark:text-fuchsia-300',
+                            'soft' => 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100 dark:bg-fuchsia-500/10 dark:text-fuchsia-300 dark:border-fuchsia-500/20',
+                            'bar' => 'bg-fuchsia-500',
+                            'dot' => 'bg-fuchsia-500 shadow-[0_0_8px_#d946ef]',
+                        ],
+                    ];
+
+                    $teacherReferenceCards = [
+                        [
+                            'label' => 'Ketuntasan kuis',
+                            'value' => number_format($passRate ?? 0) . '%',
+                            'target' => 'Target ' . $teacherPassTarget . '%',
+                            'caption' => number_format($totalPassedQuizzesCount ?? 0) . ' dari ' . number_format($totalAttempts ?? 0) . ' percobaan lulus',
+                            'percent' => $passRate ?? 0,
+                            'tone' => ($passRate ?? 0) >= $teacherPassTarget ? 'emerald' : (($passRate ?? 0) > 0 ? 'amber' : 'slate'),
+                        ],
+                        [
+                            'label' => 'Rata-rata kelas',
+                            'value' => number_format($globalAverage ?? 0, 1),
+                            'target' => 'Batas ' . $teacherAverageTarget,
+                            'caption' => ($globalAverage ?? 0) >= $teacherAverageTarget ? 'Sudah memenuhi batas ketuntasan' : 'Masih perlu penguatan konsep',
+                            'percent' => min(100, max(0, (float) ($globalAverage ?? 0))),
+                            'tone' => ($globalAverage ?? 0) >= $teacherAverageTarget ? 'emerald' : 'amber',
+                        ],
+                        [
+                            'label' => 'Aktivitas 7 hari',
+                            'value' => number_format($overviewActivityTotal),
+                            'target' => 'Minimal aktif',
+                            'caption' => number_format($overviewQuizActivityTotal) . ' kuis dan ' . number_format($overviewLabActivityTotal) . ' praktik',
+                            'percent' => $overviewActivityTotal > 0 ? 100 : 0,
+                            'tone' => $overviewActivityTotal >= $teacherActivityTarget ? 'cyan' : 'slate',
+                        ],
+                    ];
+
+                    $teacherRecommendations = collect();
+
+                    if (($realRemedialCount ?? 0) > 0) {
+                        $teacherRecommendations->push([
+                            'title' => 'Prioritaskan pengguna remedial',
+                            'body' => number_format($realRemedialCount ?? 0) . ' pengguna perlu ditinjau.',
+                            'tone' => 'amber',
+                        ]);
+                    }
+
+                    if ($lowestChapterScore !== null && $lowestChapterScore < $teacherAverageTarget) {
+                        $teacherRecommendations->push([
+                            'title' => 'Perkuat ' . $lowestChapterLabel,
+                            'body' => 'Rata-rata nilai ' . $lowestChapterScore . '.',
+                            'tone' => 'indigo',
+                        ]);
+                    }
+
+                    if ($overviewMaterialRate < 70 && ($totalStudents ?? 0) > 0) {
+                        $teacherRecommendations->push([
+                            'title' => 'Dorong penyelesaian materi',
+                            'body' => 'Akses materi belum merata.',
+                            'tone' => 'fuchsia',
+                        ]);
+                    }
+
+                    if ($overviewActivityTotal === 0) {
+                        $teacherRecommendations->push([
+                            'title' => 'Aktifkan aktivitas awal',
+                            'body' => 'Belum ada aktivitas 7 hari.',
+                            'tone' => 'slate',
+                        ]);
+                    }
+
+                    if ($teacherRecommendations->isEmpty()) {
+                        $teacherRecommendations->push([
+                            'title' => 'Pertahankan pemantauan berkala',
+                            'body' => 'Pantau nilai dan aktivitas.',
+                            'tone' => 'emerald',
+                        ]);
+                    }
+
+                    $teacherRecommendations = $teacherRecommendations->take(3)->values();
+                @endphp
+
+                {{-- =======================================================
+                     DASHBOARD PENDIDIK
+                     ======================================================= --}}
+                @php
+                    $teacherConditionToneClasses = $teacherToneClasses[$teacherConditionTone] ?? $teacherToneClasses['slate'];
+                @endphp
+
+                <section class="reveal grid gap-5 xl:grid-cols-12" style="animation-delay: 0.08s;">
+                    <article class="glass-card rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm transition-colors duration-300 dark:border-white/[0.05] dark:bg-[#0f141e] md:p-6 xl:col-span-8">
+                        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                            <div class="max-w-2xl">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest {{ $teacherConditionToneClasses['soft'] }}">
+                                        <i class="h-2 w-2 rounded-full {{ $teacherConditionToneClasses['dot'] }}"></i>
+                                        {{ $teacherConditionTitle }}
+                                    </span>
+                                    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/40">
+                                        {{ number_format($totalStudents ?? 0) }} pengguna
+                                    </span>
+                                </div>
+
+                                <h3 class="mt-5 text-2xl font-black leading-tight text-slate-950 dark:text-white md:text-3xl">
+                                    Dashboard Pendidik
+                                </h3>
+                                <p class="mt-2 max-w-xl text-sm font-medium leading-7 text-slate-500 dark:text-white/45">
+                                    Pantau ketuntasan materi, praktik, evaluasi, dan aktivitas kelas dari data yang tercatat.
+                                </p>
+                            </div>
+
+                            <div class="grid min-w-full gap-3 sm:grid-cols-3 lg:min-w-[380px]">
+                                <button type="button" @click="showQuizModal = true" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-cyan-200 hover:bg-cyan-50 dark:border-white/5 dark:bg-white/[0.03] dark:hover:border-cyan-500/30 dark:hover:bg-cyan-500/10">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">Kuis Lulus</p>
+                                    <p class="mt-2 text-2xl font-black text-slate-950 dark:text-white">{{ number_format($totalPassedQuizzesCount ?? 0) }}x</p>
+                                    <p class="mt-1 text-[11px] font-bold text-cyan-600 dark:text-cyan-300">{{ number_format($passRate ?? 0) }}%</p>
+                                </button>
+
+                                <button type="button" @click="showAvgModal = true" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-emerald-200 hover:bg-emerald-50 dark:border-white/5 dark:bg-white/[0.03] dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">Rata-rata</p>
+                                    <p class="mt-2 text-2xl font-black text-slate-950 dark:text-white">{{ number_format($globalAverage ?? 0, 1) }}</p>
+                                    <p class="mt-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-300">Batas {{ $teacherAverageTarget }}</p>
+                                </button>
+
+                                <button type="button" @click="showRemedialModal = true" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-amber-200 hover:bg-amber-50 dark:border-white/5 dark:bg-white/[0.03] dark:hover:border-amber-500/30 dark:hover:bg-amber-500/10">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">Remedial</p>
+                                    <p class="mt-2 text-2xl font-black text-slate-950 dark:text-white">{{ number_format($realRemedialCount ?? 0) }}</p>
+                                    <p class="mt-1 text-[11px] font-bold text-amber-600 dark:text-amber-300">{{ number_format($remedialRate ?? 0) }}%</p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                            @foreach($overviewMetrics as $metric)
+                                <button type="button"
+                                    @click='showLearningInsightModal = true; learningInsight = {
+                                        label: @json($metric['label']),
+                                        value: @json($metric['value_display'] . $metric['unit']),
+                                        valueCaption: @json($metric['value_caption']),
+                                        primaryCount: @json($metric['primary_count']),
+                                        primaryCaption: @json($metric['primary_caption']),
+                                        secondaryCount: @json($metric['secondary_count']),
+                                        secondaryCaption: @json($metric['secondary_caption']),
+                                        insight: @json($metric['insight']),
+                                        sourceName: @json($metric['source_name']),
+                                        sourceKey: @json($metric['source_key'])
+                                    }'
+                                    class="group w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400/30 dark:border-white/[0.06] dark:bg-[#0b1220] dark:hover:border-indigo-400/30">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="min-w-0">
+                                            <p class="truncate text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">{{ $metric['label'] }}</p>
+                                            <div class="mt-2 flex items-baseline gap-1">
+                                                <span class="text-2xl font-black text-slate-950 dark:text-white">{{ $metric['value_display'] }}</span>
+                                                @if($metric['unit'] !== '')
+                                                    <span class="text-xs font-black text-slate-400 dark:text-white/35">{{ $metric['unit'] }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <span class="h-2.5 w-2.5 rounded-full {{ $metric['bar'] }}"></span>
+                                    </div>
+                                    <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
+                                        <div class="h-full rounded-full {{ $metric['bar'] }}" style="width: {{ $metric['value'] }}%"></div>
+                                    </div>
+                                    <div class="mt-4 grid grid-cols-2 gap-2">
+                                        <div class="rounded-xl bg-slate-50 px-3 py-2 dark:bg-white/[0.03]">
+                                            <p class="truncate text-sm font-black text-slate-950 dark:text-white">{{ $metric['primary_count'] }}</p>
+                                            <p class="truncate text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">{{ $metric['primary_label'] }}</p>
+                                        </div>
+                                        <div class="rounded-xl bg-slate-50 px-3 py-2 dark:bg-white/[0.03]">
+                                            <p class="truncate text-sm font-black text-slate-950 dark:text-white">{{ $metric['secondary_count'] }}</p>
+                                            <p class="truncate text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">{{ $metric['secondary_label'] }}</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            @endforeach
+                        </div>
+                    </article>
+
+                    <aside class="glass-card rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm transition-colors duration-300 dark:border-white/[0.05] dark:bg-[#0f141e] md:p-6 xl:col-span-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-300">Tindak Lanjut</p>
+                                <h3 class="mt-2 text-xl font-black text-slate-950 dark:text-white">Prioritas Kelas</h3>
+                            </div>
+                            <button @click="showDashboardInfoModal = true" class="grid h-9 w-9 place-items-center rounded-full border border-slate-200 bg-slate-50 text-xs font-black text-slate-500 transition hover:border-indigo-200 hover:text-indigo-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/45 dark:hover:border-indigo-500/30 dark:hover:text-indigo-300">?</button>
+                        </div>
+
+                        <div class="mt-5 space-y-3">
+                            @foreach($teacherRecommendations as $recommendation)
+                                @php $recommendationTone = $teacherToneClasses[$recommendation['tone']] ?? $teacherToneClasses['slate']; @endphp
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-white/[0.03]">
+                                    <div class="flex items-start gap-3">
+                                        <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full {{ $recommendationTone['dot'] }}"></span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-black text-slate-950 dark:text-white">{{ $recommendation['title'] }}</h4>
+                                            <p class="mt-1 text-xs font-medium leading-6 text-slate-500 dark:text-white/45">{{ $recommendation['body'] }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/5 dark:bg-[#020617]/70">
+                            <div class="mb-3 flex items-center justify-between">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">Aktivitas 7 Hari</p>
+                                <div class="flex items-center gap-2 text-[10px] font-black text-slate-500 dark:text-white/40">
+                                    <span class="inline-flex items-center gap-1"><i class="h-2 w-2 rounded-full bg-cyan-500"></i>{{ number_format($overviewQuizActivityTotal) }}</span>
+                                    <span class="inline-flex items-center gap-1"><i class="h-2 w-2 rounded-full bg-fuchsia-500"></i>{{ number_format($overviewLabActivityTotal) }}</span>
+                                </div>
+                            </div>
+                            <div class="flex h-24 items-end gap-2">
+                                @forelse($overviewActivityDays as $day)
+                                    @php
+                                        $barHeight = $day['total'] > 0 ? max(8, round(($day['total'] / $overviewActivityPeak) * 100)) : 4;
+                                        $quizRatio = $day['total'] > 0 ? round(($day['quiz'] / max(1, $day['total'])) * 100) : 0;
+                                    @endphp
+                                    <div class="flex flex-1 flex-col items-center gap-2" title="{{ $day['label'] }}: {{ $day['quiz'] }}x kuis, {{ $day['lab'] }}x praktik">
+                                        <div class="flex h-20 w-full max-w-[26px] items-end overflow-hidden rounded-full bg-white shadow-inner dark:bg-white/10">
+                                            <div class="flex w-full flex-col justify-end overflow-hidden rounded-full" style="height: {{ $barHeight }}%">
+                                                @if($day['total'] > 0)
+                                                    <span class="block w-full bg-cyan-500" style="height: {{ $quizRatio }}%"></span>
+                                                    <span class="block w-full bg-fuchsia-500" style="height: {{ 100 - $quizRatio }}%"></span>
+                                                @else
+                                                    <span class="block h-full w-full bg-slate-300 dark:bg-white/15"></span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <b class="text-[9px] font-black text-slate-400 dark:text-white/30">{{ $day['label'] }}</b>
+                                    </div>
+                                @empty
+                                    <p class="w-full self-center text-center text-xs font-semibold text-slate-500 dark:text-white/40">Belum ada aktivitas.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </aside>
+                </section>
+
+                {{-- =======================================================
+                     DETAIL ANALITIK PENDIDIK
+                     ======================================================= --}}
+                <section class="hidden">
+                    @php $teacherConditionToneClasses = $teacherToneClasses[$teacherConditionTone] ?? $teacherToneClasses['slate']; @endphp
+
+                    <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 dark:border-white/5 pb-4">
+                        <div>
+                            <p class="text-[10px] uppercase font-black tracking-widest text-slate-400 dark:text-white/35">Analitik Kelas</p>
+                            <h3 class="text-[15px] md:text-[16px] font-bold text-slate-900 dark:text-white">Detail Kelas</h3>
+                        </div>
+                        <span class="w-fit rounded-lg border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest {{ $teacherConditionToneClasses['soft'] }}">
+                            {{ $teacherConditionTitle }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        @foreach($teacherReferenceCards as $referenceCard)
+                            @php
+                                $referenceTone = $teacherToneClasses[$referenceCard['tone']] ?? $teacherToneClasses['slate'];
+                                $referencePercent = min(100, max(0, (int) $referenceCard['percent']));
+                            @endphp
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-white/5 dark:bg-[#020617]/70">
+                                <div class="flex items-start justify-between gap-3 mb-2">
+                                    <div>
+                                        <p class="text-sm font-black text-slate-900 dark:text-white">{{ $referenceCard['label'] }}</p>
+                                    </div>
+                                    <span class="text-xs font-black {{ $referenceTone['text'] }}">{{ $referenceCard['value'] }}</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden border border-slate-200/60 dark:border-white/5">
+                                    <div class="h-full {{ $referenceTone['bar'] }} transition-all duration-1000" style="width: {{ $referencePercent }}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+
                 {{-- =======================================================
                      1. HERO INSIGHT SECTION (3 KARTU ATAS)
                      ======================================================= --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+                <div class="hidden">
                     
                     {{-- Card 1: Passed Quizzes --}}
                     <div class="glass-card rounded-2xl group/card flex flex-col justify-between overflow-visible cursor-pointer" @click="showQuizModal = true">
@@ -548,9 +1041,9 @@
                                     <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                     <div class="tooltip-content">
                                         <span class="font-bold text-cyan-600 dark:text-cyan-400 block mb-1">Perhitungan:</span>
-                                        Total pengumpulan kuis yang berhasil mencapai batas KKM (Skor ≥ 70). Diambil berdasarkan kuis unik tiap siswa.
+                                        Total pengumpulan kuis dengan nilai minimal KKM (Nilai ≥ 70). Diambil berdasarkan kuis unik tiap pengguna.
                                         <br><br>
-                                        <span class="text-slate-500 dark:text-slate-400 font-mono text-[9px]">Total Seluruh Percobaan: {{ $totalAttempts }}</span>
+                                        <span class="text-slate-500 dark:text-slate-400 font-mono text-[9px]">Total percobaan kuis: {{ number_format($totalAttempts ?? 0) }}x</span>
                                     </div>
                                 </div>
                             </h3>
@@ -599,8 +1092,8 @@
                                 <div class="tooltip-container tooltip-red tooltip-down tooltip-left" @click.stop>
                                     <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                     <div class="tooltip-content">
-                                        <span class="font-bold text-red-500 dark:text-red-400 block mb-1">Perhitungan Murni:</span>
-                                        Siswa dihitung butuh remedial JIKA nilainya < 70 DAN belum pernah mendapatkan nilai di atas KKM pada evaluasi tersebut.
+                                        <span class="font-bold text-red-500 dark:text-red-400 block mb-1">Perhitungan:</span>
+                                        Pengguna dihitung butuh remedial jika nilainya < 70 dan belum pernah mendapatkan nilai di atas KKM pada evaluasi tersebut.
                                     </div>
                                 </div>
                             </h3>
@@ -611,12 +1104,12 @@
                                     <div class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-500/20 flex items-center justify-center text-xs font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 transition-colors">!</div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-white truncate transition-colors">{{ $act->name }}</p>
-                                        <p class="text-[9px] text-red-500 dark:text-red-400 mt-0.5 transition-colors">Skor: {{ $act->score }} (Kurang: <span class="font-bold">{{ 70 - $act->score }}</span>)</p>
+                                        <p class="text-[9px] text-red-500 dark:text-red-400 mt-0.5 transition-colors">Nilai: {{ $act->score }} (Kurang: <span class="font-bold">{{ 70 - $act->score }}</span>)</p>
                                     </div>
                                 </div>
                                 @empty
                                 <div class="flex flex-col items-center justify-center py-4 text-emerald-600 dark:text-emerald-400 transition-colors border border-dashed border-emerald-200 dark:border-emerald-500/20 rounded-xl bg-emerald-50 dark:bg-emerald-500/5">
-                                    <span class="text-[10px] font-bold uppercase tracking-widest text-center">Semua Aman!</span>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-center">Tidak ada peringatan</span>
                                     <svg class="w-5 h-5 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 </div>
                                 @endforelse
@@ -627,13 +1120,13 @@
                                     Tinjau Daftar Tindakan &rarr;
                                 </button>
                                 @if($remedialRate > 0)
-                                    <span class="text-[9px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded shadow-sm">Tingkat Prioritas: {{ $remedialRate }}%</span>
+                                    <span class="text-[9px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded shadow-sm">Remedial: {{ $remedialRate }}%</span>
                                 @endif
                             </div>
                         </div>
                     </div>
 
-                    {{-- Card 3: Lab Completion --}}
+                    {{-- Card 3: Praktik --}}
                     <div class="glass-card rounded-2xl group/card flex flex-col justify-between overflow-visible cursor-pointer" @click="showLabModal = true">
                         <div class="card-bg-gfx">
                             <div class="absolute right-0 top-0 p-4 opacity-[0.05] dark:opacity-10 transition-transform duration-500 group-hover/card:scale-110">
@@ -643,20 +1136,20 @@
                         
                         <div class="p-6 relative z-20 flex flex-col h-full">
                             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between transition-colors">
-                                Penyelesaian Lab
+                                Penyelesaian Praktik
                                 <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left" @click.stop>
                                     <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                     <div class="tooltip-content">
                                         <span class="font-bold text-fuchsia-600 dark:text-fuchsia-400 block mb-1">Sumber Data:</span>
-                                        Total sesi praktikum yang tervalidasi dengan status lulus dari semua siswa.
+                                        Total riwayat praktik dengan status lulus dari semua pengguna.
                                     </div>
                                 </div>
                             </h3>
                             
                             <div class="flex items-center justify-between mt-2 flex-1">
                                 <div>
-                                    <span class="text-4xl font-black text-slate-900 dark:text-white drop-shadow-sm dark:drop-shadow-md transition-colors">{{ $realLabCount ?? 0 }}</span>
-                                    <span class="text-sm text-slate-500 dark:text-white/40 block mt-1 transition-colors">Total Lulus</span>
+                                    <span class="text-4xl font-black text-slate-900 dark:text-white drop-shadow-sm dark:drop-shadow-md transition-colors">{{ number_format($realLabCount ?? 0) }}x</span>
+                                    <span class="text-sm text-slate-500 dark:text-white/40 block mt-1 transition-colors">Praktik Lulus</span>
                                 </div>
                                 <div class="text-right">
                                     <button class="px-3 py-1.5 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-600/20 text-fuchsia-600 dark:text-fuchsia-400 text-[10px] font-bold border border-fuchsia-200 dark:border-fuchsia-600/30 hover:bg-fuchsia-600 hover:text-white transition-colors shadow-sm dark:shadow-none">
@@ -666,10 +1159,10 @@
                             </div>
                             
                             <div class="mt-6 pt-3 border-t border-slate-200 dark:border-white/5 transition-colors flex items-center justify-between">
-                                <div class="flex-1 mr-3 bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden shadow-inner border border-slate-300 dark:border-white/5 transition-colors" title="Rata-rata Skor: {{ round($avgLabScore, 1) }}">
+                                <div class="flex-1 mr-3 bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden shadow-inner border border-slate-300 dark:border-white/5 transition-colors" title="Rata-rata Nilai: {{ round($avgLabScore, 1) }}">
                                     <div class="h-full bg-gradient-to-r from-fuchsia-400 to-fuchsia-600 dark:from-fuchsia-600 dark:to-fuchsia-400 transition-all duration-1000" style="width: {{ min(100, $avgLabScore) }}%"></div>
                                 </div>
-                                <p class="text-[9px] text-slate-500 dark:text-white/40 font-mono transition-colors">Rata-rata Skor: <strong class="text-fuchsia-600 dark:text-fuchsia-400">{{ round($avgLabScore, 1) }}</strong></p>
+                                <p class="text-[9px] text-slate-500 dark:text-white/40 font-mono transition-colors">Rata-rata Nilai: <strong class="text-fuchsia-600 dark:text-fuchsia-400">{{ round($avgLabScore, 1) }}</strong></p>
                             </div>
                         </div>
                     </div>
@@ -678,15 +1171,15 @@
                 {{-- =======================================================
                      2. STATS GRID (4 KARTU TENGAH)
                      ======================================================= --}}
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 reveal" style="animation-delay: 0.2s;">
+                <div class="hidden">
                     
-                    {{-- Total Siswa --}}
+                    {{-- Total Pengguna --}}
                     <a href="{{ route('admin.students.index') }}" class="glass-card rounded-2xl p-5 border-l-4 border-l-indigo-500 cursor-pointer group transition-all overflow-visible block">
                         <div class="flex justify-between items-start">
-                            <p class="text-[10px] uppercase font-bold text-slate-500 dark:text-white/40 tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Siswa</p>
+                            <p class="text-[10px] uppercase font-bold text-slate-500 dark:text-white/40 tracking-widest group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Total Pengguna</p>
                             <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">?</div>
-                                <div class="tooltip-content">Menghitung seluruh pengguna aktif yang memiliki role 'student' (Bukan admin atau tutor). Terdapat <b>{{ count($availableClasses ?? []) }} Kelas Aktif</b> saat ini.</div>
+                                <div class="tooltip-content">Menghitung akun pengguna pembelajaran dengan role 'student'. Admin dan tutor tidak dihitung. Terdapat <b>{{ count($availableClasses ?? []) }} kelas aktif</b> saat ini.</div>
                             </div>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ number_format($totalStudents ?? 0) }}</h3>
@@ -699,10 +1192,10 @@
                             <p class="text-[10px] uppercase font-bold text-slate-500 dark:text-white/40 tracking-widest group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Kuis Lulus</p>
                             <div class="tooltip-container tooltip-cyan tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-cyan-600 dark:group-hover:text-cyan-400">?</div>
-                                <div class="tooltip-content">Kalkulasi total percobaan kuis yang diselesaikan dengan skor akhirnya memenuhi KKM (Nilai ≥ 70).</div>
+                                <div class="tooltip-content">Kalkulasi total percobaan kuis dengan nilai akhir minimal KKM (Nilai ≥ 70).</div>
                             </div>
                         </div>
-                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ number_format($totalPassedQuizzesCount ?? 0) }}</h3>
+                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-2 transition-colors">{{ number_format($totalPassedQuizzesCount ?? 0) }}x</h3>
                         <p class="text-[9px] text-cyan-600 dark:text-cyan-400 mt-2 opacity-0 group-hover:opacity-100 transition translate-y-2 group-hover:translate-y-0 flex items-center gap-1">Lihat Riwayat &rarr;</p>
                     </div>
 
@@ -713,11 +1206,11 @@
                             <div class="tooltip-container tooltip-emerald tooltip-up tooltip-left">
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">?</div>
                                 <div class="tooltip-content">
-                                    Total akumulasi nilai seluruh kuis dibagi dengan Total Seluruh Percobaan Kuis ({{ $totalAttempts }} Percobaan).
+                                    Total akumulasi nilai seluruh kuis dibagi dengan total percobaan kuis ({{ number_format($totalAttempts ?? 0) }}x).
                                     <hr class="my-2 border-slate-200/20">
-                                    <span class="text-emerald-400">Skor tertinggi: {{ $highestGlobalScore }}</span><br>
-                                    <span class="text-red-400">Skor terendah: {{ $lowestGlobalScore }}</span><br>
-                                    <span class="text-slate-400">Rata-rata Durasi: {{ gmdate("i:s", $avgQuizDuration) }} Menit</span>
+                                    <span class="text-emerald-400">Nilai tertinggi: {{ $highestGlobalScore }}</span><br>
+                                    <span class="text-red-400">Nilai terendah: {{ $lowestGlobalScore }}</span><br>
+                                    <span class="text-slate-400">Rata-rata durasi: {{ gmdate("i:s", $avgQuizDuration) }} menit</span>
                                 </div>
                             </div>
                         </div>
@@ -736,7 +1229,7 @@
                                 <div class="tooltip-trigger bg-transparent border-transparent shadow-none text-slate-400 dark:text-white/30 group-hover:text-violet-600 dark:group-hover:text-violet-400">?</div>
                                 <div class="tooltip-content">
                                     <span class="font-bold text-violet-400">Rumus Persentase:</span><br>
-                                    (Total Kuis Lulus: {{ $totalPassedQuizzesCount }}) ÷ (Total Percobaan: {{ $totalAttempts }}) × 100%
+                                    (kuis lulus: {{ number_format($totalPassedQuizzesCount ?? 0) }}x) ÷ (percobaan kuis: {{ number_format($totalAttempts ?? 0) }}x) × 100%
                                 </div>
                             </div>
                         </div>
@@ -760,7 +1253,7 @@
                                 Tren Performa (7 Hari)
                                 <div class="tooltip-container tooltip-indigo tooltip-up tooltip-left">
                                     <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
-                                    <div class="tooltip-content">Melacak pergerakan rata-rata skor evaluasi secara harian untuk memantau performa pembelajaran siswa 7 hari terakhir.</div>
+                                    <div class="tooltip-content">Melacak pergerakan rata-rata nilai evaluasi secara harian untuk memantau performa pembelajaran pengguna 7 hari terakhir.</div>
                                 </div>
                             </h3>
                             <div class="flex p-1 bg-slate-100 dark:bg-[#0a0e17] rounded-lg border border-slate-200 dark:border-white/5 shadow-inner transition-colors" x-data="{ currentType: 'line' }">
@@ -861,13 +1354,13 @@
                                     <div class="tooltip-container tooltip-indigo tooltip-down tooltip-left">
                                         <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                         <div class="tooltip-content">
-                                            Perbandingan jumlah akun berdasarkan peran pengguna, seperti siswa dan admin.
+                                            Perbandingan jumlah akun berdasarkan peran pengguna, seperti pengguna dan admin.
                                         </div>
                                     </div>
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Komposisi akun sistem.</p>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">User</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">Akun</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
                         </div>
                         <div class="flex-1 min-h-[220px] relative">
@@ -875,20 +1368,20 @@
                         </div>
                     </div>
 
-                    {{-- Distribusi Kelas Siswa --}}
-                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('class', 'Distribusi Siswa per Kelas', 'Sebaran jumlah siswa pada tiap kelas untuk melihat komposisi rombongan belajar.')">
+                    {{-- Distribusi Kelas Pengguna --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('class', 'Distribusi Pengguna per Kelas', 'Sebaran jumlah pengguna pada tiap kelas.')">
                         <div class="flex items-start justify-between gap-3 mb-5">
                             <div>
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-                                    Siswa per Kelas
+                                    Pengguna per Kelas
                                     <div class="tooltip-container tooltip-cyan tooltip-down tooltip-left">
                                         <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                         <div class="tooltip-content">
-                                            Menampilkan sebaran jumlah siswa pada setiap kelas. Data diambil dari kolom class_group pada akun siswa.
+                                            Menampilkan sebaran jumlah pengguna pada setiap kelas. Data diambil dari kolom class_group pada akun pengguna.
                                         </div>
                                     </div>
                                 </h3>
-                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Top kelas dengan siswa terbanyak.</p>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Kelas dengan pengguna terbanyak.</p>
                             </div>
                             <span class="px-2.5 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[9px] font-black border border-cyan-100 dark:border-cyan-500/20">Kelas</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
@@ -899,7 +1392,7 @@
                     </div>
 
                     {{-- Rata-rata Kuis per Bab --}}
-                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('chapter', 'Rata-rata Kuis per Bab', 'Rata-rata nilai kuis tiap bab untuk memantau materi yang perlu penguatan.')">
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('chapter', 'Rata-rata Kuis per Bab', 'Rata-rata nilai kuis yang dikelompokkan berdasarkan bab.')">
                         <div class="flex items-start justify-between gap-3 mb-5">
                             <div>
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
@@ -907,13 +1400,13 @@
                                     <div class="tooltip-container tooltip-emerald tooltip-down tooltip-left">
                                         <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                         <div class="tooltip-content">
-                                            Rata-rata nilai kuis dikelompokkan berdasarkan chapter_id. Grafik ini membantu melihat bab yang perlu penguatan materi.
+                                            Rata-rata nilai kuis dikelompokkan berdasarkan chapter_id.
                                         </div>
                                     </div>
                                 </h3>
                                 <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Performa kuis tiap bab.</p>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black border border-emerald-100 dark:border-emerald-500/20">Skor</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black border border-emerald-100 dark:border-emerald-500/20">Nilai</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
                         </div>
                         <div class="flex-1 min-h-[220px] relative">
@@ -921,8 +1414,8 @@
                         </div>
                     </div>
 
-                    {{-- Aktivitas Kuis dan Lab --}}
-                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('activity', 'Aktivitas Kuis dan Lab 7 Hari', 'Perbandingan volume pengerjaan kuis dan lab dalam tujuh hari terakhir.')">
+                    {{-- Aktivitas Kuis dan Praktik --}}
+                    <div class="glass-card chart-zoom-card rounded-2xl p-6 flex flex-col min-h-[320px] group/chart" onclick="openHeroChart('activity', 'Aktivitas Kuis dan Praktik 7 Hari', 'Perbandingan jumlah pengerjaan kuis dan praktik dalam tujuh hari terakhir.')">
                         <div class="flex items-start justify-between gap-3 mb-5">
                             <div>
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
@@ -930,11 +1423,11 @@
                                     <div class="tooltip-container tooltip-fuchsia tooltip-down tooltip-left">
                                         <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                         <div class="tooltip-content">
-                                            Membandingkan jumlah pengerjaan kuis dan lab dalam tujuh hari terakhir tanpa mengubah grafik tren nilai utama.
+                                            Membandingkan jumlah pengerjaan kuis dan praktik dalam tujuh hari terakhir.
                                         </div>
                                     </div>
                                 </h3>
-                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Volume kuis dan lab terbaru.</p>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1">Jumlah kuis dan praktik terbaru.</p>
                             </div>
                             <span class="px-2.5 py-1 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 text-[9px] font-black border border-fuchsia-100 dark:border-fuchsia-500/20">Aktivitas</span>
                             <button type="button" class="chart-zoom-button px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black shadow-sm" onclick="event.stopPropagation(); this.closest('.chart-zoom-card').click();">Perbesar</button>
@@ -960,11 +1453,11 @@
                                         <div class="tooltip-trigger text-slate-500 dark:text-white">?</div>
                                         <div class="tooltip-content">
                                             <span class="font-bold text-indigo-400 block">Indikator Kesulitan:</span>
-                                            Dihitung berdasarkan rasio (Jumlah Jawaban Benar) ÷ (Total Seluruh Jawaban Masuk) × 100.
+                                            Dihitung dari rasio jawaban benar terhadap seluruh jawaban yang terkumpul.
                                         </div>
                                     </div>
                                 </h3>
-                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Metrik untuk meninjau tingkat kesulitan kurikulum berdasarkan interaksi siswa.</p>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Metrik untuk meninjau tingkat kesulitan soal berdasarkan jawaban pengguna.</p>
                             </div>
                             
                             <a href="{{ route('admin.analytics.questions') }}" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow-md dark:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition flex items-center gap-1.5 border border-indigo-500 dark:border-indigo-400 shrink-0">
@@ -991,7 +1484,7 @@
                                                 <span class="truncate max-w-[200px] md:max-w-[300px]">{{ \Illuminate\Support\Str::limit($q->question_text, 65) }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-5 py-4 text-center text-slate-500 dark:text-white/50 text-[10px] font-mono transition-colors">{{ $q->total_answers }} Siswa</td>
+                                        <td class="px-5 py-4 text-center text-slate-500 dark:text-white/50 text-[10px] font-mono transition-colors">{{ number_format($q->total_answers) }} jawaban</td>
                                         <td class="px-5 py-4 text-center">
                                             <div class="flex items-center justify-center gap-3">
                                                 <div class="flex-1 max-w-[100px] h-1.5 bg-slate-200 dark:bg-[#020617] rounded-full overflow-hidden border border-slate-300 dark:border-white/5 hidden lg:block shadow-inner transition-colors">
@@ -1029,14 +1522,14 @@
                                     <svg class="w-5 h-5 text-fuchsia-600 dark:text-fuchsia-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     Log Aktivitas Terbaru
                                 </h3>
-                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Menampilkan pengerjaan kuis dan lab real-time.</p>
+                                <p class="text-[10px] text-slate-500 dark:text-white/40 mt-1 transition-colors">Menampilkan pengerjaan kuis dan praktik terbaru.</p>
                             </div>
 
                             {{-- Alpine Filters --}}
                             <div class="flex gap-1.5 bg-slate-100 dark:bg-[#0a0e17] p-1 rounded-lg border border-slate-200 dark:border-white/5 shadow-inner">
                                 <button @click="logFilter = 'all'" :class="logFilter === 'all' ? 'bg-fuchsia-500 text-white shadow' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-2 py-1 text-[9px] font-bold rounded transition-all">Semua</button>
                                 <button @click="logFilter = 'kuis'" :class="logFilter === 'kuis' ? 'bg-cyan-500 text-white shadow' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-2 py-1 text-[9px] font-bold rounded transition-all">Kuis</button>
-                                <button @click="logFilter = 'lab'" :class="logFilter === 'lab' ? 'bg-purple-500 text-white shadow' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-2 py-1 text-[9px] font-bold rounded transition-all">Lab</button>
+                                <button @click="logFilter = 'lab'" :class="logFilter === 'lab' ? 'bg-purple-500 text-white shadow' : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'" class="px-2 py-1 text-[9px] font-bold rounded transition-all">Praktik</button>
                             </div>
                         </div>
 
@@ -1050,7 +1543,7 @@
                                             <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-white/80 flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors shadow-inner">
                                                 {{ substr($act['user_name'] ?? 'U', 0, 1) }}
                                             </div>
-                                            <p class="text-xs font-bold text-slate-800 dark:text-white truncate transition-colors">{{ $act['user_name'] ?? 'Unknown User' }}</p>
+                                            <p class="text-xs font-bold text-slate-800 dark:text-white truncate transition-colors">{{ $act['user_name'] ?? 'Pengguna tidak dikenal' }}</p>
                                         </div>
                                         <span class="text-[8px] font-bold px-2 py-0.5 rounded border transition-colors shrink-0 {{ $act['is_passed'] ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20' }}">
                                             {{ $act['is_passed'] ? 'Lulus' : 'Gagal' }}
@@ -1063,7 +1556,7 @@
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                                             </div>
                                         @else
-                                            <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center shrink-0 shadow-sm dark:shadow-inner transition-colors" title="Aktivitas Praktikum Lab">
+                                            <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 flex items-center justify-center shrink-0 shadow-sm dark:shadow-inner transition-colors" title="Aktivitas Praktik">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                                             </div>
                                         @endif
@@ -1071,11 +1564,11 @@
                                         <div class="flex-1 min-w-0">
                                             <p class="text-[11px] text-slate-600 dark:text-white/80 font-medium line-clamp-1 leading-snug transition-colors">
                                                 {{ $act['title'] }} 
-                                                <span class="{{ $act['is_passed'] ? 'text-emerald-500' : 'text-red-500' }} font-bold ml-1">(Skor: {{ $act['score'] }})</span>
+                                                <span class="{{ $act['is_passed'] ? 'text-emerald-500' : 'text-red-500' }} font-bold ml-1">(Nilai: {{ $act['score'] }})</span>
                                             </p>
                                             <div class="flex items-center gap-1.5 mt-1.5">
                                                 <p class="text-[9px] text-slate-500 dark:text-white/40 font-mono transition-colors">
-                                                    {{ \Carbon\Carbon::parse($act['created_at'])->diffForHumans() }} <span class="hidden sm:inline-block text-slate-300 dark:text-white/20 px-1">•</span> <span class="hidden sm:inline-block">{{ \Carbon\Carbon::parse($act['created_at'])->translatedFormat('H:i') }} WIB</span>
+                                                    {{ \Carbon\Carbon::parse($act['created_at'])->diffForHumans() }} <span class="hidden sm:inline-block text-slate-300 dark:text-white/20 px-1">•</span> <span class="hidden sm:inline-block">{{ \Carbon\Carbon::parse($act['created_at'])->translatedFormat('H:i') }} WITA</span>
                                                 </p>
                                                 {{-- Menampilkan durasi pengerjaan jika ada --}}
                                                 @if(isset($act['duration']) && $act['duration'] > 0)
@@ -1129,8 +1622,66 @@
         </div>
     </div>
 
+    {{-- ==================== HERO MODAL INSIGHT LEARNING ANALYTICS ==================== --}}
+    <div x-show="showLearningInsightModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" style="display: none;" x-cloak x-transition.opacity>
+        <div class="absolute inset-0 bg-slate-900/70 dark:bg-[#020617]/90 backdrop-blur-md cursor-pointer transition-opacity" @click="showLearningInsightModal = false"></div>
+
+        <div class="relative w-full max-w-3xl overflow-hidden rounded-[2rem] border border-indigo-200 bg-white shadow-2xl dark:border-indigo-500/30 dark:bg-[#0f141e]" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+            <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-slate-900 to-cyan-600 px-6 py-6 text-white sm:px-8">
+                <div class="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                <div class="relative z-10 flex items-start justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-100">Rincian Analitik</p>
+                        <h3 class="mt-2 truncate text-2xl font-black sm:text-3xl" x-text="learningInsight.label"></h3>
+                        <p class="mt-2 analytics-card-text max-w-xl text-xs font-semibold text-indigo-100/85" x-text="learningInsight.insight"></p>
+                    </div>
+                    <button @click="showLearningInsightModal = false" class="shrink-0 rounded-full bg-white/10 p-2 text-white/80 transition hover:bg-red-500/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-5 p-5 sm:p-7">
+                <div class="grid gap-4 md:grid-cols-[.85fr_1.15fr]">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-white/5 dark:bg-[#020617]/70">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Angka utama</p>
+                        <div class="mt-2 flex items-end gap-2">
+                            <p class="text-5xl font-black leading-none text-slate-900 dark:text-white" x-text="learningInsight.value"></p>
+                        </div>
+                        <p class="mt-3 analytics-card-text text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-white/45" x-text="learningInsight.valueCaption"></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-white/[0.03]">
+                            <p class="analytics-card-text text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35" x-text="learningInsight.primaryCaption"></p>
+                            <p class="mt-2 truncate text-3xl font-black text-slate-900 dark:text-white" x-text="learningInsight.primaryCount"></p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-white/[0.03]">
+                            <p class="analytics-card-text text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35" x-text="learningInsight.secondaryCaption"></p>
+                            <p class="mt-2 truncate text-3xl font-black text-slate-900 dark:text-white" x-text="learningInsight.secondaryCount"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-white/5 dark:bg-[#020617]/70">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/35">Sumber data</p>
+                            <h4 class="mt-1 truncate text-lg font-black text-slate-900 dark:text-white" x-text="learningInsight.sourceName"></h4>
+                        </div>
+                    </div>
+                    <p class="mt-4 overflow-x-auto rounded-xl bg-white px-3 py-3 font-mono text-[11px] font-bold text-slate-600 dark:bg-white/5 dark:text-white/55" x-text="learningInsight.sourceKey"></p>
+                </div>
+
+                <button @click="showLearningInsightModal = false" class="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-black text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 dark:bg-white dark:text-slate-950 dark:hover:bg-indigo-100">
+                    Tutup Rincian
+                </button>
+            </div>
+        </div>
+    </div>
+
     {{-- ==================== HERO MODAL PANDUAN DASBOR ==================== --}}
-    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" x-cloak>
+    <div x-show="showDashboardInfoModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" style="display: none;" x-cloak>
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020617]/80 backdrop-blur-md cursor-pointer transition-opacity" @click="showDashboardInfoModal = false" x-transition.opacity></div>
         
         <div class="relative w-full max-w-xl bg-white/90 dark:bg-[#0f141e]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
@@ -1145,31 +1696,31 @@
             </div>
             
             <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-2">Panduan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">Dasbor Analitik</span></h3>
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Pusat Kendali & Pemantauan Akademik</p>
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Ringkasan Data Pembelajaran</p>
             
             <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-justify space-y-4">
-                <p>Halaman ini membantu admin memantau proses belajar, meninjau capaian, dan menentukan tindak lanjut pembelajaran.</p>
+                <p>Halaman ini menampilkan data pembelajaran, aktivitas pengguna, dan hasil evaluasi.</p>
                 
                 <div class="space-y-3 mt-4 text-left">
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">01</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ringkasan Metrik dan Evaluasi</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Rekapitulasi tingkat kelulusan, tren performa mingguan, hingga analisis probabilitas kesulitan butir soal.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Rekapitulasi tingkat kelulusan, tren mingguan, dan tingkat kesulitan butir soal.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">02</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Log Aktivitas & Audit</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pemantauan progres siswa secara waktu-nyata dan pencatatan transparansi tindakan yang dilakukan oleh jajaran Administrator.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pemantauan progres pengguna secara waktu-nyata dan pencatatan transparansi tindakan yang dilakukan oleh administrator.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-white/5">
                         <span class="text-slate-400 dark:text-slate-500 mt-0.5 font-mono text-xs">03</span>
                         <div>
                             <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Direktori Pengguna</h4>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kelola data siswa, impor dan ekspor dokumen, serta pantau capaian tiap individu.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kelola data pengguna, impor dan ekspor dokumen, serta pantau capaian tiap individu.</p>
                         </div>
                     </div>
                 </div>
@@ -1195,9 +1746,9 @@
             <div class="bg-gradient-to-r from-cyan-500 to-blue-500 -mx-6 -mt-6 p-6 md:p-8 mb-6 text-white flex justify-between items-start shadow-inner relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div class="relative z-10">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-cyan-100 mb-1">Pengumpulan Kuis Valid</p>
-                    <h3 class="text-3xl font-black mb-1">{{ number_format($totalPassedQuizzesCount ?? 0) }} Kuis Lulus</h3>
-                    <p class="text-xs text-cyan-100 opacity-90">Evaluasi unik yang telah berhasil memenuhi syarat nilai KKM (Skor ≥ 70).</p>
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-cyan-100 mb-1">Riwayat Kuis Lulus</p>
+                    <h3 class="text-3xl font-black mb-1">{{ number_format($totalPassedQuizzesCount ?? 0) }}x Kuis Lulus</h3>
+                    <p class="text-xs text-cyan-100 opacity-90">Data kuis lulus dihitung dari nilai minimal KKM (Nilai ≥ 70).</p>
                 </div>
                 <button @click="showQuizModal = false" class="text-cyan-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -1238,9 +1789,9 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div class="relative z-10">
                     <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-100 mb-1">Rata-rata Seluruh Kuis</p>
-                    <h3 class="text-4xl font-black mb-1">{{ $globalAverage ?? 0 }} <span class="text-lg font-bold text-emerald-200">Poin</span></h3>
+                    <h3 class="text-4xl font-black mb-1">{{ $globalAverage ?? 0 }}</h3>
                     <p class="text-[10px] text-emerald-100 opacity-90 mt-1">
-                        Skor gabungan total dari <b>{{ $totalAttempts }}</b> seluruh percobaan kuis dibagi rata.
+                        Nilai gabungan dari <b>{{ number_format($totalAttempts ?? 0) }}x</b> percobaan kuis dibagi rata.
                     </p>
                 </div>
                 <button @click="showAvgModal = false" class="text-emerald-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10">
@@ -1255,7 +1806,7 @@
                         <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors">
                             {{ $avg->chapter_id == 99 ? 'Evaluasi Akhir' : 'Kuis Bab ' . $avg->chapter_id }}
                         </p>
-                        <p class="text-[10px] text-slate-500 dark:text-white/50 mt-0.5 transition-colors">Terkumpul: <span class="text-slate-700 dark:text-white font-bold">{{ $avg->total }} Percobaan</span></p>
+                        <p class="text-[10px] text-slate-500 dark:text-white/50 mt-0.5 transition-colors">Terkumpul: <span class="text-slate-700 dark:text-white font-bold">{{ number_format($avg->total) }}x</span></p>
                     </div>
                     <div class="text-right flex items-center gap-3">
                         <div class="w-24 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden hidden sm:block shadow-inner">
@@ -1280,13 +1831,13 @@
             <div class="bg-gradient-to-r from-violet-500 to-indigo-600 -mx-6 -mt-6 p-6 md:p-8 mb-6 text-white flex justify-between items-start shadow-inner relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div class="relative z-10 w-full pr-8">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-violet-200 mb-1">Tingkat Kesuksesan Evaluasi (Rasio Kelulusan)</p>
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-violet-200 mb-1">Rasio Kelulusan Kuis</p>
                     <h3 class="text-4xl font-black mb-3">{{ $passRate ?? 0 }}<span class="text-2xl font-bold text-violet-200">%</span></h3>
                     <div class="w-full bg-violet-800/50 rounded-full h-1.5 mb-2 overflow-hidden border border-white/10">
                         <div class="bg-white h-full" style="width: {{ $passRate ?? 0 }}%"></div>
                     </div>
                     <p class="text-[10px] text-violet-200 opacity-90 mt-2 font-mono">
-                        (Total Lulus: <b>{{ $totalPassedQuizzesCount }}</b>) ÷ (Total Percobaan: <b>{{ $totalAttempts }}</b>) × 100%
+                        (kuis lulus: <b>{{ number_format($totalPassedQuizzesCount ?? 0) }}x</b>) ÷ (percobaan kuis: <b>{{ number_format($totalAttempts ?? 0) }}x</b>) × 100%
                     </p>
                 </div>
                 <button @click="showPassedModal = false" class="text-violet-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10 shrink-0">
@@ -1306,13 +1857,13 @@
                         </p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $act->score }} Poin</span>
+                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">Nilai {{ $act->score }}</span>
                         <span class="text-[9px] text-slate-400 dark:text-white/30 hidden sm:inline-block font-mono mt-1 transition-colors">{{ \Carbon\Carbon::parse($act->created_at)->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10">
-                    <p class="text-[11px] text-slate-500 dark:text-white/40 italic transition-colors">Belum ada data siswa lulus.</p>
+                    <p class="text-[11px] text-slate-500 dark:text-white/40 italic transition-colors">Belum ada data pengguna lulus.</p>
                 </div>
                 @endforelse
             </div>
@@ -1330,10 +1881,10 @@
                 <div class="relative z-10 w-full pr-8">
                     <p class="text-[10px] uppercase font-bold tracking-widest text-red-100 mb-1">Status Prioritas Kelas</p>
                     <h3 class="text-3xl font-black mb-1">{{ number_format($realRemedialCount ?? 0) }} Peringatan Remedial</h3>
-                    <p class="text-xs text-red-100 opacity-90">Siswa di bawah ini mendapatkan skor < 70 dan belum pernah mencapai KKM di evaluasi tersebut.</p>
+                    <p class="text-xs text-red-100 opacity-90">Pengguna berikut mendapatkan nilai < 70 dan belum pernah mencapai KKM pada evaluasi tersebut.</p>
                     @if($remedialRate > 0)
                         <div class="mt-3 inline-block px-3 py-1 bg-red-900/30 rounded-lg border border-red-100/20">
-                            <span class="text-[10px] font-bold text-red-100">Mencakup {{ $remedialRate }}% dari total {{ $totalStudents }} siswa aktif</span>
+                            <span class="text-[10px] font-bold text-red-100">Mencakup {{ $remedialRate }}% dari total {{ number_format($totalStudents ?? 0) }} pengguna aktif</span>
                         </div>
                     @endif
                 </div>
@@ -1353,13 +1904,13 @@
                         </p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-red-600 dark:text-red-500 transition-colors">{{ $act->score }} Poin</span>
-                        <span class="text-[9px] text-red-700 dark:text-red-300 font-bold bg-red-100 dark:bg-red-500/10 px-2 py-0.5 rounded mt-1 hidden sm:inline-block transition-colors">Kurang {{ 70 - $act->score }} Poin</span>
+                        <span class="block text-sm font-black text-red-600 dark:text-red-500 transition-colors">Nilai {{ $act->score }}</span>
+                        <span class="text-[9px] text-red-700 dark:text-red-300 font-bold bg-red-100 dark:bg-red-500/10 px-2 py-0.5 rounded mt-1 hidden sm:inline-block transition-colors">Kurang {{ 70 - $act->score }}</span>
                     </div>
                 </div>
                 @empty
                 <div class="flex flex-col items-center justify-center py-10 text-emerald-600 dark:text-emerald-400 transition-colors border border-dashed border-emerald-200 dark:border-emerald-500/20 rounded-xl bg-emerald-50 dark:bg-emerald-500/5">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-center">Semua Aman!</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-center">Tidak ada peringatan</span>
                     <svg class="w-5 h-5 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 </div>
                 @endforelse
@@ -1367,7 +1918,7 @@
         </div>
     </div>
 
-    {{-- 6. MODAL: DATA LAB COMPLETION (FUCHSIA HERO) - NEW --}}
+    {{-- 6. MODAL: DATA PRAKTIK COMPLETION (FUCHSIA HERO) --}}
     <div x-show="showLabModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/95 backdrop-blur-md transition-colors" @click="showLabModal = false"></div>
         <div class="relative w-full max-w-2xl bg-white dark:bg-[#0f141e] border border-fuchsia-200 dark:border-fuchsia-500/40 rounded-2xl shadow-xl dark:shadow-[0_20px_70px_rgba(217,70,239,0.15)] p-6 transition-colors duration-500 overflow-hidden" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
@@ -1376,10 +1927,10 @@
             <div class="bg-gradient-to-r from-fuchsia-500 to-purple-600 -mx-6 -mt-6 p-6 md:p-8 mb-6 text-white flex justify-between items-start shadow-inner relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[40px] pointer-events-none"></div>
                 <div class="relative z-10 w-full pr-8">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-fuchsia-200 mb-1">Riwayat Praktikum Lab</p>
-                    <h3 class="text-4xl font-black mb-1">{{ $realLabCount }} <span class="text-xl">Lulus</span></h3>
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-fuchsia-200 mb-1">Riwayat Praktik</p>
+                    <h3 class="text-4xl font-black mb-1">{{ number_format($realLabCount ?? 0) }}x <span class="text-xl">Praktik Lulus</span></h3>
                     <p class="text-[10px] text-fuchsia-100 opacity-90 mt-1">
-                        Sesi lab yang berhasil divalidasi dengan status lulus. Rata-rata skor keseluruhan: <b>{{ round($avgLabScore, 1) }}</b>
+                        Riwayat praktik dengan status lulus. Rata-rata nilai keseluruhan: <b>{{ round($avgLabScore, 1) }}</b>
                     </p>
                 </div>
                 <button @click="showLabModal = false" class="text-fuchsia-100 hover:text-white transition bg-white/10 hover:bg-red-500/80 rounded-full p-2 relative z-10 shrink-0">
@@ -1398,12 +1949,12 @@
                         <p class="text-[10px] text-slate-500 dark:text-white/50 mt-0.5 transition-colors line-clamp-1" title="{{ $lab->lab_title }}">{{ $lab->lab_title }}</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">{{ $lab->final_score }} Poin</span>
+                        <span class="block text-sm font-black text-emerald-600 dark:text-emerald-400 transition-colors">Nilai {{ $lab->final_score }}</span>
                         <span class="text-[9px] text-slate-400 dark:text-white/30 hidden sm:inline-block font-mono mt-1 transition-colors">{{ \Carbon\Carbon::parse($lab->created_at)->diffForHumans() }}</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-[11px] text-slate-500 dark:text-white/40 text-center py-10 transition-colors">Belum ada data penyelesaian praktikum.</p>
+                <p class="text-[11px] text-slate-500 dark:text-white/40 text-center py-10 transition-colors">Belum ada data penyelesaian praktik.</p>
                 @endforelse
             </div>
         </div>
@@ -1416,7 +1967,7 @@
     <div x-show="showImport" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" @click="showImport = false"></div>
         <div class="relative w-full max-w-md bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] p-6 transition-colors duration-500" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors">Impor Data Siswa</h3>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors">Impor Data Pengguna</h3>
             <p class="text-[10px] text-slate-500 dark:text-white/50 mb-6 border-b border-slate-200 dark:border-white/5 pb-4 transition-colors">Header CSV yang Diperlukan: <code class="bg-slate-100 dark:bg-[#0a0e17] px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-300 font-mono font-bold mt-1 inline-block border border-slate-200 dark:border-white/5 transition-colors">Nama, Email, Kelas, Institusi, Kata Sandi</code></p>
             <form action="{{ route('admin.user.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -1437,7 +1988,7 @@
     <div x-show="showAdd" class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display: none;" x-transition.opacity>
         <div class="absolute inset-0 bg-slate-900/80 dark:bg-[#020617]/90 backdrop-blur-md transition-colors" @click="showAdd = false"></div>
         <div class="relative w-full max-w-md bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_20px_70px_rgba(0,0,0,0.9)] p-6 transition-colors duration-500" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-white/5 pb-3 transition-colors">Daftarkan Siswa Baru</h3>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-white/5 pb-3 transition-colors">Daftarkan Pengguna Baru</h3>
             <form action="{{ route('admin.user.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div><label class="text-[9px] font-bold text-slate-500 dark:text-white/50 uppercase mb-1.5 block tracking-widest transition-colors">Nama Lengkap</label><input type="text" name="name" class="w-full glass-input rounded-xl px-4 py-3 text-sm focus:bg-white dark:focus:bg-[#0a0e17] shadow-inner" required></div>
@@ -1574,7 +2125,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Skor Rata-rata', 
+                        label: 'Nilai Rata-rata',
                         data: dataScores,
                         borderColor: '#818cf8', backgroundColor: gradient, borderWidth: 3,
                         pointBackgroundColor: isDark ? '#0f141e' : '#ffffff', 
@@ -1705,7 +2256,7 @@
                     data: {
                         labels: raw.labels,
                         datasets: [{
-                            label: 'Jumlah Siswa',
+                            label: 'Jumlah Pengguna',
                             data: raw.data,
                             backgroundColor: '#06b6d4',
                             borderRadius: 10,
@@ -1807,7 +2358,7 @@
                                 tension: 0.4
                             },
                             {
-                                label: 'Lab',
+                                label: 'Praktik',
                                 data: labCounts,
                                 borderColor: '#d946ef',
                                 backgroundColor: 'rgba(217,70,239,0.10)',
@@ -2034,7 +2585,7 @@
 
                 Swal.fire({
                     title: 'Hapus pengguna ini?',
-                    html: `<div class="text-sm leading-6">Data akun <b>${userName}</b><br><span class="text-xs opacity-70">${userEmail}</span><br><br>Tindakan ini akan menghapus akun siswa dan data insight yang terkait dari dashboard.</div>`,
+                    html: `<div class="text-sm leading-6">Data akun <b>${userName}</b><br><span class="text-xs opacity-70">${userEmail}</span><br><br>Tindakan ini akan menghapus akun pengguna dan data terkait dari dashboard.</div>`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Ya, hapus sekarang',

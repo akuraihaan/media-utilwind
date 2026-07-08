@@ -194,11 +194,46 @@ class LabController extends Controller
     public function analytics(Request $request, $labId = null)
     {
         $selectedClass = trim((string) $request->query('class_group', ''));
-        $classGroups = DB::table('class_groups')
+        $selectedPeriod = (string) $request->query('period', 'all');
+        $periodOptions = [
+            'all' => 'Semua waktu',
+            '7d' => '7 hari terakhir',
+            '30d' => '30 hari terakhir',
+            '6m' => '6 bulan terakhir',
+        ];
+
+        if (!array_key_exists($selectedPeriod, $periodOptions)) {
+            $selectedPeriod = 'all';
+        }
+
+        $periodStart = match ($selectedPeriod) {
+            '7d' => Carbon::now()->subDays(6)->startOfDay(),
+            '30d' => Carbon::now()->subDays(29)->startOfDay(),
+            '6m' => Carbon::now()->subMonths(6)->startOfDay(),
+            default => null,
+        };
+        $periodLabel = $periodOptions[$selectedPeriod];
+
+        $managedClassGroups = DB::table('class_groups')
             ->whereNotNull('token')
             ->where('token', '<>', '')
             ->orderBy('name')
             ->pluck('name');
+        $activityClassGroups = DB::table('lab_histories')
+            ->join('users', 'lab_histories.user_id', '=', 'users.id')
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
+            ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->when($periodStart, fn ($q) => $q->where('lab_histories.created_at', '>=', $periodStart))
+            ->distinct()
+            ->pluck('users.class_group');
+        $classGroups = $managedClassGroups
+            ->merge($activityClassGroups)
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
 
         if ($selectedClass !== '' && !$classGroups->contains($selectedClass)) {
             $selectedClass = '';
@@ -206,10 +241,12 @@ class LabController extends Controller
 
         $baseQuery = DB::table('lab_histories')
             ->join('users', 'lab_histories.user_id', '=', 'users.id')
-            ->join('class_groups', 'users.class_group', '=', 'class_groups.name')
-            ->whereNotNull('class_groups.token')
-            ->where('class_groups.token', '<>', '')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
             ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->when($periodStart, fn ($q) => $q->where('lab_histories.created_at', '>=', $periodStart))
             ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass));
 
         $totalAttempts = (clone $baseQuery)->count('lab_histories.id');
@@ -223,7 +260,7 @@ class LabController extends Controller
 
         $userPerformance = DB::table('lab_histories')
             ->join('users', 'lab_histories.user_id', '=', 'users.id')
-            ->join('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
             ->select(
                 'users.id as student_id',
                 'users.name',
@@ -239,49 +276,65 @@ class LabController extends Controller
                 DB::raw('MAX(lab_histories.created_at) as last_attempt'),
                 DB::raw('MAX(lab_histories.id) as latest_history_id')
             )
-            ->whereNotNull('class_groups.token')
-            ->where('class_groups.token', '<>', '')
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
             ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->when($periodStart, fn ($q) => $q->where('lab_histories.created_at', '>=', $periodStart))
             ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass))
             ->groupBy('users.id', 'users.name', 'users.email', 'users.class_group')
             ->orderByDesc('best_score')
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $row->total_tries = (int) ($row->total_tries ?? 0);
+                $row->passed_tries = (int) ($row->passed_tries ?? 0);
+                $row->failed_tries = (int) ($row->failed_tries ?? 0);
+                $row->best_score = round((float) ($row->best_score ?? 0), 1);
+                $row->lowest_score = round((float) ($row->lowest_score ?? 0), 1);
+                $row->average_score = round((float) ($row->average_score ?? 0), 1);
+                $row->avg_time = (int) ($row->avg_time ?? 0);
 
-        $classPerformance = DB::table('lab_histories')
-            ->join('users', 'lab_histories.user_id', '=', 'users.id')
-            ->join('class_groups', 'users.class_group', '=', 'class_groups.name')
+                return $row;
+            });
+
+        $classPerformance = DB::table('users')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->leftJoin('lab_histories', function ($join) use ($labId, $periodStart) {
+                $join->on('lab_histories.user_id', '=', 'users.id');
+
+                if ($labId) {
+                    $join->where('lab_histories.lab_id', $labId);
+                }
+
+                if ($periodStart) {
+                    $join->where('lab_histories.created_at', '>=', $periodStart);
+                }
+            })
             ->select(
-                'class_groups.name as class_group',
+                'users.class_group as class_group',
                 'class_groups.major',
                 'class_groups.token',
                 'class_groups.is_active'
             )
-            ->selectRaw('COUNT(DISTINCT users.id) as students_count')
+            ->selectRaw('COUNT(DISTINCT users.id) as enrolled_students')
+            ->selectRaw('COUNT(DISTINCT CASE WHEN lab_histories.id IS NOT NULL THEN users.id END) as students_count')
             ->selectRaw('COUNT(lab_histories.id) as total_attempts')
             ->selectRaw('AVG(lab_histories.final_score) as avg_score')
             ->selectRaw("SUM(CASE WHEN lab_histories.status = 'passed' THEN 1 ELSE 0 END) as passed_attempts")
             ->selectRaw("SUM(CASE WHEN lab_histories.status = 'failed' THEN 1 ELSE 0 END) as failed_attempts")
             ->selectRaw('AVG(lab_histories.duration_seconds) as avg_time')
             ->selectRaw('MAX(lab_histories.created_at) as last_attempt')
-            ->whereNotNull('class_groups.token')
-            ->where('class_groups.token', '<>', '')
-            ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
             ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass))
-            ->groupBy('class_groups.name', 'class_groups.major', 'class_groups.token', 'class_groups.is_active')
+            ->groupBy('users.class_group', 'class_groups.major', 'class_groups.token', 'class_groups.is_active')
             ->orderBy('class_group')
             ->get();
 
-        $enrolledStudentsByClass = DB::table('users')
-            ->join('class_groups', 'users.class_group', '=', 'class_groups.name')
-            ->whereNotNull('class_groups.token')
-            ->where('class_groups.token', '<>', '')
-            ->select('class_groups.name', DB::raw('COUNT(users.id) as total_students'))
-            ->groupBy('class_groups.name')
-            ->pluck('total_students', 'class_groups.name');
-
-        $classPerformance = $classPerformance->map(function ($row) use ($enrolledStudentsByClass) {
+        $classPerformance = $classPerformance->map(function ($row) {
             $row->students_count = (int) ($row->students_count ?? 0);
-            $row->enrolled_students = (int) ($enrolledStudentsByClass[$row->class_group] ?? $row->students_count);
+            $row->enrolled_students = (int) ($row->enrolled_students ?? $row->students_count);
             $row->total_attempts = (int) ($row->total_attempts ?? 0);
             $row->passed_attempts = (int) ($row->passed_attempts ?? 0);
             $row->failed_attempts = (int) ($row->failed_attempts ?? 0);
@@ -292,7 +345,9 @@ class LabController extends Controller
             $row->last_attempt_label = $row->last_attempt
                 ? \Carbon\Carbon::parse($row->last_attempt)->diffForHumans()
                 : 'Belum ada aktivitas';
-            $row->status_label = (int) $row->is_active === 1 ? 'Aktif' : 'Nonaktif';
+            $row->status_label = $row->is_active === null
+                ? 'Tanpa Token'
+                : ((int) $row->is_active === 1 ? 'Aktif' : 'Nonaktif');
 
             return $row;
         });
@@ -300,7 +355,7 @@ class LabController extends Controller
         $labScoreRows = DB::table('lab_histories')
             ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
             ->join('users', 'lab_histories.user_id', '=', 'users.id')
-            ->join('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
             ->select(
                 'lab_histories.user_id',
                 'lab_histories.lab_id',
@@ -310,9 +365,11 @@ class LabController extends Controller
                 'users.class_group'
             )
             ->whereNotNull('lab_histories.final_score')
-            ->whereNotNull('class_groups.token')
-            ->where('class_groups.token', '<>', '')
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
             ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->when($periodStart, fn ($q) => $q->where('lab_histories.created_at', '>=', $periodStart))
             ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass))
             ->get();
 
@@ -344,6 +401,262 @@ class LabController extends Controller
         $labChartHighest = $validLabScores->count() ? round((float) $validLabScores->max(), 1) : null;
         $labChartLowest = $validLabScores->count() ? round((float) $validLabScores->min(), 1) : null;
         $hasLabChartData = $validLabScores->count() > 0;
+
+        $historyRows = DB::table('lab_histories')
+            ->join('labs', 'lab_histories.lab_id', '=', 'labs.id')
+            ->join('users', 'lab_histories.user_id', '=', 'users.id')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->select(
+                'lab_histories.id',
+                'lab_histories.user_id',
+                'lab_histories.lab_id',
+                'lab_histories.final_score',
+                'lab_histories.status',
+                'lab_histories.duration_seconds',
+                'lab_histories.completed_steps',
+                'lab_histories.created_at as attempted_at',
+                'labs.title as lab_title',
+                'users.name as student_name',
+                'users.email as student_email',
+                'users.class_group'
+            )
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
+            ->when($labId, fn ($q) => $q->where('lab_histories.lab_id', $labId))
+            ->when($periodStart, fn ($q) => $q->where('lab_histories.created_at', '>=', $periodStart))
+            ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass))
+            ->orderByDesc('lab_histories.created_at')
+            ->get()
+            ->map(function ($row) {
+                $row->final_score = round((float) ($row->final_score ?? 0), 1);
+                $row->duration_seconds = (int) ($row->duration_seconds ?? 0);
+                $row->duration_label = $this->formatSecondsShort($row->duration_seconds);
+                $row->status_label = ($row->status ?? '') === 'passed' ? 'Lulus' : 'Belum lulus';
+                $row->attempted_sort = $row->attempted_at ? Carbon::parse($row->attempted_at)->timestamp : 0;
+                $row->attempted_label = $row->attempted_at ? Carbon::parse($row->attempted_at)->diffForHumans() : '-';
+
+                return $row;
+            });
+
+        $labStepRows = DB::table('lab_steps')
+            ->join('labs', 'lab_steps.lab_id', '=', 'labs.id')
+            ->select(
+                'lab_steps.id',
+                'lab_steps.lab_id',
+                'lab_steps.title as step_title',
+                'lab_steps.order_index',
+                'labs.title as lab_title'
+            )
+            ->when($labId, fn ($q) => $q->where('lab_steps.lab_id', $labId))
+            ->orderBy('labs.id')
+            ->orderBy('lab_steps.order_index')
+            ->get();
+
+        $stepIdsByLab = $labStepRows
+            ->groupBy('lab_id')
+            ->map(fn ($steps) => $steps->pluck('id')->map(fn ($id) => (int) $id)->values());
+
+        $completedIdsForAttempt = function ($row) use ($stepIdsByLab): array {
+            $decoded = json_decode($row->completed_steps ?? '[]', true);
+            $ids = collect(is_array($decoded) ? $decoded : [])
+                ->map(fn ($id) => (int) $id)
+                ->filter()
+                ->values();
+
+            if ($ids->isEmpty() && ($row->status ?? '') === 'passed') {
+                return collect($stepIdsByLab->get((int) $row->lab_id, collect()))->all();
+            }
+
+            return $ids->all();
+        };
+
+        $latestAttemptRows = $historyRows
+            ->sortByDesc('attempted_sort')
+            ->unique(fn ($row) => $row->user_id . '-' . $row->lab_id)
+            ->values();
+
+        $stepObstacleRows = $labStepRows
+            ->map(function ($step) use ($latestAttemptRows, $completedIdsForAttempt) {
+                $attempts = $latestAttemptRows->where('lab_id', $step->lab_id)->values();
+                $total = $attempts->count();
+
+                if ($total === 0) {
+                    return null;
+                }
+
+                $completedCount = $attempts
+                    ->filter(fn ($row) => in_array((int) $step->id, $completedIdsForAttempt($row), true))
+                    ->count();
+                $unresolvedCount = max(0, $total - $completedCount);
+
+                return [
+                    'lab_id' => (int) $step->lab_id,
+                    'lab_title' => $step->lab_title,
+                    'step_title' => $step->step_title,
+                    'order_index' => (int) ($step->order_index ?? 0),
+                    'attempt_count' => $total,
+                    'completed_count' => $completedCount,
+                    'unresolved_count' => $unresolvedCount,
+                    'completion_rate' => $total > 0 ? round(($completedCount / $total) * 100, 1) : 0,
+                ];
+            })
+            ->filter(fn ($row) => $row && $row['unresolved_count'] > 0)
+            ->sortByDesc('unresolved_count')
+            ->take(3)
+            ->values();
+
+        $labObstacleRows = $latestAttemptRows
+            ->groupBy('lab_id')
+            ->map(function ($attempts, $currentLabId) use ($labStepRows, $completedIdsForAttempt, $stepObstacleRows) {
+                $steps = $labStepRows->where('lab_id', (int) $currentLabId)->values();
+                $stepCount = max(1, $steps->count());
+                $incompleteAverage = $attempts->avg(function ($row) use ($steps, $completedIdsForAttempt, $stepCount) {
+                    if ($steps->isEmpty()) {
+                        return ($row->status ?? '') === 'passed' ? 0 : 1;
+                    }
+
+                    $completedIds = $completedIdsForAttempt($row);
+
+                    return max(0, $stepCount - $steps->filter(fn ($step) => in_array((int) $step->id, $completedIds, true))->count());
+                });
+                $weakestStep = $stepObstacleRows->firstWhere('lab_id', (int) $currentLabId);
+
+                return [
+                    'lab_id' => (int) $currentLabId,
+                    'lab_title' => $attempts->first()->lab_title ?? 'Lab',
+                    'students_count' => $attempts->pluck('user_id')->unique()->count(),
+                    'latest_attempts' => $attempts->count(),
+                    'not_passed_count' => $attempts->filter(fn ($row) => ($row->status ?? '') !== 'passed')->count(),
+                    'avg_score' => round((float) $attempts->avg('final_score'), 1),
+                    'avg_incomplete_steps' => round((float) $incompleteAverage, 1),
+                    'weakest_step' => $weakestStep['step_title'] ?? 'Belum ada langkah dominan',
+                    'risk_percent' => $attempts->count() > 0
+                        ? round(($attempts->filter(fn ($row) => ($row->status ?? '') !== 'passed')->count() / $attempts->count()) * 100, 1)
+                        : 0,
+                ];
+            })
+            ->sortByDesc(fn ($row) => ($row['not_passed_count'] * 1000) + ($row['avg_incomplete_steps'] * 10) + max(0, 100 - $row['avg_score']))
+            ->take(3)
+            ->values();
+
+        $studentIdsInScope = DB::table('users')
+            ->leftJoin('class_groups', 'users.class_group', '=', 'class_groups.name')
+            ->where('users.role', 'student')
+            ->whereNotNull('users.class_group')
+            ->where('users.class_group', '<>', '')
+            ->when($selectedClass !== '', fn ($q) => $q->where('users.class_group', $selectedClass))
+            ->pluck('users.id');
+
+        $lessonObstacleRows = collect();
+
+        if (Schema::hasTable('course_lessons') && $studentIdsInScope->isNotEmpty()) {
+            $lessonCompletionCounts = DB::table('user_lesson_progress')
+                ->whereIn('user_id', $studentIdsInScope)
+                ->where('completed', true)
+                ->select('course_lesson_id', DB::raw('COUNT(DISTINCT user_id) as completed_students'))
+                ->groupBy('course_lesson_id')
+                ->pluck('completed_students', 'course_lesson_id');
+
+            $studentTotalInScope = $studentIdsInScope->unique()->count();
+
+            $lessonObstacleRows = DB::table('course_lessons')
+                ->select('id', 'title', 'order')
+                ->orderBy('order')
+                ->get()
+                ->map(function ($lesson) use ($lessonCompletionCounts, $studentTotalInScope) {
+                    $completedStudents = (int) ($lessonCompletionCounts[$lesson->id] ?? 0);
+                    $unfinishedStudents = max(0, $studentTotalInScope - $completedStudents);
+
+                    return [
+                        'lesson_id' => (int) $lesson->id,
+                        'title' => $lesson->title,
+                        'order' => (int) ($lesson->order ?? 0),
+                        'completed_students' => $completedStudents,
+                        'unfinished_students' => $unfinishedStudents,
+                        'completion_rate' => $studentTotalInScope > 0 ? round(($completedStudents / $studentTotalInScope) * 100, 1) : 0,
+                    ];
+                })
+                ->filter(fn ($row) => $row['unfinished_students'] > 0)
+                ->sortByDesc('unfinished_students')
+                ->take(3)
+                ->values();
+        }
+
+        $followUpRecommendations = collect();
+        $topStepObstacle = $stepObstacleRows->first();
+        $topLabObstacle = $labObstacleRows->first();
+        $topLessonObstacle = $lessonObstacleRows->first();
+
+        if ($topStepObstacle) {
+            $followUpRecommendations->push([
+                'tone' => 'amber',
+                'title' => 'Ulangi materi terkait ' . $topStepObstacle['step_title'],
+                'metric' => $topStepObstacle['completion_rate'] . '% tuntas',
+                'reason' => 'Langkah ini menjadi hambatan terbesar pada filter aktif.',
+                'evidence' => $topStepObstacle['unresolved_count'] . ' siswa belum menuntaskan langkah ini di ' . $topStepObstacle['lab_title'] . '.',
+                'next_section' => 'Catatan Praktik',
+                'next_hint' => 'Mulai dari langkah yang sering tertunda, lalu beri contoh singkat sebelum siswa mengulang lab.',
+            ]);
+        }
+
+        if ($topLabObstacle && $topLabObstacle['not_passed_count'] > 0) {
+            $followUpRecommendations->push([
+                'tone' => 'rose',
+                'title' => 'Selesaikan ' . $topLabObstacle['lab_title'] . ' sebelum lanjut',
+                'metric' => $topLabObstacle['risk_percent'] . '% belum lulus',
+                'reason' => 'Lab ini memiliki rasio belum lulus paling tinggi.',
+                'evidence' => $topLabObstacle['not_passed_count'] . ' siswa pada percobaan terakhir belum lulus.',
+                'next_section' => 'Performa per Kelas',
+                'next_hint' => 'Cek kelas dengan partisipasi rendah atau rasio lulus kecil, lalu jadwalkan remedial praktik.',
+            ]);
+        }
+
+        $responsiveSignal = $stepObstacleRows->first(function ($row) {
+            $text = Str::lower(($row['lab_title'] ?? '') . ' ' . ($row['step_title'] ?? ''));
+
+            return Str::contains($text, ['responsive', 'responsif', 'breakpoint']);
+        }) ?: $labObstacleRows->first(function ($row) {
+            return Str::contains(Str::lower($row['lab_title'] ?? ''), ['responsive', 'responsif', 'breakpoint']);
+        });
+
+        if ($responsiveSignal) {
+            $followUpRecommendations->push([
+                'tone' => 'cyan',
+                'title' => 'Indikator responsivitas perlu diperkuat',
+                'metric' => ($responsiveSignal['lab_title'] ?? 'Responsif'),
+                'reason' => 'Data hambatan menunjukkan sinyal terkait responsivitas atau breakpoint.',
+                'evidence' => 'Sinyal muncul dari judul lab atau langkah yang sering belum tuntas.',
+                'next_section' => 'Catatan Praktik',
+                'next_hint' => 'Berikan latihan kecil tentang breakpoint, urutan class responsif, dan pengecekan live preview.',
+            ]);
+        }
+
+        if ($topLessonObstacle) {
+            $followUpRecommendations->push([
+                'tone' => 'indigo',
+                'title' => 'Tinjau ulang subbab ' . $topLessonObstacle['title'],
+                'metric' => $topLessonObstacle['completion_rate'] . '% selesai',
+                'reason' => 'Materi pendukung belum cukup kuat sebelum siswa mengulang praktik.',
+                'evidence' => $topLessonObstacle['unfinished_students'] . ' siswa belum menandai subbab ini selesai.',
+                'next_section' => 'Materi pendukung',
+                'next_hint' => 'Arahkan siswa menuntaskan subbab ini, lalu hubungkan kembali dengan instruksi lab terkait.',
+            ]);
+        }
+
+        if ($followUpRecommendations->isEmpty()) {
+            $followUpRecommendations->push([
+                'tone' => 'emerald',
+                'title' => 'Tidak ada hambatan dominan',
+                'metric' => 'Stabil',
+                'reason' => 'Rasio lulus, skor, dan hambatan langkah belum menunjukkan masalah besar.',
+                'evidence' => 'Belum ada lab, langkah, atau materi yang menonjol sebagai prioritas intervensi.',
+                'next_section' => 'Pendampingan Siswa',
+                'next_hint' => 'Pertahankan umpan balik rutin dan cek siswa yang mulai menurun pada percobaan berikutnya.',
+            ]);
+        }
+
+        $followUpRecommendations = $followUpRecommendations->take(3)->values();
         
         $labsList = DB::table('labs')->select('id', 'title')->get();
         
@@ -352,7 +665,10 @@ class LabController extends Controller
             'avgScore', 'avgDuration', 'userPerformance', 'labChartLabels',
             'labChartScores', 'labChartParticipants', 'labChartAverage',
             'labChartHighest', 'labChartLowest', 'hasLabChartData', 'labsList', 'labId',
-            'classGroups', 'classPerformance', 'selectedClass'
+            'classGroups', 'classPerformance', 'selectedClass',
+            'selectedPeriod', 'periodOptions', 'periodLabel',
+            'labObstacleRows', 'stepObstacleRows', 'lessonObstacleRows',
+            'followUpRecommendations'
         ));
     }
 
@@ -461,7 +777,7 @@ class LabController extends Controller
         $duration = (int) ($labData->duration_minutes ?? 60);
 
         // 4. Buat Sesi Baru
-        LabSession::create([
+        LabSession::create($this->filterColumns('lab_sessions', [
             'user_id' => $userId,
             'lab_id' => $id,
             'status' => 'active',
@@ -469,9 +785,12 @@ class LabController extends Controller
             'expires_at' => now()->addMinutes($duration), // Aman karena $duration dipastikan integer
             'current_code' => $initialCode,
             'current_score' => 0, 
+            'save_count' => 0,
+            'validation_attempt_count' => 0,
+            'code_change_count' => 0,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]));
         
         return redirect()->route('lab.workspace', ['id' => $id]);
     }
@@ -649,14 +968,23 @@ class LabController extends Controller
             return response()->json(['status' => 'expired', 'message' => 'Waktu pengerjaan telah habis!', 'redirect' => $redirect->getTargetUrl()]);
         }
 
+        $isValidationAttempt = $request->filled('step_id');
+        $isManualSave = !$isValidationAttempt || $request->input('event_type') === 'manual_save';
+
         if ($request->has('source_code')) {
-            $session->update([
-                'current_code' => $request->source_code, 
-                'updated_at' => now()
-            ]);
+            $session->current_code = $request->source_code;
         }
 
-        if (!$request->step_id) return response()->json(['status' => 'success', 'output' => "Auto-saved."]);
+        $this->applyLabInteractionCounters($session, $request, $isManualSave, $isValidationAttempt);
+        $session->updated_at = now();
+        $session->save();
+
+        if (!$isValidationAttempt) {
+            return response()->json([
+                'status' => 'success',
+                'output' => 'Auto-saved.',
+            ] + $this->labInteractionPayload($session));
+        }
         
         $currentStep = DB::table('lab_steps')->where('id', $request->step_id)->first();
         $userCode = $request->source_code ?? $session->current_code;
@@ -684,13 +1012,13 @@ class LabController extends Controller
                 'points' => $currentStep->points,
                 'new_score' => $finalScore, 
                 'output' => "Benar! Tugas selesai."
-            ]);
+            ] + $this->labInteractionPayload($session));
         }
 
         return response()->json([
             'status' => 'error',
             'message' => "Syarat belum terpenuhi: Kode wajib mengandung '{$failedRule}'"
-        ]);
+        ] + $this->labInteractionPayload($session));
     }
 
     public function end(Request $request, $id)
@@ -715,6 +1043,9 @@ class LabController extends Controller
         }
 
         $finalCode = $request->source_code ?? $session->current_code;
+        $session->current_code = $finalCode;
+        $this->applyLabInteractionCounters($session, $request, false, false);
+        $session->save();
 
         DB::beginTransaction();
         try {
@@ -737,7 +1068,7 @@ class LabController extends Controller
             $durationSeconds = abs(now()->diffInSeconds(Carbon::parse($session->started_at)));
             $completedStepsData = $session->completed_steps;
             
-            $history = LabHistory::create([
+            $history = LabHistory::create($this->filterColumns('lab_histories', [
                 'user_id' => $userId,
                 'lab_id' => $session->lab_id,
                 'last_code_snapshot' => $finalCode,
@@ -746,10 +1077,13 @@ class LabController extends Controller
                 'final_score' => $finalScore,
                 'duration_seconds' => $durationSeconds,
                 'completed_steps' => $completedStepsData, 
+                'save_count' => (int) ($session->save_count ?? 0),
+                'validation_attempt_count' => (int) ($session->validation_attempt_count ?? 0),
+                'code_change_count' => (int) ($session->code_change_count ?? 0),
                 'created_at' => now(),
                 'updated_at' => now(),
                 'completed_at' => now()
-            ]);
+            ]));
             
             $session->delete();
             DB::commit();
@@ -818,18 +1152,22 @@ class LabController extends Controller
         // FIX: Parsing tanggal dengan Carbon
         $durationSeconds = abs(Carbon::now()->diffInSeconds(Carbon::parse($session->started_at)));
 
-        $historyId = DB::table('lab_histories')->insertGetId([
+        $historyId = DB::table('lab_histories')->insertGetId($this->filterColumns('lab_histories', [
             'user_id' => $session->user_id,
             'lab_id' => $session->lab_id,
             'final_score' => $finalScore,
             'duration_seconds' => $durationSeconds,
             'last_code_snapshot' => $finalCode,
             'source_code' => $finalCode,
+            'completed_steps' => $session->completed_steps,
+            'save_count' => (int) ($session->save_count ?? 0),
+            'validation_attempt_count' => (int) ($session->validation_attempt_count ?? 0),
+            'code_change_count' => (int) ($session->code_change_count ?? 0),
             'completed_at' => now(),
             'status' => ($finalScore >= $passingGrade) ? 'passed' : 'failed',
             'created_at' => now(),
             'updated_at' => now()
-        ]);
+        ]));
         
         DB::table('lab_sessions')->where('id', $session->id)->delete();
         
@@ -841,23 +1179,81 @@ class LabController extends Controller
         $lab = DB::table('labs')->where('id', $session->lab_id)->first();
         $passingGrade = $lab->passing_grade ?? 50;
         
-        $historyId = DB::table('lab_histories')->insertGetId([
+        $historyId = DB::table('lab_histories')->insertGetId($this->filterColumns('lab_histories', [
             'user_id' => $session->user_id,
             'lab_id' => $session->lab_id,
             'final_score' => $session->current_score,
             // FIX: Parsing tanggal dengan Carbon
             'duration_seconds' => abs(now()->diffInSeconds(Carbon::parse($session->started_at))),
             'last_code_snapshot' => $session->current_code,
+            'source_code' => $session->current_code,
+            'completed_steps' => $session->completed_steps,
+            'save_count' => (int) ($session->save_count ?? 0),
+            'validation_attempt_count' => (int) ($session->validation_attempt_count ?? 0),
+            'code_change_count' => (int) ($session->code_change_count ?? 0),
             'completed_at' => now(),
             'status' => ($session->current_score >= $passingGrade) ? 'passed' : 'failed',
             'created_at' => now(),
             'updated_at' => now()
-        ]);
+        ]));
         
         // FIX: $sessionId diganti menjadi $session->id
         DB::table('lab_sessions')->where('id', $session->id)->delete();
 
         return redirect()->route('lab.result', $historyId)->with('success', "$message Nilai Anda: {$session->current_score}");
+    }
+
+    private function applyLabInteractionCounters(LabSession $session, Request $request, bool $countSave, bool $countValidation): void
+    {
+        if ($countSave && Schema::hasColumn('lab_sessions', 'save_count')) {
+            $session->save_count = (int) ($session->save_count ?? 0) + 1;
+        }
+
+        if ($countValidation && Schema::hasColumn('lab_sessions', 'validation_attempt_count')) {
+            $session->validation_attempt_count = (int) ($session->validation_attempt_count ?? 0) + 1;
+        }
+
+        if (Schema::hasColumn('lab_sessions', 'code_change_count')) {
+            $clientChangeCount = max(0, (int) $request->input('code_change_count', 0));
+            $session->code_change_count = max((int) ($session->code_change_count ?? 0), $clientChangeCount);
+        }
+    }
+
+    private function labInteractionPayload(LabSession $session): array
+    {
+        return [
+            'save_count' => (int) ($session->save_count ?? 0),
+            'validation_attempt_count' => (int) ($session->validation_attempt_count ?? 0),
+            'code_change_count' => (int) ($session->code_change_count ?? 0),
+        ];
+    }
+
+    private function formatSecondsShort($seconds): string
+    {
+        $seconds = max(0, (int) round((float) ($seconds ?? 0)));
+
+        if ($seconds === 0) {
+            return '0s';
+        }
+
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+        $remainingSeconds = $seconds % 60;
+        $parts = [];
+
+        if ($hours > 0) {
+            $parts[] = $hours . 'j';
+        }
+
+        if ($minutes > 0) {
+            $parts[] = $minutes . 'm';
+        }
+
+        if ($remainingSeconds > 0 || empty($parts)) {
+            $parts[] = $remainingSeconds . 's';
+        }
+
+        return implode(' ', array_slice($parts, 0, 2));
     }
 
     private function filterColumns(string $table, array $attributes): array
